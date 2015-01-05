@@ -10,7 +10,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fletch22.orb.dataGeneration.RandomUtils;
+import com.fletch22.util.RandomUtil;
 
 public class DataRetrievalStorageTest {
 	
@@ -32,7 +32,7 @@ public class DataRetrievalStorageTest {
 	@Test
 	public void testMap() {
 	
-		RandomUtils randomUtils = new RandomUtils();
+		RandomUtil randomUtils = new RandomUtil();
 		
 		logger.info("Starting random number test.");
 		for (int i = 0; i < 1000; i++) {
