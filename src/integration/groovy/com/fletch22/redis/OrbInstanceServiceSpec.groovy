@@ -10,6 +10,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
 import spock.lang.Specification
 
+import com.fletch22.orb.IntegrationTests
+
+@org.junit.experimental.categories.Category(IntegrationTests.class)
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/springContext.xml")
 class OrbInstanceServiceSpec extends Specification {
@@ -26,6 +29,11 @@ class OrbInstanceServiceSpec extends Specification {
 		
 		then:
 		orbInstanceService
+	}
+	
+	@Test
+	public void test() {
+		assertTrue(true);
 	}
 
 }

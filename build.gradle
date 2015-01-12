@@ -38,6 +38,7 @@ dependencies {
 	compile 'org.springframework:spring-test:4.1.3.RELEASE'
 	compile 'joda-time:joda-time:2.6'
 	testCompile 'org.spockframework:spock-maven:0.7-groovy-2.0'
+	testCompile 'com.googlecode.junit-toolbox:junit-toolbox:2.0'
 	
 	integrationTestCompile sourceSets.main.output
 	integrationTestCompile configurations.testCompile

@@ -10,10 +10,12 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.util.thread.ExecutorThreadPool;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.fletch22.orb.request.HelloHandler;
 
+@Ignore
 public class JettyServerTest {
 
 	@Test

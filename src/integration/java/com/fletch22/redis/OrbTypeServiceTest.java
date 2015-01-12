@@ -24,8 +24,10 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.Protocol;
 
+import com.fletch22.orb.IntegrationTests;
 import com.fletch22.util.RandomUtil;
 
+@org.junit.experimental.categories.Category(IntegrationTests.class)
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/springContext.xml")
 public class OrbTypeServiceTest {
