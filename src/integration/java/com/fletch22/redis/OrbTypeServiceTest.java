@@ -5,7 +5,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -72,17 +74,32 @@ public class OrbTypeServiceTest {
 	@Test
 	public void testCreateType() {
 		
-		int numInstances = 1000;
+		int numInstances = 10000;
+		
+		List<String> uniqueGuids = getUniqueUUIDs(numInstances);
 		
 		// Arrange
+		logger.info("Start create type test.");
 		for (int i = 0; i < numInstances; i++) {
-			createTypeForTest(orbTypeService, "Test-" + i);
+			createTypeForTest(orbTypeService, "Test-" + uniqueGuids.get(i));
 		}
+		logger.info("End create type test.");
 		
 		Set<String> types = orbTypeService.getTypes();
 		assertTrue("Should be true.", types.size() > 0);
 		
 		logger.info("Types size: {}", types.size());
+	}
+	
+	private List<String> getUniqueUUIDs(int number) {
+		
+		List<String> uniqueKeys = new ArrayList<String>(number);
+		
+		for (int i=0; i < number; i++) {
+			uniqueKeys.add(java.util.UUID.randomUUID().toString());
+		}
+
+		return uniqueKeys;
 	}
 
 	private void createTypeForTest(OrbTypeService redisClient, String typeName) {
