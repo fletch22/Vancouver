@@ -47,14 +47,14 @@ class LogDaoSpec extends Specification {
 	}
 	
 	@Test
-	def 'testCountCommands'() {
+	def "testCountCommands"() {
 		
 		given:
 		
 		when:
-		Connection connection = logDao.countCommands()
+		int numberCommands = logDao.countCommands()
 		
 		then:
-		true
+		numberCommands > 0
 	}
 }

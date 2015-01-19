@@ -95,7 +95,7 @@ public class OrbTypeServiceTest {
 		
 		List<String> uniqueKeys = new ArrayList<String>(number);
 		
-		for (int i=0; i < number; i++) {
+		for (int i = 0; i < number; i++) {
 			uniqueKeys.add(java.util.UUID.randomUUID().toString());
 		}
 

@@ -1,0 +1,27 @@
+Logging and Rolling Back Features:
+
+Recovery Mode:
+	Iterating through commands (retrieved) from db should not invoke undo operations. 
+	
+Transactions can be nested. A nested transaction is AKA a inner transaction.
+
+All IDs for a given transaction nested level have the same tranIds. For example
+
+Transaction OUTER (tranId = 1)
+	Operation A (tranId = 1)
+	Operation B (tranId = 1)
+	Transaction Inner (tranId = 2)
+		Operation InnerA (tranId = 2)
+		Operation InnerB (tranId = 2)
+	Operation C (tranId = 1)
+	Operation D (tranId = 1)
+	
+Nested transaction are kept track of in an array. Peek reads the most recent tran id.
+
+All actions are shuttled through the server ops as a log bundle. This give it context. One bit of context is keeping track of the current id So adding type and instances will set the current internal id.
+
+Since internal ids can be deleted, when a transaction is rolled back the tran id cannot be logically found. In other words:
+
+There are 2 main tables in the log database: actionlog and undoActionLog. To keep things fast and simple, the ActionLog is only two columns: the action and the date of the action. 
+
+Most obviously the tranDate helps us order the commands.
