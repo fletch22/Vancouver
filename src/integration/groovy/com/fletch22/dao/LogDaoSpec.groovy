@@ -6,18 +6,28 @@ import java.sql.Connection
 
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
 import spock.lang.Specification
 
+import com.fletch22.orb.CommandExpressor
+import com.fletch22.orb.TranDateGenerator
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/springContext.xml")
 class LogDaoSpec extends Specification {
 	
+	static Logger logger = LoggerFactory.getLogger(LogDaoSpec)
+	
 	@Autowired
 	LogDao logDao;
+	
+	@Autowired
+	TranDateGenerator tranDateGenerator;
 
 	@Test
 	def 'test is connection openable'() {
@@ -29,7 +39,7 @@ class LogDaoSpec extends Specification {
 		
 		then:
 		logDao.isConnectionOpen()
-	}
+	} 
 	
 	@Test
 	def 'test is connection closed'() {
@@ -47,14 +57,45 @@ class LogDaoSpec extends Specification {
 	}
 	
 	@Test
-	def "testCountCommands"() {
+	def 'clear out database'() {
 		
 		given:
-		
+				
 		when:
-		int numberCommands = logDao.countCommands()
+		logDao.clearOutDatabase();
 		
 		then:
-		numberCommands > 0
+		int numberCommands = logDao.countCommands()
+		numberCommands == 0
 	}
+	
+	@Test
+	def 'testConnection'() {
+		
+		given:
+		when:
+		String connectionString = logDao.getConnectionString()
+		
+		then:
+		connectionString
+	}
+	
+	@Test
+	def 'insert sample record into database'() {
+		
+		given:
+		CommandExpressor commandExpressor = new CommandExpressor();
+			
+		//def action = commandExpressor.jsonCommandGetTotalOrbCount();
+		
+		logger.info("TD: {}", tranDateGenerator.getTranDate());
+		
+		when:
+		//logDao.logAction(action, tranDateGenerator.getTranDate(), tranId)
+		def test = 'test'
+		
+		then:
+		1 == 1
+	}
+	
 }

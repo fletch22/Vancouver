@@ -72,6 +72,23 @@ public class LogDao {
 		
 		return numberOfCommands;
 	}
+	
+	public void clearOutDatabase() {
+
+		try {
+			connection = getConnection();
+			
+			String clearOutDatabase = "{call blowAwayActionTable5}";
+			CallableStatement callableStatement = connection.prepareCall(clearOutDatabase);
+			
+			callableStatement.executeUpdate();
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage(), e);
+		} finally {
+			closeConnection();
+		}
+		
+	}
 
 	private void closeConnection() {
 		try {
