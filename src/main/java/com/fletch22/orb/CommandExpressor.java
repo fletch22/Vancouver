@@ -438,44 +438,6 @@ public class CommandExpressor {
 		return translation;
 	}
 
-	public StringBuilder getJsonCommandListOfOrbTypes(String searchString) {
-		StringBuilder translation = new StringBuilder();
-
-		translation.append("{'" + CommandExpressor.ROOT_LABEL + "':{'");
-
-		translation.append(CommandExpressor.GET_LIST_OF_ORB_TYPES);
-		searchString = this.jsonUtil.escapeJsonIllegals(searchString);
-		translation.append("':'");
-		translation.append(searchString);
-		translation.append("'}}");
-
-		return translation;
-	}
-
-	public StringBuilder getJsonCommandUpdateOrbTypeLabel(int orbInternalId, String orbTypeLabel) {
-		StringBuilder translation = new StringBuilder();
-		orbTypeLabel = this.jsonUtil.escapeJsonIllegals(orbTypeLabel);
-
-		translation.append("{'");
-		translation.append(CommandExpressor.ROOT_LABEL);
-		translation.append("':{'");
-
-		translation.append(CommandExpressor.SET_ORB_TYPE_LABEL);
-		translation.append("':{'");
-		translation.append(CommandExpressor.ORB_INTERNAL_ID);
-		translation.append("':'");
-		translation.append(String.valueOf(orbInternalId));
-		translation.append("','");
-		translation.append(CommandExpressor.ORB_TYPE_LABEL);
-		translation.append("':'");
-		translation.append(this.jsonUtil.escapeJsonIllegals(orbTypeLabel));
-		translation.append("'");
-		translation.append("}");
-		translation.append("}}");
-
-		return translation;
-	}
-
 	public StringBuilder getJsonCommandAddOrbWhole(Orb orb) {
 		StringBuilder translation = new StringBuilder();
 
@@ -498,35 +460,6 @@ public class CommandExpressor {
 		translation.append("':");
 		translation.append(this.orbManager.convertToJson(orb));
 		translation.append("}}");
-
-		return translation;
-	}
-
-	public StringBuilder getJsonCommandAddOrbBaseType(String orbLabel) {
-		int orbType = OrbTypeManager.ORBTYPE_BASETYPE_ID;
-		return getJsonCommandAddOrbType(orbLabel, orbType);
-	}
-
-	public StringBuilder getJsonCommandAddOrbType(String orbLabel, int orbTypeInternalId) {
-		StringBuilder translation = new StringBuilder();
-
-		String orbLabelClean = this.jsonUtil.escapeJsonIllegals(orbLabel);
-
-		translation.append("{'");
-		translation.append(CommandExpressor.ROOT_LABEL);
-		translation.append("':{'");
-		translation.append(CommandExpressor.ADD_ORB_TYPE);
-		translation.append("':[{'");
-		translation.append(ORB_TYPE_LABEL);
-		translation.append("':'");
-		translation.append(orbLabelClean);
-		translation.append("'},{'");
-		translation.append(ORB_TYPE_INTERNAL_ID);
-		translation.append("':'");
-		translation.append(String.valueOf(orbTypeInternalId));
-		translation.append("'}");
-
-		translation.append("]}}");
 
 		return translation;
 	}

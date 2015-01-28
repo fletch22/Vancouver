@@ -31,7 +31,8 @@ public class TranDateGenerator {
 
 	// NOTE:01-20-2015:chris.flesche: A complex design that will perhaps not be necessary. Basically this ensures that the tran date 
 	// never repeats. If there is a repeat, the method increments the value by a small amount.
-	// NOTE:01-20-2015:Turning back the system clock may very well mess up record ordering. Syncing time services will also mess this up if the time syncs at the right moment and/or with a big enough reset. 
+	// NOTE:01-20-2015:Turning back the system clock may very well mess up record ordering - hence this precautionary approach. Syncing time services will also mess ordering if the time syncs at the 
+	// right moment and/or with a big enough reset. 
 	public BigDecimal getTranDate() {
 		BigDecimal currentTranDateRaw = getCurrentTranDate();
 
@@ -72,7 +73,6 @@ public class TranDateGenerator {
 	}
 
 	private void sleep(BigDecimal difference) {
-		logger.info(String.valueOf(difference));
 		try {
 			Thread.sleep(difference.longValue());
 		} catch (Exception e) {

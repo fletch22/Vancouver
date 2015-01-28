@@ -23,7 +23,7 @@ public class JsonUtil {
 		return value;
 	}
 	
-	public static String unescapeJsonIllegals(String value) 
+	public String unescapeJsonIllegals(String value) 
 	{
         if (value != null)
         {

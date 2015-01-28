@@ -1,0 +1,108 @@
+package com.fletch22.orb.command.orbType;
+
+import static org.junit.Assert.assertNotNull;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import com.fletch22.orb.OrbTypeManager;
+import com.fletch22.orb.action.persistence.CommandWrapper;
+import com.fletch22.orb.command.orbType.dto.AddOrbTypeDto;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = "classpath:/springContext.xml")
+public class AddOrbTypeCommanderTest {
+	
+	Logger logger = LoggerFactory.getLogger(AddOrbTypeCommanderTest.class);
+	
+	@Autowired
+	AddOrbTypeCommand addOrbTypeCommand;
+	
+	@Test
+	public void testSpring() {
+		assertNotNull(addOrbTypeCommand);
+		assertNotNull(addOrbTypeCommand.jsonUtil);
+	}
+
+	@Test
+	public void test() {
+		
+		logger.info("Start");
+		
+		for (int i = 0; i < 100000; i++) {
+			String json = addOrbTypeCommand.toJson("foo").toString();
+			AddOrbTypeDto dto = addOrbTypeCommand.fromJson(json);
+		}
+		logger.info("End");
+	}
+	
+	@Test
+	public void testComplexJsonConversionSpeed() {
+		
+		AddOrbTypePackage addOrbTypePackage = new AddOrbTypePackage();
+		addOrbTypePackage.label = "foo";
+		addOrbTypePackage.orbInternalId = OrbTypeManager.ORBTYPE_INTERNAL_ID_UNSET;
+		
+		Gson gson = new Gson();
+		JsonParser jsonParser = new JsonParser();
+		
+		CommandWrapper commandWrapper = new CommandWrapper();
+		commandWrapper.actionId = AddOrbTypePackage.ACTION_ID;
+		commandWrapper.action = addOrbTypePackage;
+		
+		String actionb = gson.toJson(commandWrapper);
+		
+		logger.info("Start Complex");
+		
+		String action = addOrbTypeCommand.toJson("foo").toString();
+		for (int i = 0; i < 100000; i++) {
+			JsonElement jsonElement = jsonParser.parse(actionb);
+			JsonObject jsonObject = jsonElement.getAsJsonObject();
+			String actionId = jsonObject.getAsJsonPrimitive("actionId").getAsString();
+			JsonElement jsonCommand = jsonObject.getAsJsonObject("action");
+			
+			TransformActionToClassName transformActionToClassName = new TransformActionToClassName();
+			Class clazz = transformActionToClassName.transformAction(actionId);
+			
+
+//			Command<AddOrbTypePackage> command = new Command<AddOrbTypePackage>();
+//			AddOrbTypePackage addTypePackageRedyra = command.getObject(jsonCommand, clazz);
+			
+			AddOrbTypePackage addTypePackageRedyra = null;
+			try {
+				addTypePackageRedyra = (AddOrbTypePackage) gson.fromJson(jsonCommand, clazz);
+			} catch (Exception e) {
+				throw new RuntimeException(e.getMessage(), e);
+			}
+		
+		}
+		logger.info("End");
+		
+	}
+	
+	public class Command<T> {
+		
+		@SuppressWarnings("unchecked")
+		public T getObject(JsonElement jsonCommand, Class type) {
+			Gson gson = new Gson();
+			
+			Object object;
+			try {
+				object = gson.fromJson(jsonCommand, type.getClass());
+			} catch (Exception e) {
+				throw new RuntimeException(e.getMessage(), e);
+			}
+			
+			return (T) object;
+		}
+	}
+}
