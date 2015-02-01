@@ -5,10 +5,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class RedisKeyFactory {
 
-	public KeyGenerator getKeyGenerator(OrbType orbType) {
+	public KeyGenerator getKeyGenerator(ObjectType orbType) {
 		
-		if (orbType.equals(OrbType.TYPE)) {
-			return new OrbTypeKeyGenerator();
+		if (orbType.equals(ObjectType.TYPE)) {
+			return new ObjectTypeKeyGenerator();
 		} else {
 			throw new RuntimeException("Could not create key generator because type not recognized.");
 		}

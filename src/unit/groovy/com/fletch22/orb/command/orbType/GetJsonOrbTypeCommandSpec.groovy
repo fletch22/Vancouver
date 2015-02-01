@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.fletch22.orb.command.orbType;
 
 import static org.junit.Assert.*
@@ -15,22 +12,22 @@ import spock.lang.Specification
 
 @RunWith(SpringJUnit4ClassRunner)
 @ContextConfiguration(locations = 'classpath:/springContext.xml')
-class GetListOfOrbTypesTranslatorSpec extends Specification {
+class GetJsonOrbTypeCommandSpec extends Specification {
 
 	@Autowired
-	GetListOfOrbTypesCommand getListOfOrbTypesTranslator
+	GetJsonOrbTypeCommand getJsonOrbTypeCommand
 	
 	@Test
-	def 'test translation'() {
+	def 'test Get Json OrbTypeCommand parse and unparse'() {
 		
 		given:
-		def expectedSearchString = 'foo'
-		def action = this.getListOfOrbTypesTranslator.toJson(expectedSearchString);
+		int orbInternalTypeIdExpected
+		def json = this.getJsonOrbTypeCommand.toJson(orbInternalTypeIdExpected).toString()
 		
 		when:
-		def actionData = this.getListOfOrbTypesTranslator.fromJson(action.toString());
+		def action = this.getGetJsonOrbTypeCommand().fromJson(json)
 		
 		then:
-		actionData.searchString == expectedSearchString;
+		action.orbTypeInternalId == orbInternalTypeIdExpected
 	}
 }

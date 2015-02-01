@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.fletch22.util.BigDecimalForDataStorageUtil;
 import com.fletch22.util.NowFactory;
 
 @Component
@@ -16,7 +17,7 @@ public class TranDateGenerator {
 	
 	public static final BigDecimal TRAN_DATE_UNSET = new BigDecimal(0);
 	private BigDecimal lastTranDateRaw = new BigDecimal(0);
-	private static final int NUMBER_DECIMAL_PLACES = 10;
+	public static final int NUMBER_DECIMAL_PLACES = BigDecimalForDataStorageUtil.MAXIMUM_DECIMAL_DIGITS;
 	private BigDecimal increment = (new BigDecimal(1)).scaleByPowerOfTen(-1 * NUMBER_DECIMAL_PLACES); // NOTE:01-20-2015:chris.flesche: decimal followed by 9 zeros. Then a 1. :)
 	
 	// NOTE:01-24-2015:chris.flesche: When the system resets its clock, this could screw up this class' tranDate. 

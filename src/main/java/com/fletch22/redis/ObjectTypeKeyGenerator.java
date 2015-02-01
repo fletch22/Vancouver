@@ -1,6 +1,6 @@
 package com.fletch22.redis;
 
-public class OrbTypeKeyGenerator implements KeyGenerator {
+public class ObjectTypeKeyGenerator implements KeyGenerator {
 	
 	static final String KEY_PREFIX = "orbType:";
 

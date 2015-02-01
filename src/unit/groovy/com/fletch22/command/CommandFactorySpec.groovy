@@ -1,7 +1,4 @@
-/**
- * 
- */
-package com.fletch22.orb.command.orbType;
+package com.fletch22.command;
 
 import static org.junit.Assert.*
 
@@ -11,26 +8,32 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
+import com.fletch22.orb.command.orbType.AddOrbTypeCommand;
+
 import spock.lang.Specification
 
 @RunWith(SpringJUnit4ClassRunner)
 @ContextConfiguration(locations = 'classpath:/springContext.xml')
-class GetListOfOrbTypesTranslatorSpec extends Specification {
-
-	@Autowired
-	GetListOfOrbTypesCommand getListOfOrbTypesTranslator
+class CommandFactorySpec extends Specification {
 	
+	@Autowired
+	AddOrbTypeCommand addOrbTypeCommand
+	
+	@Autowired
+	CommandFactory commandFactory
+
 	@Test
-	def 'test translation'() {
+	def 'test factory'() {
 		
 		given:
-		def expectedSearchString = 'foo'
-		def action = this.getListOfOrbTypesTranslator.toJson(expectedSearchString);
+		def action = this.addOrbTypeCommand.toJson('foo').toString()
 		
 		when:
-		def actionData = this.getListOfOrbTypesTranslator.fromJson(action.toString());
+		def jsonCommand = this.commandFactory.getJsonCommand(action)
 		
 		then:
-		actionData.searchString == expectedSearchString;
+		notThrown(Exception)
+		jsonCommand
 	}
+
 }

@@ -18,7 +18,7 @@ import com.fletch22.orb.IntegrationTests
 class OrbInstanceServiceSpec extends Specification {
 	
 	@Autowired
-	OrbInstanceService orbInstanceService
+	ObjectInstanceCacheService orbInstanceService
 
 	@Test
 	def 'test instance exists'() {

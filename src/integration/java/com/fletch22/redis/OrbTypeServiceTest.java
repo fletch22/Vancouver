@@ -37,7 +37,7 @@ public class OrbTypeServiceTest {
 	Logger logger = LoggerFactory.getLogger(OrbTypeServiceTest.class);
 	
 	@Autowired
-	OrbTypeService orbTypeService;
+	ObjectTypeCacheService orbTypeService;
 	
 	@Autowired
 	RandomUtil randomUtil;
@@ -102,7 +102,7 @@ public class OrbTypeServiceTest {
 		return uniqueKeys;
 	}
 
-	private void createTypeForTest(OrbTypeService redisClient, String typeName) {
+	private void createTypeForTest(ObjectTypeCacheService redisClient, String typeName) {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("prop1", "value1");
 		map.put("prop2", "value2");
@@ -142,7 +142,7 @@ public class OrbTypeServiceTest {
 		
 		// Assert
 		assertTrue("Returned result from removal should be true.", result);
-		assertFalse("Orb type should not exist.", orbTypeService.doesOrbTypeExist(typeName));
+		assertFalse("Orb type should not exist.", orbTypeService.doesObjectTypeExist(typeName));
 	}
 
 	private String getRandomTypeName() {
@@ -180,13 +180,13 @@ public class OrbTypeServiceTest {
 		String newTypeName = getRandomTypeName();
 		
 		// Act
-		assertFalse("Record with new name should not exist.", orbTypeService.doesOrbTypeExist(newTypeName));
-		assertTrue("Record with old name should exist.", orbTypeService.doesOrbTypeExist(typeName));
+		assertFalse("Record with new name should not exist.", orbTypeService.doesObjectTypeExist(newTypeName));
+		assertTrue("Record with old name should exist.", orbTypeService.doesObjectTypeExist(typeName));
 		orbTypeService.renameType(typeName, newTypeName);
 		
 		// Assert
-		assertFalse("Record with old name should not exist.", orbTypeService.doesOrbTypeExist(typeName));
-		assertTrue("Record with new name should exist.", orbTypeService.doesOrbTypeExist(newTypeName));
+		assertFalse("Record with old name should not exist.", orbTypeService.doesObjectTypeExist(typeName));
+		assertTrue("Record with new name should exist.", orbTypeService.doesObjectTypeExist(newTypeName));
 		
 		orbTypeService.removeType(newTypeName);
 	}

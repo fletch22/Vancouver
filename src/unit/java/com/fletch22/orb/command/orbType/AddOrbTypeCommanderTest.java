@@ -11,7 +11,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.fletch22.orb.OrbTypeManager;
-import com.fletch22.orb.action.persistence.CommandWrapper;
 import com.fletch22.orb.command.orbType.dto.AddOrbTypeDto;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;

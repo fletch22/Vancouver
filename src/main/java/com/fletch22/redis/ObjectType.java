@@ -1,6 +1,6 @@
 package com.fletch22.redis;
 
-public enum OrbType {
+public enum ObjectType {
 	TYPE,
 	TYPE_LIST,
 	INSTANCE

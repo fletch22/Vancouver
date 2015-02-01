@@ -1,4 +1,4 @@
-package com.fletch22.orb.action.persistence;
+package com.fletch22.orb.command.orbType;
 
 public class CommandWrapper {
 

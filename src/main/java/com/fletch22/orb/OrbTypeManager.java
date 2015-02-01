@@ -1,6 +1,15 @@
 package com.fletch22.orb;
 
+import java.math.BigDecimal;
+import java.util.HashMap;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import com.fletch22.orb.command.orbType.dto.AddOrbTypeDto;
+import com.fletch22.redis.ObjectInstanceCacheService;
+import com.fletch22.redis.ObjectTypeCacheService;
+import com.fletch22.util.OrbUtil;
 
 @Component
 public class OrbTypeManager {
@@ -14,4 +23,28 @@ public class OrbTypeManager {
     public static final int ORBTYPE_INTERNAL_ID_UNSET = -1;
     public static final int ORBTYPE_ATTR_ORDINAL_UNSET = -1;
 	public static final int ORBTYPE_BASETYPE_ID = 0;
+	
+	@Autowired
+	ObjectInstanceCacheService objectInstanceCacheService;
+	
+	@Autowired
+	OrbUtil orbUtil;
+	
+	@Autowired
+	ObjectTypeCacheService objectTypeCacheService;
+	
+	@Autowired
+	private InternalIdGenerator internalIdGenerator;
+	
+	public void createOrbType(AddOrbTypeDto addOrbTypeDto, BigDecimal tranDate) {
+		
+		boolean exists = objectTypeCacheService.doesObjectTypeExist(addOrbTypeDto.label);
+		if (exists) {
+			throw new RuntimeException("Encountered problem trying to create orb type. Appears orb type '" + addOrbTypeDto.label + "' already exists.");
+		} else {
+			HashMap<String, String> orbPropertyMap = this.orbUtil.createCoreProperties(this.internalIdGenerator.getNextId(), addOrbTypeDto.label, tranDate);
+			
+			objectTypeCacheService.createType(addOrbTypeDto.label, orbPropertyMap);
+		}
+	}
 }

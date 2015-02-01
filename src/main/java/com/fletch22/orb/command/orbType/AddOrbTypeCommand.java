@@ -3,6 +3,7 @@ package com.fletch22.orb.command.orbType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.fletch22.command.JsonCommand;
 import com.fletch22.orb.CommandExpressor;
 import com.fletch22.orb.OrbTypeManager;
 import com.fletch22.orb.command.orbType.dto.AddOrbTypeDto;
@@ -14,7 +15,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 
 @Component
-public class AddOrbTypeCommand {
+public class AddOrbTypeCommand implements JsonCommand {
 
 	@Autowired
 	JsonUtil jsonUtil;
@@ -67,6 +68,6 @@ public class AddOrbTypeCommand {
 		innerObject = secondElementJsonObject.get(CommandExpressor.ORB_TYPE_INTERNAL_ID);
 		int orbTypeInternalId = innerObject.getAsJsonPrimitive().getAsInt();
 		
-		return null; //new AddOrbTypeDto(label, orbTypeInternalId);
+		return new AddOrbTypeDto(label, orbTypeInternalId);
 	}
 }

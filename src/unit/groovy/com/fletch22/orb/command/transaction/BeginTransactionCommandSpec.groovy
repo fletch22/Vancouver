@@ -1,7 +1,4 @@
-/**
- * 
- */
-package com.fletch22.orb.command.orbType;
+package com.fletch22.orb.command.transaction;
 
 import static org.junit.Assert.*
 
@@ -15,22 +12,21 @@ import spock.lang.Specification
 
 @RunWith(SpringJUnit4ClassRunner)
 @ContextConfiguration(locations = 'classpath:/springContext.xml')
-class GetListOfOrbTypesTranslatorSpec extends Specification {
-
-	@Autowired
-	GetListOfOrbTypesCommand getListOfOrbTypesTranslator
+class BeginTransactionCommandSpec extends Specification {
 	
+	@Autowired
+	BeginTransactionCommand beginTransactionCommand 
+
 	@Test
-	def 'test translation'() {
+	def 'test begin tranaction parse and unparse'() {
 		
 		given:
-		def expectedSearchString = 'foo'
-		def action = this.getListOfOrbTypesTranslator.toJson(expectedSearchString);
+		def json = this.beginTransactionCommand.toJson().toString()
 		
 		when:
-		def actionData = this.getListOfOrbTypesTranslator.fromJson(action.toString());
+		this.beginTransactionCommand.fromJson(json)
 		
 		then:
-		actionData.searchString == expectedSearchString;
+		notThrown(Exception) 
 	}
 }

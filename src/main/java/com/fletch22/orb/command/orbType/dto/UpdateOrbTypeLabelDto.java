@@ -1,6 +1,8 @@
 package com.fletch22.orb.command.orbType.dto;
 
-public class UpdateOrbTypeLabelDto {
+import com.fletch22.command.dto.Dto;
+
+public class UpdateOrbTypeLabelDto implements Dto {
 	String label;
 	int orbTypeInternalId;
 	

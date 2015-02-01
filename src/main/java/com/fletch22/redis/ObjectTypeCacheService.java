@@ -16,14 +16,14 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Protocol;
 
 @Component
-public class OrbTypeService {
+public class ObjectTypeCacheService {
 	
 	private static final long DELETE_KEY_RESULT_KEY_NOT_FOUND = 0;
 	private static final String DEFAULT_KEY_TRAN_DATE = "tranDate";
 	private static final long RENAME_RESULT_KEY_ALREADY_EXISTS = 0;
 	private static final long REMOVE_PROPERTY_FROM_HASHMAP_PROPERTY_NOT_FOUND = 0;
 
-	Logger logger = LoggerFactory.getLogger(OrbTypeService.class);
+	Logger logger = LoggerFactory.getLogger(ObjectTypeCacheService.class);
 	
 	@Autowired
 	Jedis jedis;
@@ -35,14 +35,14 @@ public class OrbTypeService {
 
 	@PostConstruct
 	public void postConstruct() {
-		this.typeKeyGenerator = this.redisKeyFactory.getKeyGenerator(OrbType.TYPE);
+		this.typeKeyGenerator = this.redisKeyFactory.getKeyGenerator(ObjectType.TYPE);
 	}
 
 	public void createType(String typeName, Map<String, String> properties) {
 		
 		try {
 			validateTypeProperties(properties);
-			Map<String, String> map = transformToOrbProperties(properties);
+			Map<String, String> map = transformToObjectProperties(properties);
 
 			String key = this.typeKeyGenerator.getKey(typeName);
 			this.jedis.hmset(key, map);
@@ -77,14 +77,6 @@ public class OrbTypeService {
 				throw new RuntimeException(message);
 			}
 			wasSuccessful = true;
-//			Set<String> keys = this.jedis.keys(getTypeNameKey(typeName));
-//			for (String key: keys) {
-//				long result = jedis.del(key);
-//				if (result == DELETE_KEY_RESULT_KEY_NOT_FOUND) {
-//					String message = String.format("Encountered problem with removing type. Could not find item with key '" + key + "' for type '" + typeName + "'. Because not found could not delete.");
-//					throw new RuntimeException();
-//				}
-//			}
 		} catch (Exception e) {
 			throw new RuntimeException("Encountered problem while trying to create type: " + e.getMessage(), e);
 		}
@@ -110,7 +102,7 @@ public class OrbTypeService {
 		try {
 			String key = getTypeNameKey(typeName);
 			result = this.jedis.hgetAll(key);
-			if (!doesRedisHashMapRecordExist(result)) {
+			if (!doesHashMapRecordExist(result)) {
 				throw new RuntimeException("Encountered problem trying to get non-existent type '" + typeName + "' with key '" + key + "'.");
 			}
 		} catch (Exception e) {
@@ -119,7 +111,7 @@ public class OrbTypeService {
 		return result;
 	}
 	
-	public boolean doesOrbTypeExist(String typeName) {
+	public boolean doesObjectTypeExist(String typeName) {
 		boolean exists = false;
 		try {
 			String key = getTypeNameKey(typeName);
@@ -130,7 +122,7 @@ public class OrbTypeService {
 		return exists;
 	}
 	
-	private boolean doesRedisHashMapRecordExist(Map<String, String> returnedMap) {
+	private boolean doesHashMapRecordExist(Map<String, String> returnedMap) {
 		boolean result = true;
 		if (returnedMap.size() == 0) {
 			result = false;
@@ -138,7 +130,7 @@ public class OrbTypeService {
 		return result;
 	}
 	
-	public Map<String, String> transformToOrbProperties(Map<String, String> map) {
+	public Map<String, String> transformToObjectProperties(Map<String, String> map) {
 		Map<String, String> orbProperties = new HashMap<String, String>();
 		
 		if (map.containsKey(DEFAULT_KEY_TRAN_DATE)) {

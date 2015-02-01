@@ -253,47 +253,11 @@ public class CommandExpressor {
 		return translation;
 	}
 
-	public StringBuilder getJsonCommandBeginTransaction() {
-		StringBuilder translation = new StringBuilder();
-
-		translation.append("{'" + CommandExpressor.ROOT_LABEL + "':{'");
-		translation.append(CommandExpressor.BEGIN_TRANSACTION);
-		translation.append("'}}");
-
-		return translation;
-	}
-
 	public StringBuilder getJsonCommandBeginTransactionInner() {
 		StringBuilder translation = new StringBuilder();
 
 		translation.append("{'" + CommandExpressor.ROOT_LABEL + "':{'");
 		translation.append(CommandExpressor.BEGIN_TRANSACTION_INNER);
-		translation.append("'}}");
-
-		return translation;
-	}
-
-	public StringBuilder getJsonCommandGetCurrentTransactionId() {
-		StringBuilder translation = new StringBuilder();
-
-		translation.append("{'");
-		translation.append(CommandExpressor.SYSTEM_COMMAND);
-		translation.append("':'");
-		translation.append(CommandExpressor.GET_CURRENT_TRANSACTION_ID);
-		translation.append("'}");
-
-		return translation;
-	}
-	
-	public StringBuilder getJsonCommandKillTransaction(BigDecimal transactionId) {
-		StringBuilder translation = new StringBuilder();
-
-		translation.append("{'");
-		translation.append(CommandExpressor.SYSTEM_COMMAND);
-		translation.append("':{'");
-		translation.append(CommandExpressor.KILL_TRANSACTION);
-		translation.append("':'");
-		translation.append(transactionId.toString());
 		translation.append("'}}");
 
 		return translation;
@@ -778,24 +742,6 @@ public class CommandExpressor {
 		return translation;
 	}
 
-	public StringBuilder getJsonCommandGetOrbType(int orbTypeInternalId) {
-		StringBuilder translation = new StringBuilder();
-
-		String oidClean = this.jsonUtil.escapeJsonIllegals(String.valueOf(orbTypeInternalId));
-
-		translation.append("{'");
-		translation.append(CommandExpressor.ROOT_LABEL);
-		translation.append("':{'");
-		translation.append(GET_ORB_TYPE);
-		translation.append("':{'");
-		translation.append(ORB_TYPE_INTERNAL_ID);
-		translation.append("':'");
-		translation.append(oidClean);
-		translation.append("'}}}");
-
-		return translation;
-	}
-
 	// TODO: This should not be exposed as part of the "public" API.
 	public StringBuilder getJsonCommandUndoBeginInnerTransaction(BigDecimal transactionIdInner) {
 		StringBuilder translation = new StringBuilder();
@@ -844,15 +790,6 @@ public class CommandExpressor {
 		translation.append("'}]}}");
 
 		return translation;
-	}
-
-	public StringBuilder getJsonCommandGetOrbTypeFromLabel(String label) {
-		StringBuilder sb = new StringBuilder();
-
-		label = this.jsonUtil.escapeJsonIllegals(label);
-		sb.append("{'" + CommandExpressor.ROOT_LABEL + "':{'" + CommandExpressor.GET_ORB_TYPE_FROM_LABEL + "':{'" + CommandExpressor.ORB_TYPE_LABEL + "':'" + label + "'}}}");
-
-		return sb;
 	}
 
 	public StringBuilder getJsonCommandGetOrbInstFromLabel(String label) {
