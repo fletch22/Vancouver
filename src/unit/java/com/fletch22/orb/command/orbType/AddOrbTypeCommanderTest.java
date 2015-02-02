@@ -18,7 +18,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:/springContext.xml")
+@ContextConfiguration(locations = "classpath:/springContext-test.xml")
 public class AddOrbTypeCommanderTest {
 	
 	Logger logger = LoggerFactory.getLogger(AddOrbTypeCommanderTest.class);

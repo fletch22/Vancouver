@@ -15,7 +15,7 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 @RunWith(SpringJUnit4ClassRunner)
-@ContextConfiguration(locations = 'classpath:/springContext.xml')
+@ContextConfiguration(locations = 'classpath:/springContext-test.xml')
 class TranDateGeneratorSpec extends Specification {
 	
 	static Logger logger = LoggerFactory.getLogger(TranDateGeneratorSpec)

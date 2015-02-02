@@ -1,11 +1,15 @@
 package com.fletch22.util;
 
+import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.util.Random;
 
 import org.springframework.stereotype.Component;
 
 @Component
 public class RandomUtil {
+	
+	private SecureRandom random = new SecureRandom();
 
 	public int getRandomInteger() {
 		Random random = new Random();
@@ -29,5 +33,9 @@ public class RandomUtil {
 		int randomNumber = r.nextInt(high - low) + low;
 
 		return randomNumber;
+	}
+	
+	public String getRandomString() {
+		return new BigInteger(130, random).toString(32);
 	}
 }

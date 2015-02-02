@@ -1,16 +1,28 @@
 package com.fletch22.redis;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+@Component
 public class ObjectTypeKeyGenerator implements KeyGenerator {
 	
-	static final String KEY_PREFIX = "orbType:";
+	@Value("${cache.app.prefix}")
+	String cachAppPrefix;
+	
+	private static final String KEY_CORE_PREFIX = "orbType:";
 
 	@Override
-	public String getKey(String typeName) {
-		return getKeyPrefix() + typeName;
+	public String getKey(String id) {
+		return getKeyPrefix() + id;
 	}
 
 	@Override
 	public String getKeyPrefix() {
-		return KEY_PREFIX;
+		return cachAppPrefix + ":" + KEY_CORE_PREFIX;
+	}
+
+	@Override
+	public String extractIdFromKey(String key) {
+		return key.substring(getKeyPrefix().length());
 	}
 }

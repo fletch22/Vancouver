@@ -1,12 +1,10 @@
 package com.fletch22.redis;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +17,7 @@ import redis.clients.jedis.Protocol;
 public class ObjectTypeCacheService {
 	
 	private static final long DELETE_KEY_RESULT_KEY_NOT_FOUND = 0;
-	private static final String DEFAULT_KEY_TRAN_DATE = "tranDate";
 	private static final long RENAME_RESULT_KEY_ALREADY_EXISTS = 0;
-	private static final long REMOVE_PROPERTY_FROM_HASHMAP_PROPERTY_NOT_FOUND = 0;
 
 	Logger logger = LoggerFactory.getLogger(ObjectTypeCacheService.class);
 	
@@ -38,14 +34,13 @@ public class ObjectTypeCacheService {
 		this.typeKeyGenerator = this.redisKeyFactory.getKeyGenerator(ObjectType.TYPE);
 	}
 
-	public void createType(String typeName, Map<String, String> properties) {
+	public void createType(String id, Map<String, String> properties) {
 		
 		try {
 			validateTypeProperties(properties);
-			Map<String, String> map = transformToObjectProperties(properties);
 
-			String key = this.typeKeyGenerator.getKey(typeName);
-			this.jedis.hmset(key, map);
+			String key = this.typeKeyGenerator.getKey(id);
+			this.jedis.hmset(key, properties);
 		} catch (Exception e) {
 			throw new RuntimeException("Encountered problem while trying to create type: " + e.getMessage(), e);
 		}
@@ -54,6 +49,10 @@ public class ObjectTypeCacheService {
 	private void validateTypeProperties(Map<String, String> properties) {
 		if (null == properties) {
 			throw new RuntimeException("Encountered problems validating the properties for a type. Properties were null. Should not be null.");
+		}
+		
+		if (properties.size() == 0) {
+			throw new RuntimeException("Encountered problems validating the properties for a type. There are zero properties. Properties should not be null.");
 		}
 	}
 
@@ -67,13 +66,13 @@ public class ObjectTypeCacheService {
 		return results;
 	}
 	
-	public boolean removeType(String typeName) {
+	public boolean removeType(String id) {
 		boolean wasSuccessful = false;
 		try {
-			String key = getTypeNameKey(typeName);
-			long result = jedis.del(getTypeNameKey(typeName));
+			String key = getTypeIdKey(id);
+			long result = jedis.del(getTypeIdKey(id));
 			if (result == DELETE_KEY_RESULT_KEY_NOT_FOUND) {
-				String message = String.format("Encountered problem with removing type. Could not find item with key '" + key + "' for type '" + typeName + "'. Because not found could not delete.");
+				String message = String.format("Encountered problem with removing type. Could not find item with key '" + key + "' for type '" + id + "'. Because not found could not delete.");
 				throw new RuntimeException(message);
 			}
 			wasSuccessful = true;
@@ -83,8 +82,8 @@ public class ObjectTypeCacheService {
 		return wasSuccessful;
 	}
 	
-	private String getTypeNameKey(String typeName) {
-		return this.typeKeyGenerator.getKeyPrefix() + typeName;
+	private String getTypeIdKey(String id) {
+		return this.typeKeyGenerator.getKey(id);
 	}
 
 	public String removeAllKeys() {
@@ -97,13 +96,13 @@ public class ObjectTypeCacheService {
 		return result;
 	}
 
-	public Map<String, String> getType(String typeName) {
+	public Map<String, String> getType(String id) {
 		Map<String, String> result = null;
 		try {
-			String key = getTypeNameKey(typeName);
+			String key = getTypeIdKey(id);
 			result = this.jedis.hgetAll(key);
 			if (!doesHashMapRecordExist(result)) {
-				throw new RuntimeException("Encountered problem trying to get non-existent type '" + typeName + "' with key '" + key + "'.");
+				throw new RuntimeException("Encountered problem trying to get non-existent type '" + id + "' with key '" + key + "'.");
 			}
 		} catch (Exception e) {
 			throw new RuntimeException("Encountered problem while trying to create type: " + e.getMessage(), e);
@@ -111,10 +110,10 @@ public class ObjectTypeCacheService {
 		return result;
 	}
 	
-	public boolean doesObjectTypeExist(String typeName) {
+	public boolean doesObjectTypeExist(String id) {
 		boolean exists = false;
 		try {
-			String key = getTypeNameKey(typeName);
+			String key = getTypeIdKey(id);
 			exists = this.jedis.exists(key);
 		} catch (Exception e) {
 			throw new RuntimeException("Encountered problem while trying to determine if type exists: " + e.getMessage(), e);
@@ -130,44 +129,32 @@ public class ObjectTypeCacheService {
 		return result;
 	}
 	
-	public Map<String, String> transformToObjectProperties(Map<String, String> map) {
-		Map<String, String> orbProperties = new HashMap<String, String>();
-		
-		if (map.containsKey(DEFAULT_KEY_TRAN_DATE)) {
-			throw new RuntimeException("Encountered problem while trying to convert type properties. Properties were found to already have a key '" + DEFAULT_KEY_TRAN_DATE + "'. This key is reserved and cannot be specified by user.");
-		}
-		orbProperties.put(DEFAULT_KEY_TRAN_DATE, String.valueOf(DateTime.now().getMillis()));
-		orbProperties.putAll(map);
-		 
-		return orbProperties;
-	}
-
-	public void renameType(String typeName, String newTypeName) {
+	public void reIdType(String id, String newId) {
 		try {
-			long result = this.jedis.renamenx(getTypeNameKey(typeName), getTypeNameKey(newTypeName));
+			long result = this.jedis.renamenx(getTypeIdKey(id), getTypeIdKey(newId));
 			if (result == RENAME_RESULT_KEY_ALREADY_EXISTS) {
-				throw new RuntimeException("Encountered problem while trying to rename type key from '" + typeName + "' to '" + newTypeName + "'. There is already an entry with key '" + newTypeName + "'.");
+				throw new RuntimeException("Encountered problem while trying to rename type key from '" + id + "' to '" + newId + "'. There is already an entry with key '" + newId + "'.");
 			}
 		} catch (Exception e) {
 			throw new RuntimeException("Encountered problem while trying to rename type: " + e.getMessage(), e);
 		}
 	}
 
-	public void removePropertyFromType(String typeName, String propertyToRemove) {
+	public void removePropertyFromType(String id, String propertyToRemove) {
 		try {
-			String key = getTypeNameKey(typeName);
+			String key = getTypeIdKey(id);
 			this.jedis.hdel(key, propertyToRemove);
 		} catch (Exception e) {
 			throw new RuntimeException("Encountered problem while trying to rename type: " + e.getMessage(), e);
 		}
 	}
 	
-	public void renameTypeProperty(String typeName, String propertyNameOriginal, String propertyNameNew) {
+	public void renameTypeProperty(String id, String propertyNameOriginal, String propertyNameNew) {
 		try {
 			
 			validatePropertyForRename1(propertyNameOriginal, propertyNameNew);
 			
-			String key = getTypeNameKey(typeName);
+			String key = getTypeIdKey(id);
 			Map<String, String> map = this.jedis.hgetAll(key);
 			
 			validatePropertyForRename2(map, propertyNameOriginal, propertyNameNew);
@@ -176,11 +163,11 @@ public class ObjectTypeCacheService {
 			map.remove(propertyNameOriginal);
 			map.put(propertyNameNew, value);
 		
-			this.removePropertyFromType(typeName, propertyNameOriginal);
+			this.removePropertyFromType(id, propertyNameOriginal);
 			
 			String result = this.jedis.hmset(key, map);
 			if (!result.equals(Protocol.Keyword.OK.toString())) {
-				throw new RuntimeException("Encountered problem while trying to rename type '" + typeName + "' property from '" + propertyNameOriginal + "' to '" + propertyNameNew + "'.");
+				throw new RuntimeException("Encountered problem while trying to rename type '" + id + "' property from '" + propertyNameOriginal + "' to '" + propertyNameNew + "'.");
 			}
 		} catch (Exception e) {
 			throw new RuntimeException("Encountered problem while trying to rename type: " + e.getMessage(), e);
@@ -188,11 +175,6 @@ public class ObjectTypeCacheService {
 	}
 
 	private void validatePropertyForRename1(String propertyNameOriginal, String propertyNameNew) {
-		if (propertyNameOriginal.equals(DEFAULT_KEY_TRAN_DATE)
-		|| propertyNameNew.equals(DEFAULT_KEY_TRAN_DATE)) {
-			throw new RuntimeException("Encountered problem renaming property in type from '" + propertyNameOriginal + "' to '" + propertyNameNew + "'. Name cannot be reserved property name.");
-		}
-		
 		if (null == propertyNameOriginal
 		|| null == propertyNameNew) {
 			propertyNameOriginal = (null == propertyNameOriginal) ? "<null>":  propertyNameOriginal;

@@ -21,7 +21,7 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 
 @RunWith(SpringJUnit4ClassRunner)
-@ContextConfiguration( locations = "classpath:/springContext.xml")
+@ContextConfiguration( locations = "classpath:/springContext-test.xml")
 class TypeProcessorSpec extends Specification {
 	
 	static Logger logger = LoggerFactory.getLogger(TypeProcessorSpec)
@@ -33,7 +33,7 @@ class TypeProcessorSpec extends Specification {
 	def 'test Gson'() {
 		
 		given:
-		def command = orbTypeCommands.getJsonCommandAddOrbType("foo")
+		def command = orbTypeCommands.toJson("foo")
 		
 		when:
 		

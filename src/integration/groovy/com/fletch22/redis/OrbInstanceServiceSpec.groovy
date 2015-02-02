@@ -14,7 +14,7 @@ import com.fletch22.orb.IntegrationTests
 
 @org.junit.experimental.categories.Category(IntegrationTests.class)
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:/springContext.xml")
+@ContextConfiguration(locations = "classpath:/springContext-test.xml")
 class OrbInstanceServiceSpec extends Specification {
 	
 	@Autowired

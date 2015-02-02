@@ -1,4 +1,4 @@
-package com.fletch22.processor;
+package com.fletch22.orb.command.processor;
 
 public interface Processor {
 

@@ -13,7 +13,7 @@ import com.fletch22.orb.command.orbType.AddOrbTypeCommand;
 import spock.lang.Specification
 
 @RunWith(SpringJUnit4ClassRunner)
-@ContextConfiguration(locations = 'classpath:/springContext.xml')
+@ContextConfiguration(locations = 'classpath:/springContext-test.xml')
 class CommandFactorySpec extends Specification {
 	
 	@Autowired

@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.joda.time.DateTime;
+import org.junit.After;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,20 +28,72 @@ import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.Protocol;
 
 import com.fletch22.orb.IntegrationTests;
+import com.fletch22.orb.command.orbType.AddOrbTypeCommand;
+import com.fletch22.orb.service.OrbTypeService;
+import com.fletch22.util.JsonUtil;
+import com.fletch22.util.OrbUtil;
 import com.fletch22.util.RandomUtil;
+import com.google.gson.Gson;
 
 @org.junit.experimental.categories.Category(IntegrationTests.class)
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:/springContext.xml")
+@ContextConfiguration(locations = "classpath:/springContext-test.xml")
 public class OrbTypeServiceTest {
 	
 	Logger logger = LoggerFactory.getLogger(OrbTypeServiceTest.class);
 	
 	@Autowired
-	ObjectTypeCacheService orbTypeService;
+	ObjectTypeCacheService objectTypeCacheService;
 	
 	@Autowired
 	RandomUtil randomUtil;
+	
+	@Autowired
+	OrbUtil orbUtil;
+	
+	@Autowired
+	OrbTypeService orbTypeService;
+	
+	@Autowired
+	AddOrbTypeCommand addOrbTypeCommand;
+	
+	@After
+	public void afterClass() {
+		
+		Set<String> keys = objectTypeCacheService.getTypes();
+		for (String key: keys) {
+			String id = objectTypeCacheService.typeKeyGenerator.extractIdFromKey(key);
+			objectTypeCacheService.removeType(id);
+		}
+	}
+	
+	@Test
+	public void pureJavaCreateTest() {
+		String label = randomUtil.getRandomString();
+		int max = 1000;
+		
+		logger.info("Start create type.");
+		for (int i = 0; i < max; i++) {
+			String labelToUse = label + String.valueOf(i);
+			long orbInternalId = orbTypeService.addOrbType(labelToUse);
+		}
+		logger.info("End create type.");
+	}
+	
+	@Test
+	public void testJson() {
+		
+		String illegal = "1 2 > '\\' 3 = / 4";
+	
+		Gson gson = new Gson();	
+		String parsed = gson.toJson(illegal);
+		
+		logger.info("JP: {}", parsed);
+		logger.info("JP P: {}", gson.fromJson(parsed, String.class));
+		
+		JsonUtil jsonUtil = new JsonUtil();
+		logger.info("Ju: {}", jsonUtil.escapeJsonIllegals(illegal));
+	}
 
 	@Test
 	public void test() {
@@ -81,11 +134,11 @@ public class OrbTypeServiceTest {
 		// Arrange
 		logger.info("Start create type test.");
 		for (int i = 0; i < numInstances; i++) {
-			createTypeForTest(orbTypeService, "Test-" + uniqueGuids.get(i));
+			createTypeForTest(objectTypeCacheService, "Test-" + uniqueGuids.get(i));
 		}
 		logger.info("End create type test.");
 		
-		Set<String> types = orbTypeService.getTypes();
+		Set<String> types = objectTypeCacheService.getTypes();
 		assertTrue("Should be true.", types.size() > 0);
 		
 		logger.info("Types size: {}", types.size());
@@ -118,31 +171,34 @@ public class OrbTypeServiceTest {
 		
 		// Arrange
 		// Act
-		String result = orbTypeService.removeAllKeys();
+		String result = objectTypeCacheService.removeAllKeys();
 		
 		// Assert
 		assertEquals("Should be ok.", Protocol.Keyword.OK.toString(), result);
-		assertEquals("Should be no keys.", 0, orbTypeService.getTypes().size());
+		assertEquals("Should be no keys.", 0, objectTypeCacheService.getTypes().size());
 	}
 	
 	@Test
 	public void removeType() {
 
 		// Arrange
-		String typeName = getRandomTypeName();
+		String id = getRandomTypeName();
 		
-		orbTypeService.createType(typeName,  new HashMap<String, String>());
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("id", this.getUniqueUUIDs(1).get(0));
 		
-		Map<String, String> map = orbTypeService.getType(typeName);
+		objectTypeCacheService.createType(id,  map);
+		
+		map = objectTypeCacheService.getType(id);
 		
 		assertNotNull("Returned object should not be null.", map);
 		
 		// Act
-		boolean result = orbTypeService.removeType(typeName);
+		boolean result = objectTypeCacheService.removeType(id);
 		
 		// Assert
 		assertTrue("Returned result from removal should be true.", result);
-		assertFalse("Orb type should not exist.", orbTypeService.doesObjectTypeExist(typeName));
+		assertFalse("Orb type should not exist.", objectTypeCacheService.doesObjectTypeExist(id));
 	}
 
 	private String getRandomTypeName() {
@@ -159,7 +215,7 @@ public class OrbTypeServiceTest {
 		
 		// Act
 		try {
-			orbTypeService.createType(typeName, null);
+			objectTypeCacheService.createType(typeName, null);
 		} catch (Exception e) {
 			message = e.getMessage();
 			logger.info(message);
@@ -168,27 +224,6 @@ public class OrbTypeServiceTest {
 		// Assert
 		assertNotNull("There should be a message and it should not be null.", message);
 		assertEquals("Error message should be expected.", "Encountered problem while trying to create type: Encountered problems validating the properties for a type. Properties were null. Should not be null.", message);
-	}
-	
-	@Test
-	public void testRename() {
-		
-		// Arrange
-		String typeName = getRandomTypeName();
-		orbTypeService.createType(typeName, new HashMap<String, String>());
-		
-		String newTypeName = getRandomTypeName();
-		
-		// Act
-		assertFalse("Record with new name should not exist.", orbTypeService.doesObjectTypeExist(newTypeName));
-		assertTrue("Record with old name should exist.", orbTypeService.doesObjectTypeExist(typeName));
-		orbTypeService.renameType(typeName, newTypeName);
-		
-		// Assert
-		assertFalse("Record with old name should not exist.", orbTypeService.doesObjectTypeExist(typeName));
-		assertTrue("Record with new name should exist.", orbTypeService.doesObjectTypeExist(newTypeName));
-		
-		orbTypeService.removeType(newTypeName);
 	}
 	
 	@Test
@@ -201,16 +236,16 @@ public class OrbTypeServiceTest {
 		map.put(propertyToRemove, "value1");
 		map.put("test2", "value2");
 		
-		orbTypeService.createType(typeName, map);
+		objectTypeCacheService.createType(typeName, map);
 		
 		// Act
-		orbTypeService.removePropertyFromType(typeName, propertyToRemove);
+		objectTypeCacheService.removePropertyFromType(typeName, propertyToRemove);
 		
 		// Assert
-		map = orbTypeService.getType(typeName);
+		map = objectTypeCacheService.getType(typeName);
 		assertFalse("Property list should no longer contain property '" + propertyToRemove, map.containsKey(propertyToRemove));
 		
-		orbTypeService.removeType(typeName);
+		objectTypeCacheService.removeType(typeName);
 	}
 	
 	@Test
@@ -222,12 +257,12 @@ public class OrbTypeServiceTest {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("test2", "value2");
 		
-		orbTypeService.createType(typeName, map);
+		objectTypeCacheService.createType(typeName, map);
 		
 		// Act
 		boolean exceptionThrown = false;
 		try {
-			orbTypeService.removePropertyFromType(typeName, propertyDoesNotExist);
+			objectTypeCacheService.removePropertyFromType(typeName, propertyDoesNotExist);
 		} catch (Exception e) {
 			exceptionThrown = true;
 		}
@@ -235,7 +270,7 @@ public class OrbTypeServiceTest {
 		// Assert
 		assertFalse("Exception should not be thrown. Non existent field should not cause an exception", exceptionThrown);
 		
-		orbTypeService.removeType(typeName);
+		objectTypeCacheService.removeType(typeName);
 	}
 	
 	@Test
@@ -248,14 +283,14 @@ public class OrbTypeServiceTest {
 		map.put(propertyNameOriginal, "value2");
 		map.put("test2", "value2");
 		
-		orbTypeService.createType(typeName, map);
+		objectTypeCacheService.createType(typeName, map);
 		
 		String propertyNameNew = "righteousBison";
 		
 		// Act
-		orbTypeService.renameTypeProperty(typeName, propertyNameOriginal, propertyNameNew);
+		objectTypeCacheService.renameTypeProperty(typeName, propertyNameOriginal, propertyNameNew);
 		
-		map = orbTypeService.getType(typeName);
+		map = objectTypeCacheService.getType(typeName);
 		
 		for (String keyThing: map.keySet()) {
 			logger.info("Key: Value: {}, {}", keyThing, map.get(keyThing));

@@ -36,15 +36,18 @@ public class OrbTypeManager {
 	@Autowired
 	private InternalIdGenerator internalIdGenerator;
 	
-	public void createOrbType(AddOrbTypeDto addOrbTypeDto, BigDecimal tranDate) {
+	public long createOrbType(AddOrbTypeDto addOrbTypeDto, BigDecimal tranDate) {
+		long orbInternalTypeId;
 		
 		boolean exists = objectTypeCacheService.doesObjectTypeExist(addOrbTypeDto.label);
 		if (exists) {
 			throw new RuntimeException("Encountered problem trying to create orb type. Appears orb type '" + addOrbTypeDto.label + "' already exists.");
 		} else {
-			HashMap<String, String> orbPropertyMap = this.orbUtil.createCoreProperties(this.internalIdGenerator.getNextId(), addOrbTypeDto.label, tranDate);
+			orbInternalTypeId = this.internalIdGenerator.getNextId();
+			HashMap<String, String> orbPropertyMap = this.orbUtil.createCoreProperties(orbInternalTypeId, addOrbTypeDto.label, tranDate);
 			
 			objectTypeCacheService.createType(addOrbTypeDto.label, orbPropertyMap);
 		}
+		return orbInternalTypeId;
 	}
 }

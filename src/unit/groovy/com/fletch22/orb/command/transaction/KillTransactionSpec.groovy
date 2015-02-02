@@ -11,7 +11,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import spock.lang.Specification
 
 @RunWith(SpringJUnit4ClassRunner)
-@ContextConfiguration(locations = 'classpath:/springContext.xml')
+@ContextConfiguration(locations = 'classpath:/springContext-test.xml')
 class KillTransactionSpec extends Specification {
 	
 	@Autowired
