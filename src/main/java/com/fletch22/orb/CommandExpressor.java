@@ -641,7 +641,7 @@ public class CommandExpressor {
 		return translation;
 	}
 
-	public StringBuilder getJsonCommandRemoveOrbType(int orbTypeInternalId, boolean allowCascadingDeletes) {
+	public StringBuilder getJsonCommandRemoveOrbType(long orbTypeInternalId, boolean allowCascadingDeletes) {
 		StringBuilder translation = new StringBuilder();
 		translation.append("{'");
 		translation.append(CommandExpressor.ROOT_LABEL);

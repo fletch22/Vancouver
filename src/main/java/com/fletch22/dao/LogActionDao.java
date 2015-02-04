@@ -1,5 +1,6 @@
 package com.fletch22.dao;
 
+import java.math.BigDecimal;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -10,9 +11,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class LogDao {
+public class LogActionDao {
 	
-	Logger logger = LoggerFactory.getLogger(LogDao.class);
+	Logger logger = LoggerFactory.getLogger(LogActionDao.class);
 	private Connection connection = null;
 	
 	@Value("${db.log.host}")
@@ -43,7 +44,7 @@ public class LogDao {
 		return String.format("jdbc:mysql://%s/%s?user=%s&password=%s", host, databaseName, userName, password);
 	}
 
-	private boolean isConnectionOpen() {
+	public boolean isConnectionOpen() {
 		try {
 			return (null != connection && !connection.isClosed());
 		} catch (Exception e) {
@@ -87,7 +88,27 @@ public class LogDao {
 		} finally {
 			closeConnection();
 		}
+	}
+	
+	public void logAction(StringBuilder action, StringBuilder undoAction, BigDecimal tranId, BigDecimal tranDate) {
 		
+		try {
+			connection = getConnection();
+			
+			String logAction = "{call logAction5(?, ?, ?, ?)}";
+			CallableStatement callableStatement = connection.prepareCall(logAction);
+			
+			callableStatement.setString(1, action.toString());
+			callableStatement.setString(2, undoAction.toString());
+			callableStatement.setBigDecimal(3, tranId);
+			callableStatement.setBigDecimal(4, tranDate);
+			 
+			callableStatement.executeUpdate();
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage(), e);
+		} finally {
+			closeConnection();
+		}
 	}
 
 	private void closeConnection() {

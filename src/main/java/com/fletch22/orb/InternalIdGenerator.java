@@ -11,7 +11,12 @@ public class InternalIdGenerator {
 		return currentId;
 	}
 	
-	public long getNextId() {
-		return ++this.currentId;
+	public void incrementId() {
+		++this.currentId;
+	}
+	
+	public long getNewId()  {
+		incrementId();
+		return getCurrentId();
 	}
 }

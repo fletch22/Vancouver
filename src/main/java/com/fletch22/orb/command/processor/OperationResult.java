@@ -1,5 +1,9 @@
 package com.fletch22.orb.command.processor;
 
+import java.math.BigDecimal;
+
+import com.fletch22.orb.rollback.RollbackAction;
+
 public class OperationResult {
 	public enum OpResult 
 	{
@@ -23,11 +27,14 @@ public class OperationResult {
 	public static final int UNSET = -1;
     public long internalIdBeforeOperation = UNSET;
 	public long internalIdAfterOperation = UNSET;
+	public RollbackAction rollbackAction;
 	
 	public Object operationResultObject = null;
 	public Exception operationResultException;
 	
 	public OperationResultReasonCode resultReasonCode = OperationResultReasonCode.UNASSIGNED;
+	public StringBuilder action;
+	public BigDecimal tranDate;
 
 	public OperationResult(OpResult opResult)
 	{

@@ -16,7 +16,7 @@ public class CommandFactory {
 	@Autowired
 	AddOrbTypeCommand addOrbTypeCommand;
 	
-	public JsonCommand getJsonCommand(String action) {
+	public JsonCommand getJsonCommand(StringBuilder action) {
 		
 		String actionVerb = actionSniffer.getVerb(action);
 		

@@ -16,6 +16,7 @@ import spock.lang.Specification
 
 import com.fletch22.orb.CommandExpressor
 import com.fletch22.orb.TranDateGenerator
+import com.fletch22.orb.command.orbType.AddOrbTypeCommand
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/springContext.xml")
@@ -24,10 +25,24 @@ class LogDaoSpec extends Specification {
 	static Logger logger = LoggerFactory.getLogger(LogDaoSpec)
 	
 	@Autowired
-	LogDao logDao;
+	LogActionDao logDao;
 	
 	@Autowired
-	TranDateGenerator tranDateGenerator;
+	TranDateGenerator tranDateGenerator
+	
+	@Autowired
+	AddOrbTypeCommand addOrbTypeCommand
+	
+	@Autowired
+	CommandExpressor commandExpressor
+	
+	def setup()  {
+		logDao.clearOutDatabase()
+	}
+	
+	def cleanup() {
+		//logDao.clearOutDatabase()
+	}
 
 	@Test
 	def 'test is connection openable'() {
@@ -84,18 +99,20 @@ class LogDaoSpec extends Specification {
 	def 'insert sample record into database'() {
 		
 		given:
-		CommandExpressor commandExpressor = new CommandExpressor();
-			
-		//def action = commandExpressor.jsonCommandGetTotalOrbCount();
+		def action = this.addOrbTypeCommand.toJson("foo");
+		def undoAction = this.commandExpressor.getJsonCommandRemoveOrbType(1234, false);
 		
-		logger.info("TD: {}", tranDateGenerator.getTranDate());
+		def tranDate = tranDateGenerator.getTranDate();
+		
+		tranDate = tranDate.add(new BigDecimal(".000000000001"));
+		def tranId = tranDate;
+		
+		logger.info("TD: {}", tranDate);
 		
 		when:
-		//logDao.logAction(action, tranDateGenerator.getTranDate(), tranId)
-		def test = 'test'
+		logDao.logAction(action, undoAction, tranDate, tranId);
 		
 		then:
 		1 == 1
 	}
-	
 }

@@ -14,7 +14,7 @@ public class ActionSniffer {
 	private static final String SYSTEM_COMMAND_PREFIX_1 = String.format(PREFIX_TEMPLATE_1, CommandExpressor.SYSTEM_COMMAND);
 	private static final String SYSTEM_COMMAND_PREFIX_2 = String.format(PREFIX_TEMPLATE_2, CommandExpressor.SYSTEM_COMMAND);
 
-	public String getVerb(String action) {
+	public String getVerb(StringBuilder action) {
 		String verb = null;
 		
 		verb = getVerbWithPrefix(getPrefixInUse(action), action);
@@ -26,21 +26,22 @@ public class ActionSniffer {
 		return verb;
 	}
 
-	private String getPrefixInUse(String action) {
+	private String getPrefixInUse(StringBuilder action) {
 		String prefixInUse = null;
-		if (action.startsWith(ROOT_PREFIX_1)) {
+		String actionRaw = action.toString();
+		if (actionRaw.startsWith(ROOT_PREFIX_1)) {
 			prefixInUse = ROOT_PREFIX_1;
-		} else if (action.startsWith(ROOT_PREFIX_2)) {
+		} else if (actionRaw.startsWith(ROOT_PREFIX_2)) {
 			prefixInUse = ROOT_PREFIX_2;
-		} else if (action.startsWith(SYSTEM_COMMAND_PREFIX_1)) {
+		} else if (actionRaw.startsWith(SYSTEM_COMMAND_PREFIX_1)) {
 			prefixInUse = SYSTEM_COMMAND_PREFIX_1;
-		} else if (action.startsWith(SYSTEM_COMMAND_PREFIX_2)) {
+		} else if (actionRaw.startsWith(SYSTEM_COMMAND_PREFIX_2)) {
 			prefixInUse = SYSTEM_COMMAND_PREFIX_2;
 		}
 		return prefixInUse;
 	}
 
-	private String getVerbWithPrefix(String prefix, String action) {
+	private String getVerbWithPrefix(String prefix, StringBuilder action) {
 		int prefixLength = prefix.length();
 		int nextTickPos = action.indexOf("'", prefixLength);
 		return action.substring(prefixLength, nextTickPos);

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fletch22.orb.command.orbType.dto.AddOrbTypeDto;
+import com.fletch22.orb.rollback.RollbackAction;
 import com.fletch22.redis.ObjectInstanceCacheService;
 import com.fletch22.redis.ObjectTypeCacheService;
 import com.fletch22.util.OrbUtil;
@@ -34,19 +35,26 @@ public class OrbTypeManager {
 	ObjectTypeCacheService objectTypeCacheService;
 	
 	@Autowired
+	CommandExpressor commandExpressor;
+	
+	@Autowired
 	private InternalIdGenerator internalIdGenerator;
 	
-	public long createOrbType(AddOrbTypeDto addOrbTypeDto, BigDecimal tranDate) {
+	public long createOrbType(AddOrbTypeDto addOrbTypeDto, BigDecimal tranDate, final RollbackAction rollbackAction) {
 		long orbInternalTypeId;
 		
 		boolean exists = objectTypeCacheService.doesObjectTypeExist(addOrbTypeDto.label);
 		if (exists) {
 			throw new RuntimeException("Encountered problem trying to create orb type. Appears orb type '" + addOrbTypeDto.label + "' already exists.");
 		} else {
-			orbInternalTypeId = this.internalIdGenerator.getNextId();
-			HashMap<String, String> orbPropertyMap = this.orbUtil.createCoreProperties(orbInternalTypeId, addOrbTypeDto.label, tranDate);
 			
-			objectTypeCacheService.createType(addOrbTypeDto.label, orbPropertyMap);
+				orbInternalTypeId = this.internalIdGenerator.getNewId();
+				HashMap<String, String> orbPropertyMap = this.orbUtil.createCoreProperties(orbInternalTypeId, addOrbTypeDto.label, tranDate);
+				
+				objectTypeCacheService.createType(addOrbTypeDto.label, orbPropertyMap);
+				
+				// add delete to rollback action
+				rollbackAction.addAction(this.commandExpressor.getJsonCommandRemoveOrbType(orbInternalTypeId, false));
 		}
 		return orbInternalTypeId;
 	}
