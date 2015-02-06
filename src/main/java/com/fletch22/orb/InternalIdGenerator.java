@@ -19,4 +19,8 @@ public class InternalIdGenerator {
 		incrementId();
 		return getCurrentId();
 	}
+
+	public void setCurrentId(long id) {
+		this.currentId = id;
+	}
 }

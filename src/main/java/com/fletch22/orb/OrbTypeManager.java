@@ -47,14 +47,13 @@ public class OrbTypeManager {
 		if (exists) {
 			throw new RuntimeException("Encountered problem trying to create orb type. Appears orb type '" + addOrbTypeDto.label + "' already exists.");
 		} else {
+			orbInternalTypeId = this.internalIdGenerator.getNewId();
+			HashMap<String, String> orbPropertyMap = this.orbUtil.createCoreProperties(orbInternalTypeId, addOrbTypeDto.label, tranDate);
 			
-				orbInternalTypeId = this.internalIdGenerator.getNewId();
-				HashMap<String, String> orbPropertyMap = this.orbUtil.createCoreProperties(orbInternalTypeId, addOrbTypeDto.label, tranDate);
-				
-				objectTypeCacheService.createType(addOrbTypeDto.label, orbPropertyMap);
-				
-				// add delete to rollback action
-				rollbackAction.addAction(this.commandExpressor.getJsonCommandRemoveOrbType(orbInternalTypeId, false));
+			objectTypeCacheService.createType(addOrbTypeDto.label, orbPropertyMap);
+			
+			// add delete to rollback action
+			rollbackAction.addAction(this.commandExpressor.getJsonCommandRemoveOrbType(orbInternalTypeId, false));
 		}
 		return orbInternalTypeId;
 	}

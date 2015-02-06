@@ -18,13 +18,13 @@ public class OperationResult {
         ROLLBACK_OCCURRING
     }
     
+    public static final int UNSET = -1;
     public static OperationResult SUCCESS = new OperationResult(OpResult.SUCCESS);
 	public static OperationResult IN_THE_MIDDLE = new OperationResult(OpResult.IN_THE_MIDDLE);
 	public static OperationResult FAILURE = new OperationResult(OpResult.FAILURE);
 	
 	public OpResult opResult;
 	public boolean shouldBeLogged = false;
-	public static final int UNSET = -1;
     public long internalIdBeforeOperation = UNSET;
 	public long internalIdAfterOperation = UNSET;
 	public RollbackAction rollbackAction;
@@ -60,7 +60,7 @@ public class OperationResult {
         this.operationResultObject = operationResultObject;
     }
     
-    public boolean includeInternalIdInLog()
+    public boolean isIncludeInternalIdInLog()
     {
         return (this.internalIdBeforeOperation != this.internalIdAfterOperation);
     }

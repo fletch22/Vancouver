@@ -7,10 +7,11 @@ import org.springframework.stereotype.Component;
 
 import com.fletch22.orb.TranDateGenerator;
 import com.fletch22.orb.command.orbType.AddOrbTypeCommand;
+import com.fletch22.orb.command.processor.CommandProcessActionPackage;
+import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory;
 import com.fletch22.orb.command.processor.CommandProcessor;
 import com.fletch22.orb.command.processor.OperationResult;
 import com.fletch22.orb.command.processor.OperationResult.OpResult;
-import com.fletch22.orb.rollback.RollbackAction;
 
 @Component
 public class OrbTypeService {
@@ -25,12 +26,17 @@ public class OrbTypeService {
 	
 	@Autowired
 	TranDateGenerator tranDateGenerator;
+	
+	@Autowired
+	CommandProcessActionPackageFactory commandProcessActionPackageFactory;
 	 
 	public long addOrbType(String label) {
 		
 		StringBuilder action = this.addOrbTypeCommand.toJson(label);
+		
+		CommandProcessActionPackage commandProcessActionPackage = commandProcessActionPackageFactory.getInstance(action);
 	
-		OperationResult operationResult = commandProcessor.processAction(action, tranDateGenerator.getTranDate());
+		OperationResult operationResult = commandProcessor.processAction(commandProcessActionPackage);
 		
 		if (operationResult.opResult.equals(OpResult.SUCCESS)) {
 			return (long) operationResult.operationResultObject;
