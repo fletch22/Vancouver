@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.fletch22.orb.rollback.RollbackAction;
+import com.fletch22.orb.rollback.UndoActionBundle;
 import com.fletch22.util.JsonUtil;
 
 @Component
@@ -36,6 +36,7 @@ public class CommandExpressor {
 
 	public static final String COLLECTOR_LABEL = "collectorLabel";
 	public static final String COLUMNS_REQUESTED = "columnsRequested";
+	public static final String COMMAND_BUNDLE = "commandBundle";
 	public static final String COMMAND_COLLECTION = "commandCollection";
 	public static final String COMMAND_LABEL = "command";
 	public static final String COUNT = "count";
@@ -188,7 +189,6 @@ public class CommandExpressor {
 	public static final String UNDO_BEGIN_TRANSACTION_INNER_ID = "undoBeginTransactionInnerId";
 	public static final String UNDO_COMMIT_TRANSACTION_INNER_ID = "undoCommitTransactionInnerId";
 	public static final String UPDATE_QUERY = "updateQuery";
-
 	@Autowired
 	JsonUtil jsonUtil;
 	
@@ -200,9 +200,9 @@ public class CommandExpressor {
 
 		String payload = "asdfjk;asdfjkl;fsjdakl;jfdsk;ljkfd;jak;fdjsk;fjkds;jfkd;sljfkd;sajkf;dsajkf;dsjkf;ldjskl;fjdksal;fjkds;jfkds;jfkd;lsajfkdl;sa";
 
-		translation.append("{'" + CommandExpressor.ROOT_LABEL + "':{'");
+		translation.append("{\"" + CommandExpressor.ROOT_LABEL + "\":{\"");
 		translation.append(CommandExpressor.PING);
-		translation.append("':'");
+		translation.append("\":\"");
 		translation.append(jsonUtil.escapeJsonIllegals(payload));
 		translation.append("}");
 
@@ -212,13 +212,13 @@ public class CommandExpressor {
 	public StringBuilder getJsonCommandSetStartupUserBackupPath(String startupRelativeLogPath) {
 		StringBuilder translation = new StringBuilder();
 
-		translation.append("{'" + CommandExpressor.ROOT_LABEL + "':{'");
+		translation.append("{\"" + CommandExpressor.ROOT_LABEL + "\":{\"");
 		translation.append(CommandExpressor.SET_STARTUP_USER_BACKUP_PATH);
-		translation.append("':{'");
+		translation.append("\":{\"");
 		translation.append(RELATIVE_FILE_PATH);
-		translation.append("':'");
+		translation.append("\":\"");
 		translation.append(this.jsonUtil.escapeJsonIllegals(startupRelativeLogPath));
-		translation.append("'}}");
+		translation.append("\"}}");
 
 		return translation;
 	}
@@ -226,22 +226,22 @@ public class CommandExpressor {
 	public StringBuilder getJsonCommandCreateSystemTypes() {
 		StringBuilder translation = new StringBuilder();
 
-		translation.append("{'" + CommandExpressor.ROOT_LABEL + "':{'");
+		translation.append("{\"" + CommandExpressor.ROOT_LABEL + "\":{\"");
 		translation.append(CommandExpressor.CREATE_SYSTEM_TYPES);
-		translation.append("'}}");
+		translation.append("\"}}");
 
 		return translation;
 	}
 
-	public StringBuilder getJsonCommandJsonCommandCollection(LinkedList<RollbackAction> commandCollection) {
+	public StringBuilder getJsonCommandJsonCommandCollection(LinkedList<UndoActionBundle> commandCollection) {
 		StringBuilder translation = new StringBuilder();
 
-		translation.append("{'" + CommandExpressor.ROOT_LABEL + "':{'");
+		translation.append("{\"" + CommandExpressor.ROOT_LABEL + "\":{\"");
 
-		RollbackAction[] rollbackActions = commandCollection.toArray(new RollbackAction[commandCollection.size()]); // (RollbackAction[])commandCollection.ToArray();
+		UndoActionBundle[] rollbackActions = commandCollection.toArray(new UndoActionBundle[commandCollection.size()]); // (RollbackAction[])commandCollection.ToArray();
 
 		translation.append(CommandExpressor.COMMAND_COLLECTION);
-		translation.append("':[");
+		translation.append("\":[");
 		for (int i = 0; i < rollbackActions.length; i++) {
 			translation.append(rollbackActions[i].toJson());
 			if (i + 1 < commandCollection.size()) {
@@ -256,9 +256,9 @@ public class CommandExpressor {
 	public StringBuilder getJsonCommandBeginTransactionInner() {
 		StringBuilder translation = new StringBuilder();
 
-		translation.append("{'" + CommandExpressor.ROOT_LABEL + "':{'");
+		translation.append("{\"" + CommandExpressor.ROOT_LABEL + "\":{\"");
 		translation.append(CommandExpressor.BEGIN_TRANSACTION_INNER);
-		translation.append("'}}");
+		translation.append("\"}}");
 
 		return translation;
 	}
@@ -266,15 +266,15 @@ public class CommandExpressor {
 	public StringBuilder getJsonCommandOrbInstances(int orbTypeInternalId) {
 		StringBuilder translation = new StringBuilder();
 
-		translation.append("{'");
+		translation.append("{\"");
 		translation.append(CommandExpressor.ROOT_LABEL);
-		translation.append("':{'");
+		translation.append("\":{\"");
 		translation.append(CommandExpressor.GET_ORB_INSTANCES);
-		translation.append("':{'");
+		translation.append("\":{\"");
 		translation.append(CommandExpressor.ORB_TYPE_INTERNAL_ID);
-		translation.append("':'");
+		translation.append("\":\"");
 		translation.append(String.valueOf(orbTypeInternalId));
-		translation.append("'}}}");
+		translation.append("\"}}}");
 
 		return translation;
 	}
@@ -282,11 +282,11 @@ public class CommandExpressor {
 	public StringBuilder getJsonCommandSetCurrentId(int currentId) {
 		StringBuilder translation = new StringBuilder();
 
-		translation.append("{'" + CommandExpressor.ROOT_LABEL + "':{'");
+		translation.append("{\"" + CommandExpressor.ROOT_LABEL + "\":{\"");
 		translation.append(CommandExpressor.SET_CURRENT_ID);
-		translation.append("':'");
+		translation.append("\":\"");
 		translation.append(currentId);
-		translation.append("'}}");
+		translation.append("\"}}");
 
 		return translation;
 	}
@@ -294,11 +294,11 @@ public class CommandExpressor {
 	public StringBuilder getJsonCommandCommitTransaction(BigDecimal transactionId) {
 		StringBuilder translation = new StringBuilder();
 
-		translation.append("{'" + CommandExpressor.ROOT_LABEL + "':{'");
+		translation.append("{\"" + CommandExpressor.ROOT_LABEL + "\":{\"");
 		translation.append(CommandExpressor.COMMIT_TRANSACTION_WITH_ID);
-		translation.append("':'");
+		translation.append("\":\"");
 		translation.append(transactionId);
-		translation.append("'}}");
+		translation.append("\"}}");
 
 		return translation;
 	}
@@ -306,13 +306,13 @@ public class CommandExpressor {
 	public StringBuilder getJsonTransactionCommandWrapper(BigDecimal transactionId, StringBuilder jsonCommandToWrap) {
 		StringBuilder translation = new StringBuilder();
 
-		translation.append("{'");
+		translation.append("{\"");
 		translation.append(CommandExpressor.TRANSACTION);
-		translation.append("':[{'");
+		translation.append("\":[{\"");
 		translation.append(CommandExpressor.TRANSACTION_ID);
-		translation.append("':'");
+		translation.append("\":\"");
 		translation.append(transactionId);
-		translation.append("'},");
+		translation.append("\"},");
 		translation.append(jsonCommandToWrap.toString().trim());
 		translation.append("]}");
 
@@ -322,15 +322,15 @@ public class CommandExpressor {
 	public StringBuilder getJsonCommandRollbackTransaction(BigDecimal transactionId) {
 		StringBuilder translation = new StringBuilder();
 
-		translation.append("{'");
+		translation.append("{\"");
 		translation.append(CommandExpressor.ROOT_LABEL);
-		translation.append("':{'");
+		translation.append("\":{\"");
 		translation.append(CommandExpressor.ROLLBACK_TRANSACTION);
-		translation.append("':{'");
+		translation.append("\":{\"");
 		translation.append(CommandExpressor.TRANSACTION_ID);
-		translation.append("':'");
+		translation.append("\":\"");
 		translation.append(transactionId);
-		translation.append("'}}}");
+		translation.append("\"}}}");
 
 		return translation;
 	}
@@ -338,11 +338,11 @@ public class CommandExpressor {
 	public StringBuilder getJsonCommandInitDatabase() {
 		StringBuilder translation = new StringBuilder();
 
-		translation.append("{'");
+		translation.append("{\"");
 		translation.append(CommandExpressor.SYSTEM_COMMAND);
-		translation.append("':'");
+		translation.append("\":\"");
 		translation.append(CommandExpressor.SYSTEM_COMMAND_INIT_DATABASE);
-		translation.append("'}");
+		translation.append("\"}");
 
 		return translation;
 	}
@@ -350,9 +350,9 @@ public class CommandExpressor {
 	public StringBuilder getJsonCommandGetAllSystemCollectors() {
 		StringBuilder translation = new StringBuilder();
 
-		translation.append("{'" + CommandExpressor.ROOT_LABEL + "':{'");
+		translation.append("{\"" + CommandExpressor.ROOT_LABEL + "\":{\"");
 		translation.append(CommandExpressor.GET_ALL_SYSTEM_COLLECTORS);
-		translation.append("'}}");
+		translation.append("\"}}");
 
 		return translation;
 	}
@@ -360,13 +360,13 @@ public class CommandExpressor {
 	public StringBuilder getJsonCommandSystemCollectorAttributes(String collectorLabel) {
 		StringBuilder translation = new StringBuilder();
 
-		translation.append("{'" + CommandExpressor.ROOT_LABEL + "':{'");
+		translation.append("{\"" + CommandExpressor.ROOT_LABEL + "\":{\"");
 		translation.append(CommandExpressor.GET_SYSTEM_COLLECTOR_ATTRIBUTES);
-		translation.append("':{'");
+		translation.append("\":{\"");
 		translation.append(CommandExpressor.COLLECTOR_LABEL);
-		translation.append("':'");
+		translation.append("\":\"");
 		translation.append(collectorLabel);
-		translation.append("'}}}");
+		translation.append("\"}}}");
 
 		return translation;
 	}
@@ -374,15 +374,15 @@ public class CommandExpressor {
 	public StringBuilder getJsonCommandGetQuery(String uniqueQueryLabel) {
 		StringBuilder translation = new StringBuilder();
 
-		translation.append("{'" + CommandExpressor.ROOT_LABEL + "':{'");
+		translation.append("{\"" + CommandExpressor.ROOT_LABEL + "\":{\"");
 
 		translation.append(CommandExpressor.GET_QUERY);
-		translation.append("':{'");
+		translation.append("\":{\"");
 		translation.append(QUERY_NAME);
-		translation.append("':'");
+		translation.append("\":\"");
 		uniqueQueryLabel = this.jsonUtil.escapeJsonIllegals(uniqueQueryLabel);
 		translation.append(uniqueQueryLabel);
-		translation.append("'}}}");
+		translation.append("\"}}}");
 
 		return translation;
 	}
@@ -390,27 +390,14 @@ public class CommandExpressor {
 	public StringBuilder getJsonCommandGetQueryById(int queryId) {
 		StringBuilder translation = new StringBuilder();
 
-		translation.append("{'" + CommandExpressor.ROOT_LABEL + "':{'");
+		translation.append("{\"" + CommandExpressor.ROOT_LABEL + "\":{\"");
 
 		translation.append(CommandExpressor.GET_QUERY_BY_ID);
-		translation.append("':{'");
+		translation.append("\":{\"");
 		translation.append(QUERY_ID);
-		translation.append("':'");
+		translation.append("\":\"");
 		translation.append(queryId);
-		translation.append("'}}}");
-
-		return translation;
-	}
-
-	public StringBuilder getJsonCommandAddOrbWhole(Orb orb) {
-		StringBuilder translation = new StringBuilder();
-
-		translation.append("{'" + CommandExpressor.ROOT_LABEL + "':{'");
-
-		translation.append(CommandExpressor.ORB_ADD_WHOLE);
-		translation.append("':");
-		translation.append(this.orbManager.convertToJson(orb));
-		translation.append("}}");
+		translation.append("\"}}}");
 
 		return translation;
 	}
@@ -418,10 +405,10 @@ public class CommandExpressor {
 	public StringBuilder getJsonCommandRestoreOrbWithNoProcessing(Orb orb) {
 		StringBuilder translation = new StringBuilder();
 
-		translation.append("{'" + CommandExpressor.ROOT_LABEL + "':{'");
+		translation.append("{\"" + CommandExpressor.ROOT_LABEL + "\":{\"");
 
 		translation.append(CommandExpressor.RESTORE_ORB_WITH_NO_PROCESSING);
-		translation.append("':");
+		translation.append("\":");
 		translation.append(this.orbManager.convertToJson(orb));
 		translation.append("}}");
 
@@ -431,19 +418,19 @@ public class CommandExpressor {
 	public StringBuilder getJsonCommandBurnAndReplantFromSql(long start, long end) {
 		StringBuilder translation = new StringBuilder();
 
-		translation.append("{'");
+		translation.append("{\"");
 		translation.append(CommandExpressor.ROOT_LABEL);
-		translation.append("':{'");
+		translation.append("\":{\"");
 		translation.append(BURN_AND_REPLANT_FROM_SQL);
-		translation.append("':[{'");
+		translation.append("\":[{\"");
 		translation.append(TIME_SPAN_START);
-		translation.append("':'");
+		translation.append("\":\"");
 		translation.append(start);
-		translation.append("'},{'");
+		translation.append("\"},{\"");
 		translation.append(TIME_SPAN_END);
-		translation.append("':'");
+		translation.append("\":\"");
 		translation.append(end);
-		translation.append("'}]}}");
+		translation.append("\"}]}}");
 
 		return translation;
 	}
@@ -455,15 +442,15 @@ public class CommandExpressor {
 			orbType = OrbTypeManager.ORBTYPE_BASETYPE_ID;
 		}
 
-		translation.append("{'");
+		translation.append("{\"");
 		translation.append(CommandExpressor.ROOT_LABEL);
-		translation.append("':{'");
+		translation.append("\":{\"");
 		translation.append(CommandExpressor.ADD_ORB);
-		translation.append("':[{'");
+		translation.append("\":[{\"");
 		translation.append(ORB_TYPE);
-		translation.append("':'");
+		translation.append("\":\"");
 		translation.append(String.valueOf(orbType));
-		translation.append("'}]}}");
+		translation.append("\"}]}}");
 
 		return translation;
 	}
@@ -471,19 +458,19 @@ public class CommandExpressor {
 	public StringBuilder getJsonCommandGetOrb(int orbId, boolean resolveReferences) {
 		StringBuilder translation = new StringBuilder();
 
-		translation.append("{'");
+		translation.append("{\"");
 		translation.append(CommandExpressor.ROOT_LABEL);
-		translation.append("':{'");
+		translation.append("\":{\"");
 		translation.append(GET_ORB);
-		translation.append("':[{'");
+		translation.append("\":[{\"");
 		translation.append(ORB_INTERNAL_ID);
-		translation.append("':'");
+		translation.append("\":\"");
 		translation.append(String.valueOf(orbId));
-		translation.append("'},{'");
+		translation.append("\"},{\"");
 		translation.append(RESOLVE_REFERENCES);
-		translation.append("':'");
+		translation.append("\":\"");
 		translation.append(resolveReferences);
-		translation.append("'}]}}");
+		translation.append("\"}]}}");
 
 		return translation;
 	}
@@ -491,11 +478,11 @@ public class CommandExpressor {
 	public StringBuilder getJsonCommandGetTotalOrbCount() {
 		StringBuilder translation = new StringBuilder();
 
-		translation.append("{'");
+		translation.append("{\"");
 		translation.append(CommandExpressor.ROOT_LABEL);
-		translation.append("':'");
+		translation.append("\":\"");
 		translation.append(GET_TOTAL_ORB_COUNT);
-		translation.append("'}");
+		translation.append("\"}");
 
 		return translation;
 	}
@@ -503,15 +490,15 @@ public class CommandExpressor {
 	public StringBuilder getJsonCommandGetCountOrbTypeInstances(int orbTypeId) {
 		StringBuilder translation = new StringBuilder();
 
-		translation.append("{'");
+		translation.append("{\"");
 		translation.append(CommandExpressor.ROOT_LABEL);
-		translation.append("':{'");
+		translation.append("\":{\"");
 		translation.append(GET_COUNT_ORB_TYPE_INST);
-		translation.append("':{'");
+		translation.append("\":{\"");
 		translation.append(ORB_TYPE_ID);
-		translation.append("':'");
+		translation.append("\":\"");
 		translation.append(String.valueOf(orbTypeId));
-		translation.append("'}}}");
+		translation.append("\"}}}");
 
 		return translation;
 	}
@@ -520,43 +507,43 @@ public class CommandExpressor {
 		StringBuilder translation = new StringBuilder();
 
 		attributeName = this.jsonUtil.escapeJsonIllegals(attributeName);
-		translation.append("{'");
+		translation.append("{\"");
 		translation.append(CommandExpressor.ROOT_LABEL);
-		translation.append("':{'");
+		translation.append("\":{\"");
 		translation.append(CommandExpressor.ADD_ORB_ATTRIBUTE_TO_TYPE);
-		translation.append("':[{'");
+		translation.append("\":[{\"");
 		translation.append(ORB_INTERNAL_ID);
-		translation.append("':'");
+		translation.append("\":\"");
 		translation.append(String.valueOf(orbInternalId));
-		translation.append("'},{'");
+		translation.append("\"},{\"");
 		translation.append(ATTRIBUTE_NAME);
-		translation.append("':'");
+		translation.append("\":\"");
 		translation.append(attributeName);
-		translation.append("'}]}}");
+		translation.append("\"}]}}");
 
 		return translation;
 	}
 
 	public StringBuilder getJsonCommandAddNameMapRef(String objectIdentifier, String key, String attributeName) {
 		StringBuilder translation = new StringBuilder();
-		translation.append("{'");
+		translation.append("{\"");
 		translation.append(CommandExpressor.ROOT_LABEL);
-		translation.append("':{'");
+		translation.append("\":{\"");
 		translation.append(CommandExpressor.ADD_NAME_MAP_REF);
-		translation.append("':[{'");
+		translation.append("\":[{\"");
 		translation.append(OBJECT_IDENTIFIER);
-		translation.append("':'");
+		translation.append("\":\"");
 		translation.append(objectIdentifier);
-		translation.append("'},{'");
+		translation.append("\"},{\"");
 		translation.append(CommandExpressor.NAME_MAP_KEY);
-		translation.append("':'");
+		translation.append("\":\"");
 		translation.append(key);
-		translation.append("'},{'");
+		translation.append("\"},{\"");
 		translation.append(CommandExpressor.NAME_MAP_VALUE);
-		translation.append("':'");
+		translation.append("\":\"");
 		translation.append(attributeName);
 
-		translation.append("'}]}}");
+		translation.append("\"}]}}");
 
 		return translation;
 	}
@@ -565,23 +552,23 @@ public class CommandExpressor {
 		StringBuilder translation = new StringBuilder();
 
 		attributeName = this.jsonUtil.escapeJsonIllegals(attributeName);
-		translation.append("{'");
+		translation.append("{\"");
 		translation.append(CommandExpressor.ROOT_LABEL);
-		translation.append("':{'");
+		translation.append("\":{\"");
 		translation.append(CommandExpressor.ADD_ATTR_TO_TYPE_AT_ORD);
-		translation.append("':[{'");
+		translation.append("\":[{\"");
 		translation.append(ORB_INTERNAL_ID);
-		translation.append("':'");
+		translation.append("\":\"");
 		translation.append(String.valueOf(orbInternalId));
-		translation.append("'},{'");
+		translation.append("\"},{\"");
 		translation.append(CommandExpressor.ATTRIBUTE_NAME);
-		translation.append("':'");
+		translation.append("\":\"");
 		translation.append(attributeName);
-		translation.append("'},{'");
+		translation.append("\"},{\"");
 		translation.append(CommandExpressor.ATTRIBUTE_ORDINAL);
-		translation.append("':'");
+		translation.append("\":\"");
 		translation.append(String.valueOf(ordinal));
-		translation.append("'}]}}");
+		translation.append("\"}]}}");
 
 		return translation;
 	}
@@ -590,15 +577,15 @@ public class CommandExpressor {
 		StringBuilder translation = new StringBuilder();
 
 		orbTypeLabel = this.jsonUtil.escapeJsonIllegals(orbTypeLabel);
-		translation.append("{'");
+		translation.append("{\"");
 		translation.append(CommandExpressor.ROOT_LABEL);
-		translation.append("':{'");
+		translation.append("\":{\"");
 		translation.append(DOES_ORB_TYPE_EXIST);
-		translation.append("':{'");
+		translation.append("\":{\"");
 		translation.append(ORB_TYPE_LABEL);
-		translation.append("':'");
+		translation.append("\":\"");
 		translation.append(orbTypeLabel);
-		translation.append("'}}}");
+		translation.append("\"}}}");
 
 		return translation;
 	}
@@ -607,55 +594,36 @@ public class CommandExpressor {
 		StringBuilder translation = new StringBuilder();
 
 		attributeName = this.jsonUtil.escapeJsonIllegals(attributeName);
-		translation.append("{'");
+		translation.append("{\"");
 		translation.append(CommandExpressor.ROOT_LABEL);
-		translation.append("':{'");
+		translation.append("\":{\"");
 		translation.append(SET_ORB_INSTANCE_ATTR);
-		translation.append("':[{'");
+		translation.append("\":[{\"");
 		translation.append(ORB_INTERNAL_ID);
-		translation.append("':'");
+		translation.append("\":\"");
 		translation.append(String.valueOf(orbInternalId));
-		translation.append("'},{'");
+		translation.append("\"},{\"");
 		translation.append(ORB_ATTR_NAME);
-		translation.append("':'");
+		translation.append("\":\"");
 		translation.append(attributeName);
-		translation.append("'},{'");
+		translation.append("\"},{\"");
 		translation.append(ORB_INST_ATTR_VALUE);
-		translation.append("':'");
-		translation.append(attributeValue + "'}]}}");
+		translation.append("\":\"");
+		translation.append(attributeValue + "\"}]}}");
 
 		return translation;
 	}
 
 	public StringBuilder getJsonCommandRemoveOrbInstance(int orbInternalId) {
 		StringBuilder translation = new StringBuilder();
-		translation.append("{'");
+		translation.append("{\"");
 		translation.append(CommandExpressor.ROOT_LABEL);
-		translation.append("':{'");
+		translation.append("\":{\"");
 		translation.append(REMOVE_ORB_INSTANCE);
-		translation.append("':{'");
+		translation.append("\":{\"");
 		translation.append(ORB_INTERNAL_ID);
-		translation.append("':'");
-		translation.append(String.valueOf(orbInternalId) + "'}}}");
-
-		return translation;
-	}
-
-	public StringBuilder getJsonCommandRemoveOrbType(long orbTypeInternalId, boolean allowCascadingDeletes) {
-		StringBuilder translation = new StringBuilder();
-		translation.append("{'");
-		translation.append(CommandExpressor.ROOT_LABEL);
-		translation.append("':{'");
-		translation.append(REMOVE_ORB_TYPE);
-		translation.append("':[{'");
-		translation.append(ORB_INTERNAL_ID);
-		translation.append("':'");
-		translation.append(String.valueOf(orbTypeInternalId));
-		translation.append("'},{'");
-		translation.append(ALLOW_CASCADING_DELETES);
-		translation.append("':'");
-		translation.append(String.valueOf(allowCascadingDeletes));
-		translation.append("'}]}}");
+		translation.append("\":\"");
+		translation.append(String.valueOf(orbInternalId) + "\"}}}");
 
 		return translation;
 	}
@@ -664,19 +632,19 @@ public class CommandExpressor {
 		StringBuilder translation = new StringBuilder();
 
 		orbAttributeName = this.jsonUtil.escapeJsonIllegals(orbAttributeName);
-		translation.append("{'");
+		translation.append("{\"");
 		translation.append(CommandExpressor.ROOT_LABEL);
-		translation.append("':{'");
+		translation.append("\":{\"");
 		translation.append(REMOVE_ORB_ATTRIBUTE_FROM_TYPE);
-		translation.append("':[{'");
+		translation.append("\":[{\"");
 		translation.append(ORB_TYPE_ID);
-		translation.append("':'");
+		translation.append("\":\"");
 		translation.append(String.valueOf(orbTypeInternalId));
-		translation.append("'},{'");
+		translation.append("\"},{\"");
 		translation.append(ORB_ATTR_NAME);
-		translation.append("':'");
+		translation.append("\":\"");
 		translation.append(orbAttributeName);
-		translation.append("'}]}}");
+		translation.append("\"}]}}");
 
 		return translation;
 	}
@@ -686,8 +654,8 @@ public class CommandExpressor {
 
 		oldName = this.jsonUtil.escapeJsonIllegals(oldName);
 		newName = this.jsonUtil.escapeJsonIllegals(newName);
-		translation.append("{'" + CommandExpressor.ROOT_LABEL + "':{'" + RENAME_ORB_TYPE_ATTRIBUTE + "':{'" + ORB_INTERNAL_ID + "':'" + orbTypeInternalId + "','" + OLD_ATTRIBUTE_NAME + "':'" + oldName + "','"
-				+ NEW_ATTRIBUTE_NAME + "':'" + newName + "'}}}");
+		translation.append("{\"" + CommandExpressor.ROOT_LABEL + "\":{\"" + RENAME_ORB_TYPE_ATTRIBUTE + "\":{\"" + ORB_INTERNAL_ID + "\":\"" + orbTypeInternalId + "\",\"" + OLD_ATTRIBUTE_NAME + "\":\"" + oldName + "\",\""
+				+ NEW_ATTRIBUTE_NAME + "\":\"" + newName + "\"}}}");
 
 		return translation;
 	}
@@ -695,23 +663,23 @@ public class CommandExpressor {
 	public StringBuilder getJsonCommandCreateOrbInstances(int orbTypeInternalId, int numberOfInstances, boolean populateInstancesWithData) {
 		StringBuilder translation = new StringBuilder();
 
-		translation.append("{'");
+		translation.append("{\"");
 		translation.append(CommandExpressor.ROOT_LABEL);
-		translation.append("':{'");
+		translation.append("\":{\"");
 		translation.append(CommandExpressor.CREATE_INSTANCES);
-		translation.append("':[{'");
+		translation.append("\":[{\"");
 		translation.append(CommandExpressor.ORB_TYPE_INTERNAL_ID);
-		translation.append("':'");
+		translation.append("\":\"");
 		translation.append(orbTypeInternalId);
-		translation.append("'},{'");
+		translation.append("\"},{\"");
 		translation.append(CommandExpressor.NUMBER_INSTANCES);
-		translation.append("':'");
+		translation.append("\":\"");
 		translation.append(String.valueOf(numberOfInstances));
-		translation.append("'},{'");
+		translation.append("\"},{\"");
 		translation.append(CommandExpressor.POPULATE_INSTANCES_WITH_DATA);
-		translation.append("':'");
+		translation.append("\":\"");
 		translation.append(String.valueOf(populateInstancesWithData));
-		translation.append("'}]}}");
+		translation.append("\"}]}}");
 
 		return translation;
 	}
@@ -719,7 +687,7 @@ public class CommandExpressor {
 	public StringBuilder echo(String StringToEcho) {
 		StringBuilder translation = new StringBuilder();
 
-		translation.append("{'" + CommandExpressor.ROOT_LABEL + "':{'" + ECHO + "':'" + StringToEcho + "'}}");
+		translation.append("{\"" + CommandExpressor.ROOT_LABEL + "\":{\"" + ECHO + "\":\"" + StringToEcho + "\"}}");
 
 		return translation;
 	}
@@ -729,15 +697,15 @@ public class CommandExpressor {
 
 		String oidClean = this.jsonUtil.escapeJsonIllegals(String.valueOf(orbInternalId));
 
-		translation.append("{'");
+		translation.append("{\"");
 		translation.append(CommandExpressor.ROOT_LABEL);
-		translation.append("':{'");
+		translation.append("\":{\"");
 		translation.append(GET_ORBS_TYPE);
-		translation.append("':{'");
+		translation.append("\":{\"");
 		translation.append(ORB_INTERNAL_ID);
-		translation.append("':'");
+		translation.append("\":\"");
 		translation.append(oidClean);
-		translation.append("'}}}");
+		translation.append("\"}}}");
 
 		return translation;
 	}
@@ -746,13 +714,13 @@ public class CommandExpressor {
 	public StringBuilder getJsonCommandUndoBeginInnerTransaction(BigDecimal transactionIdInner) {
 		StringBuilder translation = new StringBuilder();
 
-		translation.append("{'");
+		translation.append("{\"");
 		translation.append(CommandExpressor.ROOT_LABEL);
-		translation.append("':{'");
+		translation.append("\":{\"");
 		translation.append(CommandExpressor.UNDO_BEGIN_TRANSACTION_INNER_ID);
-		translation.append("':'");
+		translation.append("\":\"");
 		translation.append(String.valueOf(transactionIdInner));
-		translation.append("'}}");
+		translation.append("\"}}");
 
 		return translation;
 	}
@@ -761,13 +729,13 @@ public class CommandExpressor {
 	public StringBuilder getJsonCommandUndoCommitInnerTransaction(BigDecimal transactionIdInner) {
 		StringBuilder translation = new StringBuilder();
 
-		translation.append("{'");
+		translation.append("{\"");
 		translation.append(CommandExpressor.ROOT_LABEL);
-		translation.append("':{'");
+		translation.append("\":{\"");
 		translation.append(CommandExpressor.UNDO_COMMIT_TRANSACTION_INNER_ID);
-		translation.append("':'");
+		translation.append("\":\"");
 		translation.append(String.valueOf(transactionIdInner));
-		translation.append("'}}");
+		translation.append("\"}}");
 
 		return translation;
 	}
@@ -775,19 +743,19 @@ public class CommandExpressor {
 	public StringBuilder getJsonCommandSetOrbInstLabel(int orbInternalId, String label) {
 		StringBuilder translation = new StringBuilder();
 
-		translation.append("{'");
+		translation.append("{\"");
 		translation.append(CommandExpressor.ROOT_LABEL);
-		translation.append("':{'");
+		translation.append("\":{\"");
 		translation.append(CommandExpressor.SET_ORB_INST_LABEL);
-		translation.append("':[{'");
+		translation.append("\":[{\"");
 		translation.append(CommandExpressor.ORB_INTERNAL_ID);
-		translation.append("':'");
+		translation.append("\":\"");
 		translation.append(String.valueOf(orbInternalId));
-		translation.append("'},{'");
+		translation.append("\"},{\"");
 		translation.append(CommandExpressor.ORB_INST_LABEL);
-		translation.append("':'");
+		translation.append("\":\"");
 		translation.append(this.jsonUtil.escapeJsonIllegals(label));
-		translation.append("'}]}}");
+		translation.append("\"}]}}");
 
 		return translation;
 	}
@@ -796,7 +764,7 @@ public class CommandExpressor {
 		StringBuilder sb = new StringBuilder();
 
 		label = this.jsonUtil.escapeJsonIllegals(label);
-		sb.append("{'" + CommandExpressor.ROOT_LABEL + "':{'" + CommandExpressor.GET_ORB_INST_FROM_LABEL + "':{'" + CommandExpressor.ORB_INST_LABEL + "':'" + label + "'}}}");
+		sb.append("{\"" + CommandExpressor.ROOT_LABEL + "\":{\"" + CommandExpressor.GET_ORB_INST_FROM_LABEL + "\":{\"" + CommandExpressor.ORB_INST_LABEL + "\":\"" + label + "\"}}}");
 
 		return sb;
 	}
@@ -805,9 +773,9 @@ public class CommandExpressor {
 	// {
 	// StringBuilder translation = new StringBuilder();
 	//
-	// translation.append("{'" + CommandExpressor.ROOT_LABEL + "':{'");
+	// translation.append("{\"" + CommandExpressor.ROOT_LABEL + "\":{\"");
 	// translation.append(CommandExpressor.METHOD_CALL);
-	// translation.append("':");
+	// translation.append("\":");
 	// translation.append(methodCall.toJson());
 	// translation.append("}");
 	//
@@ -816,26 +784,26 @@ public class CommandExpressor {
 //		public StringBuilder getJsonCommandGetStartupUserBackupPath() {
 //		StringBuilder translation = new StringBuilder();
 	//
-//		translation.append("{'" + CommandExpressor.ROOT_LABEL + "':{'");
+//		translation.append("{\"" + CommandExpressor.ROOT_LABEL + "\":{\"");
 //		translation.append(CommandExpressor.GET_STARTUP_USER_BACKUP_PATH);
-//		translation.append("'}}");
+//		translation.append("\"}}");
 	//
 //		return translation;
 	//}
 //		public StringBuilder getJsonCommandCreateNamespaceFolder(String path, String folderName) {
 //		StringBuilder translation = new StringBuilder();
 	//
-//		translation.append("{'" + CommandExpressor.ROOT_LABEL + "':{'");
+//		translation.append("{\"" + CommandExpressor.ROOT_LABEL + "\":{\"");
 //		translation.append(CommandExpressor.CREATE_NAMESPACE_FOLDER);
-//		translation.append("':[{'");
+//		translation.append("\":[{\"");
 //		translation.append(CommandExpressor.NAMESPACE_FOLDER_PATH);
-//		translation.append("':'");
+//		translation.append("\":\"");
 //		translation.append(this.jsonUtil.escapeJsonIllegals(path));
-//		translation.append("'},{'");
+//		translation.append("\"},{\"");
 //		translation.append(CommandExpressor.NAMESPACE_FOLDER_NAME);
-//		translation.append("':'");
+//		translation.append("\":\"");
 //		translation.append(this.jsonUtil.escapeJsonIllegals(folderName));
-//		translation.append("'}]}}");
+//		translation.append("\"}]}}");
 	//
 //		return translation;
 	//}
@@ -846,17 +814,17 @@ public class CommandExpressor {
 	// {
 	// StringBuilder translation = new StringBuilder();
 	//
-	// translation.append("{'" + CommandExpressor.ROOT_LABEL + "':{'");
+	// translation.append("{\"" + CommandExpressor.ROOT_LABEL + "\":{\"");
 	// translation.append(CommandExpressor.GET_FILE_INFORMATION);
-	// translation.append("':{'");
+	// translation.append("\":{\"");
 	// translation.append(CommandExpressor.FILESYSTEM_PATH_BASE);
-	// translation.append("':'");
+	// translation.append("\":\"");
 	// translation.append(fileSystemBase.ToString());
-	// translation.append("','");
+	// translation.append("\",\"");
 	// translation.append(CommandExpressor.FILESYSTEM_ITEM_PATH);
-	// translation.append("':'");
+	// translation.append("\":\"");
 	// translation.append(this.jsonUtil.escapeJsonIllegals(relativeFilePath));
-	// translation.append("'}}}");
+	// translation.append("\"}}}");
 	//
 	// return translation;
 	// }
@@ -866,21 +834,21 @@ public class CommandExpressor {
 	// {
 	// StringBuilder translation = new StringBuilder();
 	//
-	// translation.append("{'" + CommandExpressor.ROOT_LABEL + "':{'");
+	// translation.append("{\"" + CommandExpressor.ROOT_LABEL + "\":{\"");
 	// translation.append(CommandExpressor.BACKUP_DATABASE);
-	// translation.append("':{'");
+	// translation.append("\":{\"");
 	// translation.append(CommandExpressor.RELATIVE_FOLDER_PATH);
-	// translation.append("':'");
+	// translation.append("\":\"");
 	// translation.append(this.jsonUtil.escapeJsonIllegals(relativeFolderPath));
-	// translation.append("','");
+	// translation.append("\",\"");
 	// translation.append(CommandExpressor.BACKUP_NAME);
-	// translation.append("':'");
+	// translation.append("\":\"");
 	// translation.append(this.jsonUtil.escapeJsonIllegals(backupName));
-	// translation.append("','");
+	// translation.append("\",\"");
 	// translation.append(CommandExpressor.BACKUP_AMOUNT_TYPE);
-	// translation.append("':'");
+	// translation.append("\":\"");
 	// translation.append(backupAmountType.ToString());
-	// translation.append("'}}");
+	// translation.append("\"}}");
 	//
 	// return translation;
 	// }
@@ -890,38 +858,38 @@ public class CommandExpressor {
 	// fileSystemBase, String pathOffWorkspace)
 	// {
 	// StringBuilder translation = new StringBuilder();
-	// translation.append("{'");
+	// translation.append("{\"");
 	// translation.append(CommandExpressor.ROOT_LABEL);
-	// translation.append("':{'");
+	// translation.append("\":{\"");
 	// translation.append(CommandExpressor.DELETE_FILESYSTEM_ITEM);
-	// translation.append("':{'");
+	// translation.append("\":{\"");
 	// translation.append(FILESYSTEM_PATH);
-	// translation.append("':'");
+	// translation.append("\":\"");
 	// translation.append(this.jsonUtil.escapeJsonIllegals(pathOffWorkspace));
-	// translation.append("','");
+	// translation.append("\",\"");
 	// translation.append(CommandExpressor.FILESYSTEM_PATH_BASE);
-	// translation.append("':'");
+	// translation.append("\":\"");
 	// translation.append(fileSystemBase.ToString());
-	// translation.append("'}}}");
+	// translation.append("\"}}}");
 	//
 	// return translation;
 	// }
 //		public StringBuilder getJsonCommandGetItemsInFolder(String pathOffWorkspaceRoot, CommonDaemon.FileSystemOps.FolderContents.FileSystemBase fileSystemFolderType) {
 //			StringBuilder translation = new StringBuilder();
 	//
-//			translation.append("{'");
+//			translation.append("{\"");
 //			translation.append(CommandExpressor.ROOT_LABEL);
-//			translation.append("':{'");
+//			translation.append("\":{\"");
 //			translation.append(CommandExpressor.GET_FILESYSTEM_ITEMS_IN_FOLDER);
-//			translation.append("':{'");
+//			translation.append("\":{\"");
 //			translation.append(CommandExpressor.FILESYSTEM_FOLDER_PATH);
-//			translation.append("':'");
+//			translation.append("\":\"");
 //			translation.append(this.jsonUtil.escapeJsonIllegals(pathOffWorkspaceRoot));
-//			translation.append("','");
+//			translation.append("\",\"");
 //			translation.append(CommandExpressor.FILESYSTEM_PATH_BASE);
-//			translation.append("':'");
+//			translation.append("\":\"");
 //			translation.append(fileSystemFolderType.ToString());
-//			translation.append("'}}}");
+//			translation.append("\"}}}");
 	//
 //			return translation;
 //		}
@@ -929,23 +897,23 @@ public class CommandExpressor {
 //		public StringBuilder getJsonCommandCreateWorkspaceFolder(CommonDaemon.FileSystemOps.FolderContents.FileSystemBase fileSystemBase, String pathOffWorkspaceRoot, String addedFolderName) {
 //			StringBuilder translation = new StringBuilder();
 	//
-//			translation.append("{'");
+//			translation.append("{\"");
 //			translation.append(CommandExpressor.ROOT_LABEL);
-//			translation.append("':{'");
+//			translation.append("\":{\"");
 //			translation.append(CommandExpressor.ADD_FOLDER_TO_FILESYSTEM);
-//			translation.append("':[{'");
+//			translation.append("\":[{\"");
 //			translation.append(CommandExpressor.PATH_OFF_WORKSPACE_ROOT);
-//			translation.append("':'");
+//			translation.append("\":\"");
 //			translation.append(this.jsonUtil.escapeJsonIllegals(pathOffWorkspaceRoot));
-//			translation.append("'},{'");
+//			translation.append("\"},{\"");
 //			translation.append(CommandExpressor.FOLDER_TO_ADD_TO_FILESYSTEM);
-//			translation.append("':'");
+//			translation.append("\":\"");
 //			translation.append(this.jsonUtil.escapeJsonIllegals(addedFolderName));
-//			translation.append("'},{'");
+//			translation.append("\"},{\"");
 //			translation.append(CommandExpressor.FILESYSTEM_PATH_BASE);
-//			translation.append("':'");
+//			translation.append("\":\"");
 //			translation.append(fileSystemBase.ToString());
-//			translation.append("'}]}}");
+//			translation.append("\"}]}}");
 	//
 //			return translation;
 //		}
@@ -953,42 +921,42 @@ public class CommandExpressor {
 //		public StringBuilder getJsonCommandMoveWorkspaceItem(CommonDaemon.FileSystemOps.FolderContents.FileSystemBase fileSystemBase, String pathToMove, String pathDestination, boolean isCopy) {
 //			StringBuilder translation = new StringBuilder();
 	//
-//			translation.append("{'");
+//			translation.append("{\"");
 //			translation.append(CommandExpressor.ROOT_LABEL);
-//			translation.append("':{'");
+//			translation.append("\":{\"");
 //			translation.append(CommandExpressor.MOVE_WORKSPACE_ITEM);
-//			translation.append("':{'");
+//			translation.append("\":{\"");
 //			translation.append(CommandExpressor.FILESYSTEM_PATH_SOURCE);
-//			translation.append("':'");
+//			translation.append("\":\"");
 //			translation.append(this.jsonUtil.escapeJsonIllegals(pathToMove));
-//			translation.append("','");
+//			translation.append("\",\"");
 //			translation.append(FILESYSTEM_PATH_DESTINATION);
-//			translation.append("':'");
+//			translation.append("\":\"");
 //			translation.append(this.jsonUtil.escapeJsonIllegals(pathDestination));
-//			translation.append("','");
+//			translation.append("\",\"");
 //			translation.append(FILESYSTEM_COMMAND_IS_COPY);
-//			translation.append("':'");
+//			translation.append("\":\"");
 //			translation.append(isCopy.ToString());
-//			translation.append("','");
+//			translation.append("\",\"");
 //			translation.append(CommandExpressor.FILESYSTEM_PATH_BASE);
-//			translation.append("':'");
+//			translation.append("\":\"");
 //			translation.append(fileSystemBase.ToString());
-//			translation.append("'}}}");
+//			translation.append("\"}}}");
 	//
 //			return translation;
 //		}
 	//	
 //		public StringBuilder getJsonCommandDeleteFileSystemFile(String filePathOffWorkspace) {
 //			StringBuilder translation = new StringBuilder();
-//			translation.append("{'");
+//			translation.append("{\"");
 //			translation.append(CommandExpressor.ROOT_LABEL);
-//			translation.append("':{'");
+//			translation.append("\":{\"");
 //			translation.append(CommandExpressor.DELETE_FILESYSTEM_FILE);
-//			translation.append("':{'");
+//			translation.append("\":{\"");
 //			translation.append(FILESYSTEM_PATH);
-//			translation.append("':'");
+//			translation.append("\":\"");
 //			translation.append(this.jsonUtil.escapeJsonIllegals(filePathOffWorkspace));
-//			translation.append("'}}}");
+//			translation.append("\"}}}");
 	//
 //			return translation;
 //		}
@@ -996,13 +964,13 @@ public class CommandExpressor {
 //		public StringBuilder getJsonCommandGetNamespaceFolder(String path) {
 //			StringBuilder translation = new StringBuilder();
 	//
-//			translation.append("{'" + CommandExpressor.ROOT_LABEL + "':{'");
+//			translation.append("{\"" + CommandExpressor.ROOT_LABEL + "\":{\"");
 //			translation.append(CommandExpressor.GET_NAMESPACE_FOLDER);
-//			translation.append("':{'");
+//			translation.append("\":{\"");
 //			translation.append(CommandExpressor.NAMESPACE_FOLDER_PATH);
-//			translation.append("':'");
+//			translation.append("\":\"");
 //			translation.append(this.jsonUtil.escapeJsonIllegals(path));
-//			translation.append("'}}}");
+//			translation.append("\"}}}");
 	//
 //			return translation;
 //		}
@@ -1010,38 +978,38 @@ public class CommandExpressor {
 //		public StringBuilder getJsonCommandGetNamespaceFolderPath(int oidFolder) {
 //			StringBuilder translation = new StringBuilder();
 	//
-//			translation.append("{'" + CommandExpressor.ROOT_LABEL + "':{'");
+//			translation.append("{\"" + CommandExpressor.ROOT_LABEL + "\":{\"");
 //			translation.append(CommandExpressor.GET_NAMESPACE_FOLDER);
-//			translation.append("':{'");
+//			translation.append("\":{\"");
 //			translation.append(CommandExpressor.ORB_INTERNAL_ID);
-//			translation.append("':'");
+//			translation.append("\":\"");
 //			translation.append(String.valueOf(oidFolder));
-//			translation.append("'}}}");
+//			translation.append("\"}}}");
 //			return translation;
 //		}
 	//
 //		public StringBuilder getJsonCommandGetNamespaceFolderContents(String path) {
 //			StringBuilder translation = new StringBuilder();
-//			translation.append("{'" + CommandExpressor.ROOT_LABEL + "':{'");
+//			translation.append("{\"" + CommandExpressor.ROOT_LABEL + "\":{\"");
 //			translation.append(CommandExpressor.GET_NAMESPACE_FOLDER_CONTENTS);
-//			translation.append("':'");
+//			translation.append("\":\"");
 //			translation.append(this.jsonUtil.escapeJsonIllegals(path));
-//			translation.append("'}}");
+//			translation.append("\"}}");
 //			return translation;
 //		}
 		
 //		public StringBuilder getJsonCommandDeleteQuery(String queryName) {
 //		StringBuilder translation = new StringBuilder();
 	//
-//		translation.append("{'" + CommandExpressor.ROOT_LABEL + "':{'");
+//		translation.append("{\"" + CommandExpressor.ROOT_LABEL + "\":{\"");
 	//
 //		translation.append(CommandExpressor.DELETE_QUERY);
-//		translation.append("':{'");
+//		translation.append("\":{\"");
 //		translation.append(QUERY_NAME);
-//		translation.append("':'");
+//		translation.append("\":\"");
 //		queryName = this.jsonUtil.escapeJsonIllegals(queryName);
 //		translation.append(queryName);
-//		translation.append("'}}}");
+//		translation.append("\"}}}");
 	//
 //		return translation;
 	//}
@@ -1049,10 +1017,10 @@ public class CommandExpressor {
 //		public StringBuilder getJsonCommandGetAllQueryNames() {
 //			StringBuilder translation = new StringBuilder();
 	//
-//			translation.append("{'" + CommandExpressor.ROOT_LABEL + "':{'");
+//			translation.append("{\"" + CommandExpressor.ROOT_LABEL + "\":{\"");
 	//
 //			translation.append(CommandExpressor.GET_ALL_QUERY_NAMES);
-//			translation.append("'}}");
+//			translation.append("\"}}");
 	//
 //			return translation;
 //		}
@@ -1060,17 +1028,17 @@ public class CommandExpressor {
 //		public StringBuilder getJsonCommandUpdateQuery(String oldQueryName, CommonDaemon.Database.Query.Query query) {
 //			StringBuilder translation = new StringBuilder();
 	//
-//			translation.append("{'" + CommandExpressor.ROOT_LABEL + "':{'");
+//			translation.append("{\"" + CommandExpressor.ROOT_LABEL + "\":{\"");
 	//
 //			translation.append(CommandExpressor.UPDATE_QUERY);
-//			translation.append("':[{'");
+//			translation.append("\":[{\"");
 //			translation.append(QUERY_NAME_OLD);
-//			translation.append("':'");
+//			translation.append("\":\"");
 //			oldQueryName = this.jsonUtil.escapeJsonIllegals(oldQueryName);
 //			translation.append(oldQueryName);
-//			translation.append("'},{'");
+//			translation.append("\"},{\"");
 //			translation.append(QUERY_BODY);
-//			translation.append("':");
+//			translation.append("\":");
 //			translation.append(query.toJson());
 //			translation.append("}]}}");
 	//
@@ -1080,12 +1048,12 @@ public class CommandExpressor {
 //		public StringBuilder getJsonCommandSaveNewQuery(CommonDaemon.Database.Query.Query query) {
 //			StringBuilder translation = new StringBuilder();
 	//
-//			translation.append("{'" + CommandExpressor.ROOT_LABEL + "':{'");
+//			translation.append("{\"" + CommandExpressor.ROOT_LABEL + "\":{\"");
 	//
 //			translation.append(CommandExpressor.SAVE_NEW_QUERY);
-//			translation.append("':{'");
+//			translation.append("\":{\"");
 //			translation.append(QUERY_BODY);
-//			translation.append("':");
+//			translation.append("\":");
 //			translation.append(query.toJson());
 //			translation.append("}}}");
 	//
@@ -1114,89 +1082,89 @@ public class CommandExpressor {
 
 	//public StringBuilder getJsonCommandRenameFileSystemItem(CommonDaemon.FileSystemOps.FolderContents.FileSystemBase fileSystemBase, String relativePath, String newName) {
 //		StringBuilder translation = new StringBuilder();
-//		translation.append("{'");
+//		translation.append("{\"");
 //		translation.append(CommandExpressor.ROOT_LABEL);
-//		translation.append("':{'");
+//		translation.append("\":{\"");
 //		translation.append(CommandExpressor.RENAME_FILESYSTEM_ITEM);
-//		translation.append("':{'");
+//		translation.append("\":{\"");
 //		translation.append(FILESYSTEM_ITEM_PATH);
-//		translation.append("':'");
+//		translation.append("\":\"");
 //		translation.append(this.jsonUtil.escapeJsonIllegals(relativePath));
-//		translation.append("','");
+//		translation.append("\",\"");
 //		translation.append(FILESYSTEM_ITEM_NAME);
-//		translation.append("':'");
+//		translation.append("\":\"");
 //		translation.append(newName);
-//		translation.append("','");
+//		translation.append("\",\"");
 //		translation.append(CommandExpressor.FILESYSTEM_PATH_BASE);
-//		translation.append("':'");
+//		translation.append("\":\"");
 //		translation.append(fileSystemBase.ToString());
-//		translation.append("'}}}");
+//		translation.append("\"}}}");
 	//
 //		return translation;
 	//}
 	//	
 //		public StringBuilder getJsonCommandDeleteNameSpaceFolder(int oidFolder) {
 //			StringBuilder translation = new StringBuilder();
-//			translation.append("{'");
+//			translation.append("{\"");
 //			translation.append(CommandExpressor.ROOT_LABEL);
-//			translation.append("':{'");
+//			translation.append("\":{\"");
 //			translation.append(DELETE_FOLDER_SPACE_FOLDER);
-//			translation.append("':{'");
+//			translation.append("\":{\"");
 //			translation.append(ORB_INTERNAL_ID);
-//			translation.append("':'");
+//			translation.append("\":\"");
 //			translation.append(String.valueOf(oidFolder));
-//			translation.append("'}}}");
+//			translation.append("\"}}}");
 	//
 //			return translation;
 //		}
 	//
 //		public StringBuilder getJsonCommandMoveNameSpaceFolder(int oidFolderToMove, int oidFolderDestination) {
 //			StringBuilder translation = new StringBuilder();
-//			translation.append("{'");
+//			translation.append("{\"");
 //			translation.append(CommandExpressor.ROOT_LABEL);
-//			translation.append("':{'");
+//			translation.append("\":{\"");
 //			translation.append(MOVE_FOLDER_SPACE_FOLDER);
-//			translation.append("':[{'");
+//			translation.append("\":[{\"");
 //			translation.append(OID_FOLDER_TO_MOVE);
-//			translation.append("':'");
+//			translation.append("\":\"");
 //			translation.append(String.valueOf(oidFolderToMove));
-//			translation.append("'},{'");
+//			translation.append("\"},{\"");
 //			translation.append(OID_FOLDER_DESTINATION);
-//			translation.append("':'");
+//			translation.append("\":\"");
 //			translation.append(String.valueOf(oidFolderDestination));
-//			translation.append("'}]}}");
+//			translation.append("\"}]}}");
 	//
 //			return translation;
 //		}
 //		public StringBuilder getJsonCommandRemoveOrbDls(int orbInternalId) {
 //			StringBuilder translation = new StringBuilder();
 	//
-//			translation.append("{'");
+//			translation.append("{\"");
 //			translation.append(CommandExpressor.ROOT_LABEL);
-//			translation.append("':{'");
+//			translation.append("\":{\"");
 	//
 //			translation.append(CommandExpressor.REMOVE_ORB_DATA_LIMITS);
-//			translation.append("':{'");
+//			translation.append("\":{\"");
 //			translation.append(ORB_INTERNAL_ID);
-//			translation.append("':'");
+//			translation.append("\":\"");
 //			translation.append(String.valueOf(orbInternalId));
-//			translation.append("'}");
-//			translation.append("'}}");
+//			translation.append("\"}");
+//			translation.append("\"}}");
 	//
 //			return translation;
 //		}
 //		public StringBuilder getJsonCommandBurnAndReplantFromDisk(String relativeFilePath) {
 //		StringBuilder translation = new StringBuilder();
 	//
-//		translation.append("{'");
+//		translation.append("{\"");
 //		translation.append(CommandExpressor.ROOT_LABEL);
-//		translation.append("':{'");
+//		translation.append("\":{\"");
 //		translation.append(CommandExpressor.BURN_AND_REPLANT_FROM_DISK);
-//		translation.append("':{'");
+//		translation.append("\":{\"");
 //		translation.append(CommandExpressor.RELATIVE_FILE_PATH);
-//		translation.append("':'");
+//		translation.append("\":\"");
 //		translation.append(this.jsonUtil.escapeJsonIllegals(relativeFilePath));
-//		translation.append("'}}}");
+//		translation.append("\"}}}");
 	//
 //		return translation;
 	//}
@@ -1206,7 +1174,7 @@ public class CommandExpressor {
 	//
 //			String jsonQuery = query.toJson().ToString();
 	//
-//			translation.append("{'" + CommandExpressor.ROOT_LABEL + "':{'" + GET_QUERY_RESULTS + "':" + jsonQuery + "}}");
+//			translation.append("{\"" + CommandExpressor.ROOT_LABEL + "\":{\"" + GET_QUERY_RESULTS + "\":" + jsonQuery + "}}");
 	//
 //			return translation;
 //		}
@@ -1214,15 +1182,15 @@ public class CommandExpressor {
 //		public StringBuilder getJsonCommandGetQueryResults(int queryId) {
 //			StringBuilder translation = new StringBuilder();
 	//
-//			translation.append("{'");
+//			translation.append("{\"");
 //			translation.append(CommandExpressor.ROOT_LABEL);
-//			translation.append("':{'");
+//			translation.append("\":{\"");
 //			translation.append(GET_QUERY_RESULTS_BY_ID);
-//			translation.append("':{'");
+//			translation.append("\":{\"");
 //			translation.append(QUERY_ID);
-//			translation.append("':'");
+//			translation.append("\":\"");
 //			translation.append(String.valueOf(queryId));
-//			translation.append("'}}}");
+//			translation.append("\"}}}");
 	//
 //			return translation;
 //		}
@@ -1231,8 +1199,8 @@ public class CommandExpressor {
 //			StringBuilder translation = new StringBuilder();
 	//
 //			attributeName = this.jsonUtil.escapeJsonIllegals(attributeName);
-//			translation.append("{'" + CommandExpressor.ROOT_LABEL + "':{'" + GET_ALL_DATA_LIMIT_FOR_ATTR + "':[{'" + ORB_INTERNAL_ID + "':'" + orbInternalId + "'},{'" + CommandExpressor.ORB_ATTR_NAME + "':'" + attributeName
-//					+ "'}] }}");
+//			translation.append("{\"" + CommandExpressor.ROOT_LABEL + "\":{\"" + GET_ALL_DATA_LIMIT_FOR_ATTR + "\":[{\"" + ORB_INTERNAL_ID + "\":\"" + orbInternalId + "\"},{\"" + CommandExpressor.ORB_ATTR_NAME + "\":\"" + attributeName
+//					+ "\"}] }}");
 	//
 //			return translation;
 //		}
@@ -1240,7 +1208,7 @@ public class CommandExpressor {
 //		public StringBuilder getJsonCommandGetDataLimitsForOrb(int orbInternalId) {
 //			StringBuilder translation = new StringBuilder();
 	//
-//			translation.append("{'" + CommandExpressor.ROOT_LABEL + "':{'" + GET_ALL_DATA_LIMIT_FOR_ORB + "':{'" + ORB_INTERNAL_ID + "':'" + String.valueOf(orbInternalId) + "'}}}");
+//			translation.append("{\"" + CommandExpressor.ROOT_LABEL + "\":{\"" + GET_ALL_DATA_LIMIT_FOR_ORB + "\":{\"" + ORB_INTERNAL_ID + "\":\"" + String.valueOf(orbInternalId) + "\"}}}");
 	//
 //			return translation;
 //		}
@@ -1249,26 +1217,26 @@ public class CommandExpressor {
 	// {
 	// StringBuilder translation = new StringBuilder();
 	//
-	// translation.append("{'" + CommandExpressor.ROOT_LABEL + "':{'" +
-	// ADD_DATA_LIMITATION + "':" + dl.toJson() + "}}");
+	// translation.append("{\"" + CommandExpressor.ROOT_LABEL + "\":{\"" +
+	// ADD_DATA_LIMITATION + "\":" + dl.toJson() + "}}");
 	//
 	// return translation;
 	// }
 //		public StringBuilder getJsonCommandRenameNameSpaceFolder(int oidFolder, String newFolderName) {
 //		StringBuilder translation = new StringBuilder();
-//		translation.append("{'");
+//		translation.append("{\"");
 //		translation.append(CommandExpressor.ROOT_LABEL);
-//		translation.append("':{'");
+//		translation.append("\":{\"");
 //		translation.append(RENAME_FOLDER_SPACE_FOLDER);
-//		translation.append("':[{'");
+//		translation.append("\":[{\"");
 //		translation.append(ORB_INTERNAL_ID);
-//		translation.append("':'");
+//		translation.append("\":\"");
 //		translation.append(String.valueOf(oidFolder));
-//		translation.append("'},{'");
+//		translation.append("\"},{\"");
 //		translation.append(FOLDER_SPACE_FOLDER_NAME);
-//		translation.append("':'");
+//		translation.append("\":\"");
 //		translation.append(this.jsonUtil.escapeJsonIllegals(newFolderName));
-//		translation.append("'}]}}");
+//		translation.append("\"}]}}");
 	//
 //		return translation;
 	//}
@@ -1277,23 +1245,23 @@ public class CommandExpressor {
 	// {
 	// StringBuilder translation = new StringBuilder();
 	//
-	// translation.append("{'" + CommandExpressor.ROOT_LABEL + "':{'" +
-	// UPDATE_DATA_LIMITATION + "':" + dl.toJson() + "}}");
+	// translation.append("{\"" + CommandExpressor.ROOT_LABEL + "\":{\"" +
+	// UPDATE_DATA_LIMITATION + "\":" + dl.toJson() + "}}");
 	//
 	// return translation;
 	// }
 	//public StringBuilder getJsonCommandRemoveDataLimitation(String dataLimitationId) {
 //		StringBuilder translation = new StringBuilder();
 	//
-//		translation.append("{'");
+//		translation.append("{\"");
 //		translation.append(CommandExpressor.ROOT_LABEL);
-//		translation.append("':{'");
+//		translation.append("\":{\"");
 //		translation.append(CommandExpressor.REMOVE_DATA_LIMITATION);
-//		translation.append("':{'");
+//		translation.append("\":{\"");
 //		translation.append(CommandExpressor.DATA_LIMITATION_ID);
-//		translation.append("':'");
+//		translation.append("\":\"");
 //		translation.append(dataLimitationId);
-//		translation.append("'}}}");
+//		translation.append("\"}}}");
 	//
 //		return translation;
 	//}

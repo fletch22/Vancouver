@@ -13,15 +13,15 @@ public class GetCurrentTransactionIdCommand {
 	public StringBuilder toJson() {
 		StringBuilder translation = new StringBuilder();
 
-		translation.append("{'");
+		translation.append("{\"");
 		translation.append(CommandExpressor.SYSTEM_COMMAND);
-		translation.append("':'");
+		translation.append("\":\"");
 		translation.append(CommandExpressor.GET_CURRENT_TRANSACTION_ID);
-		translation.append("'}");
+		translation.append("\"}");
 
 		return translation;
 	}
-
+ 
 	public void fromJson(String json) {
 		
 		JsonParser parser = new JsonParser();

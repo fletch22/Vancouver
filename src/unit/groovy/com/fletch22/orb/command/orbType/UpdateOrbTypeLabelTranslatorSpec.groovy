@@ -17,7 +17,7 @@ import spock.lang.Specification
 class UpdateOrbTypeLabelTranslatorSpec extends Specification {
 	
 	@Autowired
-	UpdateOrbTypeLabelCommand updateOrbTypeLabelTranslator; 
+	UpdateOrbTypeLabelCommand updateOrbTypeLabelCommand; 
 
 	@Test
 	def 'test translation'() {
@@ -26,14 +26,13 @@ class UpdateOrbTypeLabelTranslatorSpec extends Specification {
 		String expectedLabel = 'foo'
 		int expectedInternalId = 123
 		
-		String action = this.updateOrbTypeLabelTranslator.getJsonCommandUpdateOrbTypeLabel(expectedInternalId, expectedLabel)
+		String action = this.updateOrbTypeLabelCommand.toJson(expectedInternalId, expectedLabel)
 		
 		when:
-		UpdateOrbTypeLabelDto dto = this.updateOrbTypeLabelTranslator.getActionData(action);
+		UpdateOrbTypeLabelDto dto = this.updateOrbTypeLabelCommand.fromJson(action);
 		
 		then:
 		dto.label == expectedLabel
 		dto.orbTypeInternalId == expectedInternalId 
 	}
-
 }

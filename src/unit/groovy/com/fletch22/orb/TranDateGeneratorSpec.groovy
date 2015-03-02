@@ -45,6 +45,29 @@ class TranDateGeneratorSpec extends Specification {
 	
 	@Test
 	@Unroll
+	def 'test generator multiple'() {
+		
+		given:
+		Set<Long> tranDateList = new HashSet<Long>()
+		
+		when:
+		logger.info("Start")
+		1000.times {
+			def tranDate = tranDateGenerator.getTranDate()
+//			def result = tranDateList.add(tranDate);
+//			if (!result) {
+//				throw new RuntimeException("Found duplicate");
+//			}
+		}
+		logger.info("Stop")
+		
+		def etst = ''
+		then:
+		1 == 1
+	}
+	
+	@Test
+	@Unroll
 	def 'test time resets generator'() {
 		
 		given:

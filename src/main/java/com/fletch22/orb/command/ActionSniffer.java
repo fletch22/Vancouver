@@ -1,4 +1,4 @@
-package com.fletch22.command;
+package com.fletch22.orb.command;
 
 import org.springframework.stereotype.Component;
 
@@ -7,9 +7,9 @@ import com.fletch22.orb.CommandExpressor;
 @Component
 public class ActionSniffer {
 	
-	private static final String PREFIX_TEMPLATE_1 = "{'%s':{'";
-	private static final String PREFIX_TEMPLATE_2 = "{'%s':'";
-	private static final String PREFIX_TEMPLATE_3 = "{'%s':[{'";
+	private static final String PREFIX_TEMPLATE_1 = "{\"%s\":{\"";
+	private static final String PREFIX_TEMPLATE_2 = "{\"%s\":\"";
+	private static final String PREFIX_TEMPLATE_3 = "{\"%s\":[{\"";
 	private static final String ROOT_PREFIX_1 = String.format(PREFIX_TEMPLATE_1, CommandExpressor.ROOT_LABEL);
 	private static final String ROOT_PREFIX_2 = String.format(PREFIX_TEMPLATE_2, CommandExpressor.ROOT_LABEL);
 	private static final String SYSTEM_COMMAND_PREFIX_1 = String.format(PREFIX_TEMPLATE_1, CommandExpressor.SYSTEM_COMMAND);
@@ -23,7 +23,7 @@ public class ActionSniffer {
 		verb = getVerbWithPrefix(getPrefixInUse(action), action);
 		
 		if (null == verb) {
-			throw new RuntimeException("Encountered problem attempting to determine the type of action from string '" + action + "'.");
+			throw new RuntimeException("Encountered problem attempting to determine the type of action from string \"" + action + "\".");
 		}
 		
 		return verb;
@@ -48,7 +48,7 @@ public class ActionSniffer {
 
 	private String getVerbWithPrefix(String prefix, StringBuilder action) {
 		int prefixLength = prefix.length();
-		int nextTickPos = action.indexOf("'", prefixLength);
+		int nextTickPos = action.indexOf("\"", prefixLength);
 		return action.substring(prefixLength, nextTickPos);
 	}
 }

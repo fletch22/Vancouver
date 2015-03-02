@@ -1,5 +1,7 @@
 package com.fletch22.redis;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -12,6 +14,8 @@ import org.springframework.stereotype.Component;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Protocol;
+
+import com.fletch22.orb.NakedOrb;
 
 @Component
 public class ObjectTypeCacheService {
@@ -34,12 +38,14 @@ public class ObjectTypeCacheService {
 		this.typeKeyGenerator = this.redisKeyFactory.getKeyGenerator(ObjectType.TYPE);
 	}
 
-	public void createType(String id, Map<String, String> properties) {
+	public void createType(NakedOrb nakedOrb) {
+		
+		Map<String, String> properties = nakedOrb.expressAllProperties();
 		
 		try {
 			validateTypeProperties(properties);
 
-			String key = this.typeKeyGenerator.getKey(id);
+			String key = this.typeKeyGenerator.getKey(nakedOrb.getOrbInternalId());
 			this.jedis.hmset(key, properties);
 		} catch (Exception e) {
 			throw new RuntimeException("Encountered problem while trying to create type: " + e.getMessage(), e);
@@ -66,20 +72,37 @@ public class ObjectTypeCacheService {
 		return results;
 	}
 	
-	public boolean removeType(String id) {
-		boolean wasSuccessful = false;
+	public NakedOrb deleteType(String id) {
+		NakedOrb deletedOrb = null;
 		try {
+			
 			String key = getTypeIdKey(id);
-			long result = jedis.del(getTypeIdKey(id));
+			deletedOrb = new NakedOrb(getType(id));
+			long result = this.jedis.del(getTypeIdKey(id));
 			if (result == DELETE_KEY_RESULT_KEY_NOT_FOUND) {
 				String message = String.format("Encountered problem with removing type. Could not find item with key '" + key + "' for type '" + id + "'. Because not found could not delete.");
 				throw new RuntimeException(message);
 			}
-			wasSuccessful = true;
 		} catch (Exception e) {
 			throw new RuntimeException("Encountered problem while trying to create type: " + e.getMessage(), e);
 		}
-		return wasSuccessful;
+		return deletedOrb;
+	}
+	
+	public List<NakedOrb> deleteAllTypes() {
+		List<NakedOrb> deletedOrbs = new ArrayList<NakedOrb>();
+		try {
+			Set<String> keyList = this.getTypes();
+			
+			for (String key: keyList) {
+				NakedOrb nakedOrb = new NakedOrb(getTypeFromKey(key));
+				NakedOrb deletedOrb = this.deleteType(nakedOrb.getOrbInternalId());
+				deletedOrbs.add(deletedOrb);
+			}
+		} catch (Exception e) {
+			throw new RuntimeException("Encountered problem while trying to create type: " + e.getMessage(), e);
+		}
+		return deletedOrbs;
 	}
 	
 	private String getTypeIdKey(String id) {
@@ -100,12 +123,18 @@ public class ObjectTypeCacheService {
 		Map<String, String> result = null;
 		try {
 			String key = getTypeIdKey(id);
-			result = this.jedis.hgetAll(key);
-			if (!doesHashMapRecordExist(result)) {
-				throw new RuntimeException("Encountered problem trying to get non-existent type '" + id + "' with key '" + key + "'.");
-			}
+			result = getTypeFromKey(key);
 		} catch (Exception e) {
 			throw new RuntimeException("Encountered problem while trying to create type: " + e.getMessage(), e);
+		}
+		return result;
+	}
+
+	private Map<String, String> getTypeFromKey(String key) {
+		Map<String, String> result;
+		result = this.jedis.hgetAll(key);
+		if (!doesHashMapRecordExist(result)) {
+			throw new RuntimeException("Encountered problem trying to get non-existent type '" + key + "'.");
 		}
 		return result;
 	}

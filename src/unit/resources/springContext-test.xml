@@ -17,5 +17,7 @@
 		<property name="location" value="classpath:application-test.properties" />
 	</bean>
 	
+	<bean id="contextApplicationContextProvider" class="com.fletch22.ApplicationContextProvider"></bean>
+	
 </beans>
             

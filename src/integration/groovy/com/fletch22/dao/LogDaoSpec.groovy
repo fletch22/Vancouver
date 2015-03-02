@@ -17,6 +17,7 @@ import spock.lang.Specification
 import com.fletch22.orb.CommandExpressor
 import com.fletch22.orb.TranDateGenerator
 import com.fletch22.orb.command.orbType.AddOrbTypeCommand
+import com.fletch22.orb.command.orbType.DeleteOrbTypeCommand
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/springContext.xml")
@@ -35,6 +36,9 @@ class LogDaoSpec extends Specification {
 	
 	@Autowired
 	CommandExpressor commandExpressor
+	
+	@Autowired
+	DeleteOrbTypeCommand deleteOrbTypeCommand;
 	
 	def setup()  {
 		logDao.clearOutDatabase()
@@ -100,7 +104,7 @@ class LogDaoSpec extends Specification {
 		
 		given:
 		def action = this.addOrbTypeCommand.toJson("foo");
-		def undoAction = this.commandExpressor.getJsonCommandRemoveOrbType(1234, false);
+		def undoAction = this.deleteOrbTypeCommand.toJson(1234, false);
 		
 		def tranDate = tranDateGenerator.getTranDate();
 		

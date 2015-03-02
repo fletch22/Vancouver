@@ -21,31 +21,31 @@ public class UpdateOrbTypeLabelCommand {
 	@Autowired
 	JsonUtil jsonUtil;
 
-	public StringBuilder getActionCommand(int orbInternalId, String orbTypeLabel) {
+	public StringBuilder toJson(int orbInternalId, String orbTypeLabel) {
 		StringBuilder translation = new StringBuilder();
 		orbTypeLabel = this.jsonUtil.escapeJsonIllegals(orbTypeLabel);
 
-		translation.append("{'");
+		translation.append("{\"");
 		translation.append(CommandExpressor.ROOT_LABEL);
-		translation.append("':{'");
+		translation.append("\":{\"");
 
 		translation.append(CommandExpressor.SET_ORB_TYPE_LABEL);
-		translation.append("':{'");
+		translation.append("\":{\"");
 		translation.append(CommandExpressor.ORB_INTERNAL_ID);
-		translation.append("':'");
+		translation.append("\":\"");
 		translation.append(String.valueOf(orbInternalId));
-		translation.append("','");
+		translation.append("\",\"");
 		translation.append(CommandExpressor.ORB_TYPE_LABEL);
-		translation.append("':'");
+		translation.append("\":\"");
 		translation.append(this.jsonUtil.escapeJsonIllegals(orbTypeLabel));
-		translation.append("'");
+		translation.append("\"");
 		translation.append("}");
 		translation.append("}}");
 
 		return translation;
 	}
 
-	public UpdateOrbTypeLabelDto getActionData(String action) {
+	public UpdateOrbTypeLabelDto fromJson(String action) {
 		
 		JsonParser parser = new JsonParser();
 		JsonObject jsonObject = (JsonObject) parser.parse(action);

@@ -16,13 +16,13 @@ public class KillTransactionCommand {
 	public StringBuilder toJson(BigDecimal transactionId) {
 		StringBuilder translation = new StringBuilder();
 
-		translation.append("{'");
+		translation.append("{\"");
 		translation.append(CommandExpressor.SYSTEM_COMMAND);
-		translation.append("':{'");
+		translation.append("\":{\"");
 		translation.append(CommandExpressor.KILL_TRANSACTION);
-		translation.append("':'");
+		translation.append("\":\"");
 		translation.append(transactionId.toString());
-		translation.append("'}}");
+		translation.append("\"}}");
 
 		return translation;
 	}

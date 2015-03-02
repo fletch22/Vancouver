@@ -25,12 +25,12 @@ public class GetListOfOrbTypesCommand {
 	public StringBuilder toJson(String searchString) {
 		StringBuilder translation = new StringBuilder();
 
-		translation.append("{'" + CommandExpressor.ROOT_LABEL + "':{'");
+		translation.append("{\"" + CommandExpressor.ROOT_LABEL + "\":{\"");
 
 		translation.append(CommandExpressor.GET_LIST_OF_ORB_TYPES);
-		translation.append("':'");
+		translation.append("\":\"");
 		translation.append(this.jsonUtil.escapeJsonIllegals(searchString));
-		translation.append("'}}");
+		translation.append("\"}}");
 
 		return translation;
 	}

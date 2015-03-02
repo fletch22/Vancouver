@@ -20,13 +20,13 @@ public class LogBundler {
 	public StringBuilder bundle(StringBuilder action, long internalIdBeforeOperation) {
 		StringBuilder translation = new StringBuilder();
 
-        translation.append("{'" + CommandExpressor.LOG_BUNDLE + "':[{'");
+        translation.append("{\"" + CommandExpressor.LOG_BUNDLE + "\":[{\"");
         translation.append(CommandExpressor.ID_BEFORE_OPERATION);
-        translation.append("':'");
+        translation.append("\":\"");
         translation.append(internalIdBeforeOperation);
-        translation.append("'},{'");
+        translation.append("\"},{\"");
         translation.append(CommandExpressor.ROOT_LABEL);
-        translation.append("':");
+        translation.append("\":");
         translation.append(action);
         translation.append("}]}");
 

@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,10 +29,10 @@ import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.Protocol;
 
 import com.fletch22.orb.IntegrationTests;
+import com.fletch22.orb.NakedOrb;
 import com.fletch22.orb.command.orbType.AddOrbTypeCommand;
 import com.fletch22.orb.service.OrbTypeService;
 import com.fletch22.util.JsonUtil;
-import com.fletch22.util.OrbUtil;
 import com.fletch22.util.RandomUtil;
 import com.google.gson.Gson;
 
@@ -49,9 +50,6 @@ public class OrbTypeServiceTest {
 	RandomUtil randomUtil;
 	
 	@Autowired
-	OrbUtil orbUtil;
-	
-	@Autowired
 	OrbTypeService orbTypeService;
 	
 	@Autowired
@@ -63,14 +61,14 @@ public class OrbTypeServiceTest {
 		Set<String> keys = objectTypeCacheService.getTypes();
 		for (String key: keys) {
 			String id = objectTypeCacheService.typeKeyGenerator.extractIdFromKey(key);
-			objectTypeCacheService.removeType(id);
+			objectTypeCacheService.deleteType(id);
 		}
 	}
 	
 	@Test
 	public void pureJavaCreateTest() {
 		String label = randomUtil.getRandomString();
-		int max = 1000;
+		int max = 100;
 		
 		logger.info("Start create type.");
 		for (int i = 0; i < max; i++) {
@@ -162,7 +160,9 @@ public class OrbTypeServiceTest {
 		map.put("prop3", "value3");
 		map.put("prop4", "value4");
 		
-		redisClient.createType(typeName, map);
+		NakedOrb nakedOrb = new NakedOrb(map);
+		
+		redisClient.createType(nakedOrb);
 	}
 	
 	@Test
@@ -185,20 +185,28 @@ public class OrbTypeServiceTest {
 		String id = getRandomTypeName();
 		
 		Map<String, String> map = new HashMap<String, String>();
-		map.put("id", this.getUniqueUUIDs(1).get(0));
+		map.put("id", id);
 		
-		objectTypeCacheService.createType(id,  map);
+		NakedOrb nakedOrb = new NakedOrb(map);
+		
+		objectTypeCacheService.createType(nakedOrb);
 		
 		map = objectTypeCacheService.getType(id);
 		
 		assertNotNull("Returned object should not be null.", map);
 		
+		objectTypeCacheService.deleteType(id);
+		
 		// Act
-		boolean result = objectTypeCacheService.removeType(id);
+		boolean exceptionThrown = false;
+		try {
+			NakedOrb result = objectTypeCacheService.deleteType(id);
+		} catch (Exception e) {
+			exceptionThrown = true;
+		}
 		
 		// Assert
-		assertTrue("Returned result from removal should be true.", result);
-		assertFalse("Orb type should not exist.", objectTypeCacheService.doesObjectTypeExist(id));
+		assertTrue("The exception should have been thrown because no id exists.", exceptionThrown);
 	}
 
 	private String getRandomTypeName() {
@@ -213,9 +221,11 @@ public class OrbTypeServiceTest {
 		
 		String message = null;
 		
+		NakedOrb nakedOrb = new NakedOrb(null);
+		
 		// Act
 		try {
-			objectTypeCacheService.createType(typeName, null);
+			objectTypeCacheService.createType(nakedOrb);
 		} catch (Exception e) {
 			message = e.getMessage();
 			logger.info(message);
@@ -231,21 +241,24 @@ public class OrbTypeServiceTest {
 		
 		// Arrange
 		String propertyToRemove = "test1";
-		String typeName = getRandomTypeName();
+		int id = this.randomUtil.getRandomInteger();
 		Map<String, String> map = new HashMap<String, String>();
 		map.put(propertyToRemove, "value1");
 		map.put("test2", "value2");
 		
-		objectTypeCacheService.createType(typeName, map);
+		NakedOrb nakedOrb = new NakedOrb(map);
+		nakedOrb.setId(id);
+		
+		objectTypeCacheService.createType(nakedOrb);
 		
 		// Act
-		objectTypeCacheService.removePropertyFromType(typeName, propertyToRemove);
+		objectTypeCacheService.removePropertyFromType(String.valueOf(id), propertyToRemove);
 		
 		// Assert
-		map = objectTypeCacheService.getType(typeName);
+		map = objectTypeCacheService.getType(String.valueOf(id));
 		assertFalse("Property list should no longer contain property '" + propertyToRemove, map.containsKey(propertyToRemove));
 		
-		objectTypeCacheService.removeType(typeName);
+		objectTypeCacheService.deleteType(String.valueOf(id));
 	}
 	
 	@Test
@@ -253,16 +266,19 @@ public class OrbTypeServiceTest {
 		
 		// Arrange
 		String propertyDoesNotExist = "test1";
-		String typeName = getRandomTypeName();
+		int id = this.randomUtil.getRandomInteger();
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("test2", "value2");
 		
-		objectTypeCacheService.createType(typeName, map);
+		NakedOrb nakedOrb = new NakedOrb(map);
+		nakedOrb.setId(id);
+		
+		objectTypeCacheService.createType(nakedOrb);
 		
 		// Act
 		boolean exceptionThrown = false;
 		try {
-			objectTypeCacheService.removePropertyFromType(typeName, propertyDoesNotExist);
+			objectTypeCacheService.removePropertyFromType(nakedOrb.getOrbInternalId(), propertyDoesNotExist);
 		} catch (Exception e) {
 			exceptionThrown = true;
 		}
@@ -270,7 +286,7 @@ public class OrbTypeServiceTest {
 		// Assert
 		assertFalse("Exception should not be thrown. Non existent field should not cause an exception", exceptionThrown);
 		
-		objectTypeCacheService.removeType(typeName);
+		objectTypeCacheService.deleteType(String.valueOf(id));
 	}
 	
 	@Test
@@ -278,19 +294,22 @@ public class OrbTypeServiceTest {
 		
 		// Arrange
 		String propertyNameOriginal = "test1";
-		String typeName = getRandomTypeName();
+		int id = this.randomUtil.getRandomInteger();
 		Map<String, String> map = new HashMap<String, String>();
 		map.put(propertyNameOriginal, "value2");
 		map.put("test2", "value2");
 		
-		objectTypeCacheService.createType(typeName, map);
+		NakedOrb nakedOrb = new NakedOrb(map);
+		nakedOrb.setId(id);
+		
+		objectTypeCacheService.createType(nakedOrb);
 		
 		String propertyNameNew = "righteousBison";
 		
 		// Act
-		objectTypeCacheService.renameTypeProperty(typeName, propertyNameOriginal, propertyNameNew);
+		objectTypeCacheService.renameTypeProperty(String.valueOf(id), propertyNameOriginal, propertyNameNew);
 		
-		map = objectTypeCacheService.getType(typeName);
+		map = objectTypeCacheService.getType(String.valueOf(id));
 		
 		for (String keyThing: map.keySet()) {
 			logger.info("Key: Value: {}, {}", keyThing, map.get(keyThing));

@@ -1,16 +1,19 @@
 package com.fletch22.orb;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.fletch22.orb.command.orbType.AddOrbTypeCommand;
+import com.fletch22.orb.command.orbType.AddWholeOrbTypeCommand;
+import com.fletch22.orb.command.orbType.DeleteOrbTypeCommand;
+import com.fletch22.orb.command.orbType.DeleteOrbTypeDto;
 import com.fletch22.orb.command.orbType.dto.AddOrbTypeDto;
-import com.fletch22.orb.rollback.RollbackAction;
+import com.fletch22.orb.rollback.UndoActionBundle;
 import com.fletch22.redis.ObjectInstanceCacheService;
 import com.fletch22.redis.ObjectTypeCacheService;
-import com.fletch22.util.OrbUtil;
+import com.fletch22.util.JsonUtil;
 
 @Component
 public class OrbTypeManager {
@@ -29,32 +32,53 @@ public class OrbTypeManager {
 	ObjectInstanceCacheService objectInstanceCacheService;
 	
 	@Autowired
-	OrbUtil orbUtil;
-	
-	@Autowired
 	ObjectTypeCacheService objectTypeCacheService;
 	
 	@Autowired
 	CommandExpressor commandExpressor;
 	
 	@Autowired
+	AddOrbTypeCommand addOrbTypeCommand;
+	
+	@Autowired
+	DeleteOrbTypeCommand deleteOrbTypeCommand;
+	
+	@Autowired
+	NakedToClothedOrbTransformer nakedToClothedOrbTransformer;
+	
+	@Autowired
+	AddWholeOrbTypeCommand addWholeOrbTypeCommand;
+	
+	@Autowired
+	JsonUtil jsonUtil;
+	
+	@Autowired
 	private InternalIdGenerator internalIdGenerator;
 	
-	public long createOrbType(AddOrbTypeDto addOrbTypeDto, BigDecimal tranDate, final RollbackAction rollbackAction) {
+	public long createOrbType(AddOrbTypeDto addOrbTypeDto, BigDecimal tranDate, final UndoActionBundle rollbackAction) {
 		long orbInternalTypeId;
 		
-		boolean exists = objectTypeCacheService.doesObjectTypeExist(addOrbTypeDto.label);
+		boolean exists = this.objectTypeCacheService.doesObjectTypeExist(addOrbTypeDto.label);
 		if (exists) {
 			throw new RuntimeException("Encountered problem trying to create orb type. Appears orb type '" + addOrbTypeDto.label + "' already exists.");
 		} else {
 			orbInternalTypeId = this.internalIdGenerator.getNewId();
-			HashMap<String, String> orbPropertyMap = this.orbUtil.createCoreProperties(orbInternalTypeId, addOrbTypeDto.label, tranDate);
+			NakedOrb nakedOrb = new NakedOrb(orbInternalTypeId, addOrbTypeDto.label, tranDate);
 			
-			objectTypeCacheService.createType(addOrbTypeDto.label, orbPropertyMap);
+			objectTypeCacheService.createType(nakedOrb);
 			
 			// add delete to rollback action
-			rollbackAction.addAction(this.commandExpressor.getJsonCommandRemoveOrbType(orbInternalTypeId, false));
+			rollbackAction.addAction(this.deleteOrbTypeCommand.toJson(orbInternalTypeId, false), tranDate);
 		}
 		return orbInternalTypeId;
+	}
+
+	public void deleteOrbType(DeleteOrbTypeDto deleteOrbTypeDto, BigDecimal tranDate, UndoActionBundle rollbackAction) {
+		
+		NakedOrb nakedOrb = objectTypeCacheService.deleteType(String.valueOf(deleteOrbTypeDto.orbTypeInternalId));
+		
+		// Add delete to rollback action
+		Orb orb = nakedToClothedOrbTransformer.convertNakedToClothed(nakedOrb);
+		rollbackAction.addAction(this.addWholeOrbTypeCommand.toJson(orb), tranDate);
 	}
 }

@@ -21,7 +21,7 @@ public class GetOrbTypeFromLabelCommand {
 		StringBuilder sb = new StringBuilder();
 
 		label = this.jsonUtil.escapeJsonIllegals(label);
-		sb.append("{'" + CommandExpressor.ROOT_LABEL + "':{'" + CommandExpressor.GET_ORB_TYPE_FROM_LABEL + "':{'" + CommandExpressor.ORB_TYPE_LABEL + "':'" + label + "'}}}");
+		sb.append("{\"" + CommandExpressor.ROOT_LABEL + "\":{\"" + CommandExpressor.GET_ORB_TYPE_FROM_LABEL + "\":{\"" + CommandExpressor.ORB_TYPE_LABEL + "\":\"" + label + "\"}}}");
 
 		return sb;
 	}

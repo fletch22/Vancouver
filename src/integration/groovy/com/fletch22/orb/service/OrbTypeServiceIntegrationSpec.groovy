@@ -17,9 +17,9 @@ import com.fletch22.util.RandomUtil
 
 @RunWith(SpringJUnit4ClassRunner)
 @ContextConfiguration(locations = 'classpath:/springContext-test.xml')
-class OrbTypeServiceSpec extends Specification {
+class OrbTypeServiceIntegrationSpec extends Specification {
 	
-	static Logger logger = LoggerFactory.getLogger(OrbTypeServiceSpec)
+	static Logger logger = LoggerFactory.getLogger(OrbTypeServiceIntegrationSpec)
 	
 	@Autowired
 	OrbTypeService orbTypeService
@@ -29,7 +29,7 @@ class OrbTypeServiceSpec extends Specification {
 	
 	def cleanup() {
 		// remove all orb types created.
-		
+		orbTypeService.r
 	}
 
 	@Test
@@ -52,7 +52,7 @@ class OrbTypeServiceSpec extends Specification {
 		
 		given:
 		String label = randomUtil.getRandomString();
-		int max = 10000
+		int max = 1000
 		
 		when:
 		logger.info("Start create type.");

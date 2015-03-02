@@ -1,3 +1,4 @@
 Todo:
 
-Create Rollback Actions for AddOrbType.
+Create Rollback Actions for AddOrbType. - Done
+Add delete instances when deleting type - Pending

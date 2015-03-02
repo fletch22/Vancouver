@@ -21,15 +21,15 @@ public class GetJsonOrbTypeCommand {
 
 		String oidClean = this.jsonUtil.escapeJsonIllegals(String.valueOf(orbTypeInternalId));
 
-		translation.append("{'");
+		translation.append("{\"");
 		translation.append(CommandExpressor.ROOT_LABEL);
-		translation.append("':{'");
+		translation.append("\":{\"");
 		translation.append(CommandExpressor.GET_ORB_TYPE);
-		translation.append("':{'");
+		translation.append("\":{\"");
 		translation.append(CommandExpressor.ORB_TYPE_INTERNAL_ID);
-		translation.append("':'");
+		translation.append("\":\"");
 		translation.append(oidClean);
-		translation.append("'}}}");
+		translation.append("\"}}}");
 
 		return translation;
 	}

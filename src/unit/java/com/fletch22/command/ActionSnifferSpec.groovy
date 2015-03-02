@@ -13,6 +13,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import spock.lang.Specification
 
 import com.fletch22.orb.CommandExpressor
+import com.fletch22.orb.command.ActionSniffer
 import com.fletch22.orb.command.orbType.AddOrbTypeCommand
 
 @RunWith(SpringJUnit4ClassRunner)
@@ -31,7 +32,7 @@ class ActionSnifferSpec extends Specification {
 	def 'test root verb sniffer'() {
 		
 		given:
-		def json = addOrbTypeCommand.toJson('foo').toString();
+		def json = addOrbTypeCommand.toJson('foo');
 		
 		when:
 		def verb = this.actionSniffer.getVerb(json);

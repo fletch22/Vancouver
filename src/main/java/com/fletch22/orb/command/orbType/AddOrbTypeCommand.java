@@ -3,7 +3,6 @@ package com.fletch22.orb.command.orbType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.fletch22.command.JsonCommand;
 import com.fletch22.orb.CommandExpressor;
 import com.fletch22.orb.OrbTypeManager;
 import com.fletch22.orb.command.orbType.dto.AddOrbTypeDto;
@@ -15,7 +14,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 
 @Component
-public class AddOrbTypeCommand implements JsonCommand {
+public class AddOrbTypeCommand {
 
 	@Autowired
 	JsonUtil jsonUtil;
@@ -24,24 +23,24 @@ public class AddOrbTypeCommand implements JsonCommand {
 		 return this.toJson(orbLabel, OrbTypeManager.ORBTYPE_INTERNAL_ID_UNSET);
 	}
 	
-	public StringBuilder toJson(String orbLabel, int orbTypeInternalId) {
+	public StringBuilder toJson(String orbLabel, long orbTypeInternalId) {
 		StringBuilder translation = new StringBuilder();
 
 		String orbLabelClean = this.jsonUtil.escapeJsonIllegals(orbLabel);
 
-		translation.append("{'");
+		translation.append("{\"");
 		translation.append(CommandExpressor.ROOT_LABEL);
-		translation.append("':{'");
+		translation.append("\":{\"");
 		translation.append(CommandExpressor.ADD_ORB_TYPE);
-		translation.append("':[{'");
+		translation.append("\":[{\"");
 		translation.append(CommandExpressor.ORB_TYPE_LABEL);
-		translation.append("':'");
+		translation.append("\":\"");
 		translation.append(orbLabelClean);
-		translation.append("'},{'");
+		translation.append("\"},{\"");
 		translation.append(CommandExpressor.ORB_TYPE_INTERNAL_ID);
-		translation.append("':'");
+		translation.append("\":\"");
 		translation.append(String.valueOf(orbTypeInternalId));
-		translation.append("'}");
+		translation.append("\"}");
 
 		translation.append("]}}");
 

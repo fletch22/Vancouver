@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -109,6 +111,24 @@ public class LogActionDao {
 		} finally {
 			closeConnection();
 		}
+	}
+	
+	public ResultSet getUndosForTransactionAndSubesequentTransactions(long tranId) {
+		ResultSet resultSet = null;
+		try {
+			this.connection = getConnection();
+			
+			String transactionAndSubsequentUndo = "{call getTransactionAndSubsequentUndos2(?)}";
+			 
+			PreparedStatement pstmt = this.connection.prepareStatement(transactionAndSubsequentUndo);
+			pstmt.setLong(1, tranId);
+	        resultSet = pstmt.executeQuery();    
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage(), e);
+		} finally {
+			closeConnection();
+		}
+		return resultSet;
 	}
 
 	private void closeConnection() {

@@ -22,10 +22,10 @@ public class BeginTransactionCommand {
 	public StringBuilder toJson() {
 		StringBuilder translation = new StringBuilder();
 
-		translation.append("{'" + CommandExpressor.ROOT_LABEL + "':{'");
+		translation.append("{\"" + CommandExpressor.ROOT_LABEL + "\":{\"");
 		translation.append(CommandExpressor.BEGIN_TRANSACTION);
 		
-		translation.append("':'placeholder'}}");
+		translation.append("\":\"placeholder\"}}");
 
 		return translation;
 	}
