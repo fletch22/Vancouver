@@ -3,8 +3,8 @@ package com.fletch22.orb.transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.fletch22.orb.command.processor.CommandProcessActionPackage;
 import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory;
+import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory.CommandProcessActionPackage;
 import com.fletch22.orb.command.processor.CommandProcessor;
 import com.fletch22.orb.command.processor.OperationResult;
 import com.fletch22.orb.command.processor.OperationResult.OpResult;
@@ -25,9 +25,7 @@ public class UndoService {
 		while (!undoActionBundle.getActions().empty()) {
 			UndoAction undoAction = undoActionBundle.getActions().pop();
 			
-			CommandProcessActionPackage commandProcessActionPackage = new CommandProcessActionPackage();
-			commandProcessActionPackage.setAction(undoAction.action)
-			.setTranDate(undoAction.tranDate);
+			CommandProcessActionPackage commandProcessActionPackage = commandProcessActionPackageFactory.getInstance(undoAction.action, undoAction.tranDate);
 			
 			OperationResult operationResult = this.commandProcessor.executeAction(commandProcessActionPackage);
 			

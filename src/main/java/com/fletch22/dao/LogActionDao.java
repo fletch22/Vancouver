@@ -6,11 +6,16 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import com.fletch22.orb.rollback.UndoAction;
 
 @Component
 public class LogActionDao {
@@ -32,7 +37,7 @@ public class LogActionDao {
 	
 	private Connection getConnection(){
         try {	
-            if(connection == null
+            if (connection == null
             || connection.isClosed()) {
                 connection = DriverManager.getConnection(getConnectionString());
             }
@@ -102,8 +107,8 @@ public class LogActionDao {
 			
 			callableStatement.setString(1, action.toString());
 			callableStatement.setString(2, undoAction.toString());
-			callableStatement.setBigDecimal(3, tranId);
-			callableStatement.setBigDecimal(4, tranDate);
+			callableStatement.setBigDecimal(3, tranDate);
+			callableStatement.setBigDecimal(4, tranId);
 			 
 			callableStatement.executeUpdate();
 		} catch (Exception e) {
@@ -113,8 +118,8 @@ public class LogActionDao {
 		}
 	}
 	
-	public ResultSet getUndosForTransactionAndSubesequentTransactions(long tranId) {
-		ResultSet resultSet = null;
+	public List<UndoAction> getUndosForTransactionAndSubesequentTransactions(long tranId) {
+		List<UndoAction> actions = new ArrayList<UndoAction>();
 		try {
 			this.connection = getConnection();
 			
@@ -122,13 +127,26 @@ public class LogActionDao {
 			 
 			PreparedStatement pstmt = this.connection.prepareStatement(transactionAndSubsequentUndo);
 			pstmt.setLong(1, tranId);
-	        resultSet = pstmt.executeQuery();    
+			ResultSet resultSet = pstmt.executeQuery();
+	        
+			while (resultSet.next()) {
+				
+				String undo = resultSet.getString("undoAction");
+				
+				undo = (null == undo) ? StringUtils.EMPTY: undo;
+				StringBuilder action = new StringBuilder(undo);
+				long date = resultSet.getLong("tranDate");
+				
+				UndoAction undoAction = new UndoAction(action, new BigDecimal(date));
+				
+				actions.add(undoAction);
+			}
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage(), e);
 		} finally {
 			closeConnection();
 		}
-		return resultSet;
+		return actions;
 	}
 
 	private void closeConnection() {

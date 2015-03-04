@@ -12,13 +12,13 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
 import spock.lang.Specification
 
-import com.fletch22.orb.IntegrationSystemInitializer;
+import com.fletch22.orb.IntegrationSystemInitializer
 import com.fletch22.orb.command.CommandBundle
 import com.fletch22.orb.command.orbType.AddOrbTypeCommand
-import com.fletch22.orb.command.orbType.GetListOfOrbTypesCommand;
-import com.fletch22.orb.command.processor.CommandProcessActionPackage
+import com.fletch22.orb.command.orbType.GetListOfOrbTypesCommand
 import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory
 import com.fletch22.orb.command.processor.CommandProcessor
+import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory.CommandProcessActionPackage
 
 @RunWith(SpringJUnit4ClassRunner)
 @ContextConfiguration(locations = 'classpath:/springContext-test.xml')

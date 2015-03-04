@@ -1,6 +1,5 @@
 package com.fletch22.orb.command.processor;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +18,7 @@ import com.fletch22.orb.command.orbType.AddOrbTypeCommand;
 import com.fletch22.orb.command.orbType.DeleteOrbTypeCommand;
 import com.fletch22.orb.command.orbType.DeleteOrbTypeDto;
 import com.fletch22.orb.command.orbType.dto.AddOrbTypeDto;
+import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory.CommandProcessActionPackage;
 import com.fletch22.orb.command.processor.OperationResult.OpResult;
 import com.fletch22.orb.transaction.UndoService;
 
@@ -64,8 +64,6 @@ public class CommandProcessor {
 		if (null == commandProcessActionPackage.getTranId()) {
 			commandProcessActionPackage.setTranId(commandProcessActionPackage.getTranDate());
 		}
-		
-		throw new RuntimeException("Test tran Id.");
 		
 		operationResult = executeAction(commandProcessActionPackage);
 		
