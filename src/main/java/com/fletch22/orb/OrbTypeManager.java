@@ -55,7 +55,7 @@ public class OrbTypeManager {
 	@Autowired
 	private InternalIdGenerator internalIdGenerator;
 	
-	public long createOrbType(AddOrbTypeDto addOrbTypeDto, BigDecimal tranDate, final UndoActionBundle rollbackAction) {
+	public long createOrbType(AddOrbTypeDto addOrbTypeDto, BigDecimal tranDate, final UndoActionBundle undoActionBundle) {
 		long orbInternalTypeId;
 		
 		boolean exists = this.objectTypeCacheService.doesObjectTypeExist(addOrbTypeDto.label);
@@ -68,7 +68,7 @@ public class OrbTypeManager {
 			objectTypeCacheService.createType(nakedOrb);
 			
 			// add delete to rollback action
-			rollbackAction.addAction(this.deleteOrbTypeCommand.toJson(orbInternalTypeId, false), tranDate);
+			undoActionBundle.addUndoAction(this.deleteOrbTypeCommand.toJson(orbInternalTypeId, false), tranDate);
 		}
 		return orbInternalTypeId;
 	}
@@ -79,6 +79,6 @@ public class OrbTypeManager {
 		
 		// Add delete to rollback action
 		Orb orb = nakedToClothedOrbTransformer.convertNakedToClothed(nakedOrb);
-		rollbackAction.addAction(this.addWholeOrbTypeCommand.toJson(orb), tranDate);
+		rollbackAction.addUndoAction(this.addWholeOrbTypeCommand.toJson(orb), tranDate);
 	}
 }

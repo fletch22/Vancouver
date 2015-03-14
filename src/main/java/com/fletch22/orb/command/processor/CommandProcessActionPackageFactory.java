@@ -17,8 +17,10 @@ public class CommandProcessActionPackageFactory {
 	public CommandProcessActionPackage getInstance(StringBuilder action) {
 		CommandProcessActionPackage commandProcessActionPackage = new CommandProcessActionPackage();
 		
+		BigDecimal tranDate = tranDateGenerator.getTranDate();
 		commandProcessActionPackage.setAction(action)
-		.setTranDate(tranDateGenerator.getTranDate())
+		.setTranDate(tranDate)
+		.setTranId(tranDate)
 		.setUndoActionBundle(new UndoActionBundle());
 		
 		return commandProcessActionPackage;
@@ -29,6 +31,7 @@ public class CommandProcessActionPackageFactory {
 		
 		commandProcessActionPackage.setAction(action)
 		.setTranDate(tranDate)
+		.setTranId(tranDate)
 		.setUndoActionBundle(new UndoActionBundle());
 		
 		return commandProcessActionPackage;

@@ -21,7 +21,7 @@ public class CommandBundle {
 	public void addCommand(StringBuilder action) {
 		this.actionList.add(action);
 	}
-
+	
 	public StringBuilder toJson() {
 		StringBuilder translation = new StringBuilder();
 

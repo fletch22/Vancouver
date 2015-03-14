@@ -20,6 +20,8 @@ import com.fletch22.orb.command.orbType.DeleteOrbTypeDto;
 import com.fletch22.orb.command.orbType.dto.AddOrbTypeDto;
 import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory.CommandProcessActionPackage;
 import com.fletch22.orb.command.processor.OperationResult.OpResult;
+import com.fletch22.orb.rollback.UndoAction;
+import com.fletch22.orb.rollback.UndoActionBundle;
 import com.fletch22.orb.transaction.UndoService;
 
 @Component
@@ -60,10 +62,6 @@ public class CommandProcessor {
 	public OperationResult processAction(CommandProcessActionPackage commandProcessActionPackage) {
 		
 		OperationResult operationResult = OperationResult.IN_THE_MIDDLE;
-		
-		if (null == commandProcessActionPackage.getTranId()) {
-			commandProcessActionPackage.setTranId(commandProcessActionPackage.getTranDate());
-		}
 		
 		operationResult = executeAction(commandProcessActionPackage);
 		
@@ -120,6 +118,10 @@ public class CommandProcessor {
 					CommandBundle commandBundle = CommandBundle.fromJson(action);
 					operationResult = execute(commandBundle, commandProcessActionPackage);
 					break;
+				case CommandExpressor.UNDO_BUNDLE: 
+					UndoActionBundle undoActionBundle = UndoActionBundle.fromJson(action);
+					operationResult = execute(undoActionBundle, commandProcessActionPackage);
+					break;
 				default:
 					throw new RuntimeException("Encountered problem trying to determine json command type from '" + action + "'.");
 			}
@@ -127,6 +129,7 @@ public class CommandProcessor {
 			operationResult.action = new StringBuilder(action);
 		} catch (Exception e) {
 			operationResult.opResult = OpResult.FAILURE;
+			operationResult.operationResultException = e;
 		}
 			
 		return operationResult;
@@ -137,6 +140,21 @@ public class CommandProcessor {
 		
 		for (StringBuilder action: commandBundle.getActionList()) {
 			commandProcessActionPackage.setAction(action);
+			operationResult = executeAction(commandProcessActionPackage);
+			
+			if (operationResult.opResult == OpResult.FAILURE) break;
+		}
+		
+		return operationResult;
+	}
+	
+	private OperationResult execute(UndoActionBundle undoActionBundle, final CommandProcessActionPackage commandProcessActionPackage) {
+		OperationResult operationResult = OperationResult.IN_THE_MIDDLE;
+		
+		while (!undoActionBundle.getActions().empty()) {
+			UndoAction undoAction = undoActionBundle.getActions().pop();
+			commandProcessActionPackage.setAction(undoAction.action)
+			.setTranDate(undoAction.tranDate);
 			operationResult = executeAction(commandProcessActionPackage);
 			
 			if (operationResult.opResult == OpResult.FAILURE) break;

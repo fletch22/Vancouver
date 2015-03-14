@@ -34,30 +34,29 @@ public class LogActionService {
 	
 	public void logAction(OperationResult operationResult, CommandProcessActionPackage commandProcessActionPackage) {
 		
-		StringBuilder undoAction = convertRollbackToJsonAction(commandProcessActionPackage.getUndoActionBundle());
+		StringBuilder undoAction = commandProcessActionPackage.getUndoActionBundle().toJson();
 		
+		StringBuilder action = operationResult.action;
 		if (operationResult.isIncludeInternalIdInLog()) {
-			undoAction = logBundler.bundle(operationResult.action, operationResult.internalIdBeforeOperation);
+			action = logBundler.bundle(operationResult.action, operationResult.internalIdBeforeOperation);
 		}
 		
-		this.logActionDao.logAction(operationResult.action, undoAction, commandProcessActionPackage.getTranId(), commandProcessActionPackage.getTranDate());
-	}
-
-	private StringBuilder convertRollbackToJsonAction(UndoActionBundle rollbackAction) {
-		return new StringBuilder(gson.toJson(rollbackAction));
+		this.logActionDao.logAction(action, undoAction, commandProcessActionPackage.getTranId(), commandProcessActionPackage.getTranDate());
 	}
 	
-	public UndoActionBundle getUndoActions(long tranId) {
-		UndoActionBundle undoActionBundle = new UndoActionBundle();
+	public List<UndoActionBundle> getUndoActions(long tranId) {
 		
-		List<UndoAction> actions = this.logActionDao.getUndosForTransactionAndSubesequentTransactions(tranId);
+		List<UndoActionBundle> actions = this.logActionDao.getUndosForTransactionAndSubesequentTransactions(tranId);
 		
-		Stack<UndoAction> stack = new Stack<UndoAction>();
+		Stack<UndoActionBundle> undoActionBundleStack = new Stack<UndoActionBundle>();
 		for(int i = actions.size() - 1; i >= 0; i--) {
-			stack.add(actions.get(i));
+			undoActionBundleStack.add(actions.get(i));
 		}
-		undoActionBundle.addAction(stack);
 		
-		return undoActionBundle;
+		return new ArrayList<UndoActionBundle>(undoActionBundleStack);
+	}
+
+	public void rollbackLog(long longValue) {
+		this.logActionDao.rollbackLog(longValue);
 	}
 }

@@ -189,6 +189,8 @@ public class CommandExpressor {
 	public static final String UNDO_BEGIN_TRANSACTION_INNER_ID = "undoBeginTransactionInnerId";
 	public static final String UNDO_COMMIT_TRANSACTION_INNER_ID = "undoCommitTransactionInnerId";
 	public static final String UPDATE_QUERY = "updateQuery";
+	public static final String UNDO_BUNDLE = "undoBundle";
+	
 	@Autowired
 	JsonUtil jsonUtil;
 	

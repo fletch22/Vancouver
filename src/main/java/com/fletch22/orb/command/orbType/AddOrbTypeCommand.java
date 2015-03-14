@@ -32,17 +32,16 @@ public class AddOrbTypeCommand {
 		translation.append(CommandExpressor.ROOT_LABEL);
 		translation.append("\":{\"");
 		translation.append(CommandExpressor.ADD_ORB_TYPE);
-		translation.append("\":[{\"");
+		translation.append("\":{\"");
 		translation.append(CommandExpressor.ORB_TYPE_LABEL);
 		translation.append("\":\"");
 		translation.append(orbLabelClean);
-		translation.append("\"},{\"");
+		translation.append("\",\"");
 		translation.append(CommandExpressor.ORB_TYPE_INTERNAL_ID);
 		translation.append("\":\"");
 		translation.append(String.valueOf(orbTypeInternalId));
 		translation.append("\"}");
-
-		translation.append("]}}");
+		translation.append("}}");
 
 		return translation;
 	}
@@ -53,18 +52,14 @@ public class AddOrbTypeCommand {
 		JsonObject jsonObject = (JsonObject) parser.parse(action);
 		
 		JsonObject root = jsonObject.getAsJsonObject(CommandExpressor.ROOT_LABEL);
-		JsonArray addOrbType = root.getAsJsonArray(CommandExpressor.ADD_ORB_TYPE);
+		JsonObject addOrbType = root.getAsJsonObject(CommandExpressor.ADD_ORB_TYPE);
 				
-		JsonElement firstElement = addOrbType.get(0);
-		JsonObject firstElementJsonObject = firstElement.getAsJsonObject();
-		JsonElement innerObject = firstElementJsonObject.get(CommandExpressor.ORB_TYPE_LABEL);
+		JsonElement innerObject = addOrbType.get(CommandExpressor.ORB_TYPE_LABEL);
 		JsonPrimitive typeLabelInner = innerObject.getAsJsonPrimitive(); 
 		
 		String label = this.jsonUtil.unescapeJsonIllegals(typeLabelInner.getAsString());
 		
-		JsonElement secondElement = addOrbType.get(1);
-		JsonObject secondElementJsonObject = secondElement.getAsJsonObject();
-		innerObject = secondElementJsonObject.get(CommandExpressor.ORB_TYPE_INTERNAL_ID);
+		innerObject = addOrbType.get(CommandExpressor.ORB_TYPE_INTERNAL_ID);
 		int orbTypeInternalId = innerObject.getAsJsonPrimitive().getAsInt();
 		
 		return new AddOrbTypeDto(label, orbTypeInternalId);

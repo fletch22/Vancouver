@@ -15,10 +15,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import spock.lang.Specification
 
 import com.fletch22.orb.CommandExpressor
+import com.fletch22.orb.IntegrationTests;
 import com.fletch22.orb.TranDateGenerator
 import com.fletch22.orb.command.orbType.AddOrbTypeCommand
 import com.fletch22.orb.command.orbType.DeleteOrbTypeCommand
 
+@org.junit.experimental.categories.Category(IntegrationTests.class)
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/springContext.xml")
 class LogDaoSpec extends Specification {

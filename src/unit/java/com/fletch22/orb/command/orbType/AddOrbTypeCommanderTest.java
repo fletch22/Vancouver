@@ -72,10 +72,6 @@ public class AddOrbTypeCommanderTest {
 			TransformActionToClassName transformActionToClassName = new TransformActionToClassName();
 			Class clazz = transformActionToClassName.transformAction(actionId);
 			
-
-//			Command<AddOrbTypePackage> command = new Command<AddOrbTypePackage>();
-//			AddOrbTypePackage addTypePackageRedyra = command.getObject(jsonCommand, clazz);
-			
 			AddOrbTypePackage addTypePackageRedyra = null;
 			try {
 				addTypePackageRedyra = (AddOrbTypePackage) gson.fromJson(jsonCommand, clazz);

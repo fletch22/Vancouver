@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.fletch22.orb.rollback.UndoAction;
+import com.fletch22.orb.rollback.UndoActionBundle;
 
 @Component
 public class LogActionDao {
@@ -118,8 +119,8 @@ public class LogActionDao {
 		}
 	}
 	
-	public List<UndoAction> getUndosForTransactionAndSubesequentTransactions(long tranId) {
-		List<UndoAction> actions = new ArrayList<UndoAction>();
+	public List<UndoActionBundle> getUndosForTransactionAndSubesequentTransactions(long tranId) {
+		List<UndoActionBundle> actions = new ArrayList<UndoActionBundle>();
 		try {
 			this.connection = getConnection();
 			
@@ -131,15 +132,14 @@ public class LogActionDao {
 	        
 			while (resultSet.next()) {
 				
-				String undo = resultSet.getString("undoAction");
+				String undoActionBundleJson = resultSet.getString("undoAction");
 				
-				undo = (null == undo) ? StringUtils.EMPTY: undo;
-				StringBuilder action = new StringBuilder(undo);
-				long date = resultSet.getLong("tranDate");
+				undoActionBundleJson = (null == undoActionBundleJson) ? StringUtils.EMPTY: undoActionBundleJson;
+				StringBuilder action = new StringBuilder(undoActionBundleJson);
 				
-				UndoAction undoAction = new UndoAction(action, new BigDecimal(date));
+				UndoActionBundle bundle = UndoActionBundle.fromJson(action);
 				
-				actions.add(undoAction);
+				actions.add(bundle);
 			}
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage(), e);
@@ -157,6 +157,23 @@ public class LogActionDao {
 			}
 		} catch (Exception e) {
 			logger.error("Encountered a problem closing the connection: " + e.getMessage(), e);
+		}
+	}
+
+	public void rollbackLog(long tranId) {
+		try {
+			connection = getConnection();
+			
+			String logAction = "{call removeTransactionAndAllAfter6(?)}";
+			CallableStatement callableStatement = connection.prepareCall(logAction);
+			
+			callableStatement.setLong(1, tranId);
+			 
+			callableStatement.executeUpdate();
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage(), e);
+		} finally {
+			closeConnection();
 		}
 	}
 }

@@ -43,6 +43,11 @@ public class ActionSniffer {
 		} else if (actionRaw.startsWith(LOG_BUNDLE_PREFIX)) {
 			prefixInUse = LOG_BUNDLE_PREFIX;
 		}
+		
+		if (null == prefixInUse) {
+			throw new RuntimeException("Could not identify prefix when determining action type.");
+		}
+		
 		return prefixInUse;
 	}
 

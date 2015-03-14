@@ -8,10 +8,14 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
 
+import spock.lang.Ignore
+import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
 import com.fletch22.orb.IntegrationSystemInitializer
+import com.fletch22.orb.IntegrationTests
+import com.fletch22.orb.command.ActionSniffer
 import com.fletch22.orb.command.CommandBundle
 import com.fletch22.orb.command.orbType.AddOrbTypeCommand
 import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory
@@ -21,10 +25,11 @@ import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory.Com
 import com.fletch22.orb.rollback.UndoAction
 import com.fletch22.orb.rollback.UndoActionBundle
 
+@org.junit.experimental.categories.Category(IntegrationTests.class)
 @ContextConfiguration(locations = ['classpath:/springContext-test.xml'])
 class LogActionServiceSpec extends Specification {
 	
-	static Logger logger = LoggerFactory.getLogger(LogActionServiceSpec)
+	@Shared Logger logger = LoggerFactory.getLogger(LogActionServiceSpec)
 	
 	@Autowired
 	IntegrationSystemInitializer initializer
@@ -40,6 +45,9 @@ class LogActionServiceSpec extends Specification {
 	
 	@Autowired
 	CommandProcessActionPackageFactory commandProcessActionPackageFactory;
+	
+	@Autowired
+	ActionSniffer actionSniffer;
 	
 	def setup() {
 		initializer.nukeAndPaveAllIntegratedSystems()
@@ -64,21 +72,18 @@ class LogActionServiceSpec extends Specification {
 		OperationResult operationResult = this.commandProcessor.processAction(commandProcessActionPackage)
 		
 		when:
-		UndoActionBundle undoActionBundle = logActionService.getUndoActions(commandProcessActionPackage.getTranId().longValue())
+		List<UndoActionBundle> undoActionBundleList = logActionService.getUndoActions(commandProcessActionPackage.getTranId().longValue())
 		
 		then:
-		undoActionBundle
-		undoActionBundle.getActions().size() == 1
+		undoActionBundleList
+		undoActionBundleList.size() == 1
+		UndoActionBundle undoActionBundle = undoActionBundleList.get(0)
+		
+		logger.info(undoActionBundle.toJson().toString());
 		
 		where:
-		numberOfAdds << [1, 5]
+		numberOfAdds << [1, 5000]
 	}
-	
-	// Single loggable transactions will be written to the log at once and will get a unique tran id for each inserted row.
-	// However multiple operations during a rollbackable transaction should all get/user the same tran ID; the DB does not allow multiple
-	// rows with the same tran ID. Therefore all the rollback undo operations should be inserted into a single record and only on commit.
-	// A cursor like transaction container will be instantiated whenever a client intiates a transaction. During the cursor's lifetime, all 
-	// operations will add undo operations to the cursor. On commit the undo operations will be written to the DB.
 	
 	@Unroll
 	@Test
@@ -88,19 +93,48 @@ class LogActionServiceSpec extends Specification {
 		setup()
 		
 		BigDecimal tranId;
-		CommandBundle commandBundle = new CommandBundle();
 		
 		CommandProcessActionPackage commandProcessActionPackage = null
+		commandProcessActionPackage = insertTypes(numberOfAdds, commandProcessActionPackage)
+		
+		when:
+		List<UndoActionBundle> undoActionBundleList = logActionService.getUndoActions(commandProcessActionPackage.getTranId().longValue())
+		
+		then:
+		undoActionBundleList
+		UndoActionBundle undoActionBundle = undoActionBundleList.get(0)
+		
+		long lastTranDate = 0
+		def isFirst = true
+		while (!undoActionBundle.getActions().empty()) {
+			UndoAction undoAction = undoActionBundle.getActions().pop()
+			if (!isFirst) {
+				assertTrue(lastTranDate > undoAction.tranDate.longValue())
+			}
+			isFirst = false
+			lastTranDate = undoAction.tranDate.longValue()
+			
+			UndoActionBundle.fromJson(new StringBuilder(undoAction.action));
+			
+			logger.info(undoAction.action.toString());
+		}
+		
+		where:
+		numberOfAdds << [1, 5, 10]
+	}
+	
+	private CommandProcessActionPackage insertTypes(Integer numberOfAdds, CommandProcessActionPackage commandProcessActionPackage) {
+		BigDecimal tranId;
 		for (i in 1..numberOfAdds.intValue()) {
-			def json = addOrbTypeCommand.toJson('foo')
+			def json = addOrbTypeCommand.toJson('foo' + i)
+			
+			CommandBundle commandBundle = new CommandBundle()
+			
 			commandBundle.addCommand(json);
 			commandProcessActionPackage = commandProcessActionPackageFactory.getInstance(commandBundle.toJson())
 			if (null != tranId) {
-				commandProcessActionPackage.setTranId(tranId);
+				commandProcessActionPackage.setTranId(tranId)
 			}
-			
-			logger.info('tranDate {}', commandProcessActionPackage.getTranDate().toString());
-			logger.info('tranId {}', tranId);
 			
 			OperationResult operationResult = this.commandProcessor.processAction(commandProcessActionPackage)
 			
@@ -109,26 +143,6 @@ class LogActionServiceSpec extends Specification {
 			}
 		}
 		
-		when:
-		UndoActionBundle undoActionBundle = logActionService.getUndoActions(commandProcessActionPackage.getTranId().longValue())
-		
-		then:
-		undoActionBundle
-		undoActionBundle.getActions().size() == numberOfAdds
-		
-		long lastTranDate = 0
-		def isFirst = true
-		while (!undoActionBundle.getActions().empty()) {
-			UndoAction undoAction = undoActionBundle.getActions().pop()
-			logger.info("TranDate {}", undoAction.tranDate.toString())
-			if (!isFirst) {
-				assertTrue(lastTranDate > undoAction.tranDate.longValue())
-			}
-			isFirst = false
-			lastTranDate = undoAction.tranDate.longValue()
-		}
-		
-		where:
-		numberOfAdds << [1, 5, 120]
+		return commandProcessActionPackage
 	}
 }

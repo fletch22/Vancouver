@@ -12,9 +12,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
 import spock.lang.Specification
 
+import com.fletch22.orb.IntegrationTests
+import com.fletch22.redis.ObjectTypeCacheService
 import com.fletch22.util.RandomUtil
 
-
+@org.junit.experimental.categories.Category(IntegrationTests.class)
 @RunWith(SpringJUnit4ClassRunner)
 @ContextConfiguration(locations = 'classpath:/springContext-test.xml')
 class OrbTypeServiceIntegrationSpec extends Specification {
@@ -27,9 +29,16 @@ class OrbTypeServiceIntegrationSpec extends Specification {
 	@Autowired
 	RandomUtil randomUtil = new RandomUtil();
 	
+	
+	@Autowired
+	ObjectTypeCacheService objectTypeCacheService;
+	
+	def setup() {
+		objectTypeCacheService.deleteAllTypes();
+	}
+	
 	def cleanup() {
-		// remove all orb types created.
-		orbTypeService.r
+		objectTypeCacheService.deleteAllTypes();
 	}
 
 	@Test
