@@ -52,7 +52,7 @@ public class RollbackService {
 				throw new RuntimeException("Encountered problem while trying to rollback database. Database is out of sync with cache. Consider re-initing from startup: ", operationResult.operationResultException);
 			}
 			
-			this.logActionService.rollbackLog(tranId.longValue());
+			this.logActionService.rollbackToBeforeSpecificTransaction(tranId);
 		}
 		
 	}

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fletch22.orb.TranDateGenerator;
+import com.fletch22.orb.command.transaction.TransactionService;
 import com.fletch22.orb.rollback.UndoActionBundle;
 
 @Component
@@ -13,6 +14,9 @@ public class CommandProcessActionPackageFactory {
 	
 	@Autowired
 	TranDateGenerator tranDateGenerator;
+	
+	@Autowired
+	TransactionService transactionService;
 
 	public CommandProcessActionPackage getInstance(StringBuilder action) {
 		CommandProcessActionPackage commandProcessActionPackage = new CommandProcessActionPackage();

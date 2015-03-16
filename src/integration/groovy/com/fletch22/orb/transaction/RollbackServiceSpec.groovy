@@ -54,7 +54,6 @@ class RollbackServiceSpec extends Specification {
 		
 		then:
 		notThrown(Exception)
-		
 	}
 	
 	private CommandProcessActionPackage insertTypes(Integer numberOfAdds) {

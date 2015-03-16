@@ -115,7 +115,7 @@ class CommandProcessorIntegrationSpec extends Specification {
 		
 		def commandProcessActionPackage = this.commandProcessActionPackageFactory.getInstance(commandBundle.toJson())
 		
-		when:
+		when: 
 		this.commandProcessor.processAction(commandProcessActionPackage)
 		
 		then:

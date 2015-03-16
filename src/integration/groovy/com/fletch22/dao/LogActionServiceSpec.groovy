@@ -2,13 +2,13 @@ package com.fletch22.dao;
 
 import static org.junit.Assert.*
 
+import org.apache.commons.lang3.NotImplementedException
 import org.junit.Test
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
 
-import spock.lang.Ignore
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -121,6 +121,28 @@ class LogActionServiceSpec extends Specification {
 		
 		where:
 		numberOfAdds << [1, 5, 10]
+	}
+	
+	@Unroll
+	@Test
+	def 'test begin and rollback transaction'() {
+		
+		given:
+		setup()
+		
+		assert !this.logActionService.isTransactionInFlight()
+		
+		BigDecimal tranId = 123;
+		this.logActionService.beginTransaction(tranId);
+		
+		assert this.logActionService.isTransactionInFlight()
+		
+		when:
+		this.logActionService.rollbackCurrentTransaction();
+		
+		then:
+		notThrown(Exception)
+		assert !this.logActionService.isTransactionInFlight()
 	}
 	
 	private CommandProcessActionPackage insertTypes(Integer numberOfAdds, CommandProcessActionPackage commandProcessActionPackage) {

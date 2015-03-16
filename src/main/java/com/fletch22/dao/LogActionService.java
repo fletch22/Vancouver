@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -56,7 +57,19 @@ public class LogActionService {
 		return new ArrayList<UndoActionBundle>(undoActionBundleStack);
 	}
 
-	public void rollbackLog(long longValue) {
-		this.logActionDao.rollbackLog(longValue);
+	public void rollbackToBeforeSpecificTransaction(BigDecimal tranId) {
+		this.logActionDao.rollbackToBeforeSpecificTransaction(tranId);
+	}
+	
+	public void rollbackCurrentTransaction() {
+		this.logActionDao.rollbackCurrentTransaction();
+	}
+
+	public void beginTransaction(BigDecimal tranDate) {
+		this.logActionDao.beginTransaction(tranDate);
+	}
+	
+	public boolean isTransactionInFlight() {
+		return this.logActionDao.isTransactionInFlight();
 	}
 }

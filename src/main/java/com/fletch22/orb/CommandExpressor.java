@@ -293,18 +293,6 @@ public class CommandExpressor {
 		return translation;
 	}
 
-	public StringBuilder getJsonCommandCommitTransaction(BigDecimal transactionId) {
-		StringBuilder translation = new StringBuilder();
-
-		translation.append("{\"" + CommandExpressor.ROOT_LABEL + "\":{\"");
-		translation.append(CommandExpressor.COMMIT_TRANSACTION_WITH_ID);
-		translation.append("\":\"");
-		translation.append(transactionId);
-		translation.append("\"}}");
-
-		return translation;
-	}
-
 	public StringBuilder getJsonTransactionCommandWrapper(BigDecimal transactionId, StringBuilder jsonCommandToWrap) {
 		StringBuilder translation = new StringBuilder();
 

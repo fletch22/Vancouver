@@ -14,12 +14,15 @@ import com.fletch22.orb.OrbTypeManager;
 import com.fletch22.orb.TranDateGenerator;
 import com.fletch22.orb.command.ActionSniffer;
 import com.fletch22.orb.command.CommandBundle;
+import com.fletch22.orb.command.orbType.AddBaseOrbTypeCommand;
 import com.fletch22.orb.command.orbType.AddOrbTypeCommand;
 import com.fletch22.orb.command.orbType.DeleteOrbTypeCommand;
 import com.fletch22.orb.command.orbType.DeleteOrbTypeDto;
 import com.fletch22.orb.command.orbType.dto.AddOrbTypeDto;
 import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory.CommandProcessActionPackage;
 import com.fletch22.orb.command.processor.OperationResult.OpResult;
+import com.fletch22.orb.command.transaction.BeginTransactionCommand;
+import com.fletch22.orb.command.transaction.TransactionService;
 import com.fletch22.orb.rollback.UndoAction;
 import com.fletch22.orb.rollback.UndoActionBundle;
 import com.fletch22.orb.transaction.UndoService;
@@ -33,10 +36,16 @@ public class CommandProcessor {
 	ActionSniffer actionSniffer;
 	
 	@Autowired
+	AddBaseOrbTypeCommand addOrbBaseTypeCommand;
+	
+	@Autowired
 	AddOrbTypeCommand addOrbTypeCommand;
 	
 	@Autowired
 	DeleteOrbTypeCommand deleteOrbTypeCommand;
+	
+	@Autowired
+	BeginTransactionCommand beginTransactionCommand;
 	
 	@Autowired
 	OrbTypeManager orbTypeManager;
@@ -51,6 +60,9 @@ public class CommandProcessor {
 	LogActionService logActionService;
 	
 	@Autowired
+	TransactionService transactionService;
+	
+	@Autowired
 	LogBundler logBundler;
 	
 	@Autowired
@@ -62,9 +74,7 @@ public class CommandProcessor {
 	public OperationResult processAction(CommandProcessActionPackage commandProcessActionPackage) {
 		
 		OperationResult operationResult = OperationResult.IN_THE_MIDDLE;
-		
 		operationResult = executeAction(commandProcessActionPackage);
-		
 		operationResult.internalIdAfterOperation = this.internalIdGenerator.getCurrentId();
 			
 		tryHandlingAndRollback(commandProcessActionPackage, operationResult);
@@ -83,15 +93,14 @@ public class CommandProcessor {
 
 	private void handleLoggingAndRollback(CommandProcessActionPackage commandProcessActionPackage, OperationResult operationResult) {
 		if (operationResult.shouldBeLogged
-		&& !commandProcessActionPackage.isInRestoreMode()) {
-			logActionService.logAction(operationResult, commandProcessActionPackage);
-        } else {
-            if (operationResult.opResult != OpResult.SUCCESS)
-            {
-                // Rollback transaction
-            	this.rollbackService.undoActions(commandProcessActionPackage.getUndoActionBundle());
-            }
-        }
+		&& !commandProcessActionPackage.isInRestoreMode()
+		&& operationResult.opResult == OpResult.SUCCESS) {
+			 logActionService.logAction(operationResult, commandProcessActionPackage);
+		}
+		
+		if (operationResult.opResult != OpResult.SUCCESS) {
+        	this.rollbackService.undoActions(commandProcessActionPackage.getUndoActionBundle());
+        } 
 	}
 
 	public OperationResult executeAction(CommandProcessActionPackage commandProcessActionPackage) {
@@ -105,6 +114,10 @@ public class CommandProcessor {
 				case CommandExpressor.ADD_ORB_TYPE:
 					AddOrbTypeDto addOrbTypeDto = this.addOrbTypeCommand.fromJson(action.toString());
 					operationResult = execute(addOrbTypeDto, commandProcessActionPackage);
+					break;
+				case CommandExpressor.BEGIN_TRANSACTION:
+					this.beginTransactionCommand.fromJson(action.toString());
+					operationResult = executeBeginTransaction(commandProcessActionPackage);
 					break;
 				case CommandExpressor.LOG_BUNDLE:
 					LogBundleDto logBundleDto = this.logBundler.unbundle(action);
@@ -135,6 +148,20 @@ public class CommandProcessor {
 		return operationResult;
 	}
 	
+	private OperationResult executeBeginTransaction(CommandProcessActionPackage commandProcessActionPackage) {
+		OperationResult operationResult = OperationResult.IN_THE_MIDDLE;
+		
+		try {
+			transactionService.beginTransaction(commandProcessActionPackage.getTranDate());
+			operationResult.opResult = OpResult.SUCCESS;
+		} catch (Exception e) {
+			operationResult.opResult = OpResult.FAILURE;
+			operationResult.operationResultException = e;
+		}
+		
+		return operationResult;
+	}
+
 	private OperationResult execute(CommandBundle commandBundle, final CommandProcessActionPackage commandProcessActionPackage) {
 		OperationResult operationResult = OperationResult.IN_THE_MIDDLE;
 		

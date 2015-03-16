@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fletch22.orb.CommandExpressor;
-import com.fletch22.orb.command.orbType.dto.UpdateOrbTypeLabelDto;
 import com.fletch22.util.JsonUtil;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -14,7 +13,7 @@ import com.google.gson.JsonParser;
 @Component
 public class BeginTransactionCommand {
 
-	Logger logger = LoggerFactory.getLogger(UpdateOrbTypeLabelDto.class);
+	Logger logger = LoggerFactory.getLogger(BeginTransactionCommand.class);
 	
 	@Autowired
 	JsonUtil jsonUtil;

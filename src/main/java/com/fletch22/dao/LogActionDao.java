@@ -22,6 +22,8 @@ import com.fletch22.orb.rollback.UndoActionBundle;
 public class LogActionDao {
 	
 	Logger logger = LoggerFactory.getLogger(LogActionDao.class);
+	
+	private static final BigDecimal NO_TRANSACTION_FOUND = new BigDecimal("-1"); 
 	private Connection connection = null;
 	
 	@Value("${db.log.host}")
@@ -160,14 +162,14 @@ public class LogActionDao {
 		}
 	}
 
-	public void rollbackLog(long tranId) {
+	public void rollbackToBeforeSpecificTransaction(BigDecimal tranId) {
 		try {
 			connection = getConnection();
 			
 			String logAction = "{call removeTransactionAndAllAfter6(?)}";
 			CallableStatement callableStatement = connection.prepareCall(logAction);
 			
-			callableStatement.setLong(1, tranId);
+			callableStatement.setBigDecimal(1, tranId);
 			 
 			callableStatement.executeUpdate();
 		} catch (Exception e) {
@@ -175,5 +177,70 @@ public class LogActionDao {
 		} finally {
 			closeConnection();
 		}
+	}
+
+	public void beginTransaction(BigDecimal tranId) {
+		try {
+			connection = getConnection();
+			
+			String beginTransaction = "{call recordTransactionStart3(?, ?)}";
+			CallableStatement callableStatement = connection.prepareCall(beginTransaction);
+			
+			callableStatement.setBigDecimal(1, tranId);
+			callableStatement.registerOutParameter(2, java.sql.Types.INTEGER);
+			 
+			callableStatement.executeUpdate();
+			 
+			int result = callableStatement.getInt(2);
+			
+			if (result == 0) {
+				throw new RuntimeException("Encountered problem while trying to begin transaction with id '" + tranId.toString() + "'. Transaction cannot be set -- perhaps because it already is set.");
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage(), e);
+		} finally {
+			closeConnection();
+		}
+	}
+	
+	public void rollbackCurrentTransaction() {
+		try {
+			connection = getConnection();
+			
+			BigDecimal tranId = getCurrentTransactionIfAny();
+		
+			if (NO_TRANSACTION_FOUND.compareTo(tranId) != 0) {
+				this.rollbackToBeforeSpecificTransaction(tranId);
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage(), e);
+		} finally {
+			closeConnection();
+		}
+	}
+	
+	public boolean isTransactionInFlight() {
+		return NO_TRANSACTION_FOUND.compareTo(getCurrentTransactionIfAny()) != 0;
+	}
+	
+	private BigDecimal getCurrentTransactionIfAny() {
+		BigDecimal tranId;
+		try {
+			connection = getConnection();
+			
+			String beginTransaction = "{call getAnyOrphanedTransactions2(?)}";
+			CallableStatement callableStatement = connection.prepareCall(beginTransaction);
+			
+			callableStatement.registerOutParameter(1, java.sql.Types.INTEGER);
+			 
+			callableStatement.executeUpdate();
+			 
+			tranId = callableStatement.getBigDecimal(1);
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage(), e);
+		} finally {
+			closeConnection();
+		}
+		return tranId;
 	}
 }
