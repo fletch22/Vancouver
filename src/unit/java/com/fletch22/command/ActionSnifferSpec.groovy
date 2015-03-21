@@ -41,5 +41,22 @@ class ActionSnifferSpec extends Specification {
 		verb
 		verb == CommandExpressor.ADD_ORB_TYPE
 	}
+	
+	@Test
+	def 'test root verb sniffer multi'() {
+		
+		given:
+		def json = addOrbTypeCommand.toJson('foo');
+		def verb
+		
+		when:
+		1000.times {
+			verb = this.actionSniffer.getVerb(json);
+		}
+		
+		then:
+		verb
+		verb == CommandExpressor.ADD_ORB_TYPE
+	}
 
 }

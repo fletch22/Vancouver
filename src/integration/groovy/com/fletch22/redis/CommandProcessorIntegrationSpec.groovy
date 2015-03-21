@@ -3,27 +3,29 @@ package com.fletch22.redis;
 import static org.junit.Assert.*
 
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
 import spock.lang.Specification
 
 import com.fletch22.orb.IntegrationSystemInitializer
-import com.fletch22.orb.IntegrationTests;
+import com.fletch22.orb.IntegrationTests
 import com.fletch22.orb.command.CommandBundle
 import com.fletch22.orb.command.orbType.AddOrbTypeCommand
 import com.fletch22.orb.command.orbType.GetListOfOrbTypesCommand
 import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory
 import com.fletch22.orb.command.processor.CommandProcessor
+import com.fletch22.orb.command.processor.OperationResult
 import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory.CommandProcessActionPackage
+import com.fletch22.orb.command.processor.OperationResult.OpResult
+import com.fletch22.orb.command.transaction.BeginTransactionCommand
+import com.fletch22.orb.command.transaction.CommitTransactionCommand
+import com.fletch22.orb.command.transaction.TransactionService
 
 @org.junit.experimental.categories.Category(IntegrationTests.class)
-@RunWith(SpringJUnit4ClassRunner)
-@ContextConfiguration(locations = 'classpath:/springContext-test.xml')
+@ContextConfiguration(locations = ['classpath:/springContext-test.xml'])
 class CommandProcessorIntegrationSpec extends Specification {
 	
 	static Logger logger = LoggerFactory.getLogger(CommandProcessorIntegrationSpec)
@@ -45,6 +47,15 @@ class CommandProcessorIntegrationSpec extends Specification {
 	
 	@Autowired
 	GetListOfOrbTypesCommand getListOfOrbTypesCommand
+	
+	@Autowired
+	BeginTransactionCommand beginTransactionCommand
+	
+	@Autowired
+	CommitTransactionCommand commitTransactionCommand
+	
+	@Autowired
+	TransactionService transactionService
 	
 	def setup() {
 		initializer.nukeAndPaveAllIntegratedSystems();
@@ -122,5 +133,42 @@ class CommandProcessorIntegrationSpec extends Specification {
 		commandProcessActionPackage.undoActionBundle
 		commandProcessActionPackage.undoActionBundle.getActions().size() == 0
 		objectTypeCacheService.getTypes().size() == 0
+	}
+	
+	@Test
+	def 'test begin, commit transaction integration with backend'() {
+		
+		given: 'The beginning of a transaction'
+		
+		def json = this.beginTransactionCommand.toJson()
+		CommandProcessActionPackage commandProcessActionPackage = this.commandProcessActionPackageFactory.getInstance(json)
+		OperationResult operationResult = commandProcessor.executeAction(commandProcessActionPackage)
+		
+		assert operationResult.opResult == OpResult.SUCCESS
+		
+		BigDecimal tranId = (BigDecimal) operationResult.operationResultObject
+						
+		and: 'an orb type is added'
+		def typeLabel = 'foo'
+		json = this.addOrbTypeCommand.toJson(typeLabel)
+		commandProcessActionPackage = this.commandProcessActionPackageFactory.getInstance(json)
+		operationResult = commandProcessor.executeAction(commandProcessActionPackage)
+		
+		assert operationResult.opResult == OpResult.SUCCESS
+		
+		when: 'the transaction is committed'
+		json = this.commitTransactionCommand.toJson(tranId)
+		commandProcessActionPackage = this.commandProcessActionPackageFactory.getInstance(json)
+		operationResult = commandProcessor.executeAction(commandProcessActionPackage)
+		
+		if (operationResult.operationResultException != null) {
+			logger.info("Exception message: {}", operationResult.operationResultException.printStackTrace())
+		}
+		
+		then: 'the transaction persists'
+		operationResult.opResult == OpResult.SUCCESS
+		
+		and: 'there is no longer a "current" transaction '
+		!this.transactionService.isTransactionInFlight()
 	}
 }

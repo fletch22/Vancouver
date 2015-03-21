@@ -22,6 +22,8 @@ import com.fletch22.orb.command.orbType.dto.AddOrbTypeDto;
 import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory.CommandProcessActionPackage;
 import com.fletch22.orb.command.processor.OperationResult.OpResult;
 import com.fletch22.orb.command.transaction.BeginTransactionCommand;
+import com.fletch22.orb.command.transaction.CommitTransactionCommand;
+import com.fletch22.orb.command.transaction.CommitTransactionDto;
 import com.fletch22.orb.command.transaction.TransactionService;
 import com.fletch22.orb.rollback.UndoAction;
 import com.fletch22.orb.rollback.UndoActionBundle;
@@ -46,6 +48,9 @@ public class CommandProcessor {
 	
 	@Autowired
 	BeginTransactionCommand beginTransactionCommand;
+	
+	@Autowired
+	CommitTransactionCommand commitTransactionCommand;
 	
 	@Autowired
 	OrbTypeManager orbTypeManager;
@@ -95,7 +100,7 @@ public class CommandProcessor {
 		if (operationResult.shouldBeLogged
 		&& !commandProcessActionPackage.isInRestoreMode()
 		&& operationResult.opResult == OpResult.SUCCESS) {
-			 logActionService.logAction(operationResult, commandProcessActionPackage);
+			logActionService.logAction(operationResult, commandProcessActionPackage);
 		}
 		
 		if (operationResult.opResult != OpResult.SUCCESS) {
@@ -118,6 +123,10 @@ public class CommandProcessor {
 				case CommandExpressor.BEGIN_TRANSACTION:
 					this.beginTransactionCommand.fromJson(action.toString());
 					operationResult = executeBeginTransaction(commandProcessActionPackage);
+					break;
+				case CommandExpressor.COMMIT_TRANSACTION_WITH_ID:
+					CommitTransactionDto commitTransactionDto = this.commitTransactionCommand.fromJson(action.toString());
+					operationResult = execute(commitTransactionDto, commandProcessActionPackage);
 					break;
 				case CommandExpressor.LOG_BUNDLE:
 					LogBundleDto logBundleDto = this.logBundler.unbundle(action);
@@ -148,11 +157,25 @@ public class CommandProcessor {
 		return operationResult;
 	}
 	
+	private OperationResult execute(CommitTransactionDto commitTransactionDto, CommandProcessActionPackage commandProcessActionPackage) {
+		OperationResult operationResult = OperationResult.IN_THE_MIDDLE;
+		
+		try {
+			transactionService.commitTransaction(commitTransactionDto.tranId, commandProcessActionPackage.getTranDate());
+			operationResult.opResult = OpResult.SUCCESS;
+		} catch (Exception e) {
+			operationResult.opResult = OpResult.FAILURE;
+			operationResult.operationResultException = e;
+		}
+		
+		return operationResult;
+	}
+	
 	private OperationResult executeBeginTransaction(CommandProcessActionPackage commandProcessActionPackage) {
 		OperationResult operationResult = OperationResult.IN_THE_MIDDLE;
 		
 		try {
-			transactionService.beginTransaction(commandProcessActionPackage.getTranDate());
+			operationResult.operationResultObject = transactionService.beginTransaction(commandProcessActionPackage.getTranDate());
 			operationResult.opResult = OpResult.SUCCESS;
 		} catch (Exception e) {
 			operationResult.opResult = OpResult.FAILURE;

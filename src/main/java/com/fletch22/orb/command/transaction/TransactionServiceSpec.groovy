@@ -52,4 +52,5 @@ class TransactionServiceSpec extends Specification {
 		then:
 		tranId.compareTo(this.transactionService.@transactionIdInFlight) == 0
 	}
+	
 }

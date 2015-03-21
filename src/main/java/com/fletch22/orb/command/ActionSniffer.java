@@ -45,7 +45,7 @@ public class ActionSniffer {
 		}
 		
 		if (null == prefixInUse) {
-			throw new RuntimeException("Could not identify prefix when determining action type.");
+			throw new RuntimeException("Could not identify prefix when determining action type for action: " + actionRaw);
 		}
 		
 		return prefixInUse;

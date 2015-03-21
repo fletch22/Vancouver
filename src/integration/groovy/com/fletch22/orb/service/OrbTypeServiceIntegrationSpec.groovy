@@ -61,7 +61,7 @@ class OrbTypeServiceIntegrationSpec extends Specification {
 		
 		given:
 		String label = randomUtil.getRandomString();
-		int max = 1000
+		int max = 10
 		
 		when:
 		logger.info("Start create type.");

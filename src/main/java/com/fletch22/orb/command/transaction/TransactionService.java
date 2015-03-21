@@ -51,4 +51,9 @@ public class TransactionService {
 		}
 		return tranId;
 	}
+
+	public void commitTransaction(BigDecimal tranId, BigDecimal tranDate) {
+		this.logActionService.commitTransaction(tranId);
+		this.transactionIdInFlight = NO_TRANSACTION_IN_FLIGHT;
+	}
 }

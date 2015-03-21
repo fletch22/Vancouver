@@ -10,6 +10,7 @@ import com.fletch22.orb.command.orbType.AddOrbTypeCommand;
 import com.fletch22.orb.command.orbType.DeleteOrbTypeCommand;
 import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory.CommandProcessActionPackage;
 import com.fletch22.orb.command.transaction.BeginTransactionCommand;
+import com.fletch22.orb.command.transaction.CommitTransactionCommand;
 import com.fletch22.orb.rollback.UndoActionBundle;
 
 @Component
@@ -31,6 +32,9 @@ public class CommandProcessActionPackageMother {
 	
 	@Autowired
 	DeleteOrbTypeCommand deleteOrbTypeCommand;
+	
+	@Autowired
+	CommitTransactionCommand commitTransactionCommand;
 
 	public CommandProcessActionPackage getGoodOne() {
 
@@ -52,6 +56,8 @@ public class CommandProcessActionPackageMother {
 			action = this.addBaseOrbTypeCommand.toJson("foo");
 		} else if (commandClazz == DeleteOrbTypeCommand.class) {
 			action = this.deleteOrbTypeCommand.toJson(123, true);
+		} else if (commandClazz == CommitTransactionCommand.class) {
+			action = this.commitTransactionCommand.toJson(new BigDecimal(123));
 		} else {
 			String name = (null == commandClazz) ? "<null>": commandClazz.getName(); 
 			throw new RuntimeException(String.format("Encountered problem with command class passed to method. Did not recognize %s", name));

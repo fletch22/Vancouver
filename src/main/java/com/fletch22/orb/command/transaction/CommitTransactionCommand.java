@@ -2,11 +2,14 @@ package com.fletch22.orb.command.transaction;
 
 import java.math.BigDecimal;
 
+import org.springframework.stereotype.Component;
+
 import com.fletch22.orb.CommandExpressor;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 
+@Component
 public class CommitTransactionCommand {
 
 	public StringBuilder toJson(BigDecimal transactionId) {

@@ -24,6 +24,8 @@ import com.fletch22.orb.command.orbType.dto.AddOrbTypeDto
 import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory.CommandProcessActionPackage
 import com.fletch22.orb.command.processor.OperationResult.OpResult
 import com.fletch22.orb.command.transaction.BeginTransactionCommand
+import com.fletch22.orb.command.transaction.CommitTransactionCommand;
+import com.fletch22.orb.command.transaction.CommitTransactionDto;
 import com.fletch22.orb.command.transaction.TransactionService;
 import com.fletch22.orb.transaction.UndoService
 
@@ -69,6 +71,9 @@ class CommandProcessorSpec extends Specification {
 		
 		OrbTypeManager orbTypeManager = Mock()
 		this.commandProcessor.orbTypeManager = orbTypeManager
+		
+		CommitTransactionCommand commitTransactionCommand = Mock()
+		//this.commandProcessor.commitTransactionCommand
 		
 		orbTypeManager.createOrbType(*_) >> 333.longValue()
 
@@ -130,5 +135,21 @@ class CommandProcessorSpec extends Specification {
 		shouldBeLogged 	| isInRestoreMode	| opResult			| numberOfUndoActionsRemaining
 		true			| false				| OpResult.SUCCESS	| 1
 		false			| false				| OpResult.FAILURE	| 1
+	}
+	
+	@Test
+	def 'test commit transaction'() {
+		
+		given:
+		CommandProcessActionPackage commandProcessActionPackage = this.commandProcessActionPackageMother.getGoodOne(CommitTransactionCommand.class)
+		CommitTransactionDto commitTransactionDto = new CommitTransactionDto()
+		commitTransactionDto.tranId = new BigDecimal(123);
+		
+		when:
+		def operationResult = this.commandProcessor.execute(commitTransactionDto, commandProcessActionPackage)
+		
+		then:
+		operationResult.opResult == OpResult.SUCCESS
+		
 	}
 }

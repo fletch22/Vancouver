@@ -1,21 +1,16 @@
 package com.fletch22.dao;
 
 import java.math.BigDecimal;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-import org.apache.commons.lang3.NotImplementedException;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fletch22.orb.InternalIdGenerator;
 import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory.CommandProcessActionPackage;
 import com.fletch22.orb.command.processor.OperationResult;
-import com.fletch22.orb.rollback.UndoAction;
 import com.fletch22.orb.rollback.UndoActionBundle;
 import com.google.gson.Gson;
 
@@ -71,5 +66,9 @@ public class LogActionService {
 	
 	public boolean isTransactionInFlight() {
 		return this.logActionDao.isTransactionInFlight();
+	}
+
+	public void commitTransaction(BigDecimal tranId) {
+		this.logActionDao.commitTransaction(tranId);
 	}
 }

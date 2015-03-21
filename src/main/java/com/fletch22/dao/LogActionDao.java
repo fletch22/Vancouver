@@ -113,7 +113,9 @@ public class LogActionDao {
 			callableStatement.setBigDecimal(3, tranDate);
 			callableStatement.setBigDecimal(4, tranId);
 			 
+			logger.info("start update");
 			callableStatement.executeUpdate();
+			logger.info("end update.");
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage(), e);
 		} finally {
@@ -242,5 +244,20 @@ public class LogActionDao {
 			closeConnection();
 		}
 		return tranId;
+	}
+
+	public void commitTransaction(BigDecimal tranId) {
+		try {
+			connection = getConnection();
+			
+			String resetCurrentTransaction = "{call resetCurrentTransaction()}";
+			CallableStatement callableStatement = connection.prepareCall(resetCurrentTransaction);
+			
+			callableStatement.executeUpdate();
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage(), e);
+		} finally {
+			closeConnection();
+		}
 	}
 }

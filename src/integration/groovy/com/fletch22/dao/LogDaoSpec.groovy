@@ -47,7 +47,7 @@ class LogDaoSpec extends Specification {
 	}
 	
 	def cleanup() {
-		//logDao.clearOutDatabase()
+		logDao.clearOutDatabase()
 	}
 
 	@Test

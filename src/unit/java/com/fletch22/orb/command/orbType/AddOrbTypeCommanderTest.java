@@ -37,8 +37,8 @@ public class AddOrbTypeCommanderTest {
 		
 		logger.info("Start");
 		
+		String json = addOrbTypeCommand.toJson("foo").toString();
 		for (int i = 0; i < 100000; i++) {
-			String json = addOrbTypeCommand.toJson("foo").toString();
 			AddOrbTypeDto dto = addOrbTypeCommand.fromJson(json);
 		}
 		logger.info("End");
