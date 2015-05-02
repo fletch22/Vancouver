@@ -2,34 +2,42 @@ package com.fletch22.orb.command.transaction;
 
 import java.math.BigDecimal;
 
+import org.joda.time.DateTime;
+import org.joda.time.Minutes;
+import org.joda.time.Seconds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.fletch22.dao.LogActionService;
+import com.fletch22.dao.LogActionDao;
 import com.fletch22.orb.TranDateGenerator;
+import com.fletch22.util.NowFactory;
 
 @Component
 public class TransactionService {
 	
 	private static final BigDecimal NO_TRANSACTION_IN_FLIGHT = null;
+	private static int transactionTimeoutInSeconds = 10;
 
 	@Autowired 
 	TranDateGenerator tranDateGenerator;
 	
 	@Autowired
-	LogActionService logActionService;
-
+	LogActionDao logActionDao;
+	
+	@Autowired
+	NowFactory nowFactory;
+	
 	private BigDecimal transactionIdInFlight;
 	
-	public BigDecimal beginTransaction(BigDecimal tranDate) {
+	public BigDecimal beginTransaction(BigDecimal tranId) {
 		if (isTransactionInFlight()) {
-			String tranId = (NO_TRANSACTION_IN_FLIGHT == this.transactionIdInFlight) ? "(null)" : this.transactionIdInFlight.toString();
-			throw new RuntimeException("Encountered problem while trying to begin a transaction. There is already a transaction underway '" + tranId + "'. The system does not yet support nested transactions.");
+			String tranIdMessage = (NO_TRANSACTION_IN_FLIGHT == this.transactionIdInFlight) ? "(null)" : this.transactionIdInFlight.toString();
+			throw new RuntimeException("Encountered problem while trying to begin a transaction. There is already a transaction underway '" + tranIdMessage + "'. The system does not yet support nested transactions.");
 		}
 		
-		this.transactionIdInFlight = getTranId();
+		this.logActionDao.recordTransactionStart(tranId);
 		
-		this.logActionService.beginTransaction(tranDate);
+		this.transactionIdInFlight = tranId;
 		
 		return this.transactionIdInFlight;
 	}
@@ -41,19 +49,45 @@ public class TransactionService {
 	public boolean isTransactionInFlight() {
 		return NO_TRANSACTION_IN_FLIGHT != this.transactionIdInFlight;
 	}
-	
-	public BigDecimal getTranId() {
-		BigDecimal tranId;
-		if (isTransactionInFlight()) {
-			tranId = transactionIdInFlight;
-		} else {
-			tranId = tranDateGenerator.getTranDate();
-		}
-		return tranId;
-	}
 
 	public void commitTransaction(BigDecimal tranId, BigDecimal tranDate) {
-		this.logActionService.commitTransaction(tranId);
+		commitTransaction(tranId);
 		this.transactionIdInFlight = NO_TRANSACTION_IN_FLIGHT;
+	}
+	
+	public BigDecimal generateTranDate() {
+		return this.tranDateGenerator.getTranDate();
+	}
+	
+	public BigDecimal generateTranId() { 
+		return this.tranDateGenerator.getTranDate();
+	}
+
+	public void rollbackToBeforeSpecificTransaction(BigDecimal tranId) {
+		this.logActionDao.rollbackToBeforeSpecificTransaction(tranId);
+	}
+	
+	public void rollbackCurrentTransaction() {
+		this.logActionDao.rollbackCurrentTransaction();
+		this.transactionIdInFlight = NO_TRANSACTION_IN_FLIGHT;
+	}
+
+	public void commitTransaction(BigDecimal tranId) {
+		this.logActionDao.resetCurrentTransaction(tranId);
+	}
+	
+	public boolean doesDatabaseHaveAnExpiredTransaction() {
+		boolean hasExpiredTransaction = false;
+		BigDecimal tranId = this.logActionDao.getCurrentTransaction();
+		
+		DateTime tranDate = null;
+		if (tranId != NO_TRANSACTION_IN_FLIGHT) {
+			tranDate = this.tranDateGenerator.convertToNearestMillisecond(tranId);
+			DateTime currentDateTime = nowFactory.getNow();
+			Seconds secondsBetween = Seconds.secondsBetween(currentDateTime, tranDate);
+			hasExpiredTransaction = (secondsBetween.getSeconds() > transactionTimeoutInSeconds);
+		}
+		
+		return hasExpiredTransaction;
 	}
 }

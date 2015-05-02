@@ -1,7 +1,9 @@
 package com.fletch22.orb;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +54,14 @@ public class TranDateGenerator {
 	private BigDecimal getCurrentTranDate() {
 		BigDecimal currentTranDateRaw = new BigDecimal(nowFactory.getNow().getMillis());
 		return currentTranDateRaw;
+	}
+	
+	public DateTime convertToNearestMillisecond(BigDecimal tranDate) {
+		
+		tranDate = tranDate.setScale(0, RoundingMode.FLOOR);
+		String dateString = String.valueOf(tranDate);
+		
+		return new DateTime(Long.parseLong(dateString)); 
 	}
 
 	private BigDecimal ensureGoodLogDate(BigDecimal currentTranDateRaw) {

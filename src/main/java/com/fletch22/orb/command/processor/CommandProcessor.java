@@ -175,7 +175,7 @@ public class CommandProcessor {
 		OperationResult operationResult = OperationResult.IN_THE_MIDDLE;
 		
 		try {
-			operationResult.operationResultObject = transactionService.beginTransaction(commandProcessActionPackage.getTranDate());
+			operationResult.operationResultObject = transactionService.beginTransaction(commandProcessActionPackage.getTranId());
 			operationResult.opResult = OpResult.SUCCESS;
 		} catch (Exception e) {
 			operationResult.opResult = OpResult.FAILURE;

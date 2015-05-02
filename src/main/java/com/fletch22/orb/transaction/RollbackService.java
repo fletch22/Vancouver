@@ -14,6 +14,7 @@ import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory.Com
 import com.fletch22.orb.command.processor.CommandProcessor;
 import com.fletch22.orb.command.processor.OperationResult;
 import com.fletch22.orb.command.processor.OperationResult.OpResult;
+import com.fletch22.orb.command.transaction.TransactionService;
 import com.fletch22.orb.rollback.UndoAction;
 import com.fletch22.orb.rollback.UndoActionBundle;
 
@@ -29,6 +30,9 @@ public class RollbackService {
 	CommandProcessor commandProcessor;
 	
 	@Autowired
+	TransactionService transactionService;
+	
+	@Autowired
 	CommandProcessActionPackageFactory commandProcessPackageFactory;
 	
 	public void rollbackToSpecificTransaction(BigDecimal tranId) {
@@ -40,8 +44,6 @@ public class RollbackService {
 			
 			UndoAction undoAction = undoActionBundle.getActions().pop();
 			
-			logger.info(undoAction.action.toString());
-			
 			CommandProcessActionPackage commandProcesActionPackage = this.commandProcessPackageFactory.getInstance(undoAction.action, undoAction.tranDate);
 			commandProcesActionPackage.setIsInRestoreMode(true);
 			
@@ -52,8 +54,7 @@ public class RollbackService {
 				throw new RuntimeException("Encountered problem while trying to rollback database. Database is out of sync with cache. Consider re-initing from startup: ", operationResult.operationResultException);
 			}
 			
-			this.logActionService.rollbackToBeforeSpecificTransaction(tranId);
+			this.transactionService.rollbackToBeforeSpecificTransaction(tranId);
 		}
-		
 	}
 }

@@ -2,7 +2,6 @@ package com.fletch22.dao;
 
 import static org.junit.Assert.*
 
-import org.apache.commons.lang3.NotImplementedException
 import org.junit.Test
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -15,6 +14,7 @@ import spock.lang.Unroll
 
 import com.fletch22.orb.IntegrationSystemInitializer
 import com.fletch22.orb.IntegrationTests
+import com.fletch22.orb.TranDateGenerator
 import com.fletch22.orb.command.ActionSniffer
 import com.fletch22.orb.command.CommandBundle
 import com.fletch22.orb.command.orbType.AddOrbTypeCommand
@@ -22,8 +22,10 @@ import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory
 import com.fletch22.orb.command.processor.CommandProcessor
 import com.fletch22.orb.command.processor.OperationResult
 import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory.CommandProcessActionPackage
+import com.fletch22.orb.command.transaction.TransactionService
 import com.fletch22.orb.rollback.UndoAction
 import com.fletch22.orb.rollback.UndoActionBundle
+import com.fletch22.orb.service.OrbTypeService
 
 @org.junit.experimental.categories.Category(IntegrationTests.class)
 @ContextConfiguration(locations = ['classpath:/springContext-test.xml'])
@@ -48,6 +50,18 @@ class LogActionServiceSpec extends Specification {
 	
 	@Autowired
 	ActionSniffer actionSniffer;
+	
+	@Autowired
+	TransactionService transactionService;
+	
+	@Autowired
+	TranDateGenerator tranDateGenerator;
+	
+	@Autowired
+	LogActionDao logActionDao;
+	
+	@Autowired
+	OrbTypeService orbTypeService;
 	
 	def setup() {
 		initializer.nukeAndPaveAllIntegratedSystems()
@@ -123,28 +137,21 @@ class LogActionServiceSpec extends Specification {
 		numberOfAdds << [1, 5, 10]
 	}
 	
-	@Unroll
 	@Test
-	def 'test begin and rollback transaction'() {
+	def 'testThrowException if new transaction started'() {
 		
 		given:
 		setup()
 		
-		assert !this.logActionService.isTransactionInFlight()
-		
-		BigDecimal tranId = 123;
-		this.logActionService.beginTransaction(tranId);
-		
-		assert this.logActionService.isTransactionInFlight()
+		this.logActionDao.recordTransactionStart(this.transactionService.generateTranId());
 		
 		when:
-		this.logActionService.rollbackCurrentTransaction();
+		this.transactionService.beginTransaction(123);
 		
 		then:
-		notThrown(Exception)
-		assert !this.logActionService.isTransactionInFlight()
+		thrown Exception
 	}
-	
+		
 	private CommandProcessActionPackage insertTypes(Integer numberOfAdds, CommandProcessActionPackage commandProcessActionPackage) {
 		BigDecimal tranId;
 		for (i in 1..numberOfAdds.intValue()) {

@@ -2,10 +2,14 @@
 Scenario 1: Transaction Tracking Mismatch in DBs
 
 Given a system that says it has a transaction in flight
-When the database says there is no transaction in flight
+When the user calls begin/rollback transaction 
+And the database says the submitted tranId does not match the the tranId in database (in flight) 
 Then throw an exception 
 And Set the transaction in flight to "not in flight"
-And restore the database. 
+And restore from the database. 
+
+Given a transaction that is rolled back
+Then reset the currentTransactionId in the db.
 
 Given a system that does not have a transaction in flight (TIF)
 And the database claims it has a TIF
@@ -16,7 +20,7 @@ Given a system that has a transaction in flight (TIF)
 And a client attempts to perform an operation without the correct tran id
 Then throw an exception saying the operation was blocked due to a lock on the db.
 
-Scenario 2: Transaction Handling During Startup
+Scenario 2: Transaction Handling During Startup - see Initialization.java
 
 Given a system starting up (in startup mode)
 And the database has a transaction in flight (TIF)
