@@ -4,23 +4,36 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.fletch22.dao.BaseLogActionDao.ActionInfo;
 import com.fletch22.orb.InternalIdGenerator;
+import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory;
 import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory.CommandProcessActionPackage;
+import com.fletch22.orb.command.processor.CommandProcessor;
 import com.fletch22.orb.command.processor.OperationResult;
 import com.fletch22.orb.rollback.UndoActionBundle;
 import com.google.gson.Gson;
 
 @Component
 public class LogActionService {
+	
+	Logger logger = LoggerFactory.getLogger(LogActionService.class);
 
 	@Autowired
 	LogActionDao logActionDao;
 
 	@Autowired
 	InternalIdGenerator internalIdGenerator;
+	
+	@Autowired
+	CommandProcessActionPackageFactory commandProcessActionPackageFactory;
+	
+	@Autowired
+	CommandProcessor commandProcessor;
 
 	@Autowired
 	LogBundler logBundler;
@@ -49,5 +62,18 @@ public class LogActionService {
 		}
 
 		return new ArrayList<UndoActionBundle>(undoActionBundleStack);
+	}
+
+	public void loadCacheFromDb() {
+		List<ActionInfo> actionInfoList = this.logActionDao.getAllActions(); 
+		
+		for (ActionInfo actionInfo: actionInfoList) {
+			CommandProcessActionPackage commandProcessActionPackage = this.commandProcessActionPackageFactory.getInstanceForRestoreMode(actionInfo.action, actionInfo.tranDate);
+			OperationResult operationResult = commandProcessor.processAction(commandProcessActionPackage);
+			
+			if (operationResult.equals(OperationResult.FAILURE)) {
+				throw new RuntimeException("Encountered problem reloading database into cache.", operationResult.operationResultException);
+			}
+		}
 	}
 }

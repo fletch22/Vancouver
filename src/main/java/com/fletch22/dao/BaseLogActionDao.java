@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -110,9 +111,9 @@ Logger logger = LoggerFactory.getLogger(LogActionDao.class);
 			callableStatement.setBigDecimal(3, tranDate);
 			callableStatement.setBigDecimal(4, tranId);
 			 
-			logger.info("start update");
+			logger.debug("start update");
 			callableStatement.executeUpdate();
-			logger.info("end update.");
+			logger.debug("end update.");
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage(), e);
 		} finally {
@@ -149,6 +150,35 @@ Logger logger = LoggerFactory.getLogger(LogActionDao.class);
 		}
 		return actions;
 	}
+	
+	public List<ActionInfo> getAllActions() {
+		List<ActionInfo> actions = new ArrayList<ActionInfo>();
+		try {
+			this.connection = getConnection();
+			
+			String transactionAndSubsequentUndo = "{call getLog(0, 9999999999999999)}";
+			
+			PreparedStatement pstmt = this.connection.prepareStatement(transactionAndSubsequentUndo);
+			ResultSet resultSet = pstmt.executeQuery();
+	        
+			while (resultSet.next()) {
+				ActionInfo actionInfo = new ActionInfo();
+				actionInfo.action = new StringBuilder(resultSet.getString("action"));
+				actionInfo.tranDate = resultSet.getBigDecimal("tran");
+				actions.add(actionInfo);
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage(), e);
+		} finally {
+			closeConnection();
+		}
+		return actions;
+	}
+	
+	public class ActionInfo {
+		public StringBuilder action;
+		public BigDecimal tranDate;
+	}
 
 	protected void closeConnection() {
 		try {
@@ -167,7 +197,6 @@ Logger logger = LoggerFactory.getLogger(LogActionDao.class);
 			
 			String logAction = "{call removeTransactionAndAllAfter6(?)}";
 			CallableStatement callableStatement = connection.prepareCall(logAction);
-			
 			
 			callableStatement.setBigDecimal(1, tranId);
 			 
@@ -223,7 +252,7 @@ Logger logger = LoggerFactory.getLogger(LogActionDao.class);
 		return NO_TRANSACTION_FOUND.compareTo(getCurrentTransactionIfAny()) != 0;
 	}
 	
-	private BigDecimal getCurrentTransactionIfAny() {
+	public BigDecimal getCurrentTransactionIfAny() {
 		BigDecimal tranId;
 		try {
 			connection = getConnection();
@@ -244,7 +273,7 @@ Logger logger = LoggerFactory.getLogger(LogActionDao.class);
 		return tranId;
 	}
 
-	public void resetCurrentTransaction(BigDecimal tranId) {
+	public void resetCurrentTransaction() {
 		try {
 			connection = getConnection();
 			
@@ -257,28 +286,5 @@ Logger logger = LoggerFactory.getLogger(LogActionDao.class);
 		} finally {
 			closeConnection();
 		}
-	}
-	
-	public BigDecimal getCurrentTransaction() {
-		BigDecimal tranId;
-		
-		try {
-			connection = getConnection();
-			
-			String getAnyOrphanedTransaction2 = "{call getAnyOrphanedTransactions2()}";
-			CallableStatement callableStatement = connection.prepareCall(getAnyOrphanedTransaction2);
-			
-			callableStatement.registerOutParameter(1, java.sql.Types.INTEGER);
-			 
-			callableStatement.executeUpdate();
-			 
-			tranId = callableStatement.getBigDecimal(1);
-		} catch (Exception e) {
-			throw new RuntimeException(e.getMessage(), e);
-		} finally {
-			closeConnection();
-		}
-		
-		return tranId;
 	}
 }

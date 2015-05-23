@@ -22,6 +22,7 @@ import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory
 import com.fletch22.orb.command.processor.CommandProcessor
 import com.fletch22.orb.command.processor.OperationResult
 import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory.CommandProcessActionPackage
+import com.fletch22.orb.command.processor.OperationResult.OpResult;
 import com.fletch22.orb.command.transaction.TransactionService
 import com.fletch22.orb.rollback.UndoAction
 import com.fletch22.orb.rollback.UndoActionBundle
@@ -62,7 +63,7 @@ class LogActionServiceSpec extends Specification {
 	
 	@Autowired
 	OrbTypeService orbTypeService;
-	
+		
 	def setup() {
 		initializer.nukeAndPaveAllIntegratedSystems()
 	}
@@ -151,6 +152,55 @@ class LogActionServiceSpec extends Specification {
 		then:
 		thrown Exception
 	}
+	
+	@Test
+	def 'testLoadLogAction'() {
+		
+		given:
+		setup()
+		
+		String jsonAddOrb = addOrbTypeCommand.toJson("testLabel")
+		
+		CommandProcessActionPackage commandProcessActionPackage = this.commandProcessActionPackageFactory.getInstance(new StringBuilder(jsonAddOrb));
+		
+		OperationResult operationResult = this.commandProcessor.processAction(commandProcessActionPackage);
+		
+		when:
+		List<String> allActionsList = this.logActionDao.getAllActions()
+		
+		for (String action : allActionsList) {
+			logger.info(action);
+		}
+		
+		then:
+		operationResult.opResult == OpResult.SUCCESS
+		allActionsList.size() > 0
+	}
+	
+	@Test
+	def 'testLoadLoadDb'() {
+		
+		given:
+		setup()
+		
+		String jsonAddOrb = addOrbTypeCommand.toJson("testLabel")
+		
+		CommandProcessActionPackage commandProcessActionPackage = this.commandProcessActionPackageFactory.getInstance(new StringBuilder(jsonAddOrb));
+		
+		OperationResult operationResult = this.commandProcessor.processAction(commandProcessActionPackage);
+		
+		when:
+		List<String> allActionsList = this.logActionDao.getAllActions()
+		
+		for (String action : allActionsList) {
+			logger.info(action);
+		}
+		
+		then:
+		operationResult.opResult == OpResult.SUCCESS
+		allActionsList.size() > 0
+	}
+
 		
 	private CommandProcessActionPackage insertTypes(Integer numberOfAdds, CommandProcessActionPackage commandProcessActionPackage) {
 		BigDecimal tranId;

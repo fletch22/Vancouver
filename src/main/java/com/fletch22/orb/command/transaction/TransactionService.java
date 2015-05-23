@@ -3,8 +3,9 @@ package com.fletch22.orb.command.transaction;
 import java.math.BigDecimal;
 
 import org.joda.time.DateTime;
-import org.joda.time.Minutes;
 import org.joda.time.Seconds;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,6 +15,8 @@ import com.fletch22.util.NowFactory;
 
 @Component
 public class TransactionService {
+	
+	Logger logger = LoggerFactory.getLogger(TransactionService.class);
 	
 	private static final BigDecimal NO_TRANSACTION_IN_FLIGHT = null;
 	private static int transactionTimeoutInSeconds = 10;
@@ -49,11 +52,6 @@ public class TransactionService {
 	public boolean isTransactionInFlight() {
 		return NO_TRANSACTION_IN_FLIGHT != this.transactionIdInFlight;
 	}
-
-	public void commitTransaction(BigDecimal tranId, BigDecimal tranDate) {
-		commitTransaction(tranId);
-		this.transactionIdInFlight = NO_TRANSACTION_IN_FLIGHT;
-	}
 	
 	public BigDecimal generateTranDate() {
 		return this.tranDateGenerator.getTranDate();
@@ -72,19 +70,21 @@ public class TransactionService {
 		this.transactionIdInFlight = NO_TRANSACTION_IN_FLIGHT;
 	}
 
-	public void commitTransaction(BigDecimal tranId) {
-		this.logActionDao.resetCurrentTransaction(tranId);
+	public void commitTransaction() {
+		this.logActionDao.resetCurrentTransaction();
+		this.transactionIdInFlight = NO_TRANSACTION_IN_FLIGHT;
 	}
 	
 	public boolean doesDatabaseHaveAnExpiredTransaction() {
 		boolean hasExpiredTransaction = false;
-		BigDecimal tranId = this.logActionDao.getCurrentTransaction();
+		BigDecimal tranId = this.logActionDao.getCurrentTransactionIfAny();
 		
 		DateTime tranDate = null;
+		
 		if (tranId != NO_TRANSACTION_IN_FLIGHT) {
 			tranDate = this.tranDateGenerator.convertToNearestMillisecond(tranId);
 			DateTime currentDateTime = nowFactory.getNow();
-			Seconds secondsBetween = Seconds.secondsBetween(currentDateTime, tranDate);
+			Seconds secondsBetween = Seconds.secondsBetween(tranDate, currentDateTime);
 			hasExpiredTransaction = (secondsBetween.getSeconds() > transactionTimeoutInSeconds);
 		}
 		

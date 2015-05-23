@@ -17,7 +17,7 @@ import com.fletch22.util.JsonUtil;
 
 @Component
 public class OrbTypeManager {
-
+	
 	public static final String ORBTYPE_LABEL = "ORB_TYPE";
     public static final String ORBTYPE_QUERY_RESULT_LABEL = "ORB_TYPE_QUERY_RESULT";
 	public static final int ORBTYPE_TYPE_ID_ORDINAL = 0;
@@ -67,7 +67,7 @@ public class OrbTypeManager {
 			
 			objectTypeCacheService.createType(nakedOrb);
 			
-			// add delete to rollback action
+			// Add delete to rollback action
 			undoActionBundle.addUndoAction(this.deleteOrbTypeCommand.toJson(orbInternalTypeId, false), tranDate);
 		}
 		return orbInternalTypeId;

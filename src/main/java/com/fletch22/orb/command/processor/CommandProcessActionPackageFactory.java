@@ -30,12 +30,13 @@ public class CommandProcessActionPackageFactory {
 		return commandProcessActionPackage;
 	}
 	
-	public CommandProcessActionPackage getInstance(StringBuilder action, BigDecimal tranDate) {
+	public CommandProcessActionPackage getInstanceForRestoreMode(StringBuilder action, BigDecimal tranDate) {
 		CommandProcessActionPackage commandProcessActionPackage = new CommandProcessActionPackage();
 		
 		commandProcessActionPackage.setAction(action)
 		.setTranDate(tranDate)
 		.setTranId(tranDate)
+		.setIsInRestoreMode(true)
 		.setUndoActionBundle(new UndoActionBundle());
 		
 		return commandProcessActionPackage;

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fletch22.orb.CommandExpressor;
+import com.fletch22.orb.InternalIdGenerator;
 import com.fletch22.orb.OrbTypeManager;
 import com.fletch22.orb.command.orbType.dto.AddOrbTypeDto;
 import com.fletch22.util.JsonUtil;
@@ -18,12 +19,19 @@ public class AddOrbTypeCommand {
 	@Autowired
 	JsonUtil jsonUtil;
 	
+	@Autowired
+	InternalIdGenerator internalIdGenerator;
+	
 	public StringBuilder toJson(String orbLabel) {
 		 return this.toJson(orbLabel, OrbTypeManager.ORBTYPE_INTERNAL_ID_UNSET);
 	}
 	
 	public StringBuilder toJson(String orbLabel, long orbTypeInternalId) {
 		StringBuilder translation = new StringBuilder();
+		
+		if (orbTypeInternalId == OrbTypeManager.ORBTYPE_INTERNAL_ID_UNSET) {
+			orbTypeInternalId = internalIdGenerator.getNewId();
+		}
 
 		String orbLabelClean = this.jsonUtil.escapeJsonIllegals(orbLabel);
 

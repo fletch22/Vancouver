@@ -31,59 +31,59 @@ import com.fletch22.orb.transaction.UndoService;
 
 @Component
 public class CommandProcessor {
-	
+
 	Logger logger = LoggerFactory.getLogger(CommandProcessor.class);
-	
+
 	@Autowired
 	ActionSniffer actionSniffer;
-	
+
 	@Autowired
 	AddBaseOrbTypeCommand addOrbBaseTypeCommand;
-	
+
 	@Autowired
 	AddOrbTypeCommand addOrbTypeCommand;
-	
+
 	@Autowired
 	DeleteOrbTypeCommand deleteOrbTypeCommand;
-	
+
 	@Autowired
 	BeginTransactionCommand beginTransactionCommand;
-	
+
 	@Autowired
 	CommitTransactionCommand commitTransactionCommand;
-	
+
 	@Autowired
 	OrbTypeManager orbTypeManager;
-	
+
 	@Autowired
 	InternalIdGenerator internalIdGenerator;
-	
+
 	@Autowired
 	TranDateGenerator tranDateGenerator;
-	
+
 	@Autowired
 	LogActionService logActionService;
-	
+
 	@Autowired
 	TransactionService transactionService;
-	
+
 	@Autowired
 	LogBundler logBundler;
-	
+
 	@Autowired
 	UndoService rollbackService;
 
 	@Autowired
 	CommandProcessActionPackageFactory commandProcessActionPackageFactory;
-	
+
 	public OperationResult processAction(CommandProcessActionPackage commandProcessActionPackage) {
-		
+
 		OperationResult operationResult = OperationResult.IN_THE_MIDDLE;
 		operationResult = executeAction(commandProcessActionPackage);
 		operationResult.internalIdAfterOperation = this.internalIdGenerator.getCurrentId();
-			
+
 		tryHandlingAndRollback(commandProcessActionPackage, operationResult);
-		
+
 		return operationResult;
 	}
 
@@ -91,89 +91,87 @@ public class CommandProcessor {
 		try {
 			handleLoggingAndRollback(commandProcessActionPackage, operationResult);
 		} catch (Exception e) {
-	        Exception explained = new Exception("Orb DB and SQL DB are now out of sync. Restart is recommended.", e);
-	        throw new RuntimeException(explained);
-	    }
+			Exception explained = new Exception("Orb DB and SQL DB are now out of sync. Restart is recommended.", e);
+			throw new RuntimeException(explained);
+		}
 	}
 
 	private void handleLoggingAndRollback(CommandProcessActionPackage commandProcessActionPackage, OperationResult operationResult) {
-		if (operationResult.shouldBeLogged
-		&& !commandProcessActionPackage.isInRestoreMode()
-		&& operationResult.opResult == OpResult.SUCCESS) {
+		if (operationResult.shouldBeLogged && !commandProcessActionPackage.isInRestoreMode() && operationResult.opResult == OpResult.SUCCESS) {
 			logActionService.logAction(operationResult, commandProcessActionPackage);
 		}
-		
+
 		if (operationResult.opResult != OpResult.SUCCESS) {
-        	this.rollbackService.undoActions(commandProcessActionPackage.getUndoActionBundle());
-        } 
+			this.rollbackService.undoActions(commandProcessActionPackage.getUndoActionBundle());
+		}
 	}
 
 	public OperationResult executeAction(CommandProcessActionPackage commandProcessActionPackage) {
 		OperationResult operationResult = OperationResult.IN_THE_MIDDLE;
-		
+
 		try {
 			StringBuilder action = commandProcessActionPackage.getAction();
-			
+
 			String actionVerb = this.actionSniffer.getVerb(action);
 			switch (actionVerb) {
-				case CommandExpressor.ADD_ORB_TYPE:
-					AddOrbTypeDto addOrbTypeDto = this.addOrbTypeCommand.fromJson(action.toString());
-					operationResult = execute(addOrbTypeDto, commandProcessActionPackage);
-					break;
-				case CommandExpressor.BEGIN_TRANSACTION:
-					this.beginTransactionCommand.fromJson(action.toString());
-					operationResult = executeBeginTransaction(commandProcessActionPackage);
-					break;
-				case CommandExpressor.COMMIT_TRANSACTION_WITH_ID:
-					CommitTransactionDto commitTransactionDto = this.commitTransactionCommand.fromJson(action.toString());
-					operationResult = execute(commitTransactionDto, commandProcessActionPackage);
-					break;
-				case CommandExpressor.LOG_BUNDLE:
-					LogBundleDto logBundleDto = this.logBundler.unbundle(action);
-					operationResult = execute(logBundleDto, commandProcessActionPackage);
-					break;
-				case CommandExpressor.REMOVE_ORB_TYPE:
-					DeleteOrbTypeDto deleteOrbTypeDto = this.deleteOrbTypeCommand.fromJson(action.toString());
-					operationResult = execute(deleteOrbTypeDto, commandProcessActionPackage);
-					break;
-				case CommandExpressor.COMMAND_BUNDLE: 
-					CommandBundle commandBundle = CommandBundle.fromJson(action);
-					operationResult = execute(commandBundle, commandProcessActionPackage);
-					break;
-				case CommandExpressor.UNDO_BUNDLE: 
-					UndoActionBundle undoActionBundle = UndoActionBundle.fromJson(action);
-					operationResult = execute(undoActionBundle, commandProcessActionPackage);
-					break;
-				default:
-					throw new RuntimeException("Encountered problem trying to determine json command type from '" + action + "'.");
+			case CommandExpressor.ADD_ORB_TYPE:
+				AddOrbTypeDto addOrbTypeDto = this.addOrbTypeCommand.fromJson(action.toString());
+				operationResult = execute(addOrbTypeDto, commandProcessActionPackage);
+				break;
+			case CommandExpressor.BEGIN_TRANSACTION:
+				this.beginTransactionCommand.fromJson(action.toString());
+				operationResult = executeBeginTransaction(commandProcessActionPackage);
+				break;
+			case CommandExpressor.COMMIT_TRANSACTION_WITH_ID:
+				CommitTransactionDto commitTransactionDto = this.commitTransactionCommand.fromJson(action.toString());
+				operationResult = execute(commitTransactionDto, commandProcessActionPackage);
+				break;
+			case CommandExpressor.LOG_BUNDLE:
+				LogBundleDto logBundleDto = this.logBundler.unbundle(action);
+				operationResult = execute(logBundleDto, commandProcessActionPackage);
+				break;
+			case CommandExpressor.REMOVE_ORB_TYPE:
+				DeleteOrbTypeDto deleteOrbTypeDto = this.deleteOrbTypeCommand.fromJson(action.toString());
+				operationResult = execute(deleteOrbTypeDto, commandProcessActionPackage);
+				break;
+			case CommandExpressor.COMMAND_BUNDLE:
+				CommandBundle commandBundle = CommandBundle.fromJson(action);
+				operationResult = execute(commandBundle, commandProcessActionPackage);
+				break;
+			case CommandExpressor.UNDO_BUNDLE:
+				UndoActionBundle undoActionBundle = UndoActionBundle.fromJson(action);
+				operationResult = execute(undoActionBundle, commandProcessActionPackage);
+				break;
+			default:
+				throw new RuntimeException("Encountered problem trying to determine json command type from '" + action + "'.");
 			}
-			
+
 			operationResult.action = new StringBuilder(action);
 		} catch (Exception e) {
 			operationResult.opResult = OpResult.FAILURE;
 			operationResult.operationResultException = e;
 		}
-			
+
 		return operationResult;
 	}
-	
+
 	private OperationResult execute(CommitTransactionDto commitTransactionDto, CommandProcessActionPackage commandProcessActionPackage) {
 		OperationResult operationResult = OperationResult.IN_THE_MIDDLE;
-		
+
 		try {
-			transactionService.commitTransaction(commitTransactionDto.tranId, commandProcessActionPackage.getTranDate());
+			transactionService.commitTransaction();
 			operationResult.opResult = OpResult.SUCCESS;
 		} catch (Exception e) {
 			operationResult.opResult = OpResult.FAILURE;
 			operationResult.operationResultException = e;
 		}
-		
+
 		return operationResult;
 	}
-	
+
 	private OperationResult executeBeginTransaction(CommandProcessActionPackage commandProcessActionPackage) {
 		OperationResult operationResult = OperationResult.IN_THE_MIDDLE;
-		
+
 		try {
 			operationResult.operationResultObject = transactionService.beginTransaction(commandProcessActionPackage.getTranId());
 			operationResult.opResult = OpResult.SUCCESS;
@@ -181,84 +179,85 @@ public class CommandProcessor {
 			operationResult.opResult = OpResult.FAILURE;
 			operationResult.operationResultException = e;
 		}
-		
+
 		return operationResult;
 	}
 
 	private OperationResult execute(CommandBundle commandBundle, final CommandProcessActionPackage commandProcessActionPackage) {
 		OperationResult operationResult = OperationResult.IN_THE_MIDDLE;
-		
-		for (StringBuilder action: commandBundle.getActionList()) {
+
+		for (StringBuilder action : commandBundle.getActionList()) {
 			commandProcessActionPackage.setAction(action);
 			operationResult = executeAction(commandProcessActionPackage);
-			
-			if (operationResult.opResult == OpResult.FAILURE) break;
+
+			if (operationResult.opResult == OpResult.FAILURE)
+				break;
 		}
-		
+
 		return operationResult;
 	}
-	
+
 	private OperationResult execute(UndoActionBundle undoActionBundle, final CommandProcessActionPackage commandProcessActionPackage) {
 		OperationResult operationResult = OperationResult.IN_THE_MIDDLE;
-		
+
 		while (!undoActionBundle.getActions().empty()) {
 			UndoAction undoAction = undoActionBundle.getActions().pop();
-			commandProcessActionPackage.setAction(undoAction.action)
-			.setTranDate(undoAction.tranDate);
+			commandProcessActionPackage.setAction(undoAction.action).setTranDate(undoAction.tranDate);
 			operationResult = executeAction(commandProcessActionPackage);
-			
-			if (operationResult.opResult == OpResult.FAILURE) break;
+
+			if (operationResult.opResult == OpResult.FAILURE)
+				break;
 		}
-		
+
 		return operationResult;
 	}
 
 	private OperationResult execute(LogBundleDto logBundle, CommandProcessActionPackage commandProcessActionPackage) {
-		
+
 		OperationResult operationResult = OperationResult.IN_THE_MIDDLE;
 		operationResult.internalIdBeforeOperation = this.internalIdGenerator.getCurrentId();
-	
+
 		try {
 			this.internalIdGenerator.setCurrentId(logBundle.internalIdBeforeOperation);
 			commandProcessActionPackage.setAction(logBundle.action);
-			
+
 			operationResult = processAction(commandProcessActionPackage);
 		} catch (Exception e) {
 			operationResult = new OperationResult(OpResult.FAILURE, e);
 		}
-		
+
 		return operationResult;
 	}
 
 	public OperationResult execute(AddOrbTypeDto addOrbTypeDto, CommandProcessActionPackage commandProcessActionPackage) {
-		
+
 		OperationResult operationResult = new OperationResult(OpResult.IN_THE_MIDDLE);
-		
+
 		try {
 			operationResult.internalIdBeforeOperation = this.internalIdGenerator.getCurrentId();
 			long orbInternalId = this.orbTypeManager.createOrbType(addOrbTypeDto, commandProcessActionPackage.getTranDate(), commandProcessActionPackage.getUndoActionBundle());
-			
+
 			operationResult = new OperationResult(OpResult.SUCCESS, orbInternalId, true);
 		} catch (Exception e) {
 			operationResult = new OperationResult(OpResult.FAILURE, e);
 		}
-		
+
 		return operationResult;
 	}
-	
+
 	private OperationResult execute(DeleteOrbTypeDto deleteOrbTypeDto, CommandProcessActionPackage commandProcessActionPackage) {
-		
+
 		OperationResult operationResult = OperationResult.IN_THE_MIDDLE;
 		operationResult.internalIdBeforeOperation = this.internalIdGenerator.getCurrentId();
-	
+
 		try {
 			this.orbTypeManager.deleteOrbType(deleteOrbTypeDto, commandProcessActionPackage.getTranDate(), commandProcessActionPackage.getUndoActionBundle());
-			
+
 			operationResult = new OperationResult(OpResult.SUCCESS, true);
 		} catch (Exception e) {
 			operationResult = new OperationResult(OpResult.FAILURE, e);
 		}
-		
+
 		return operationResult;
 	}
 }

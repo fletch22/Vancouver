@@ -24,7 +24,7 @@ public class TranDateGenerator {
 	
 	// NOTE:01-24-2015:chris.flesche: When the system resets its clock, this could screw up this class' tranDate. 
 	// This would cause bad ordering of items in the log. So this class is designed to pause if it detects that the current date time is *BEFORE* the last calculated tranDate.
-	// To reiterate, this would happen only if the system time clock was rewound to correct a slightly fast clock. In practice, the system would be a few milliseconds off. If we simply pause
+	// In other words, this would happen only if the system time clock was rewound to correct a slightly fast clock. In practice, the system would be a few milliseconds off. If we simply pause
 	// the thread until the current time exceeds the last calculate tranDate, our next calculate tranDate will safely be after the last calculated tranDate. This number represents
 	// the maximum time we should wait to "catch up" before we throw up our hands and throw an exception.
 	private static final int MAX_MILLIS_TO_PAUSE = 3000;

@@ -8,17 +8,25 @@ Then throw an exception
 And Set the transaction in flight to "not in flight"
 And restore from the database. 
 
+Status:
+
 Given a transaction that is rolled back
 Then reset the currentTransactionId in the db.
+
+Status: Done.
 
 Given a system that does not have a transaction in flight (TIF)
 And the database claims it has a TIF
 And the database is not in startup mode
 Then throw an exception so that the client knows he's got bad code.
 
+Status:
+
 Given a system that has a transaction in flight (TIF)
 And a client attempts to perform an operation without the correct tran id
 Then throw an exception saying the operation was blocked due to a lock on the db.
+
+Status:
 
 Scenario 2: Transaction Handling During Startup - see Initialization.java
 
@@ -30,15 +38,21 @@ Then set the daemon's TIF id to the database
 And finally the TIF is not expired
 Then wait for the next client operation
 
+Status:
+
 Given a system starting up (in startup mode)
 And the database has a transaction in flight (TIF)
 And the TIF is expired
 Then rollback the cache db
 And rollback the transaction in the relation db
 
+Status:
+
 Given a system starting up (in startup mode)
 And the database does not have a transaction in flight (TIF)
 Then restore the db cache 
+
+Status:
 
 Scenario 3: Committing a Transaction
 Given a tranaction
@@ -46,9 +60,11 @@ When the transaction is comitted
 Then the current transaction in the database should be reset
 And the transaction in flight (TIF) in the domain should be reset to "not in flight"
 
+Status:
+
 Given a system under test
 And the tests clear out the database
 Then the current transaction field should be reset
 
-
+Status:
  
