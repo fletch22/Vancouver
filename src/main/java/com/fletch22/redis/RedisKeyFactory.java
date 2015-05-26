@@ -8,13 +8,19 @@ public class RedisKeyFactory {
 	
 	@Autowired
 	ObjectTypeKeyGenerator objectTypeKeyGenerator;
+	
+	@Autowired
+	ObjectKeyGenerator objectKeyGenerator;
 
 	public KeyGenerator getKeyGenerator(ObjectType orbType) {
 		
-		if (orbType.equals(ObjectType.TYPE)) {
-			return this.objectTypeKeyGenerator;
-		} else {
-			throw new RuntimeException("Could not create key generator because type not recognized.");
+		switch (orbType) {
+			case TYPE:
+				return this.objectTypeKeyGenerator;
+			case INSTANCE:
+				return this.objectKeyGenerator;
+			default:
+				throw new RuntimeException("Could not create key generator because type not recognized.");
 		}
 	}
 }

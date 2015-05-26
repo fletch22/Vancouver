@@ -63,7 +63,7 @@ public class OrbTypeManager {
 			throw new RuntimeException("Encountered problem trying to create orb type. Appears orb type '" + addOrbTypeDto.label + "' already exists.");
 		} else {
 			orbInternalTypeId = this.internalIdGenerator.getNewId();
-			NakedOrb nakedOrb = new NakedOrb(orbInternalTypeId, addOrbTypeDto.label, tranDate);
+			NakedOrb nakedOrb = new NakedOrb(orbInternalTypeId, OrbTypeManager.ORBTYPE_BASETYPE_ID, addOrbTypeDto.label, tranDate);
 			
 			objectTypeCacheService.createType(nakedOrb);
 			

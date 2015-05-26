@@ -10,8 +10,10 @@ public class NakedToClothedOrbTransformer {
 	public Orb convertNakedToClothed(NakedOrb nakedOrb) {
 		
 		long internalId = new Long(nakedOrb.getOrbInternalId()).longValue();
-		BigDecimal bigDecimal = new BigDecimal(nakedOrb.getTranDate());
+		long internalTypeId = new Long(nakedOrb.getOrbTypeInternalId()).longValue();
 		
-		return new Orb(internalId, bigDecimal, nakedOrb.getUserDefinedProperties());
+		BigDecimal tranDate = new BigDecimal(nakedOrb.getTranDate());
+		
+		return new Orb(internalId, internalTypeId, tranDate, nakedOrb.getUserDefinedProperties());
 	}
 }

@@ -10,14 +10,18 @@ import com.fletch22.dao.LogBundler;
 import com.fletch22.dao.LogBundler.LogBundleDto;
 import com.fletch22.orb.CommandExpressor;
 import com.fletch22.orb.InternalIdGenerator;
+import com.fletch22.orb.Orb;
+import com.fletch22.orb.OrbManager;
 import com.fletch22.orb.OrbTypeManager;
 import com.fletch22.orb.TranDateGenerator;
 import com.fletch22.orb.command.ActionSniffer;
 import com.fletch22.orb.command.CommandBundle;
+import com.fletch22.orb.command.orb.AddOrbCommand;
 import com.fletch22.orb.command.orbType.AddBaseOrbTypeCommand;
 import com.fletch22.orb.command.orbType.AddOrbTypeCommand;
 import com.fletch22.orb.command.orbType.DeleteOrbTypeCommand;
 import com.fletch22.orb.command.orbType.DeleteOrbTypeDto;
+import com.fletch22.orb.command.orbType.dto.AddOrbDto;
 import com.fletch22.orb.command.orbType.dto.AddOrbTypeDto;
 import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory.CommandProcessActionPackage;
 import com.fletch22.orb.command.processor.OperationResult.OpResult;
@@ -39,6 +43,9 @@ public class CommandProcessor {
 
 	@Autowired
 	AddBaseOrbTypeCommand addOrbBaseTypeCommand;
+	
+	@Autowired
+	AddOrbCommand addOrbCommand;
 
 	@Autowired
 	AddOrbTypeCommand addOrbTypeCommand;
@@ -55,6 +62,9 @@ public class CommandProcessor {
 	@Autowired
 	OrbTypeManager orbTypeManager;
 
+	@Autowired
+	OrbManager orbManager;
+	
 	@Autowired
 	InternalIdGenerator internalIdGenerator;
 
@@ -118,6 +128,10 @@ public class CommandProcessor {
 				AddOrbTypeDto addOrbTypeDto = this.addOrbTypeCommand.fromJson(action.toString());
 				operationResult = execute(addOrbTypeDto, commandProcessActionPackage);
 				break;
+			case CommandExpressor.ADD_ORB:
+				AddOrbDto addOrbDto = this.addOrbCommand.fromJson(action.toString());
+				operationResult = execute(addOrbDto, commandProcessActionPackage);
+				break;
 			case CommandExpressor.BEGIN_TRANSACTION:
 				this.beginTransactionCommand.fromJson(action.toString());
 				operationResult = executeBeginTransaction(commandProcessActionPackage);
@@ -147,6 +161,20 @@ public class CommandProcessor {
 			}
 
 			operationResult.action = new StringBuilder(action);
+		} catch (Exception e) {
+			operationResult.opResult = OpResult.FAILURE;
+			operationResult.operationResultException = e;
+		}
+
+		return operationResult;
+	}
+
+	private OperationResult execute(AddOrbDto addOrbDto, CommandProcessActionPackage commandProcessActionPackage) {
+		OperationResult operationResult = OperationResult.IN_THE_MIDDLE;
+
+		try {
+			Orb orb = this.orbManager.createOrbInstance(addOrbDto, commandProcessActionPackage.getTranDate(), commandProcessActionPackage.getUndoActionBundle());
+			operationResult = new OperationResult(OpResult.SUCCESS, orb, true);
 		} catch (Exception e) {
 			operationResult.opResult = OpResult.FAILURE;
 			operationResult.operationResultException = e;
@@ -190,8 +218,7 @@ public class CommandProcessor {
 			commandProcessActionPackage.setAction(action);
 			operationResult = executeAction(commandProcessActionPackage);
 
-			if (operationResult.opResult == OpResult.FAILURE)
-				break;
+			if (operationResult.opResult == OpResult.FAILURE) break;
 		}
 
 		return operationResult;

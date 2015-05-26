@@ -1,6 +1,4 @@
-package com.fletch22.redis;
-
-import static org.junit.Assert.*
+package com.fletch22.orb.service
 
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -8,32 +6,30 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
-import spock.lang.Specification
-
 import com.fletch22.orb.IntegrationTests
+import com.fletch22.orb.Orb
 
 @org.junit.experimental.categories.Category(IntegrationTests.class)
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:/springContext-test.xml") 
-class OrbInstanceServiceSpec extends Specification {
-	
+@ContextConfiguration(locations = "classpath:/springContext-test.xml")
+class OrbServiceSpec {
+
 	@Autowired
-	ObjectInstanceCacheService orbInstanceService
+	OrbService orbService
+
+	@Autowired
+	OrbTypeService orbTypeService
 
 	@Test
-	def 'test instance exists'() {
-		
+	def void 'test create orb'() {
+
 		given:
-		when:
-		orbInstanceService
-		
-		then:
-		orbInstanceService
-	}
-	
-	@Test
-	public void test() {
-		assertTrue(true);
-	}
+		def orbTypeInternalId = orbTypeService.addOrbType("test")
 
+		when:
+		Orb orb = orbService.addOrb(orbTypeInternalId)
+
+		then:
+		orb
+	}
 }

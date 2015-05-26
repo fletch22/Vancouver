@@ -9,7 +9,6 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +20,7 @@ public abstract class BaseLogActionDao {
 
 Logger logger = LoggerFactory.getLogger(LogActionDao.class);
 	
-	private static final BigDecimal NO_TRANSACTION_FOUND = new BigDecimal("-1"); 
+protected static final BigDecimal NO_TRANSACTION_FOUND = new BigDecimal("-1"); 
 	protected Connection connection = null;
 	
 	@Value("${db.log.host}")
@@ -111,9 +110,7 @@ Logger logger = LoggerFactory.getLogger(LogActionDao.class);
 			callableStatement.setBigDecimal(3, tranDate);
 			callableStatement.setBigDecimal(4, tranId);
 			 
-			logger.debug("start update");
 			callableStatement.executeUpdate();
-			logger.debug("end update.");
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage(), e);
 		} finally {
@@ -164,7 +161,7 @@ Logger logger = LoggerFactory.getLogger(LogActionDao.class);
 			while (resultSet.next()) {
 				ActionInfo actionInfo = new ActionInfo();
 				actionInfo.action = new StringBuilder(resultSet.getString("action"));
-				actionInfo.tranDate = resultSet.getBigDecimal("tran");
+				actionInfo.tranDate = resultSet.getBigDecimal("tranDate");
 				actions.add(actionInfo);
 			}
 		} catch (Exception e) {
@@ -253,18 +250,19 @@ Logger logger = LoggerFactory.getLogger(LogActionDao.class);
 	}
 	
 	public BigDecimal getCurrentTransactionIfAny() {
-		BigDecimal tranId;
+		BigDecimal tranId = null;
 		try {
 			connection = getConnection();
 			
 			String beginTransaction = "{call getAnyOrphanedTransactions2(?)}";
 			CallableStatement callableStatement = connection.prepareCall(beginTransaction);
 			
-			callableStatement.registerOutParameter(1, java.sql.Types.INTEGER);
+			callableStatement.registerOutParameter(1, java.sql.Types.DECIMAL);
 			 
 			callableStatement.executeUpdate();
 			 
 			tranId = callableStatement.getBigDecimal(1);
+			
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage(), e);
 		} finally {

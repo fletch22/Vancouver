@@ -30,10 +30,7 @@ public class OrbTransformer {
 	@Autowired
 	JsonUtil jsonUtil;
 	
-	@Autowired
-	NakedToClothedOrbTransformer nakedToClothedTransformer;
-
-	public StringBuilder convertOrbToJson(Orb orb) {
+	public StringBuilder convertToJson(Orb orb) {
 		StringBuilder json = new StringBuilder("{'");
 		
 		json.append(OrbTransformer.ROOT_LABEL);
@@ -64,8 +61,9 @@ public class OrbTransformer {
 		json.append("],");
 		json.append("'" + CommandExpressor.ORB_INTERNAL_ID + "':'");
 		json.append(orb.getOrbInteralId());
-        json.append("','" + CommandExpressor.ORB_TRAN_DATE + "':'");
-
+        json.append("','" + CommandExpressor.ORB_TYPE_INTERNAL_ID + "':'");
+		json.append(orb.getOrbTypeInternalId());
+		json.append("','" + CommandExpressor.ORB_TRAN_DATE + "':'");
 		json.append(orb.getTranDate().toString());
 		json.append("'}}");
 
@@ -94,9 +92,12 @@ public class OrbTransformer {
 		JsonPrimitive jsonPrimitive = root.getAsJsonPrimitive(CommandExpressor.ORB_INTERNAL_ID);
 		long orbInternalId = jsonPrimitive.getAsLong();
 		
+		jsonPrimitive = root.getAsJsonPrimitive(CommandExpressor.ORB_TYPE_INTERNAL_ID);
+		long orbTypeInternalId = jsonPrimitive.getAsLong();
+		
 		jsonPrimitive = root.getAsJsonPrimitive(CommandExpressor.ORB_TRAN_DATE);
 		BigDecimal tranDate = new BigDecimal(jsonPrimitive.getAsString());
 		
-		return new Orb(orbInternalId, tranDate, properties);
+		return new Orb(orbInternalId, orbTypeInternalId, tranDate, properties);
 	}
 }

@@ -32,7 +32,7 @@ public class ObjectTypeCacheService {
 	RedisKeyFactory redisKeyFactory;
 	
 	KeyGenerator typeKeyGenerator = null;
-
+                 
 	@PostConstruct
 	public void postConstruct() {
 		this.typeKeyGenerator = this.redisKeyFactory.getKeyGenerator(ObjectType.TYPE);
@@ -53,6 +53,7 @@ public class ObjectTypeCacheService {
 	}
 	
 	private void validateTypeProperties(Map<String, String> properties) {
+		
 		if (null == properties) {
 			throw new RuntimeException("Encountered problems validating the properties for a type. Properties were null. Should not be null.");
 		}
@@ -63,6 +64,7 @@ public class ObjectTypeCacheService {
 	}
 
 	public Set<String> getTypes() {
+		
 		Set<String> results = new HashSet<String>();
 		try {
 			results = this.jedis.keys(this.typeKeyGenerator.getKeyPrefix() + "*");
@@ -73,6 +75,7 @@ public class ObjectTypeCacheService {
 	}
 	
 	public NakedOrb deleteType(String id) {
+		
 		NakedOrb deletedOrb = null;
 		try {
 			
@@ -90,6 +93,7 @@ public class ObjectTypeCacheService {
 	}
 	
 	public List<NakedOrb> deleteAllTypes() {
+		
 		List<NakedOrb> deletedOrbs = new ArrayList<NakedOrb>();
 		try {
 			Set<String> keyList = this.getTypes();
@@ -109,7 +113,9 @@ public class ObjectTypeCacheService {
 		return this.typeKeyGenerator.getKey(id);
 	}
 
+	// TODO: 06-01-2015: Should be moved into general cache utility.
 	public String removeAllKeys() {
+		
 		String result = null;
 		try {
 			result = this.jedis.flushAll();
@@ -120,6 +126,7 @@ public class ObjectTypeCacheService {
 	}
 
 	public Map<String, String> getType(String id) {
+		
 		Map<String, String> result = null;
 		try {
 			String key = getTypeIdKey(id);
@@ -131,6 +138,7 @@ public class ObjectTypeCacheService {
 	}
 
 	private Map<String, String> getTypeFromKey(String key) {
+		
 		Map<String, String> result;
 		result = this.jedis.hgetAll(key);
 		if (!doesHashMapRecordExist(result)) {
@@ -140,6 +148,7 @@ public class ObjectTypeCacheService {
 	}
 	
 	public boolean doesObjectTypeExist(String id) {
+		
 		boolean exists = false;
 		try {
 			String key = getTypeIdKey(id);
@@ -151,6 +160,7 @@ public class ObjectTypeCacheService {
 	}
 	
 	private boolean doesHashMapRecordExist(Map<String, String> returnedMap) {
+		
 		boolean result = true;
 		if (returnedMap.size() == 0) {
 			result = false;
@@ -159,6 +169,7 @@ public class ObjectTypeCacheService {
 	}
 	
 	public void reIdType(String id, String newId) {
+		
 		try {
 			long result = this.jedis.renamenx(getTypeIdKey(id), getTypeIdKey(newId));
 			if (result == RENAME_RESULT_KEY_ALREADY_EXISTS) {
@@ -170,6 +181,7 @@ public class ObjectTypeCacheService {
 	}
 
 	public void removePropertyFromType(String id, String propertyToRemove) {
+		
 		try {
 			String key = getTypeIdKey(id);
 			this.jedis.hdel(key, propertyToRemove);
@@ -179,8 +191,8 @@ public class ObjectTypeCacheService {
 	}
 	
 	public void renameTypeProperty(String id, String propertyNameOriginal, String propertyNameNew) {
+		
 		try {
-			
 			validatePropertyForRename1(propertyNameOriginal, propertyNameNew);
 			
 			String key = getTypeIdKey(id);

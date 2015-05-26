@@ -27,9 +27,10 @@ public class Initialization {
 	public OperationResult initializeSystem() {
 		OperationResult operationResult = OperationResult.FAILURE;
 		
+		nukePaveAndRepopulate();
 		if (transactionService.doesDatabaseHaveAnExpiredTransaction()) {
 			logger.info("Database has an expired transaction. Will rollback and repopulate cache.");
-			nukePaveAndRepopulate();
+			transactionService.rollbackCurrentTransaction();
 		} else {
 			operationResult = OperationResult.SUCCESS;
 		}

@@ -27,7 +27,7 @@ public class AddWholeOrbTypeCommand {
 
 		translation.append(CommandExpressor.ORB_ADD_WHOLE);
 		translation.append("\":");
-		translation.append(orbTransformer.convertOrbToJson(orb));
+		translation.append(orbTransformer.convertToJson(orb));
 		translation.append("}}");
 
 		return translation;

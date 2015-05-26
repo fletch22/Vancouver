@@ -6,14 +6,13 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
 
+import spock.lang.Ignore
 import spock.lang.Specification
 
 import com.fletch22.dao.LogActionDao
 import com.fletch22.orb.IntegrationTests
-import com.fletch22.orb.command.orbType.AddOrbTypeCommand
 import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory
 import com.fletch22.orb.command.processor.CommandProcessor
-import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory.CommandProcessActionPackage
 import com.fletch22.orb.command.transaction.TransactionService
 import com.fletch22.orb.service.OrbTypeService
 
@@ -45,25 +44,28 @@ class InitializationSpec extends Specification {
 		this.logActionDao.resetCurrentTransaction()
 	}
 	
-
 	@Test
 	def 'test'() {
 		
 		given:
 		orbTypeService.addOrbType("test")
 		
-		this.logActionDao.recordTransactionStart(transactionService.generateTranId());
+		BigDecimal bd = this.logActionDao.getCurrentTransactionIfAny()
 		
-		TransactionService.transactionTimeoutInSeconds = 1;
+		logger.info("BD: {}", bd.toString())
 		
-		Thread.sleep(2000);
+		this.logActionDao.recordTransactionStart(transactionService.generateTranId())
+		
+		TransactionService.transactionTimeoutInSeconds = 1
+		
+		Thread.sleep(2000)
 		
 		when:
-		this.initialization.initializeSystem();
-		int i = 1;
+		this.initialization.initializeSystem()
 		
 		then:
-		i == 1
+		BigDecimal currentTransaction = this.logActionDao.getCurrentTransactionIfAny()
+		assert currentTransaction.compareTo(this.logActionDao.NO_TRANSACTION_FOUND) == 0
 	}
 	
 }

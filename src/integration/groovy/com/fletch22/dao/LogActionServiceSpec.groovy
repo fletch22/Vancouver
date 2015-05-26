@@ -67,6 +67,10 @@ class LogActionServiceSpec extends Specification {
 	def setup() {
 		initializer.nukeAndPaveAllIntegratedSystems()
 	}
+	
+	def cleanup() {
+		transactionService.rollbackCurrentTransaction()	
+	}
 
 	@Unroll
 	@Test

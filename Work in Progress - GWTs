@@ -5,10 +5,8 @@ Given a system that says it has a transaction in flight
 When the user calls begin/rollback transaction 
 And the database says the submitted tranId does not match the the tranId in database (in flight) 
 Then throw an exception 
-And Set the transaction in flight to "not in flight"
-And restore from the database. 
 
-Status:
+Status: Done
 
 Given a transaction that is rolled back
 Then reset the currentTransactionId in the db.
@@ -20,13 +18,13 @@ And the database claims it has a TIF
 And the database is not in startup mode
 Then throw an exception so that the client knows he's got bad code.
 
-Status:
+Status: Done.
 
 Given a system that has a transaction in flight (TIF)
 And a client attempts to perform an operation without the correct tran id
 Then throw an exception saying the operation was blocked due to a lock on the db.
 
-Status:
+Status: Deferrred until multiple clients make this a greater possibility.
 
 Scenario 2: Transaction Handling During Startup - see Initialization.java
 
@@ -38,7 +36,7 @@ Then set the daemon's TIF id to the database
 And finally the TIF is not expired
 Then wait for the next client operation
 
-Status:
+Status: Done.
 
 Given a system starting up (in startup mode)
 And the database has a transaction in flight (TIF)
@@ -46,25 +44,48 @@ And the TIF is expired
 Then rollback the cache db
 And rollback the transaction in the relation db
 
-Status:
+Status: Done.
 
 Given a system starting up (in startup mode)
 And the database does not have a transaction in flight (TIF)
 Then restore the db cache 
 
-Status:
+Status: Done.
 
 Scenario 3: Committing a Transaction
-Given a tranaction
-When the transaction is comitted
+Given a transaction
+When the transaction is committed
 Then the current transaction in the database should be reset
 And the transaction in flight (TIF) in the domain should be reset to "not in flight"
 
-Status:
+Status: Done
 
 Given a system under test
 And the tests clear out the database
 Then the current transaction field should be reset
 
-Status:
+Status: Done
+
+Given a label for a type or instance
+Then the label will be checked for illegal chars
+And comma will be an illegal field
+
+Status: 
+
+Problem:
+	Retrieving an orb from redis may get an orb without certain properties. Null Properties are discarded. This may pose a problem for queries that look for null values.
+	
+	For example, suppose object foo has property bar. The value of property bar is 'banana'.
+	Searching for every object foo where bar is 'banana' is ok.
+	
+	However suppose instead that the value of bar is null. In this case Redis will not allow the property. To save to Redis, the property will be discarded. This means that object foo with no properties is saved to Redis.
+	Further suppose that we want to search for every object foo where bar is null. Since bar is not a property on foo, a query looking for that property (even tho the value looked for is 'null') might fail.
+	
+	There are 2 solutions at the moment:
+	 
+	 	1. Find a redis query that searches for non-existant properties.
+	 	
+Given an orb saved to the Redis cache
+And properties with null values are removed in order to saved to redis.
+When the orb is retrieved, the missing properties should be reproduced with null values.  
  

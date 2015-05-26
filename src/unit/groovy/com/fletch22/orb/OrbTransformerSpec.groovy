@@ -36,8 +36,11 @@ class OrbTransformerSpec extends Specification {
 		BigDecimal tranDateExpected = new BigDecimal("1234123312423414231");
 		
 		long orbInternalIdExpected = 2134
+		long orbTypeInternalIdExpected = 5678
 		
 		orb.setOrbInteralId(orbInternalIdExpected);
+		orb.setOrbTypeInternalId(orbTypeInternalIdExpected);
+		
 		orb.setTranDate(tranDateExpected);
 		
 		def userDefinedKey1 = 'foo1'
@@ -52,7 +55,7 @@ class OrbTransformerSpec extends Specification {
 		orb.setUserDefinedProperties(map)
 		
 		when:
-		def json = orbTransformer.convertOrbToJson(orb)
+		def json = orbTransformer.convertToJson(orb)
 		def orbActual = orbTransformer.convertFromJson(json.toString())
 		
 		then:
@@ -65,8 +68,10 @@ class OrbTransformerSpec extends Specification {
 		
 		orbActual.getUserDefinedProperties().containsKey(userDefinedKey2)
 		orbActual.orbInteralId == orbInternalIdExpected
+		orbActual.orbTypeInternalId == orbTypeInternalIdExpected
 		userDefinedValue1 == userDefinedValueExpected1
 		userDefinedValue2 == userDefinedValueExpected2
 		orbActual.getUserDefinedProperties().size() == 2
+		
 	}
 }

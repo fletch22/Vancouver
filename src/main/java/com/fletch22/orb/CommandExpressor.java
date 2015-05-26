@@ -196,6 +196,9 @@ public class CommandExpressor {
 	
 	@Autowired
 	OrbManager orbManager;
+	
+	@Autowired
+	OrbTransformer orbTransformer;
 
 	public StringBuilder getJsonPing() {
 		StringBuilder translation = new StringBuilder();
@@ -399,7 +402,7 @@ public class CommandExpressor {
 
 		translation.append(CommandExpressor.RESTORE_ORB_WITH_NO_PROCESSING);
 		translation.append("\":");
-		translation.append(this.orbManager.convertToJson(orb));
+		translation.append(this.orbTransformer.convertToJson(orb));
 		translation.append("}}");
 
 		return translation;

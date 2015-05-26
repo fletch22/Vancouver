@@ -15,10 +15,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import spock.lang.Specification
 
 import com.fletch22.orb.CommandExpressor
-import com.fletch22.orb.IntegrationTests;
+import com.fletch22.orb.IntegrationTests
 import com.fletch22.orb.TranDateGenerator
 import com.fletch22.orb.command.orbType.AddOrbTypeCommand
 import com.fletch22.orb.command.orbType.DeleteOrbTypeCommand
+import com.fletch22.orb.command.transaction.TransactionService
 
 @org.junit.experimental.categories.Category(IntegrationTests.class)
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -40,7 +41,10 @@ class LogDaoSpec extends Specification {
 	CommandExpressor commandExpressor
 	
 	@Autowired
-	DeleteOrbTypeCommand deleteOrbTypeCommand;
+	DeleteOrbTypeCommand deleteOrbTypeCommand
+	
+	@Autowired
+	TransactionService transactionService
 	
 	def setup()  {
 		logDao.clearOutDatabase()
@@ -48,6 +52,8 @@ class LogDaoSpec extends Specification {
 	
 	def cleanup() {
 		logDao.clearOutDatabase()
+		
+		transactionService
 	}
 
 	@Test

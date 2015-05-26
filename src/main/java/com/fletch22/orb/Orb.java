@@ -10,14 +10,16 @@ public class Orb {
 	private static final long UNSET = -1;
 	private Map<String, String> userDefinedProperties = new HashMap<String, String>();
 	private long orbInteralId = UNSET;
+	private long orbTypeInternalId = UNSET;
 	private BigDecimal tranDate;
 	
 	public Orb() {
 		// Do Nothing
 	}
 	
-	public Orb(long internalId, BigDecimal tranDate, Map<String, String> userDefinedProperties) {
+	public Orb(long internalId, long orbTypeInternalId, BigDecimal tranDate, Map<String, String> userDefinedProperties) {
 		this.orbInteralId = internalId;
+		this.setOrbTypeInternalId(orbTypeInternalId);
 		this.tranDate = tranDate;
 		this.userDefinedProperties = userDefinedProperties;
 	}
@@ -44,5 +46,13 @@ public class Orb {
 
 	public void setUserDefinedProperties(Map<String, String> userDefinedProperties) {
 		this.userDefinedProperties = userDefinedProperties;
+	}
+
+	public long getOrbTypeInternalId() {
+		return orbTypeInternalId;
+	}
+
+	public void setOrbTypeInternalId(long orbTypeInternalId) {
+		this.orbTypeInternalId = orbTypeInternalId;
 	}
 }
