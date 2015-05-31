@@ -18,7 +18,7 @@ import com.fletch22.orb.IntegrationTests
 class OrbInstanceServiceSpec extends Specification {
 	
 	@Autowired
-	ObjectInstanceCacheService orbInstanceService
+	RedisObjectInstanceCacheService orbInstanceService
 
 	@Test
 	def 'test instance exists'() {

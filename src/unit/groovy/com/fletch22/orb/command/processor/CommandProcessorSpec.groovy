@@ -15,7 +15,7 @@ import spock.lang.Unroll
 import com.fletch22.dao.LogActionService
 import com.fletch22.orb.CommandExpressor
 import com.fletch22.orb.InternalIdGenerator
-import com.fletch22.orb.OrbTypeManager
+import com.fletch22.orb.cache.external.OrbTypeManagerForExternalCache;
 import com.fletch22.orb.command.ActionSniffer
 import com.fletch22.orb.command.orbType.AddBaseOrbTypeCommand
 import com.fletch22.orb.command.orbType.AddOrbTypeCommand
@@ -69,7 +69,7 @@ class CommandProcessorSpec extends Specification {
 		this.commandProcessor.internalIdGenerator = internalIdGenerator
 		internalIdGenerator.getCurrentId() >> 1001
 		
-		OrbTypeManager orbTypeManager = Mock()
+		OrbTypeManagerForExternalCache orbTypeManager = Mock()
 		this.commandProcessor.orbTypeManager = orbTypeManager
 		
 		CommitTransactionCommand commitTransactionCommand = Mock()

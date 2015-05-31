@@ -7,33 +7,34 @@ import org.junit.Test
 import spock.lang.Shared
 import spock.lang.Specification
 
+import com.fletch22.orb.cache.external.OrbTypeManagerForExternalCache;
 import com.fletch22.orb.command.orbType.DeleteOrbTypeCommand
 import com.fletch22.orb.command.orbType.dto.AddOrbTypeDto
 import com.fletch22.orb.rollback.UndoActionBundle
-import com.fletch22.redis.ObjectInstanceCacheService
+import com.fletch22.redis.RedisObjectInstanceCacheService
 import com.fletch22.redis.ObjectTypeCacheService
 
-class OrbTypeManagerSpec extends Specification {
+class OrbTypeManagerForExternalCacheSpec extends Specification {
 	
-	@Shared OrbTypeManager orbTypeManager
+	@Shared OrbTypeManagerForExternalCache orbTypeManager
 	
 	@Shared ObjectTypeCacheService objectTypeCacheService
-	@Shared ObjectInstanceCacheService objectInstanceCacheService
+	@Shared RedisObjectInstanceCacheService redisObjectInstanceCacheService
 	@Shared InternalIdGenerator internalIdGenerator
 	@Shared CommandExpressor commandExpressor
 	@Shared DeleteOrbTypeCommand deleteOrbTypeCommand
 	
 	def setup() {
 		this.objectTypeCacheService = Mock(ObjectTypeCacheService)
-		this.objectInstanceCacheService = Mock(ObjectInstanceCacheService)
+		this.redisObjectInstanceCacheService = Mock(RedisObjectInstanceCacheService)
 		this.internalIdGenerator = Mock(InternalIdGenerator)
 		this.commandExpressor = Mock(CommandExpressor)
 		this.deleteOrbTypeCommand = Mock(DeleteOrbTypeCommand)
 		
-		this.orbTypeManager = new OrbTypeManager()
+		this.orbTypeManager = new OrbTypeManagerForExternalCache()
 		
 		orbTypeManager.objectTypeCacheService = objectTypeCacheService;
-		orbTypeManager.objectInstanceCacheService = objectInstanceCacheService
+		orbTypeManager.objectInstanceCacheService = redisObjectInstanceCacheService
 		orbTypeManager.internalIdGenerator = this.internalIdGenerator
 		orbTypeManager.commandExpressor = this.commandExpressor
 		orbTypeManager.deleteOrbTypeCommand = this.deleteOrbTypeCommand

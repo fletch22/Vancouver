@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Protocol;
 
-import com.fletch22.orb.NakedOrb;
+import com.fletch22.orb.cache.external.NakedOrb;
 
 @Component
 public class ObjectTypeCacheService {

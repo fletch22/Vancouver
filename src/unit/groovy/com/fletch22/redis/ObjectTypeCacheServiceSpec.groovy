@@ -8,7 +8,7 @@ import redis.clients.jedis.Jedis
 import spock.lang.Shared
 import spock.lang.Specification
 
-import com.fletch22.orb.NakedOrb
+import com.fletch22.orb.cache.external.NakedOrb;
 
 class ObjectTypeCacheServiceSpec extends Specification {
 	

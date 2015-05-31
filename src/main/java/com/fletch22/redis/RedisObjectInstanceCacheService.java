@@ -1,21 +1,23 @@
 package com.fletch22.redis;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import redis.clients.jedis.Jedis;
 
-import com.fletch22.orb.NakedOrb;
+import com.fletch22.orb.cache.external.NakedOrb;
+import com.fletch22.orb.cache.external.ObjectInstanceExternalCacheService;
 
 @Component
-public class ObjectInstanceCacheService {
+@Qualifier(value = "redis")
+public class RedisObjectInstanceCacheService implements ObjectInstanceExternalCacheService {
 
 	@Autowired
 	Jedis jedis;

@@ -3,6 +3,7 @@ package com.fletch22.orb.command.processor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import com.fletch22.dao.LogActionService;
@@ -14,6 +15,8 @@ import com.fletch22.orb.Orb;
 import com.fletch22.orb.OrbManager;
 import com.fletch22.orb.OrbTypeManager;
 import com.fletch22.orb.TranDateGenerator;
+import com.fletch22.orb.cache.external.OrbManagerExternalCache;
+import com.fletch22.orb.cache.external.OrbTypeManagerForExternalCache;
 import com.fletch22.orb.command.ActionSniffer;
 import com.fletch22.orb.command.CommandBundle;
 import com.fletch22.orb.command.orb.AddOrbCommand;
@@ -60,9 +63,11 @@ public class CommandProcessor {
 	CommitTransactionCommand commitTransactionCommand;
 
 	@Autowired
+	@Qualifier(value = OrbTypeManagerForExternalCache.COMPONENT_QUALIFIER_ID)
 	OrbTypeManager orbTypeManager;
 
 	@Autowired
+	@Qualifier(value = OrbManagerExternalCache.COMPONENT_QUALIFIER_ID)
 	OrbManager orbManager;
 	
 	@Autowired

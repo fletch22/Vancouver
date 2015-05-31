@@ -22,7 +22,7 @@ import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory
 import com.fletch22.orb.command.processor.CommandProcessor
 import com.fletch22.orb.command.processor.OperationResult
 import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory.CommandProcessActionPackage
-import com.fletch22.orb.command.processor.OperationResult.OpResult;
+import com.fletch22.orb.command.processor.OperationResult.OpResult
 import com.fletch22.orb.command.transaction.TransactionService
 import com.fletch22.orb.rollback.UndoAction
 import com.fletch22.orb.rollback.UndoActionBundle
