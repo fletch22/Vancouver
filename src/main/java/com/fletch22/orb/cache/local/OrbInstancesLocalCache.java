@@ -28,6 +28,11 @@ public class OrbInstancesLocalCache {
 	
 	public void add(long orbInternalId, long orbTypeInternalId, BigDecimal tranDate) {
 		OrbSingleTypesInstanceCollection orbSingleTypesInstanceCollection = allInstances.get(orbTypeInternalId);
+		
+		if (orbSingleTypesInstanceCollection == null) {
+			orbSingleTypesInstanceCollection = new OrbSingleTypesInstanceCollection(orbTypeInternalId);
+		}
+		
 		orbSingleTypesInstanceCollection.addInstance(orbInternalId, null, tranDate, null);
 	}
 
@@ -41,6 +46,10 @@ public class OrbInstancesLocalCache {
 		}
 		
 		return fieldValues;
+	}
+
+	public void deleteAll() {
+		allInstances.clear();
 	}
 
 }

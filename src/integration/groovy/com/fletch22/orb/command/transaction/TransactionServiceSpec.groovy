@@ -13,6 +13,7 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 import com.fletch22.dao.LogActionDao
+import com.fletch22.orb.IntegrationSystemInitializer
 import com.fletch22.orb.IntegrationTests
 import com.fletch22.orb.service.OrbTypeService
 
@@ -33,12 +34,16 @@ class TransactionServiceSpec extends Specification {
 	@Autowired
 	LogActionDao logActionDao
 	
+	@Autowired
+	IntegrationSystemInitializer integrationSystemInitializer
+	
 	def setup() {
 		this.transactionService.@transactionIdInFlight == TransactionService.NO_TRANSACTION_IN_FLIGHT
 	}
 	
 	def cleanup() {
 		this.transactionService.rollbackCurrentTransaction();
+		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems();
 	}
 
 	@Test

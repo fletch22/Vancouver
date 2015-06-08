@@ -7,7 +7,7 @@ import org.junit.Test
 import spock.lang.Shared
 import spock.lang.Specification
 
-import com.fletch22.orb.cache.external.OrbTypeManagerForExternalCache;
+import com.fletch22.orb.cache.external.OrbTypeManagerExternalCache;
 import com.fletch22.orb.command.orbType.DeleteOrbTypeCommand
 import com.fletch22.orb.command.orbType.dto.AddOrbTypeDto
 import com.fletch22.orb.rollback.UndoActionBundle
@@ -16,7 +16,7 @@ import com.fletch22.redis.ObjectTypeCacheService
 
 class OrbTypeManagerForExternalCacheSpec extends Specification {
 	
-	@Shared OrbTypeManagerForExternalCache orbTypeManager
+	@Shared OrbTypeManagerExternalCache orbTypeManager
 	
 	@Shared ObjectTypeCacheService objectTypeCacheService
 	@Shared RedisObjectInstanceCacheService redisObjectInstanceCacheService
@@ -31,7 +31,7 @@ class OrbTypeManagerForExternalCacheSpec extends Specification {
 		this.commandExpressor = Mock(CommandExpressor)
 		this.deleteOrbTypeCommand = Mock(DeleteOrbTypeCommand)
 		
-		this.orbTypeManager = new OrbTypeManagerForExternalCache()
+		this.orbTypeManager = new OrbTypeManagerExternalCache()
 		
 		orbTypeManager.objectTypeCacheService = objectTypeCacheService;
 		orbTypeManager.objectInstanceCacheService = redisObjectInstanceCacheService

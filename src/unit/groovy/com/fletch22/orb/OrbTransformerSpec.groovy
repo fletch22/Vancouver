@@ -21,16 +21,10 @@ class OrbTransformerSpec extends Specification {
 	@Autowired
 	OrbTransformer orbTransformer
 	
-	def setup() {
-		
-	}
-
 	@Test
 	def 'test orb serialize and deserialize'() {
 		
 		given:
-		setup()
-		
 		Orb orb = new Orb();
 		
 		BigDecimal tranDateExpected = new BigDecimal("1234123312423414231");

@@ -54,10 +54,6 @@ class TranDateGeneratorSpec extends Specification {
 		logger.info("Start")
 		1000.times {
 			def tranDate = tranDateGenerator.getTranDate()
-//			def result = tranDateList.add(tranDate);
-//			if (!result) {
-//				throw new RuntimeException("Found duplicate");
-//			}
 		}
 		logger.info("Stop")
 		

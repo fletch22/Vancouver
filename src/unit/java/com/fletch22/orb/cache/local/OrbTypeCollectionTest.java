@@ -6,7 +6,6 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.time.StopWatch;
@@ -65,7 +64,7 @@ public class OrbTypeCollectionTest {
 		seconds = (double)stopWatch.getNanoTime() / 1000000000.0;
 		logger.info("CG Time: {}", seconds);
 		logger.info("Nano time: {}", stopWatch.getNanoTime());
-		assertTrue(stopWatch.getNanoTime() < 40000);
+		assertTrue(stopWatch.getNanoTime() < 45000); 
 	}
 
 	private LinkedHashSet<String> getStubbedFields() {

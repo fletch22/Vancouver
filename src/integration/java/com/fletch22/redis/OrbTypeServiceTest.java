@@ -38,6 +38,7 @@ import com.google.gson.Gson;
 @org.junit.experimental.categories.Category(IntegrationTests.class)
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/springContext-test.xml")
+@Ignore
 public class OrbTypeServiceTest {
 	
 	Logger logger = LoggerFactory.getLogger(OrbTypeServiceTest.class);

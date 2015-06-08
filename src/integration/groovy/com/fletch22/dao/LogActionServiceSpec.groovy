@@ -35,7 +35,7 @@ class LogActionServiceSpec extends Specification {
 	@Shared Logger logger = LoggerFactory.getLogger(LogActionServiceSpec)
 	
 	@Autowired
-	IntegrationSystemInitializer initializer
+	IntegrationSystemInitializer integrationSystemInitializer
 	
 	@Autowired
 	LogActionService logActionService
@@ -59,17 +59,18 @@ class LogActionServiceSpec extends Specification {
 	TranDateGenerator tranDateGenerator;
 	
 	@Autowired
-	LogActionDao logActionDao;
+	LogActionDao logActionDao
 	
 	@Autowired
-	OrbTypeService orbTypeService;
-		
+	OrbTypeService orbTypeService
+	
 	def setup() {
-		initializer.nukeAndPaveAllIntegratedSystems()
+		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems()
 	}
 	
 	def cleanup() {
-		transactionService.rollbackCurrentTransaction()	
+		transactionService.rollbackCurrentTransaction()
+		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems()
 	}
 
 	@Unroll
@@ -83,7 +84,7 @@ class LogActionServiceSpec extends Specification {
 		
 		CommandProcessActionPackage commandProcessActionPackage = null
 		for (i in 0..numberOfAdds.intValue()) {
-			def json = addOrbTypeCommand.toJson('foo')
+			def json = addOrbTypeCommand.toJson('foo' + i)
 			commandBundle.addCommand(json);
 		}
 		
@@ -200,6 +201,8 @@ class LogActionServiceSpec extends Specification {
 			logger.info(action);
 		}
 		
+		logger.info("Result: {}", operationResult.operationResultException.toString());
+				
 		then:
 		operationResult.opResult == OpResult.SUCCESS
 		allActionsList.size() > 0

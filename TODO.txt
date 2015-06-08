@@ -1,4 +1,35 @@
-Todo:
+TODOs
 
-Create Rollback Actions for AddOrbType. - Done
-Add delete instances when deleting type - Pending
+Each command additions requires the following tasks:
+
+	1. Creation of DTO
+	2. Creation of Serializer
+	3. Addition to command switch case.
+	4. Addition of command service method
+	5. Addition of executing service class or method-on-existing-service.
+	6. Determination and usage of undo operation.
+	
+AOP Design:
+
+	When an Aspect join point executes, the executed methods, params and values (MPVs) will collect in an accumulator.
+	To create an accumulation of undo operations, call the undo method but in the advice prevent execution of the undo operation. Instead just log the action.
+	
+Tasks:
+
+	Create Rollback Actions for AddOrbType. - Done
+	Add delete instances when deleting type - Done
+	Add/Delete attribute - 
+	Add/Delete/Update Query -
+	Add/Delete/Update Constraint -
+	
+Given a called command in execution
+When command 1 calls command 2
+Then command 2 should add to the accumulating actions
+And command 2 should add to the accumulating undos.
+	
+Given a called command in execution
+When command 1 calls command 2
+And command 2 throws an exception
+Then 1 *and* 2 should roll back.
+
+Restore mode should be handled at the system level, not the action command level.

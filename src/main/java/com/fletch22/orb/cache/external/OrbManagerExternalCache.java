@@ -2,9 +2,8 @@ package com.fletch22.orb.cache.external;
 
 import java.math.BigDecimal;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
 
 import com.fletch22.orb.InternalIdGenerator;
 import com.fletch22.orb.Orb;
@@ -13,11 +12,8 @@ import com.fletch22.orb.command.orb.DeleteOrbCommand;
 import com.fletch22.orb.command.orbType.dto.AddOrbDto;
 import com.fletch22.orb.rollback.UndoActionBundle;
 
-@Component
-@Qualifier(value = OrbManagerExternalCache.COMPONENT_QUALIFIER_ID)
+//@Component(value = "OrbManagerExternalCache")
 public class OrbManagerExternalCache implements OrbManager {
-	
-	public static final String COMPONENT_QUALIFIER_ID = "OrbManagerExternalCache";
 	
 	@Autowired
 	InternalIdGenerator internalIdGenerator;
@@ -42,5 +38,10 @@ public class OrbManagerExternalCache implements OrbManager {
 		undoActionBundle.addUndoAction(this.deleteOrbCommand.toJson(orbInternalId, false), tranDate);
 		
 		return nakedToClothedOrbTransformer.convertNakedToClothed(nakedOrb);
+	}
+
+	@Override
+	public void deleteAllOrbInstances() {
+		throw new NotImplementedException("deleteAllOrbInstances");
 	}
 }

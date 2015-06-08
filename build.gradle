@@ -43,10 +43,15 @@ dependencies {
 	compile 'org.apache.commons:commons-lang3:3.3.2'
 	compile 'cglib:cglib-nodep:3.1'
 	compile 'com.googlecode.cqengine:cqengine:2.0.3'
+	compile 'org.springframework:spring-aop:4.1.6.RELEASE'
+	compile 'org.aspectj:aspectjrt:1.8.5'
+	compile 'org.aspectj:aspectjtools:1.8.5'
 	
 	testCompile 'com.googlecode.junit-toolbox:junit-toolbox:2.0'
 	testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
 	testCompile 'org.spockframework:spock-spring:0.7-groovy-2.0'
+	testCompile 'org.aspectj:aspectjrt:1.8.5'
+	testCompile 'org.aspectj:aspectjtools:1.8.5'
 	
 	integrationTestCompile sourceSets.main.output
 	integrationTestCompile configurations.testCompile

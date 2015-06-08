@@ -11,4 +11,6 @@ public interface OrbTypeManager {
 	public long createOrbType(AddOrbTypeDto addOrbTypeDto, BigDecimal tranDate, final UndoActionBundle undoActionBundle);
 	
 	public void deleteOrbType(DeleteOrbTypeDto deleteOrbTypeDto, BigDecimal tranDate, UndoActionBundle rollbackAction);
+
+	public void deleteAllTypes();
 }

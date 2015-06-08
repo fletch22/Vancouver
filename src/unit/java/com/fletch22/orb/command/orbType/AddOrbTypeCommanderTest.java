@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.fletch22.orb.cache.external.OrbTypeManagerForExternalCache;
+import com.fletch22.orb.OrbTypeConstants;
 import com.fletch22.orb.command.orbType.dto.AddOrbTypeDto;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -49,7 +49,7 @@ public class AddOrbTypeCommanderTest {
 		
 		AddOrbTypePackage addOrbTypePackage = new AddOrbTypePackage();
 		addOrbTypePackage.label = "foo";
-		addOrbTypePackage.orbInternalId = OrbTypeManagerForExternalCache.ORBTYPE_INTERNAL_ID_UNSET;
+		addOrbTypePackage.orbInternalId = OrbTypeConstants.ORBTYPE_INTERNAL_ID_UNSET;
 		
 		Gson gson = new Gson();
 		JsonParser jsonParser = new JsonParser();

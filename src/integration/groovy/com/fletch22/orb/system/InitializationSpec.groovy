@@ -6,10 +6,10 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
 
-import spock.lang.Ignore
 import spock.lang.Specification
 
 import com.fletch22.dao.LogActionDao
+import com.fletch22.orb.IntegrationSystemInitializer
 import com.fletch22.orb.IntegrationTests
 import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory
 import com.fletch22.orb.command.processor.CommandProcessor
@@ -38,7 +38,14 @@ class InitializationSpec extends Specification {
 	CommandProcessActionPackageFactory commandProcessActionPackageFactory
 	
 	@Autowired
+	IntegrationSystemInitializer integrationSystemInitializer
+	
+	@Autowired
 	OrbTypeService orbTypeService
+	
+	def setup() {
+		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems()
+	}
 	
 	def cleanup() {
 		this.logActionDao.resetCurrentTransaction()

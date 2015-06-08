@@ -33,8 +33,13 @@ public class OrbTypeCollection {
 	}
 
 	public OrbType remove(long id) {
-		types.remove(id);
-		return this.quickLookup.remove(id);
+		OrbType orbType = this.quickLookup.remove(id);
+		boolean wasFound = types.remove(orbType);
+		
+		if (!wasFound) {
+			throw new RuntimeException("Encountered problem removing type from type collection.");
+		}
+		return orbType;
 	}
 
 	public OrbType get(long id) {
@@ -44,6 +49,11 @@ public class OrbTypeCollection {
 	public boolean doesTypeWithLabelExist(String label) {
 		Query<OrbType> query = equal(OrbType.LABEL, label);
 		return types.retrieve(query).isEmpty();
+	}
+	
+	public void deleteAll() {
+		this.quickLookup.clear();
+		this.types.clear();
 	}
 
 	public static class OrbType {
@@ -56,7 +66,7 @@ public class OrbTypeCollection {
 			this.id = id;
 			this.label = label;
 			this.tranDate = tranDate;
-			this.customFields = customFields;
+			if (customFields != null) this.customFields = customFields;
 		}
 
 		public LinkedHashSet<String> addField(String customFieldName) {

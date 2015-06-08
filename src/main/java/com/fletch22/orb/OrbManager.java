@@ -8,4 +8,6 @@ import com.fletch22.orb.rollback.UndoActionBundle;
 public interface OrbManager {
 
 	public Orb createOrbInstance(AddOrbDto addOrbDto, BigDecimal tranDate, UndoActionBundle undoActionBundle);
+
+	public void deleteAllOrbInstances();
 }

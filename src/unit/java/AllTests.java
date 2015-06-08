@@ -9,4 +9,5 @@ import com.googlecode.junittoolbox.WildcardPatternSuite;
 @SuiteClasses({"**/*Test.class", "**/*Spec.class"})
 public class AllTests {
 
+	
 }

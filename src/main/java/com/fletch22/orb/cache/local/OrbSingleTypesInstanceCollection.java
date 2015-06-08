@@ -10,9 +10,9 @@ import com.googlecode.cqengine.index.unique.UniqueIndex;
 public class OrbSingleTypesInstanceCollection {
 
 	IndexedCollection<CacheEntry> instances = new ConcurrentIndexedCollection<CacheEntry>();
-	private int orbTypeInternalId;
+	private long orbTypeInternalId;
 
-	public OrbSingleTypesInstanceCollection(int orbTypeInternalId) {
+	public OrbSingleTypesInstanceCollection(long orbTypeInternalId) {
 		this.orbTypeInternalId = orbTypeInternalId;
 		instances.addIndex(UniqueIndex.onAttribute(CacheEntry.ID));
 	}

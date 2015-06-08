@@ -17,6 +17,6 @@
 	</bean>
 
 	<bean id="contextApplicationContextProvider" class="com.fletch22.ApplicationContextProvider"></bean>
-
+	
 </beans>
             

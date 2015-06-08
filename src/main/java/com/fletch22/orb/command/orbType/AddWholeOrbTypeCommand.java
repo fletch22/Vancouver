@@ -1,14 +1,12 @@
 package com.fletch22.orb.command.orbType;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import com.fletch22.orb.CommandExpressor;
 import com.fletch22.orb.Orb;
 import com.fletch22.orb.OrbTransformer;
 import com.fletch22.orb.OrbTypeManager;
-import com.fletch22.orb.cache.external.OrbTypeManagerForExternalCache;
 import com.fletch22.orb.command.orbType.dto.AddWholeOrbTypeDto;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -17,7 +15,6 @@ import com.google.gson.JsonParser;
 public class AddWholeOrbTypeCommand {
 	
 	@Autowired
-	@Qualifier(value = OrbTypeManagerForExternalCache.COMPONENT_QUALIFIER_ID)
 	OrbTypeManager orbTypeManager;
 	
 	@Autowired

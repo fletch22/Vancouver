@@ -33,5 +33,4 @@ class DeleteOrbTypeCommandSpec extends Specification {
 		deleteOrbTypeDto.orbTypeInternalId == expectedOid
 		deleteOrbTypeDto.allowCascadingDeletes == expectedAllowCascadingDeletes
 	}
-
 }

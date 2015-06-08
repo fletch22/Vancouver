@@ -2,13 +2,13 @@ package com.fletch22.orb.cache.external;
 
 import java.math.BigDecimal;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
 
 import com.fletch22.orb.CommandExpressor;
 import com.fletch22.orb.InternalIdGenerator;
 import com.fletch22.orb.Orb;
+import com.fletch22.orb.OrbTypeConstants;
 import com.fletch22.orb.OrbTypeManager;
 import com.fletch22.orb.command.orbType.AddOrbTypeCommand;
 import com.fletch22.orb.command.orbType.AddWholeOrbTypeCommand;
@@ -20,21 +20,8 @@ import com.fletch22.redis.ObjectTypeCacheService;
 import com.fletch22.redis.RedisObjectInstanceCacheService;
 import com.fletch22.util.JsonUtil;
 
-@Component
-@Qualifier(value = OrbTypeManagerForExternalCache.COMPONENT_QUALIFIER_ID)
-public class OrbTypeManagerForExternalCache implements OrbTypeManager {
-	
-	public static final String COMPONENT_QUALIFIER_ID = "OrbTypeManagerForExternalCache"; 
-	
-	public static final String ORBTYPE_LABEL = "ORB_TYPE";
-    public static final String ORBTYPE_QUERY_RESULT_LABEL = "ORB_TYPE_QUERY_RESULT";
-	public static final int ORBTYPE_TYPE_ID_ORDINAL = 0;
-	public static final int ORBTYPE_USERLABEL_FIELD_ORDINAL = 1;
-	public static final int ORBTYPE_START_FIELD_ORDINAL = 2;
-	public static final String ORBTYPE_DEFAULT_LABEL_X = "Orb Base Type";
-    public static final int ORBTYPE_INTERNAL_ID_UNSET = -1;
-    public static final int ORBTYPE_ATTR_ORDINAL_UNSET = -1;
-	public static final int ORBTYPE_BASETYPE_ID = 0;
+//@Component(value = "OrbTypeManagerExternalCache")
+public class OrbTypeManagerExternalCache implements OrbTypeManager {
 	
 	@Autowired
 	RedisObjectInstanceCacheService objectInstanceCacheService;
@@ -71,7 +58,7 @@ public class OrbTypeManagerForExternalCache implements OrbTypeManager {
 			throw new RuntimeException("Encountered problem trying to create orb type. Appears orb type '" + addOrbTypeDto.label + "' already exists.");
 		} else {
 			orbInternalTypeId = this.internalIdGenerator.getNewId();
-			NakedOrb nakedOrb = new NakedOrb(orbInternalTypeId, OrbTypeManagerForExternalCache.ORBTYPE_BASETYPE_ID, addOrbTypeDto.label, tranDate);
+			NakedOrb nakedOrb = new NakedOrb(orbInternalTypeId, OrbTypeConstants.ORBTYPE_BASETYPE_ID, addOrbTypeDto.label, tranDate);
 			
 			objectTypeCacheService.createType(nakedOrb);
 			
@@ -88,5 +75,10 @@ public class OrbTypeManagerForExternalCache implements OrbTypeManager {
 		// Add delete to rollback action
 		Orb orb = nakedToClothedOrbTransformer.convertNakedToClothed(nakedOrb);
 		rollbackAction.addUndoAction(this.addWholeOrbTypeCommand.toJson(orb), tranDate);
+	}
+
+	@Override
+	public void deleteAllTypes() {
+		throw new NotImplementedException("deleteAllTypes");
 	}
 }

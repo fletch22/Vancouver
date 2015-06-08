@@ -6,8 +6,6 @@ import java.util.LinkedList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.fletch22.orb.cache.external.OrbManagerExternalCache;
-import com.fletch22.orb.cache.external.OrbTypeManagerForExternalCache;
 import com.fletch22.orb.rollback.UndoActionBundle;
 import com.fletch22.util.JsonUtil;
 
@@ -197,7 +195,7 @@ public class CommandExpressor {
 	JsonUtil jsonUtil;
 	
 	@Autowired
-	OrbManagerExternalCache orbManager;
+	OrbManager orbManager;
 	
 	@Autowired
 	OrbTransformer orbTransformer;
@@ -434,7 +432,7 @@ public class CommandExpressor {
 		StringBuilder translation = new StringBuilder();
 
 		if (orbType == -1) {
-			orbType = OrbTypeManagerForExternalCache.ORBTYPE_BASETYPE_ID;
+			orbType = OrbTypeConstants.ORBTYPE_BASETYPE_ID;
 		}
 
 		translation.append("{\"");

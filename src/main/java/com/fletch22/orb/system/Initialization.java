@@ -6,9 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fletch22.dao.LogActionService;
+import com.fletch22.orb.cache.local.CacheService;
 import com.fletch22.orb.command.processor.OperationResult;
 import com.fletch22.orb.command.transaction.TransactionService;
-import com.fletch22.redis.ObjectAppCacheService;
 
 @Component
 public class Initialization {
@@ -22,7 +22,7 @@ public class Initialization {
 	TransactionService transactionService;
 	
 	@Autowired
-	ObjectAppCacheService objectAppCacheService;
+	CacheService cacheService;
 	
 	public OperationResult initializeSystem() {
 		OperationResult operationResult = OperationResult.FAILURE;
@@ -40,7 +40,7 @@ public class Initialization {
 
 	private void nukePaveAndRepopulate() {
 		
-		objectAppCacheService.clearAllItemsFromCache();
+		cacheService.clearAllItemsFromCache();
 		
 		logActionService.loadCacheFromDb();
 	}

@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import com.fletch22.orb.InternalIdGenerator;
@@ -14,9 +13,8 @@ import com.fletch22.orb.command.orb.DeleteOrbCommand;
 import com.fletch22.orb.command.orbType.dto.AddOrbDto;
 import com.fletch22.orb.rollback.UndoActionBundle;
 
-@Component
-@Qualifier(value = "")
-public class OrbManagerForLocalCache implements OrbManager {
+@Component(value = "OrbManagerLocalCache")
+public class OrbManagerLocalCache implements OrbManager {
 	
 	@Autowired
 	InternalIdGenerator internalIdGenerator;
@@ -37,6 +35,10 @@ public class OrbManagerForLocalCache implements OrbManager {
 		undoActionBundle.addUndoAction(this.deleteOrbCommand.toJson(orbInternalId, false), tranDate);
 		
 		return new Orb(orbInternalId, addOrbDto.orbTypeInternalId, tranDate, new HashMap<String, String>());
-		
+	}
+
+	@Override
+	public void deleteAllOrbInstances() {
+		orbInstancesLocalCache.deleteAll();
 	}
 }
