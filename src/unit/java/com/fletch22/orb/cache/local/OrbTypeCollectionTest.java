@@ -50,9 +50,12 @@ public class OrbTypeCollectionTest {
 		double seconds = (double)stopWatch.getNanoTime() / 1000000000.0;
 		logger.info("Map Time: {}", seconds);
 		
+		orbTypeCollection.deleteAll();
+		
 		for (long i = 0; i < max; i++) {
 			LinkedHashSet<String> fields = getStubbedFields();
-			OrbType orbType = new OrbType(i, RandomStringUtils.randomAlphabetic(17), tranDate, fields);
+			String jack = RandomStringUtils.randomAlphabetic(50) + i;
+			OrbType orbType = new OrbType(i, jack, tranDate, fields);
 			orbTypeCollection.add(orbType);
 		}
 		

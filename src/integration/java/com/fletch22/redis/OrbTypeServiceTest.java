@@ -35,10 +35,10 @@ import com.fletch22.util.JsonUtil;
 import com.fletch22.util.RandomUtil;
 import com.google.gson.Gson;
 
+@Ignore
 @org.junit.experimental.categories.Category(IntegrationTests.class)
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/springContext-test.xml")
-@Ignore
 public class OrbTypeServiceTest {
 	
 	Logger logger = LoggerFactory.getLogger(OrbTypeServiceTest.class);
@@ -67,6 +67,7 @@ public class OrbTypeServiceTest {
 	
 	@Test
 	public void pureJavaCreateTest() {
+		
 		String label = randomUtil.getRandomString();
 		int max = 100;
 		

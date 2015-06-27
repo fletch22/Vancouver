@@ -1,0 +1,413 @@
+:dependencies
+
+------------------------------------------------------------
+Root project
+------------------------------------------------------------
+
+archives - Configuration for archive artifacts.
+No dependencies
+
+compile - Compile classpath for source set 'main'.
++--- commons-collections:commons-collections:3.2
++--- org.slf4j:slf4j-api:1.7.7
++--- ch.qos.logback:logback-classic:1.1.2
+|    +--- ch.qos.logback:logback-core:1.1.2
+|    \--- org.slf4j:slf4j-api:1.7.6 -> 1.7.7
++--- org.eclipse.jetty:jetty-server:9.3.0.M0
+|    +--- javax.servlet:javax.servlet-api:3.1.0
+|    +--- org.eclipse.jetty:jetty-http:9.3.0.M0
+|    |    \--- org.eclipse.jetty:jetty-util:9.3.0.M0
+|    \--- org.eclipse.jetty:jetty-io:9.3.0.M0
+|         \--- org.eclipse.jetty:jetty-util:9.3.0.M0
++--- redis.clients:jedis:2.6.1
+|    \--- org.apache.commons:commons-pool2:2.0
++--- junit:junit:4.+ -> 4.12
+|    \--- org.hamcrest:hamcrest-core:1.3
++--- org.springframework:spring-context:4.1.3.RELEASE
+|    +--- org.springframework:spring-aop:4.1.3.RELEASE -> 4.1.6.RELEASE
+|    |    +--- aopalliance:aopalliance:1.0
+|    |    +--- org.springframework:spring-beans:4.1.6.RELEASE
+|    |    |    \--- org.springframework:spring-core:4.1.6.RELEASE
+|    |    |         \--- commons-logging:commons-logging:1.2
+|    |    \--- org.springframework:spring-core:4.1.6.RELEASE (*)
+|    +--- org.springframework:spring-beans:4.1.3.RELEASE -> 4.1.6.RELEASE (*)
+|    +--- org.springframework:spring-core:4.1.3.RELEASE -> 4.1.6.RELEASE (*)
+|    \--- org.springframework:spring-expression:4.1.3.RELEASE
+|         \--- org.springframework:spring-core:4.1.3.RELEASE -> 4.1.6.RELEASE (*)
++--- org.springframework:spring-test:4.1.3.RELEASE
+|    \--- org.springframework:spring-core:4.1.3.RELEASE -> 4.1.6.RELEASE (*)
++--- joda-time:joda-time:2.6
++--- mysql:mysql-connector-java:5.1.34
++--- org.codehaus.groovy:groovy-backports-compat23:2.4.0-rc-2
++--- com.google.code.gson:gson:2.3.1
++--- org.apache.commons:commons-lang3:3.3.2
++--- cglib:cglib-nodep:3.1
++--- com.googlecode.cqengine:cqengine:2.0.3
+|    +--- com.googlecode.concurrent-trees:concurrent-trees:2.4.0
+|    +--- org.javassist:javassist:3.18.2-GA
+|    +--- org.xerial:sqlite-jdbc:3.8.10.1
+|    +--- com.esotericsoftware:kryo:3.0.0
+|    |    +--- com.esotericsoftware:reflectasm:1.10.0
+|    |    |    \--- org.ow2.asm:asm:4.2
+|    |    +--- com.esotericsoftware:minlog:1.3.0
+|    |    \--- org.objenesis:objenesis:2.1
+|    \--- de.javakaffee:kryo-serializers:0.28
++--- org.springframework:spring-aop:4.1.6.RELEASE (*)
++--- org.aspectj:aspectjrt:1.8.5
+\--- org.aspectj:aspectjtools:1.8.5
+
+default - Configuration for default artifacts.
++--- commons-collections:commons-collections:3.2
++--- org.slf4j:slf4j-api:1.7.7
++--- ch.qos.logback:logback-classic:1.1.2
+|    +--- ch.qos.logback:logback-core:1.1.2
+|    \--- org.slf4j:slf4j-api:1.7.6 -> 1.7.7
++--- org.eclipse.jetty:jetty-server:9.3.0.M0
+|    +--- javax.servlet:javax.servlet-api:3.1.0
+|    +--- org.eclipse.jetty:jetty-http:9.3.0.M0
+|    |    \--- org.eclipse.jetty:jetty-util:9.3.0.M0
+|    \--- org.eclipse.jetty:jetty-io:9.3.0.M0
+|         \--- org.eclipse.jetty:jetty-util:9.3.0.M0
++--- redis.clients:jedis:2.6.1
+|    \--- org.apache.commons:commons-pool2:2.0
++--- junit:junit:4.+ -> 4.12
+|    \--- org.hamcrest:hamcrest-core:1.3
++--- org.springframework:spring-context:4.1.3.RELEASE
+|    +--- org.springframework:spring-aop:4.1.3.RELEASE -> 4.1.6.RELEASE
+|    |    +--- aopalliance:aopalliance:1.0
+|    |    +--- org.springframework:spring-beans:4.1.6.RELEASE
+|    |    |    \--- org.springframework:spring-core:4.1.6.RELEASE
+|    |    |         \--- commons-logging:commons-logging:1.2
+|    |    \--- org.springframework:spring-core:4.1.6.RELEASE (*)
+|    +--- org.springframework:spring-beans:4.1.3.RELEASE -> 4.1.6.RELEASE (*)
+|    +--- org.springframework:spring-core:4.1.3.RELEASE -> 4.1.6.RELEASE (*)
+|    \--- org.springframework:spring-expression:4.1.3.RELEASE
+|         \--- org.springframework:spring-core:4.1.3.RELEASE -> 4.1.6.RELEASE (*)
++--- org.springframework:spring-test:4.1.3.RELEASE
+|    \--- org.springframework:spring-core:4.1.3.RELEASE -> 4.1.6.RELEASE (*)
++--- joda-time:joda-time:2.6
++--- mysql:mysql-connector-java:5.1.34
++--- org.codehaus.groovy:groovy-backports-compat23:2.4.0-rc-2
++--- com.google.code.gson:gson:2.3.1
++--- org.apache.commons:commons-lang3:3.3.2
++--- cglib:cglib-nodep:3.1
++--- com.googlecode.cqengine:cqengine:2.0.3
+|    +--- com.googlecode.concurrent-trees:concurrent-trees:2.4.0
+|    +--- org.javassist:javassist:3.18.2-GA
+|    +--- org.xerial:sqlite-jdbc:3.8.10.1
+|    +--- com.esotericsoftware:kryo:3.0.0
+|    |    +--- com.esotericsoftware:reflectasm:1.10.0
+|    |    |    \--- org.ow2.asm:asm:4.2
+|    |    +--- com.esotericsoftware:minlog:1.3.0
+|    |    \--- org.objenesis:objenesis:2.1
+|    \--- de.javakaffee:kryo-serializers:0.28
++--- org.springframework:spring-aop:4.1.6.RELEASE (*)
++--- org.aspectj:aspectjrt:1.8.5
+\--- org.aspectj:aspectjtools:1.8.5
+
+integrationTestCompile - Compile classpath for source set 'integration test'.
++--- commons-collections:commons-collections:3.2
++--- org.slf4j:slf4j-api:1.7.7
++--- ch.qos.logback:logback-classic:1.1.2
+|    +--- ch.qos.logback:logback-core:1.1.2
+|    \--- org.slf4j:slf4j-api:1.7.6 -> 1.7.7
++--- org.eclipse.jetty:jetty-server:9.3.0.M0
+|    +--- javax.servlet:javax.servlet-api:3.1.0
+|    +--- org.eclipse.jetty:jetty-http:9.3.0.M0
+|    |    \--- org.eclipse.jetty:jetty-util:9.3.0.M0
+|    \--- org.eclipse.jetty:jetty-io:9.3.0.M0
+|         \--- org.eclipse.jetty:jetty-util:9.3.0.M0
++--- redis.clients:jedis:2.6.1
+|    \--- org.apache.commons:commons-pool2:2.0
++--- junit:junit:4.+ -> 4.12
+|    \--- org.hamcrest:hamcrest-core:1.3
++--- org.springframework:spring-context:4.1.3.RELEASE
+|    +--- org.springframework:spring-aop:4.1.3.RELEASE -> 4.1.6.RELEASE
+|    |    +--- aopalliance:aopalliance:1.0
+|    |    +--- org.springframework:spring-beans:4.1.6.RELEASE
+|    |    |    \--- org.springframework:spring-core:4.1.6.RELEASE
+|    |    |         \--- commons-logging:commons-logging:1.2
+|    |    \--- org.springframework:spring-core:4.1.6.RELEASE (*)
+|    +--- org.springframework:spring-beans:4.1.3.RELEASE -> 4.1.6.RELEASE (*)
+|    +--- org.springframework:spring-core:4.1.3.RELEASE -> 4.1.6.RELEASE (*)
+|    \--- org.springframework:spring-expression:4.1.3.RELEASE
+|         \--- org.springframework:spring-core:4.1.3.RELEASE -> 4.1.6.RELEASE (*)
++--- org.springframework:spring-test:4.1.3.RELEASE
+|    \--- org.springframework:spring-core:4.1.3.RELEASE -> 4.1.6.RELEASE (*)
++--- joda-time:joda-time:2.6
++--- mysql:mysql-connector-java:5.1.34
++--- org.codehaus.groovy:groovy-backports-compat23:2.4.0-rc-2
++--- com.google.code.gson:gson:2.3.1
++--- org.apache.commons:commons-lang3:3.3.2
++--- cglib:cglib-nodep:3.1
++--- com.googlecode.cqengine:cqengine:2.0.3
+|    +--- com.googlecode.concurrent-trees:concurrent-trees:2.4.0
+|    +--- org.javassist:javassist:3.18.2-GA
+|    +--- org.xerial:sqlite-jdbc:3.8.10.1
+|    +--- com.esotericsoftware:kryo:3.0.0
+|    |    +--- com.esotericsoftware:reflectasm:1.10.0
+|    |    |    \--- org.ow2.asm:asm:4.2
+|    |    +--- com.esotericsoftware:minlog:1.3.0
+|    |    \--- org.objenesis:objenesis:2.1
+|    \--- de.javakaffee:kryo-serializers:0.28
++--- org.springframework:spring-aop:4.1.6.RELEASE (*)
++--- org.aspectj:aspectjrt:1.8.5
++--- org.aspectj:aspectjtools:1.8.5
++--- com.googlecode.junit-toolbox:junit-toolbox:2.0
+|    +--- commons-io:commons-io:2.4
+|    +--- junit:junit:4.11 -> 4.12 (*)
+|    +--- org.hamcrest:hamcrest-library:1.3
+|    |    \--- org.hamcrest:hamcrest-core:1.3
+|    \--- org.mockito:mockito-core:1.9.5
+|         \--- org.objenesis:objenesis:1.0 -> 2.1
++--- org.spockframework:spock-core:0.7-groovy-2.0
+|    +--- junit:junit-dep:4.10
+|    |    \--- org.hamcrest:hamcrest-core:1.1 -> 1.3
+|    +--- org.codehaus.groovy:groovy-all:2.0.5
+|    \--- org.hamcrest:hamcrest-core:1.3
+\--- org.spockframework:spock-spring:0.7-groovy-2.0
+     \--- org.spockframework:spock-core:0.7-groovy-2.0 (*)
+
+integrationTestRuntime - Runtime classpath for source set 'integration test'.
++--- commons-collections:commons-collections:3.2
++--- org.slf4j:slf4j-api:1.7.7
++--- ch.qos.logback:logback-classic:1.1.2
+|    +--- ch.qos.logback:logback-core:1.1.2
+|    \--- org.slf4j:slf4j-api:1.7.6 -> 1.7.7
++--- org.eclipse.jetty:jetty-server:9.3.0.M0
+|    +--- javax.servlet:javax.servlet-api:3.1.0
+|    +--- org.eclipse.jetty:jetty-http:9.3.0.M0
+|    |    \--- org.eclipse.jetty:jetty-util:9.3.0.M0
+|    \--- org.eclipse.jetty:jetty-io:9.3.0.M0
+|         \--- org.eclipse.jetty:jetty-util:9.3.0.M0
++--- redis.clients:jedis:2.6.1
+|    \--- org.apache.commons:commons-pool2:2.0
++--- junit:junit:4.+ -> 4.12
+|    \--- org.hamcrest:hamcrest-core:1.3
++--- org.springframework:spring-context:4.1.3.RELEASE
+|    +--- org.springframework:spring-aop:4.1.3.RELEASE -> 4.1.6.RELEASE
+|    |    +--- aopalliance:aopalliance:1.0
+|    |    +--- org.springframework:spring-beans:4.1.6.RELEASE
+|    |    |    \--- org.springframework:spring-core:4.1.6.RELEASE
+|    |    |         \--- commons-logging:commons-logging:1.2
+|    |    \--- org.springframework:spring-core:4.1.6.RELEASE (*)
+|    +--- org.springframework:spring-beans:4.1.3.RELEASE -> 4.1.6.RELEASE (*)
+|    +--- org.springframework:spring-core:4.1.3.RELEASE -> 4.1.6.RELEASE (*)
+|    \--- org.springframework:spring-expression:4.1.3.RELEASE
+|         \--- org.springframework:spring-core:4.1.3.RELEASE -> 4.1.6.RELEASE (*)
++--- org.springframework:spring-test:4.1.3.RELEASE
+|    \--- org.springframework:spring-core:4.1.3.RELEASE -> 4.1.6.RELEASE (*)
++--- joda-time:joda-time:2.6
++--- mysql:mysql-connector-java:5.1.34
++--- org.codehaus.groovy:groovy-backports-compat23:2.4.0-rc-2
++--- com.google.code.gson:gson:2.3.1
++--- org.apache.commons:commons-lang3:3.3.2
++--- cglib:cglib-nodep:3.1
++--- com.googlecode.cqengine:cqengine:2.0.3
+|    +--- com.googlecode.concurrent-trees:concurrent-trees:2.4.0
+|    +--- org.javassist:javassist:3.18.2-GA
+|    +--- org.xerial:sqlite-jdbc:3.8.10.1
+|    +--- com.esotericsoftware:kryo:3.0.0
+|    |    +--- com.esotericsoftware:reflectasm:1.10.0
+|    |    |    \--- org.ow2.asm:asm:4.2
+|    |    +--- com.esotericsoftware:minlog:1.3.0
+|    |    \--- org.objenesis:objenesis:2.1
+|    \--- de.javakaffee:kryo-serializers:0.28
++--- org.springframework:spring-aop:4.1.6.RELEASE (*)
++--- org.aspectj:aspectjrt:1.8.5
++--- org.aspectj:aspectjtools:1.8.5
++--- com.googlecode.junit-toolbox:junit-toolbox:2.0
+|    +--- commons-io:commons-io:2.4
+|    +--- junit:junit:4.11 -> 4.12 (*)
+|    +--- org.hamcrest:hamcrest-library:1.3
+|    |    \--- org.hamcrest:hamcrest-core:1.3
+|    \--- org.mockito:mockito-core:1.9.5
+|         \--- org.objenesis:objenesis:1.0 -> 2.1
++--- org.spockframework:spock-core:0.7-groovy-2.0
+|    +--- junit:junit-dep:4.10
+|    |    \--- org.hamcrest:hamcrest-core:1.1 -> 1.3
+|    +--- org.codehaus.groovy:groovy-all:2.0.5
+|    \--- org.hamcrest:hamcrest-core:1.3
+\--- org.spockframework:spock-spring:0.7-groovy-2.0
+     \--- org.spockframework:spock-core:0.7-groovy-2.0 (*)
+
+runtime - Runtime classpath for source set 'main'.
++--- commons-collections:commons-collections:3.2
++--- org.slf4j:slf4j-api:1.7.7
++--- ch.qos.logback:logback-classic:1.1.2
+|    +--- ch.qos.logback:logback-core:1.1.2
+|    \--- org.slf4j:slf4j-api:1.7.6 -> 1.7.7
++--- org.eclipse.jetty:jetty-server:9.3.0.M0
+|    +--- javax.servlet:javax.servlet-api:3.1.0
+|    +--- org.eclipse.jetty:jetty-http:9.3.0.M0
+|    |    \--- org.eclipse.jetty:jetty-util:9.3.0.M0
+|    \--- org.eclipse.jetty:jetty-io:9.3.0.M0
+|         \--- org.eclipse.jetty:jetty-util:9.3.0.M0
++--- redis.clients:jedis:2.6.1
+|    \--- org.apache.commons:commons-pool2:2.0
++--- junit:junit:4.+ -> 4.12
+|    \--- org.hamcrest:hamcrest-core:1.3
++--- org.springframework:spring-context:4.1.3.RELEASE
+|    +--- org.springframework:spring-aop:4.1.3.RELEASE -> 4.1.6.RELEASE
+|    |    +--- aopalliance:aopalliance:1.0
+|    |    +--- org.springframework:spring-beans:4.1.6.RELEASE
+|    |    |    \--- org.springframework:spring-core:4.1.6.RELEASE
+|    |    |         \--- commons-logging:commons-logging:1.2
+|    |    \--- org.springframework:spring-core:4.1.6.RELEASE (*)
+|    +--- org.springframework:spring-beans:4.1.3.RELEASE -> 4.1.6.RELEASE (*)
+|    +--- org.springframework:spring-core:4.1.3.RELEASE -> 4.1.6.RELEASE (*)
+|    \--- org.springframework:spring-expression:4.1.3.RELEASE
+|         \--- org.springframework:spring-core:4.1.3.RELEASE -> 4.1.6.RELEASE (*)
++--- org.springframework:spring-test:4.1.3.RELEASE
+|    \--- org.springframework:spring-core:4.1.3.RELEASE -> 4.1.6.RELEASE (*)
++--- joda-time:joda-time:2.6
++--- mysql:mysql-connector-java:5.1.34
++--- org.codehaus.groovy:groovy-backports-compat23:2.4.0-rc-2
++--- com.google.code.gson:gson:2.3.1
++--- org.apache.commons:commons-lang3:3.3.2
++--- cglib:cglib-nodep:3.1
++--- com.googlecode.cqengine:cqengine:2.0.3
+|    +--- com.googlecode.concurrent-trees:concurrent-trees:2.4.0
+|    +--- org.javassist:javassist:3.18.2-GA
+|    +--- org.xerial:sqlite-jdbc:3.8.10.1
+|    +--- com.esotericsoftware:kryo:3.0.0
+|    |    +--- com.esotericsoftware:reflectasm:1.10.0
+|    |    |    \--- org.ow2.asm:asm:4.2
+|    |    +--- com.esotericsoftware:minlog:1.3.0
+|    |    \--- org.objenesis:objenesis:2.1
+|    \--- de.javakaffee:kryo-serializers:0.28
++--- org.springframework:spring-aop:4.1.6.RELEASE (*)
++--- org.aspectj:aspectjrt:1.8.5
+\--- org.aspectj:aspectjtools:1.8.5
+
+testCompile - Compile classpath for source set 'test'.
++--- commons-collections:commons-collections:3.2
++--- org.slf4j:slf4j-api:1.7.7
++--- ch.qos.logback:logback-classic:1.1.2
+|    +--- ch.qos.logback:logback-core:1.1.2
+|    \--- org.slf4j:slf4j-api:1.7.6 -> 1.7.7
++--- org.eclipse.jetty:jetty-server:9.3.0.M0
+|    +--- javax.servlet:javax.servlet-api:3.1.0
+|    +--- org.eclipse.jetty:jetty-http:9.3.0.M0
+|    |    \--- org.eclipse.jetty:jetty-util:9.3.0.M0
+|    \--- org.eclipse.jetty:jetty-io:9.3.0.M0
+|         \--- org.eclipse.jetty:jetty-util:9.3.0.M0
++--- redis.clients:jedis:2.6.1
+|    \--- org.apache.commons:commons-pool2:2.0
++--- junit:junit:4.+ -> 4.12
+|    \--- org.hamcrest:hamcrest-core:1.3
++--- org.springframework:spring-context:4.1.3.RELEASE
+|    +--- org.springframework:spring-aop:4.1.3.RELEASE -> 4.1.6.RELEASE
+|    |    +--- aopalliance:aopalliance:1.0
+|    |    +--- org.springframework:spring-beans:4.1.6.RELEASE
+|    |    |    \--- org.springframework:spring-core:4.1.6.RELEASE
+|    |    |         \--- commons-logging:commons-logging:1.2
+|    |    \--- org.springframework:spring-core:4.1.6.RELEASE (*)
+|    +--- org.springframework:spring-beans:4.1.3.RELEASE -> 4.1.6.RELEASE (*)
+|    +--- org.springframework:spring-core:4.1.3.RELEASE -> 4.1.6.RELEASE (*)
+|    \--- org.springframework:spring-expression:4.1.3.RELEASE
+|         \--- org.springframework:spring-core:4.1.3.RELEASE -> 4.1.6.RELEASE (*)
++--- org.springframework:spring-test:4.1.3.RELEASE
+|    \--- org.springframework:spring-core:4.1.3.RELEASE -> 4.1.6.RELEASE (*)
++--- joda-time:joda-time:2.6
++--- mysql:mysql-connector-java:5.1.34
++--- org.codehaus.groovy:groovy-backports-compat23:2.4.0-rc-2
++--- com.google.code.gson:gson:2.3.1
++--- org.apache.commons:commons-lang3:3.3.2
++--- cglib:cglib-nodep:3.1
++--- com.googlecode.cqengine:cqengine:2.0.3
+|    +--- com.googlecode.concurrent-trees:concurrent-trees:2.4.0
+|    +--- org.javassist:javassist:3.18.2-GA
+|    +--- org.xerial:sqlite-jdbc:3.8.10.1
+|    +--- com.esotericsoftware:kryo:3.0.0
+|    |    +--- com.esotericsoftware:reflectasm:1.10.0
+|    |    |    \--- org.ow2.asm:asm:4.2
+|    |    +--- com.esotericsoftware:minlog:1.3.0
+|    |    \--- org.objenesis:objenesis:2.1
+|    \--- de.javakaffee:kryo-serializers:0.28
++--- org.springframework:spring-aop:4.1.6.RELEASE (*)
++--- org.aspectj:aspectjrt:1.8.5
++--- org.aspectj:aspectjtools:1.8.5
++--- com.googlecode.junit-toolbox:junit-toolbox:2.0
+|    +--- commons-io:commons-io:2.4
+|    +--- junit:junit:4.11 -> 4.12 (*)
+|    +--- org.hamcrest:hamcrest-library:1.3
+|    |    \--- org.hamcrest:hamcrest-core:1.3
+|    \--- org.mockito:mockito-core:1.9.5
+|         \--- org.objenesis:objenesis:1.0 -> 2.1
++--- org.spockframework:spock-core:0.7-groovy-2.0
+|    +--- junit:junit-dep:4.10
+|    |    \--- org.hamcrest:hamcrest-core:1.1 -> 1.3
+|    +--- org.codehaus.groovy:groovy-all:2.0.5
+|    \--- org.hamcrest:hamcrest-core:1.3
+\--- org.spockframework:spock-spring:0.7-groovy-2.0
+     \--- org.spockframework:spock-core:0.7-groovy-2.0 (*)
+
+testRuntime - Runtime classpath for source set 'test'.
++--- commons-collections:commons-collections:3.2
++--- org.slf4j:slf4j-api:1.7.7
++--- ch.qos.logback:logback-classic:1.1.2
+|    +--- ch.qos.logback:logback-core:1.1.2
+|    \--- org.slf4j:slf4j-api:1.7.6 -> 1.7.7
++--- org.eclipse.jetty:jetty-server:9.3.0.M0
+|    +--- javax.servlet:javax.servlet-api:3.1.0
+|    +--- org.eclipse.jetty:jetty-http:9.3.0.M0
+|    |    \--- org.eclipse.jetty:jetty-util:9.3.0.M0
+|    \--- org.eclipse.jetty:jetty-io:9.3.0.M0
+|         \--- org.eclipse.jetty:jetty-util:9.3.0.M0
++--- redis.clients:jedis:2.6.1
+|    \--- org.apache.commons:commons-pool2:2.0
++--- junit:junit:4.+ -> 4.12
+|    \--- org.hamcrest:hamcrest-core:1.3
++--- org.springframework:spring-context:4.1.3.RELEASE
+|    +--- org.springframework:spring-aop:4.1.3.RELEASE -> 4.1.6.RELEASE
+|    |    +--- aopalliance:aopalliance:1.0
+|    |    +--- org.springframework:spring-beans:4.1.6.RELEASE
+|    |    |    \--- org.springframework:spring-core:4.1.6.RELEASE
+|    |    |         \--- commons-logging:commons-logging:1.2
+|    |    \--- org.springframework:spring-core:4.1.6.RELEASE (*)
+|    +--- org.springframework:spring-beans:4.1.3.RELEASE -> 4.1.6.RELEASE (*)
+|    +--- org.springframework:spring-core:4.1.3.RELEASE -> 4.1.6.RELEASE (*)
+|    \--- org.springframework:spring-expression:4.1.3.RELEASE
+|         \--- org.springframework:spring-core:4.1.3.RELEASE -> 4.1.6.RELEASE (*)
++--- org.springframework:spring-test:4.1.3.RELEASE
+|    \--- org.springframework:spring-core:4.1.3.RELEASE -> 4.1.6.RELEASE (*)
++--- joda-time:joda-time:2.6
++--- mysql:mysql-connector-java:5.1.34
++--- org.codehaus.groovy:groovy-backports-compat23:2.4.0-rc-2
++--- com.google.code.gson:gson:2.3.1
++--- org.apache.commons:commons-lang3:3.3.2
++--- cglib:cglib-nodep:3.1
++--- com.googlecode.cqengine:cqengine:2.0.3
+|    +--- com.googlecode.concurrent-trees:concurrent-trees:2.4.0
+|    +--- org.javassist:javassist:3.18.2-GA
+|    +--- org.xerial:sqlite-jdbc:3.8.10.1
+|    +--- com.esotericsoftware:kryo:3.0.0
+|    |    +--- com.esotericsoftware:reflectasm:1.10.0
+|    |    |    \--- org.ow2.asm:asm:4.2
+|    |    +--- com.esotericsoftware:minlog:1.3.0
+|    |    \--- org.objenesis:objenesis:2.1
+|    \--- de.javakaffee:kryo-serializers:0.28
++--- org.springframework:spring-aop:4.1.6.RELEASE (*)
++--- org.aspectj:aspectjrt:1.8.5
++--- org.aspectj:aspectjtools:1.8.5
++--- com.googlecode.junit-toolbox:junit-toolbox:2.0
+|    +--- commons-io:commons-io:2.4
+|    +--- junit:junit:4.11 -> 4.12 (*)
+|    +--- org.hamcrest:hamcrest-library:1.3
+|    |    \--- org.hamcrest:hamcrest-core:1.3
+|    \--- org.mockito:mockito-core:1.9.5
+|         \--- org.objenesis:objenesis:1.0 -> 2.1
++--- org.spockframework:spock-core:0.7-groovy-2.0
+|    +--- junit:junit-dep:4.10
+|    |    \--- org.hamcrest:hamcrest-core:1.1 -> 1.3
+|    +--- org.codehaus.groovy:groovy-all:2.0.5
+|    \--- org.hamcrest:hamcrest-core:1.3
+\--- org.spockframework:spock-spring:0.7-groovy-2.0
+     \--- org.spockframework:spock-core:0.7-groovy-2.0 (*)
+
+(*) - dependencies omitted (listed previously)
+
+BUILD SUCCESSFUL
+
+Total time: 3.374 secs

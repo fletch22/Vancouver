@@ -16,7 +16,8 @@ public class Log4EventUndoAspect {
 	// @Around("@annotation(com.fletch22.aop.Loggable4EventUndo)")
 	// @Around("execution(* com.fletch22.aop.*.*(..))") // works!
 	// @Around("within(com.fletch22.aop.*)") // works!
-	@Around("within(com.fletch22.aop.undo.*)") // works!
+	//@Around("within(com.fletch22.aop.undo.*)") // works!
+	@Around("execution(* com.fletch22.aop.undo.*.*(..))")
 	public Object execute(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
 		logger.info("Executing my UNDO event AFTER advice!");
 		

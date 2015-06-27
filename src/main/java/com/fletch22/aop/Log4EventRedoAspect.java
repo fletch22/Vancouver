@@ -2,6 +2,7 @@ package com.fletch22.aop;
 
 import java.lang.annotation.Annotation;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.After;
@@ -10,6 +11,9 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import com.google.gson.Gson;
+import com.google.gson.annotations.Expose;
 
 @Component
 @Aspect
@@ -58,5 +62,27 @@ public class Log4EventRedoAspect {
 		
 		logger.info("Target: {}", joinPoint.getTarget().getClass().getSimpleName());
 		logger.info("This: {}", joinPoint.getThis().getClass().getSimpleName());
+	}
+	
+	public static class ParameterPair {
+		
+		@Expose
+		public String clazzName;
+		
+		@Expose
+		public String jsonValue;
+		
+		public StringBuilder toJson() {
+			
+			Gson gson = new Gson();
+			
+			return new StringBuilder(gson.toJson(this));
+		}
+		
+		public static ParameterPair fromJson(String json) {
+			// Use an annotation value to identify the method so refactoring method name/location will not affect JSON deserialization.
+			// Create Unit test that scans all class's methods for annotations and finds duplicates.
+			throw new NotImplementedException("fromJson not finished yet.");
+		}
 	}
 }

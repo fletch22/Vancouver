@@ -4,14 +4,10 @@ import org.joda.time.DateTime
 import org.junit.Test
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.test.context.ContextConfiguration
 
-import spock.lang.Ignore
 import spock.lang.Shared
 import spock.lang.Specification
 
-import com.fletch22.orb.IntegrationTests
 import com.fletch22.orb.TranDateGenerator
 import com.fletch22.util.NowFactory
 
