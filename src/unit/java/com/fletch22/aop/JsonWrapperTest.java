@@ -4,8 +4,6 @@ import java.math.BigDecimal;
 
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 

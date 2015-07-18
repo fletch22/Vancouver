@@ -33,3 +33,9 @@ And command 2 throws an exception
 Then 1 *and* 2 should roll back.
 
 Restore mode should be handled at the system level, not the action command level.
+
+Add spock class paths to integration command line gradle test.
+
+Test compile time weaving.
+
+Get eclipse Aspect J plugin to work.

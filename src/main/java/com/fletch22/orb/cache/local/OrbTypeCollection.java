@@ -59,7 +59,7 @@ public class OrbTypeCollection {
 	public static class OrbType {
 		long id;
 		String label;
-		BigDecimal tranDate;
+		public BigDecimal tranDate;
 		LinkedHashSet<String> customFields = new LinkedHashSet<String>();
 		
 		public OrbType(long id, String label, BigDecimal tranDate, LinkedHashSet<String> customFields) {
@@ -85,6 +85,5 @@ public class OrbTypeCollection {
 				return orbType.label;
 			}
 		};
-		
 	}
 }

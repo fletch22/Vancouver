@@ -1,7 +1,7 @@
 package com.fletch22.orb;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -77,7 +77,7 @@ public class OrbTransformer {
 		JsonObject root = jsonObject.getAsJsonObject(OrbTransformer.ROOT_LABEL);
 		JsonArray jsonArray = root.getAsJsonArray(OrbTransformer.USER_DEFINED_PROPERTIES);
 
-		Map<String, String> properties = new HashMap<String, String>();
+		LinkedHashMap<String, String> properties = new LinkedHashMap<String, String>();
 		for (int i = 0; i < jsonArray.size(); i++) {
 			JsonElement arrayElement = jsonArray.get(i);
 			JsonObject arrayObject = arrayElement.getAsJsonObject();

@@ -1,9 +1,10 @@
 package com.fletch22.orb.command.processor;
 
+import java.util.UUID;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import com.fletch22.dao.LogActionService;
@@ -15,10 +16,9 @@ import com.fletch22.orb.Orb;
 import com.fletch22.orb.OrbManager;
 import com.fletch22.orb.OrbTypeManager;
 import com.fletch22.orb.TranDateGenerator;
-import com.fletch22.orb.cache.local.OrbManagerLocalCache;
-import com.fletch22.orb.cache.local.OrbTypeManagerLocalCache;
 import com.fletch22.orb.command.ActionSniffer;
 import com.fletch22.orb.command.CommandBundle;
+import com.fletch22.orb.command.MethodCallCommand;
 import com.fletch22.orb.command.orb.AddOrbCommand;
 import com.fletch22.orb.command.orbType.AddBaseOrbTypeCommand;
 import com.fletch22.orb.command.orbType.AddOrbTypeCommand;
@@ -26,14 +26,17 @@ import com.fletch22.orb.command.orbType.DeleteOrbTypeCommand;
 import com.fletch22.orb.command.orbType.DeleteOrbTypeDto;
 import com.fletch22.orb.command.orbType.dto.AddOrbDto;
 import com.fletch22.orb.command.orbType.dto.AddOrbTypeDto;
+import com.fletch22.orb.command.orbType.dto.MethodCallDto;
 import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory.CommandProcessActionPackage;
 import com.fletch22.orb.command.processor.OperationResult.OpResult;
 import com.fletch22.orb.command.transaction.BeginTransactionCommand;
 import com.fletch22.orb.command.transaction.CommitTransactionCommand;
 import com.fletch22.orb.command.transaction.CommitTransactionDto;
 import com.fletch22.orb.command.transaction.TransactionService;
+import com.fletch22.orb.logging.EventLogCommandProcessPackageHolder;
 import com.fletch22.orb.rollback.UndoAction;
 import com.fletch22.orb.rollback.UndoActionBundle;
+import com.fletch22.orb.service.MethodCallService;
 import com.fletch22.orb.transaction.UndoService;
 
 @Component
@@ -85,6 +88,15 @@ public class CommandProcessor {
 
 	@Autowired
 	UndoService rollbackService;
+	
+	@Autowired
+	MethodCallCommand methodCallCommand;
+	
+	@Autowired
+	MethodCallService methodCallService;
+	
+	@Autowired
+	EventLogCommandProcessPackageHolder eventLogCommandProcessPackageHolder;
 
 	@Autowired
 	CommandProcessActionPackageFactory commandProcessActionPackageFactory;
@@ -124,7 +136,7 @@ public class CommandProcessor {
 
 		try {
 			StringBuilder action = commandProcessActionPackage.getAction();
-
+			
 			String actionVerb = this.actionSniffer.getVerb(action);
 			switch (actionVerb) {
 			case CommandExpressor.ADD_ORB_TYPE:
@@ -159,12 +171,32 @@ public class CommandProcessor {
 				UndoActionBundle undoActionBundle = UndoActionBundle.fromJson(action);
 				operationResult = execute(undoActionBundle, commandProcessActionPackage);
 				break;
+			case CommandExpressor.METHOD_CALL:
+				MethodCallDto methodCallDto = this.methodCallCommand.fromJson(action);
+				operationResult = execute(methodCallDto, commandProcessActionPackage);
+				break;
 			default:
 				throw new RuntimeException("Encountered problem trying to determine json command type from '" + action + "'.");
 			}
-
 			operationResult.action = new StringBuilder(action);
 		} catch (Exception e) {
+			operationResult.opResult = OpResult.FAILURE;
+			operationResult.operationResultException = e;
+		}
+
+		return operationResult;
+	}
+
+	private OperationResult execute(MethodCallDto methodCallDto, CommandProcessActionPackage commandProcessActionPackage) {
+		
+		OperationResult operationResult = OperationResult.IN_THE_MIDDLE;
+
+		try {
+			eventLogCommandProcessPackageHolder.commandProcessActionPackage = commandProcessActionPackage;
+			Object object = methodCallService.process(methodCallDto);
+			operationResult = new OperationResult(OpResult.SUCCESS, object, true);
+		} catch (Exception e) {
+			eventLogCommandProcessPackageHolder.clear();
 			operationResult.opResult = OpResult.FAILURE;
 			operationResult.operationResultException = e;
 		}

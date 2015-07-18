@@ -1,5 +1,6 @@
 package com.fletch22.aop;
 
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
@@ -14,7 +15,7 @@ public class JsonWrapper {
 	
 	@SerializedName("clazzName")
 	public String clazzName;
-
+	
 	@SerializedName("objectValueAsJson")
 	private String objectValueAsJson;
 

@@ -1,12 +1,15 @@
 package com.fletch22.orb.cache.local;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.LinkedHashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.fletch22.aop.Log4EventAspect;
+import com.fletch22.aop.Loggable4Event;
 import com.fletch22.orb.InternalIdGenerator;
 import com.fletch22.orb.Orb;
 import com.fletch22.orb.OrbTypeConstants;
@@ -16,13 +19,19 @@ import com.fletch22.orb.command.orbType.AddWholeOrbTypeCommand;
 import com.fletch22.orb.command.orbType.DeleteOrbTypeCommand;
 import com.fletch22.orb.command.orbType.DeleteOrbTypeDto;
 import com.fletch22.orb.command.orbType.dto.AddOrbTypeDto;
+import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory.CommandProcessActionPackage;
 import com.fletch22.orb.rollback.UndoActionBundle;
 
 @Component(value = "OrbTypeManagerLocalCache")
 public class OrbTypeManagerLocalCache implements OrbTypeManager {
+	
+	Logger logger = LoggerFactory.getLogger(OrbTypeManagerLocalCache.class);
 
 	@Autowired
-	OrbTypeCollection orbTypeCollection;
+	OrbTypeCollection orbTypes;
+	
+	@Autowired
+	OrbCollection orbs;
 
 	@Autowired
 	InternalIdGenerator internalIdGenerator;
@@ -40,19 +49,19 @@ public class OrbTypeManagerLocalCache implements OrbTypeManager {
 		if (orbInternalTypeId == OrbTypeConstants.ORBTYPE_INTERNAL_ID_UNSET) {
 			orbInternalTypeId = this.internalIdGenerator.getNewId();
 		}
-
+		
 		OrbType orbType = new OrbType(orbInternalTypeId, addOrbTypeDto.label, tranDate, null);
-		orbTypeCollection.add(orbType);
-
+		orbTypes.add(orbType);
+		
 		// Add delete to rollback action
 		undoActionBundle.addUndoAction(this.deleteOrbTypeCommand.toJson(orbInternalTypeId, false), tranDate);
-
+		
 		return orbInternalTypeId;
 	}
 
 	@Override
 	public void deleteOrbType(DeleteOrbTypeDto deleteOrbTypeDto, BigDecimal tranDate, UndoActionBundle rollbackAction) {
-		OrbType orbType = orbTypeCollection.remove(deleteOrbTypeDto.orbTypeInternalId);
+		OrbType orbType = orbTypes.remove(deleteOrbTypeDto.orbTypeInternalId);
 		
 		// TODO: Transform to orb until we get rid of redis stuff. Then we can use OrbType natively.
 		Orb orb = convertToOrb(tranDate, orbType); 
@@ -61,7 +70,7 @@ public class OrbTypeManagerLocalCache implements OrbTypeManager {
 	}
 
 	private Orb convertToOrb(BigDecimal tranDate, OrbType orbType) {
-		Map<String, String> properties = new HashMap<String, String>();
+		LinkedHashMap<String, String> properties = new LinkedHashMap<String, String>();
 		for (String customFieldNames : orbType.customFields) {
 			properties.put(customFieldNames, customFieldNames);
 		}
@@ -71,6 +80,57 @@ public class OrbTypeManagerLocalCache implements OrbTypeManager {
 
 	@Override
 	public void deleteAllTypes() {
-		orbTypeCollection.deleteAll();
+		orbTypes.deleteAll();
+	}
+
+	@Override
+	@Loggable4Event
+	public void addAttribute(long orbTypeInternalId, String attributeName, CommandProcessActionPackage commandProcessActionPackage) {
+		logger.info("In addAttribute.");
+		
+		OrbType orbType = orbTypes.get(orbTypeInternalId);
+		
+		orbType.addField(attributeName);
+		
+		orbs.addAttribute(orbTypeInternalId, attributeName);
+		
+		Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
+		deleteAttribute(orbTypeInternalId, attributeName, null);
+	}
+
+	@Override
+	@Loggable4Event
+	public void deleteAttribute(long orbTypeInternalId, String name, CommandProcessActionPackage commandProcessActionPackage) {
+		OrbType orbType = orbTypes.get(orbTypeInternalId);
+		
+		orbType.customFields.remove(name);
+		
+		orbs.removeAttribute(orbTypeInternalId, name);
+		
+		Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
+		addAttribute(orbTypeInternalId, name, commandProcessActionPackage);
+	}
+	
+	public int getIndexOfAttribute(long orbTypeInternalId, String attributeName) {
+		OrbType orbType = orbTypes.get(orbTypeInternalId);
+		
+		if (!orbType.customFields.contains(attributeName)) {
+			throw new RuntimeException("Attribute '" + attributeName + "' not found on type " + orbTypeInternalId + ".");
+		}
+		
+		int index = 0;
+		for (String key: orbType.customFields) {
+			if (key.equals(attributeName)) {
+				break;
+			}
+			index++;
+		}
+		
+		return index;
+	}
+
+	@Override
+	public OrbType getOrbType(long orbTypeInternalId) {
+		return orbTypes.get(orbTypeInternalId);
 	}
 }

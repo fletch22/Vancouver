@@ -1,8 +1,10 @@
 package com.fletch22.orb.cache.local;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
 
+import org.apache.commons.lang3.NotImplementedException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,29 +18,35 @@ import com.fletch22.orb.rollback.UndoActionBundle;
 @Component(value = "OrbManagerLocalCache")
 public class OrbManagerLocalCache implements OrbManager {
 	
+	Logger logger = LoggerFactory.getLogger(OrbManagerLocalCache.class);
+	
 	@Autowired
 	InternalIdGenerator internalIdGenerator;
 	
 	@Autowired
-	OrbInstancesLocalCache orbInstancesLocalCache;
+	OrbCollection orbCollection;
 	
 	@Autowired
 	DeleteOrbCommand deleteOrbCommand;
 	
 	public Orb createOrbInstance(AddOrbDto addOrbDto, BigDecimal tranDate, UndoActionBundle undoActionBundle) {
-
+		
 		long orbInternalId = this.internalIdGenerator.getNewId();
 		
-		orbInstancesLocalCache.add(orbInternalId, addOrbDto.orbTypeInternalId, tranDate);
+		Orb orb = orbCollection.add(orbInternalId, addOrbDto.orbTypeInternalId, tranDate);
 		
 		// Add delete to rollback action
 		undoActionBundle.addUndoAction(this.deleteOrbCommand.toJson(orbInternalId, false), tranDate);
 		
-		return new Orb(orbInternalId, addOrbDto.orbTypeInternalId, tranDate, new HashMap<String, String>());
+		return orb;
 	}
 
 	@Override
 	public void deleteAllOrbInstances() {
-		orbInstancesLocalCache.deleteAll();
+		orbCollection.deleteAll();
+	}
+	
+	public void removeAttributeFromInstance(long orbInternalId, String attributeName) {
+		throw new NotImplementedException("Not ready yet.");
 	}
 }

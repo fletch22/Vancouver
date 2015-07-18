@@ -3,8 +3,6 @@ package com.fletch22.redis;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
 
 import redis.clients.jedis.Jedis;
 

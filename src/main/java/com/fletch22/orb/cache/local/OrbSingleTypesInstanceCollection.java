@@ -3,11 +3,17 @@ package com.fletch22.orb.cache.local;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.apache.commons.lang3.time.StopWatch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.googlecode.cqengine.ConcurrentIndexedCollection;
 import com.googlecode.cqengine.IndexedCollection;
 import com.googlecode.cqengine.index.unique.UniqueIndex;
 
 public class OrbSingleTypesInstanceCollection {
+	
+	Logger logger = LoggerFactory.getLogger(OrbSingleTypesInstanceCollection.class);
 
 	IndexedCollection<CacheEntry> instances = new ConcurrentIndexedCollection<CacheEntry>();
 	private long orbTypeInternalId;
@@ -26,9 +32,19 @@ public class OrbSingleTypesInstanceCollection {
 		createCacheEntry(id, label, tranDate, customFieldValues);
 	}
 	
-	public void removeInstanceField(int index) {
+	public void addInstanceFieldToAllInstances(String value) {
 		for (CacheEntry cacheEntry: instances) {
-			cacheEntry.list.remove(index);
+			cacheEntry.list.add(value);
+		}
+	}
+	
+	public void addInstanceFieldToAllInstances() {
+		addInstanceFieldToAllInstances(null);
+	}
+
+	public void removeInstanceFieldFromAllInstances(int indexOfField) {
+		for (CacheEntry cacheEntry: instances) {
+			cacheEntry.list.remove(indexOfField);
 		}
 	}
 }

@@ -10,11 +10,13 @@ import com.fletch22.orb.InternalIdGenerator;
 import com.fletch22.orb.Orb;
 import com.fletch22.orb.OrbTypeConstants;
 import com.fletch22.orb.OrbTypeManager;
+import com.fletch22.orb.cache.local.OrbTypeCollection.OrbType;
 import com.fletch22.orb.command.orbType.AddOrbTypeCommand;
 import com.fletch22.orb.command.orbType.AddWholeOrbTypeCommand;
 import com.fletch22.orb.command.orbType.DeleteOrbTypeCommand;
 import com.fletch22.orb.command.orbType.DeleteOrbTypeDto;
 import com.fletch22.orb.command.orbType.dto.AddOrbTypeDto;
+import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory.CommandProcessActionPackage;
 import com.fletch22.orb.rollback.UndoActionBundle;
 import com.fletch22.redis.ObjectTypeCacheService;
 import com.fletch22.redis.RedisObjectInstanceCacheService;
@@ -80,5 +82,25 @@ public class OrbTypeManagerExternalCache implements OrbTypeManager {
 	@Override
 	public void deleteAllTypes() {
 		throw new NotImplementedException("deleteAllTypes");
+	}
+
+	@Override
+	public void addAttribute(long orbInternalId, String attributeName, CommandProcessActionPackage commandProcessActionPackage) {
+		throw new NotImplementedException("Deprecated implementation.");
+	}
+
+	@Override
+	public void deleteAttribute(long orbTypeInternalId, String attributeName, CommandProcessActionPackage commandProcessActionPackage) {
+		throw new NotImplementedException("Deprecated implementation.");		
+	}
+
+	@Override
+	public int getIndexOfAttribute(long orbTypeInternalId, String attributeName) {
+		throw new NotImplementedException("Deprecated implementation.");
+	}
+
+	@Override
+	public OrbType getOrbType(long orbTypeInternalId) {
+		throw new NotImplementedException("Deprecated implementation.");
 	}
 }

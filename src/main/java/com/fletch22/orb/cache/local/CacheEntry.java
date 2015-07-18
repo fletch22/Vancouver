@@ -1,6 +1,7 @@
 package com.fletch22.orb.cache.local;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.googlecode.cqengine.attribute.SimpleAttribute;
@@ -12,7 +13,7 @@ public class CacheEntry {
 	String label;
 	long typeId;
 	BigDecimal tranDate;
-	List<String> list;
+	List<String> list = new ArrayList<String>();
 
 	public CacheEntry(long id, long typeId, String label, BigDecimal tranDate, List<String> list) {
 		this.id = id;

@@ -2,6 +2,7 @@ package com.fletch22.redis;
 
 import static org.junit.Assert.*
 
+import org.apache.commons.lang3.time.StopWatch;
 import org.junit.Test
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -23,6 +24,7 @@ import com.fletch22.orb.command.processor.OperationResult.OpResult
 import com.fletch22.orb.command.transaction.BeginTransactionCommand
 import com.fletch22.orb.command.transaction.CommitTransactionCommand
 import com.fletch22.orb.command.transaction.TransactionService
+import com.fletch22.orb.service.OrbTypeService
 
 @org.junit.experimental.categories.Category(IntegrationTests.class)
 @ContextConfiguration(locations = ['classpath:/springContext-test.xml'])
@@ -32,9 +34,6 @@ class CommandProcessorIntegrationSpec extends Specification {
 	
 	@Autowired
 	CommandProcessor commandProcessor
-	
-	@Autowired
-	ObjectTypeCacheService objectTypeCacheService
 	
 	@Autowired
 	CommandProcessActionPackageFactory commandProcessActionPackageFactory
@@ -56,6 +55,9 @@ class CommandProcessorIntegrationSpec extends Specification {
 	
 	@Autowired
 	TransactionService transactionService
+	
+	@Autowired
+	OrbTypeService orbTypeService
 	
 	def setup() {
 		initializer.nukeAndPaveAllIntegratedSystems();
@@ -117,8 +119,6 @@ class CommandProcessorIntegrationSpec extends Specification {
 		
 		def orbTypeName1 = 'foo1'
 		
-		assertTrue(objectTypeCacheService.getTypes().size() == 0)
-		
 		CommandBundle commandBundle = new CommandBundle()
 		def jsonAddOrbTypeCommand = this.addOrbTypeCommand.toJson(orbTypeName1)
 		commandBundle.addCommand(jsonAddOrbTypeCommand)
@@ -132,7 +132,6 @@ class CommandProcessorIntegrationSpec extends Specification {
 		then:
 		commandProcessActionPackage.undoActionBundle
 		commandProcessActionPackage.undoActionBundle.getActions().size() == 0
-		objectTypeCacheService.getTypes().size() == 0
 	}
 	
 	@Test
@@ -170,5 +169,75 @@ class CommandProcessorIntegrationSpec extends Specification {
 		
 		and: 'there is no longer a "current" transaction '
 		!this.transactionService.isTransactionInFlight()
+	}
+	
+	@Test
+	def 'AopActionLoggingTest'() {
+		
+		given:
+		def typeLabel = 'foo'
+		
+		logger.info("In aopActionLoggingTest.");
+		
+		long orbTypeInternalId = orbTypeService.addOrbType("thisisthetype");
+		
+		def operationResult = null
+		
+		def i = 1
+		StopWatch stopWatch = new StopWatch()
+		stopWatch.start()
+		when:
+		
+		int numberIterations = 1
+		numberIterations.times {
+			String json = "{\"command\":{\"methodCall\":{\"className\":\"com.fletch22.orb.cache.local.OrbTypeManagerLocalCache\"},\"methodName\":\"addAttribute\",\"methodParameters\":[{\"parameterTypeName\":\"long\", \"argument\":{\"clazzName\":\"java.lang.Long\",\"objectValueAsJson\":\"" + orbTypeInternalId + "\"}},{\"parameterTypeName\":\"class java.lang.String\", \"argument\":{\"clazzName\":\"java.lang.String\",\"objectValueAsJson\":\"\\\"foo" + i + "\\\"\"}}]}}";
+			
+			def action = new StringBuilder(json)
+			def commandProcessActionPackage = this.commandProcessActionPackageFactory.getInstance(action)
+			operationResult = commandProcessor.executeAction(commandProcessActionPackage)
+			i++
+		}
+		stopWatch.stop()
+		
+		then:
+		
+		if (operationResult.operationResultException != null) {
+			logger.info("Exception: {}", operationResult.operationResultException)
+		}
+		
+		operationResult != null
+		operationResult.opResult == OpResult.SUCCESS
+		
+	}
+	
+	@Test
+	def 'AopActionLoggingTest2'() {
+		
+		given:
+		def typeLabel = 'foo'
+		
+		long orbTypeInternalId = orbTypeService.addOrbType("thisisthetype");
+		
+		def operationResult = null
+		
+		when:
+		String json = "{\"command\":{\"methodCall\":{\"className\":\"com.fletch22.orb.cache.local.OrbTypeManagerLocalCache\"},\"methodName\":\"addAttribute\",\"methodParameters\":[{\"parameterTypeName\":\"long\", \"argument\":{\"clazzName\":\"java.lang.Long\",\"objectValueAsJson\":\"" + orbTypeInternalId + "\"}},{\"parameterTypeName\":\"class java.lang.String\", \"argument\":{\"clazzName\":\"java.lang.String\",\"objectValueAsJson\":\"\\\"foo\\\"\"}}]}}";
+		
+		def action = new StringBuilder(json)
+		def commandProcessActionPackage = this.commandProcessActionPackageFactory.getInstance(action)
+		operationResult = commandProcessor.executeAction(commandProcessActionPackage)
+		
+		then:
+		def size = commandProcessActionPackage.undoActionBundle.getActions().size()
+		
+		logger.info("Size: {}", size)
+		
+		if (operationResult.operationResultException != null) {
+			logger.info("Exception: {}", operationResult.operationResultException)
+		}
+		
+		operationResult != null
+		operationResult.opResult == OpResult.SUCCESS
+		
 	}
 }
