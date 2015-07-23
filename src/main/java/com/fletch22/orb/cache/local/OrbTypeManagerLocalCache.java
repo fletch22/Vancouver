@@ -85,7 +85,7 @@ public class OrbTypeManagerLocalCache implements OrbTypeManager {
 
 	@Override
 	@Loggable4Event
-	public void addAttribute(long orbTypeInternalId, String attributeName, CommandProcessActionPackage commandProcessActionPackage) {
+	public void addAttribute(long orbTypeInternalId, String attributeName) {
 		logger.info("In addAttribute.");
 		
 		OrbType orbType = orbTypes.get(orbTypeInternalId);
@@ -101,6 +101,8 @@ public class OrbTypeManagerLocalCache implements OrbTypeManager {
 	@Override
 	@Loggable4Event
 	public void deleteAttribute(long orbTypeInternalId, String name, CommandProcessActionPackage commandProcessActionPackage) {
+		logger.info("In deleteAttribute.");
+		
 		OrbType orbType = orbTypes.get(orbTypeInternalId);
 		
 		orbType.customFields.remove(name);
@@ -108,7 +110,7 @@ public class OrbTypeManagerLocalCache implements OrbTypeManager {
 		orbs.removeAttribute(orbTypeInternalId, name);
 		
 		Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
-		addAttribute(orbTypeInternalId, name, commandProcessActionPackage);
+		addAttribute(orbTypeInternalId, name);
 	}
 	
 	public int getIndexOfAttribute(long orbTypeInternalId, String attributeName) {

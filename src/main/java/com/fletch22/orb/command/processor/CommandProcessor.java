@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.fletch22.aop.Log4EventAspect;
 import com.fletch22.dao.LogActionService;
 import com.fletch22.dao.LogBundler;
 import com.fletch22.dao.LogBundler.LogBundleDto;
@@ -87,7 +88,7 @@ public class CommandProcessor {
 	LogBundler logBundler;
 
 	@Autowired
-	UndoService rollbackService;
+	UndoService undoService;
 	
 	@Autowired
 	MethodCallCommand methodCallCommand;
@@ -100,35 +101,23 @@ public class CommandProcessor {
 
 	@Autowired
 	CommandProcessActionPackageFactory commandProcessActionPackageFactory;
+	
+	@Autowired
+	RedoAndUndoLogging redoAndUndoLogging;
 
 	public OperationResult processAction(CommandProcessActionPackage commandProcessActionPackage) {
 
 		OperationResult operationResult = OperationResult.IN_THE_MIDDLE;
-		operationResult = executeAction(commandProcessActionPackage);
-		operationResult.internalIdAfterOperation = this.internalIdGenerator.getCurrentId();
-
-		tryHandlingAndRollback(commandProcessActionPackage, operationResult);
+		try {
+			Log4EventAspect.isInvokeFromSerializedMethod = true;
+			operationResult = executeAction(commandProcessActionPackage);
+			operationResult.internalIdAfterOperation = this.internalIdGenerator.getCurrentId();
+			redoAndUndoLogging.logRedoAndUndo(commandProcessActionPackage, operationResult);
+		} finally {
+			Log4EventAspect.isInvokeFromSerializedMethod = false;
+		}
 
 		return operationResult;
-	}
-
-	private void tryHandlingAndRollback(CommandProcessActionPackage commandProcessActionPackage, OperationResult operationResult) {
-		try {
-			handleLoggingAndRollback(commandProcessActionPackage, operationResult);
-		} catch (Exception e) {
-			Exception explained = new Exception("Orb DB and SQL DB are now out of sync. Restart is recommended.", e);
-			throw new RuntimeException(explained);
-		}
-	}
-
-	private void handleLoggingAndRollback(CommandProcessActionPackage commandProcessActionPackage, OperationResult operationResult) {
-		if (operationResult.shouldBeLogged && !commandProcessActionPackage.isInRestoreMode() && operationResult.opResult == OpResult.SUCCESS) {
-			logActionService.logAction(operationResult, commandProcessActionPackage);
-		}
-
-		if (operationResult.opResult != OpResult.SUCCESS) {
-			this.rollbackService.undoActions(commandProcessActionPackage.getUndoActionBundle());
-		}
 	}
 
 	public OperationResult executeAction(CommandProcessActionPackage commandProcessActionPackage) {
@@ -190,13 +179,13 @@ public class CommandProcessor {
 	private OperationResult execute(MethodCallDto methodCallDto, CommandProcessActionPackage commandProcessActionPackage) {
 		
 		OperationResult operationResult = OperationResult.IN_THE_MIDDLE;
-
+		
+		eventLogCommandProcessPackageHolder.setCommandProcessActionPackage(commandProcessActionPackage);
+		
 		try {
-			eventLogCommandProcessPackageHolder.commandProcessActionPackage = commandProcessActionPackage;
 			Object object = methodCallService.process(methodCallDto);
 			operationResult = new OperationResult(OpResult.SUCCESS, object, true);
 		} catch (Exception e) {
-			eventLogCommandProcessPackageHolder.clear();
 			operationResult.opResult = OpResult.FAILURE;
 			operationResult.operationResultException = e;
 		}

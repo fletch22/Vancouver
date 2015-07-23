@@ -81,7 +81,7 @@ class CommandProcessorSpec extends Specification {
 		addOrbTypeCommand.fromJson(*_) >> addOrbTypeDto
 		
 		UndoService rollbackService = Mock()
-		this.commandProcessor.rollbackService = rollbackService
+		this.commandProcessor.undoService = rollbackService
 	}
 
 	@Unroll

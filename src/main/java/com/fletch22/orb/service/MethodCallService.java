@@ -20,15 +20,17 @@ public class MethodCallService {
 	public Object process(MethodCallDto methodCallDto) {
 		Object result = null;
 		try {
-			Class clazz = Class.forName(methodCallDto.className);
-			Object object = Fletch22ApplicationContext.getApplicationContext().getBean(clazz);
+			Class<?> clazz = Class.forName(methodCallDto.className);
+			Object objectToExecute = Fletch22ApplicationContext.getApplicationContext().getBean(clazz);
 	
-			Method[] allMethods = object.getClass().getDeclaredMethods();
+			Method[] allMethods = clazz.getDeclaredMethods();
 			for (Method method : allMethods) {
 				String methodName = method.getName();
-				logger.info("Method: {}", methodName);
+				logger.debug("Found method: '{}' while looking for method '{}'", methodName, methodCallDto.methodName);
 				if (methodName.equals(methodCallDto.methodName)) {
 					Type[] parameterTypeArray = method.getGenericParameterTypes();
+					logger.info("Found parameter type length: '{}' while looking for parameterTypes array length '{}'", parameterTypeArray.length, methodCallDto.parameterTypes.length);
+					
 					if (parameterTypeArray.length == methodCallDto.parameterTypes.length) {
 	
 						boolean isWrongMethod = false;
@@ -48,9 +50,10 @@ public class MethodCallService {
 						}
 						
 						method.setAccessible(true);
-						result = method.invoke(object, methodCallDto.args);
+						Object castObject = clazz.cast(objectToExecute);
+						result = method.invoke(castObject, methodCallDto.args);
 						String resultAsString = (result == null) ? "null": result.toString();
-						logger.info("{}.{}() returned {}", methodCallDto.className, methodName, result);
+						logger.info("{}.{}() returned {}", methodCallDto.className, methodName, resultAsString);
 						break;
 					}
 				}

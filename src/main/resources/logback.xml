@@ -7,9 +7,9 @@
 		</layout>
 	</appender>
 
-	<logger name="com.fletch22" level="TRACE" />
+	<logger name="com.fletch22" level="INFO" />
 
-	<root level="debug">
+	<root level="info">
 		<appender-ref ref="STDOUT" />
 	</root>
 </configuration>

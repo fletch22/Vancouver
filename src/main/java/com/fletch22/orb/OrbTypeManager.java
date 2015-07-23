@@ -16,7 +16,7 @@ public interface OrbTypeManager {
 
 	public void deleteAllTypes();
 	
-	public void addAttribute(long orbInternalId, String attributeName, CommandProcessActionPackage commandProcessActionPackage);
+	public void addAttribute(long orbInternalId, String attributeName);
 	
 	public void deleteAttribute(long orbTypeInternalId, String attributeName, CommandProcessActionPackage commandProcessActionPackage);
 

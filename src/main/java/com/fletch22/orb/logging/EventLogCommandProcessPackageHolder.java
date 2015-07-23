@@ -6,9 +6,30 @@ import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory.Com
 
 @Component
 public class EventLogCommandProcessPackageHolder {
-	public CommandProcessActionPackage commandProcessActionPackage;
+	private CommandProcessActionPackage commandProcessActionPackage;
 	
-	public void clear() {
+	public void cleanup() {
 		commandProcessActionPackage = null;
 	}
+	
+	public boolean hasInitialCommandActionBeenAdded() {
+	
+		boolean result = true;
+		if (commandProcessActionPackage == null) {
+			result = false;
+		} else {
+			result = commandProcessActionPackage.getAction() != null;
+		}
+		
+		return result;
+	}
+
+	public CommandProcessActionPackage getCommandProcessActionPackage() {
+		return commandProcessActionPackage;
+	}
+
+	public void setCommandProcessActionPackage(CommandProcessActionPackage commandProcessActionPackage) {
+		this.commandProcessActionPackage = commandProcessActionPackage;
+	}
 }
+

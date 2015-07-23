@@ -8,12 +8,6 @@ public class OperationResult {
 		FAILURE
 	}
 
-    public enum OperationResultReasonCode {
-        UNASSIGNED,
-        TIMEOUT,
-        ROLLBACK_OCCURRING
-    }
-    
     public static final int UNSET = -1;
     public static OperationResult SUCCESS = new OperationResult(OpResult.SUCCESS);
 	public static OperationResult IN_THE_MIDDLE = new OperationResult(OpResult.IN_THE_MIDDLE);
@@ -27,7 +21,6 @@ public class OperationResult {
 	public Object operationResultObject = null;
 	public Exception operationResultException;
 	
-	public OperationResultReasonCode resultReasonCode = OperationResultReasonCode.UNASSIGNED;
 	public StringBuilder action;
 
 	public OperationResult(OpResult opResult)

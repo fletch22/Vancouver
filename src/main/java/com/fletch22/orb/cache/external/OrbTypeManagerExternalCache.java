@@ -85,7 +85,7 @@ public class OrbTypeManagerExternalCache implements OrbTypeManager {
 	}
 
 	@Override
-	public void addAttribute(long orbInternalId, String attributeName, CommandProcessActionPackage commandProcessActionPackage) {
+	public void addAttribute(long orbInternalId, String attributeName) {
 		throw new NotImplementedException("Deprecated implementation.");
 	}
 

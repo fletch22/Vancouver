@@ -1,13 +1,12 @@
 package com.fletch22.aop;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.NotImplementedException;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.AfterThrowing;
@@ -20,9 +19,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.fletch22.Fletch22ApplicationContext;
+import com.fletch22.orb.InternalIdGenerator;
 import com.fletch22.orb.command.MethodCallCommand;
 import com.fletch22.orb.command.orbType.dto.MethodCallDto;
+import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory;
+import com.fletch22.orb.command.processor.OperationResult;
+import com.fletch22.orb.command.processor.OperationResult.OpResult;
+import com.fletch22.orb.command.processor.RedoAndUndoLogging;
 import com.fletch22.orb.logging.EventLogCommandProcessPackageHolder;
+import com.fletch22.util.IocUtil;
 
 @Component
 @Aspect
@@ -30,6 +35,7 @@ public class Log4EventAspect {
 	
 	Logger logger = LoggerFactory.getLogger(Log4EventAspect.class);
 	
+	public static boolean isInvokeFromSerializedMethod = false;
 	public static boolean isPreventNextLineFromExecutingAndAddToUndoLog;
 	
 	@Pointcut("execution(@com.fletch22.aop.Loggable4Event * *(..))")
@@ -37,37 +43,100 @@ public class Log4EventAspect {
 	
 	@Around("redoLogger()")
 	public Object loggingAround(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
-		logger.info("Inside logging around.");
-		
 		EventLogCommandProcessPackageHolder packageHolder = getPackageHolder();
-		StringBuilder methodCallSerialized = convertCall(proceedingJoinPoint);
-		
-		logger.info("MCS: {}", methodCallSerialized);
-		logger.info("Is packageHoldder null? {}", packageHolder.commandProcessActionPackage == null);
 		
 		Object retObject = null;
-		if (Log4EventAspect.isPreventNextLineFromExecutingAndAddToUndoLog) {
-			// NOTE: This captures the undo action for the undo log.
-			BigDecimal tranDate = packageHolder.commandProcessActionPackage.getTranDate();
-			packageHolder.commandProcessActionPackage.getUndoActionBundle().addUndoAction(methodCallSerialized, tranDate);
-			Log4EventAspect.isPreventNextLineFromExecutingAndAddToUndoLog = false;
+		if (isForUndoLog()) {
+			undoLogProcessing(proceedingJoinPoint, packageHolder);
 		} else {
-			// NOTE: This captures the redo action for the redo log.
-			packageHolder.commandProcessActionPackage.setAction(methodCallSerialized);
-			retObject = proceedingJoinPoint.proceed();
+			retObject = redoLogAndProcessInvocation(proceedingJoinPoint, packageHolder);
 		}
 		
 		return retObject;
 	}
+
+	// NOTE: This captures the redo action for the redo log.
+	private Object redoLogAndProcessInvocation(ProceedingJoinPoint proceedingJoinPoint, EventLogCommandProcessPackageHolder packageHolder) throws Throwable {
+		Object retObject = null;
+		
+		boolean isInRestoreMode = packageHolder.getCommandProcessActionPackage().isInRestoreMode();
+		
+		if (packageHolder.hasInitialCommandActionBeenAdded() || isInRestoreMode) {
+			retObject = proceedingJoinPoint.proceed();
+		} else {
+			StringBuilder methodCallSerialized = convertCall(proceedingJoinPoint);
+			
+			logger.debug("redo log action: {}", methodCallSerialized);
+			
+			packageHolder.getCommandProcessActionPackage().setAction(methodCallSerialized);
+
+			// NOTE: Since only "shouldBeLogged" methods will have the @Log4EventAspect annotation
+			// We can assuredly set the "shouldBeLogged" to true here.
+			// NOTE: Consider moving this to a factory method.
+			OperationResult operationResult = new OperationResult(OpResult.IN_THE_MIDDLE, true);
+			InternalIdGenerator internalIdGenerator = (InternalIdGenerator) getBean(InternalIdGenerator.class);
+			operationResult.internalIdBeforeOperation = internalIdGenerator.getCurrentId();
+			
+			try {
+				retObject = proceedingJoinPoint.proceed();
+				operationResult.opResult = OpResult.SUCCESS;
+			} catch (Exception e) {
+				operationResult.opResult = OpResult.FAILURE;
+				operationResult.operationResultException = e;
+			}
+			
+			if (!isInvokeFromSerializedMethod) {
+				operationResult.internalIdAfterOperation = internalIdGenerator.getCurrentId();
+				operationResult.action = methodCallSerialized;
+
+				RedoAndUndoLogging redoAndUndoLogging = (RedoAndUndoLogging) getBean(RedoAndUndoLogging.class);
+				redoAndUndoLogging.logRedoAndUndo(packageHolder.getCommandProcessActionPackage(), operationResult);
+			}
+		
+			packageHolder.cleanup();
+			
+			if (operationResult.opResult == OpResult.FAILURE) {
+				throw new RuntimeException(operationResult.operationResultException);
+			}
+		}
+		return retObject;
+	}
+
+	private void undoLogProcessing(ProceedingJoinPoint proceedingJoinPoint, EventLogCommandProcessPackageHolder packageHolder) {
+
+		// NOTE: This captures the undo action for the undo log.
+		if (!packageHolder.getCommandProcessActionPackage().isInRestoreMode()) {
+			StringBuilder methodCallSerialized = convertCall(proceedingJoinPoint);
+			
+			logger.info("undolog MCS: {}", methodCallSerialized);
+			
+			BigDecimal tranDate = packageHolder.getCommandProcessActionPackage().getTranDate();
+			packageHolder.getCommandProcessActionPackage().getUndoActionBundle().addUndoAction(methodCallSerialized, tranDate);
+		}
+		
+		Log4EventAspect.isPreventNextLineFromExecutingAndAddToUndoLog = false;
+	}
+
+	private boolean isForUndoLog() {
+		return Log4EventAspect.isPreventNextLineFromExecutingAndAddToUndoLog;
+	}
 	
 	private EventLogCommandProcessPackageHolder getPackageHolder() {
-		EventLogCommandProcessPackageHolder packageHolder = (EventLogCommandProcessPackageHolder) Fletch22ApplicationContext.getApplicationContext().getBean(EventLogCommandProcessPackageHolder.class);
+		EventLogCommandProcessPackageHolder packageHolder = (EventLogCommandProcessPackageHolder) getBean(EventLogCommandProcessPackageHolder.class);
+		
+		// TODO convert to factory method
+		if (packageHolder.getCommandProcessActionPackage() == null) {
+			CommandProcessActionPackageFactory factory = (CommandProcessActionPackageFactory) getBean(CommandProcessActionPackageFactory.class);
+			packageHolder.setCommandProcessActionPackage(factory.getInstanceForDirectInvocation());
+		}
+		
 		return packageHolder;
 	}
 	
 	@AfterThrowing(pointcut = "redoLogger()", throwing = "ex")
 	public void handleException(JoinPoint joinPoint, Throwable ex) {
 		Log4EventAspect.isPreventNextLineFromExecutingAndAddToUndoLog = false;
+		Log4EventAspect.isInvokeFromSerializedMethod = false;
 	}
 	
 	private StringBuilder convertCall(JoinPoint joinPoint) {
@@ -77,12 +146,20 @@ public class Log4EventAspect {
 		Method method = signature.getMethod();
 		String methodName = method.getName();
 		Type[] parametersTypes = method.getGenericParameterTypes();
-		String clazzName = joinPoint.getTarget().getClass().getName();
+		String clazzName = getIocUtil().getBeansSpringSingletonInterface(joinPoint.getTarget()).getName();
 		
 		StringBuilder sb = convertToJson(clazzName, methodName, parametersTypes, args);
 		logger.debug("CN: {}: MN: {}, Nbr args: {}, json: {}", clazzName, methodName, args.length, sb.toString());
 		
 		return sb;
+	}
+	
+	private IocUtil getIocUtil() {
+		return (IocUtil) getBean(IocUtil.class);
+	}
+	
+	private Object getBean(Class<?> clazz) {
+		return Fletch22ApplicationContext.getApplicationContext().getBean(clazz);
 	}
 
 	private StringBuilder convertToJson(String clazzName, String methodName, Type[] parameterTypes, Object[] args) {
@@ -101,49 +178,6 @@ public class Log4EventAspect {
 	
 	private MethodCallCommand getMethodCallCommandBean() {
 		return Fletch22ApplicationContext.getApplicationContext().getBean(MethodCallCommand.class);
-	}
-	
-	private void logDetails(ProceedingJoinPoint proceedingJoinPoint) {
-		MethodSignature signature = (MethodSignature) proceedingJoinPoint.getSignature();
-		Object[] args = proceedingJoinPoint.getArgs();
-		
-		Annotation[] annotations = signature.getMethod().getAnnotations();
-		for (Annotation annotation: annotations) {
-			logger.debug("Annotation found: {}", annotation.getClass());	
-		}
-		
-		Loggable[] loggableArray = signature.getMethod().getAnnotationsByType(Loggable.class);
-		logger.info("Loggables found on method: {}", loggableArray.length);
-		
-		loggableArray = signature.getDeclaringType().getClass().getAnnotationsByType(Loggable.class);
-		logger.info("Loggables found on class: {}", loggableArray.length);
-		
-		logger.info("Target: {}", proceedingJoinPoint.getTarget().getClass().getSimpleName());
-		logger.info("This: {}", proceedingJoinPoint.getThis().getClass().getSimpleName());
-	}
-	
-	private String getCallString(MethodSignature signature, Object[] args) {
-		Class<?>[] parameterTypes = signature.getMethod().getParameterTypes();
-		
-		String argumentString = StringUtils.EMPTY;
-		if (parameterTypes.length > 0) {
-			boolean isFirst = true;
-			for (int i = 0; i < parameterTypes.length; i++) {
-				Class<?> parameter = parameterTypes[i];
-				if (!isFirst) argumentString += ", ";
-				isFirst = false;
-				String parameterName = parameter.getName();
-				if (parameterName.equals(String.class.getName())) {
-					argumentString += "\"" + args[i] + "\"";
-				} else if (parameterName.equals(Long.class.getName())) {
-					argumentString += args[i] + "L";
-				} else {
-					throw new RuntimeException("Encountered problem understanding parameter type: " + parameterName);
-				}
-			}
-		}
-		
-		return argumentString;
 	}
 	
 	public static void preventNextLineFromExecutingAndLogTheUndoAction() {

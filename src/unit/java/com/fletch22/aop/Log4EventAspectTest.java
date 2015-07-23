@@ -1,8 +1,10 @@
 package com.fletch22.aop;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 import org.apache.commons.lang3.time.StopWatch;
@@ -16,6 +18,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.fletch22.util.IocUtil;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/springContext-test.xml")
 public class Log4EventAspectTest {
@@ -26,13 +30,16 @@ public class Log4EventAspectTest {
 	@Qualifier("BorderCollie")
 	Dog dog;
 	
+	@Autowired
+	IocUtil iocUtil;
+	
 	@Test
 	public void testSuccess() {
 
 		// Arrange
 		logger.info("test logger.");
 		
-		int numRuns = 100;
+		int numRuns = 1;
 		
 		// Act
 		StopWatch stopWatch = new StopWatch();
@@ -44,7 +51,7 @@ public class Log4EventAspectTest {
 		
 		BigDecimal millis = new BigDecimal(stopWatch.getNanoTime()).divide(new BigDecimal(1000000)).divide(new BigDecimal(String.valueOf(numRuns)));
 		
-		logger.info("millis/runForwards : {}", millis.toString());
+		logger.info("millis per method call: {}", millis.toString());
 		
 		assertFalse("Execution prevent should have been reset to false.", Log4EventAspect.isPreventNextLineFromExecutingAndAddToUndoLog);
 	}
@@ -63,8 +70,19 @@ public class Log4EventAspectTest {
 			wasExceptionThrown = true;
 		}
 		
-		assertTrue("Exception was thrown.", wasExceptionThrown);
+		assertTrue("Exception should have been thrown.", wasExceptionThrown);
 		assertFalse("Execution prevent should have been reset to false.", Log4EventAspect.isPreventNextLineFromExecutingAndAddToUndoLog);
+	}
+	
+	@Test
+	public void testInterfaceToImplementationMapping() {
+		
+		// Arrange
+		// Act
+		Class<?> interfaze = iocUtil.getBeansSpringSingletonInterface(dog);
+		
+		// Assert
+		assertEquals(interfaze, Dog.class);
 	}
 	
 	public interface Dog {
@@ -73,7 +91,7 @@ public class Log4EventAspectTest {
 	}
 	
 	@Component("BorderCollie")
-	public static class BorderCollie implements Dog {
+	public static class BorderCollie implements Serializable, Dog  {
 		
 		@Loggable4Event
 		public void bark() {
@@ -85,17 +103,38 @@ public class Log4EventAspectTest {
 			logger.info("Inside run forward method.");
 			
 			Log4EventAspect.isPreventNextLineFromExecutingAndAddToUndoLog = true;
+			runBackwards();
+			
 			if (throwException) {
 				throw new RuntimeException("Throwing exception as planned.");
 			}
-			runBackwards();
+			
+			wagTail();
+		}
+		
+		@Loggable4Event
+		private void wagTail() {
+			logger.info("Inside wag tail method.");
+			
+			Log4EventAspect.isPreventNextLineFromExecutingAndAddToUndoLog = true;
+			unwagTail();
+		}
+		
+		@Loggable4Event
+		private void unwagTail() {
+			logger.info("Inside unwagTail tail method.");
+			
+			Log4EventAspect.isPreventNextLineFromExecutingAndAddToUndoLog = true;
+			wagTail();
 		}
 		
 		@Loggable4Event
 		public void runBackwards() {
 			logger.info("Inside dog run backwards method.");
+			
+			Log4EventAspect.isPreventNextLineFromExecutingAndAddToUndoLog = true;
+			runForwards(true, false);
 		}
 	}
-	
 }
 

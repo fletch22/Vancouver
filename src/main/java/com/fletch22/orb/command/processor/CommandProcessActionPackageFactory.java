@@ -17,6 +17,12 @@ public class CommandProcessActionPackageFactory {
 	
 	@Autowired
 	TransactionService transactionService;
+	
+	public CommandProcessActionPackage getInstanceForDirectInvocation() {
+		CommandProcessActionPackage commandProcessActionPackage = getInstance(null);
+		
+		return commandProcessActionPackage;
+	}
 
 	public CommandProcessActionPackage getInstance(StringBuilder action) {
 		CommandProcessActionPackage commandProcessActionPackage = new CommandProcessActionPackage();

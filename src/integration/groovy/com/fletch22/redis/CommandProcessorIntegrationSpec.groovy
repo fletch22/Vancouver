@@ -211,7 +211,7 @@ class CommandProcessorIntegrationSpec extends Specification {
 	}
 	
 	@Test
-	def 'AopActionLoggingTest2'() {
+	def 'AopActionLoggingfromSerializedMethod'() {
 		
 		given:
 		def typeLabel = 'foo'
@@ -221,7 +221,7 @@ class CommandProcessorIntegrationSpec extends Specification {
 		def operationResult = null
 		
 		when:
-		String json = "{\"command\":{\"methodCall\":{\"className\":\"com.fletch22.orb.cache.local.OrbTypeManagerLocalCache\"},\"methodName\":\"addAttribute\",\"methodParameters\":[{\"parameterTypeName\":\"long\", \"argument\":{\"clazzName\":\"java.lang.Long\",\"objectValueAsJson\":\"" + orbTypeInternalId + "\"}},{\"parameterTypeName\":\"class java.lang.String\", \"argument\":{\"clazzName\":\"java.lang.String\",\"objectValueAsJson\":\"\\\"foo\\\"\"}}]}}";
+		String json = "{\"command\":{\"methodCall\":{\"className\":\"com.fletch22.orb.OrbTypeManager\"},\"methodName\":\"addAttribute\",\"methodParameters\":[{\"parameterTypeName\":\"long\", \"argument\":{\"clazzName\":\"java.lang.Long\",\"objectValueAsJson\":\"" + orbTypeInternalId + "\"}},{\"parameterTypeName\":\"class java.lang.String\", \"argument\":{\"clazzName\":\"java.lang.String\",\"objectValueAsJson\":\"\\\"foo\\\"\"}}]}}";
 		
 		def action = new StringBuilder(json)
 		def commandProcessActionPackage = this.commandProcessActionPackageFactory.getInstance(action)
@@ -236,6 +236,7 @@ class CommandProcessorIntegrationSpec extends Specification {
 			logger.info("Exception: {}", operationResult.operationResultException)
 		}
 		
+		size > 0
 		operationResult != null
 		operationResult.opResult == OpResult.SUCCESS
 		
