@@ -23,7 +23,7 @@ import com.fletch22.orb.command.transaction.TransactionService
 
 @org.junit.experimental.categories.Category(IntegrationTests.class)
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:/springContext.xml")
+@ContextConfiguration(locations = "classpath:/springContext-test.xml")
 class LogDaoSpec extends Specification {
 	
 	static Logger logger = LoggerFactory.getLogger(LogDaoSpec)

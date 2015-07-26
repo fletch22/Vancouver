@@ -95,11 +95,6 @@ public class OrbTypeManagerExternalCache implements OrbTypeManager {
 	}
 
 	@Override
-	public int getIndexOfAttribute(long orbTypeInternalId, String attributeName) {
-		throw new NotImplementedException("Deprecated implementation.");
-	}
-
-	@Override
 	public OrbType getOrbType(long orbTypeInternalId) {
 		throw new NotImplementedException("Deprecated implementation.");
 	}

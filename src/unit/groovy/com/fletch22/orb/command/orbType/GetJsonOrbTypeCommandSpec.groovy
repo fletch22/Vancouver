@@ -15,7 +15,7 @@ import spock.lang.Specification
 class GetJsonOrbTypeCommandSpec extends Specification {
 
 	@Autowired
-	GetJsonOrbTypeCommand getJsonOrbTypeCommand
+	GetOrbTypeCommand getJsonOrbTypeCommand
 	
 	@Test
 	def 'test Get Json OrbTypeCommand parse and unparse'() {

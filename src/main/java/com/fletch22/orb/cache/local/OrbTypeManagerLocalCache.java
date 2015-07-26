@@ -86,12 +86,14 @@ public class OrbTypeManagerLocalCache implements OrbTypeManager {
 	@Override
 	@Loggable4Event
 	public void addAttribute(long orbTypeInternalId, String attributeName) {
-		logger.info("In addAttribute.");
-		
+		// NOTE: Add it to the type.
 		OrbType orbType = orbTypes.get(orbTypeInternalId);
+		
+		logger.info("OT null? {}", orbType == null);
 		
 		orbType.addField(attributeName);
 		
+		// NOTE: Add it to the instances.
 		orbs.addAttribute(orbTypeInternalId, attributeName);
 		
 		Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
@@ -101,19 +103,20 @@ public class OrbTypeManagerLocalCache implements OrbTypeManager {
 	@Override
 	@Loggable4Event
 	public void deleteAttribute(long orbTypeInternalId, String name, CommandProcessActionPackage commandProcessActionPackage) {
-		logger.info("In deleteAttribute.");
 		
+		// NOTE: Delete it from the type.
 		OrbType orbType = orbTypes.get(orbTypeInternalId);
-		
 		orbType.customFields.remove(name);
 		
-		orbs.removeAttribute(orbTypeInternalId, name);
+		// NOTE: Delete it from the instance.
+		int index = getIndexOfAttribute(orbTypeInternalId, name);
+		orbs.removeAttribute(orbTypeInternalId, index, name);
 		
 		Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
 		addAttribute(orbTypeInternalId, name);
 	}
 	
-	public int getIndexOfAttribute(long orbTypeInternalId, String attributeName) {
+	private int getIndexOfAttribute(long orbTypeInternalId, String attributeName) {
 		OrbType orbType = orbTypes.get(orbTypeInternalId);
 		
 		if (!orbType.customFields.contains(attributeName)) {

@@ -20,7 +20,5 @@ public interface OrbTypeManager {
 	
 	public void deleteAttribute(long orbTypeInternalId, String attributeName, CommandProcessActionPackage commandProcessActionPackage);
 
-	public int getIndexOfAttribute(long orbTypeInternalId, String attributeName);
-	
 	public OrbType getOrbType(long orbTypeInternalId);
 }

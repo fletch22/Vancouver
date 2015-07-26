@@ -4,19 +4,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fletch22.orb.CommandExpressor;
-import com.fletch22.orb.command.orbType.dto.GetJsonOrbTypeDto;
+import com.fletch22.orb.command.orbType.dto.GetOrbTypeDto;
 import com.fletch22.util.JsonUtil;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 
 @Component
-public class GetJsonOrbTypeCommand {
+public class GetOrbTypeCommand {
 
 	@Autowired
 	JsonUtil jsonUtil;
 	
-	public StringBuilder toJson(int orbTypeInternalId) {
+	public StringBuilder toJson(long orbTypeInternalId) {
 		StringBuilder translation = new StringBuilder();
 
 		String oidClean = this.jsonUtil.escapeJsonIllegals(String.valueOf(orbTypeInternalId));
@@ -34,7 +34,7 @@ public class GetJsonOrbTypeCommand {
 		return translation;
 	}
 	
-	public GetJsonOrbTypeDto fromJson(String action) {
+	public GetOrbTypeDto fromJson(String action) {
 		
 		JsonParser parser = new JsonParser();
 		JsonObject jsonObject = (JsonObject) parser.parse(action);
@@ -44,8 +44,8 @@ public class GetJsonOrbTypeCommand {
 		
 		JsonPrimitive orbTypeInternalIdJsonObject = getOrbType.getAsJsonPrimitive(CommandExpressor.ORB_TYPE_INTERNAL_ID);
 	
-		int orbTypeInternalId = orbTypeInternalIdJsonObject.getAsInt();
+		long orbTypeInternalId = orbTypeInternalIdJsonObject.getAsInt();
 		
-		return new GetJsonOrbTypeDto(orbTypeInternalId);
+		return new GetOrbTypeDto(orbTypeInternalId);
 	}
 }

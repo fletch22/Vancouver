@@ -1,7 +1,5 @@
 package com.fletch22.orb.command.processor;
 
-import java.util.UUID;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +15,7 @@ import com.fletch22.orb.Orb;
 import com.fletch22.orb.OrbManager;
 import com.fletch22.orb.OrbTypeManager;
 import com.fletch22.orb.TranDateGenerator;
+import com.fletch22.orb.cache.local.OrbTypeCollection.OrbType;
 import com.fletch22.orb.command.ActionSniffer;
 import com.fletch22.orb.command.CommandBundle;
 import com.fletch22.orb.command.MethodCallCommand;
@@ -25,8 +24,10 @@ import com.fletch22.orb.command.orbType.AddBaseOrbTypeCommand;
 import com.fletch22.orb.command.orbType.AddOrbTypeCommand;
 import com.fletch22.orb.command.orbType.DeleteOrbTypeCommand;
 import com.fletch22.orb.command.orbType.DeleteOrbTypeDto;
+import com.fletch22.orb.command.orbType.GetOrbTypeCommand;
 import com.fletch22.orb.command.orbType.dto.AddOrbDto;
 import com.fletch22.orb.command.orbType.dto.AddOrbTypeDto;
+import com.fletch22.orb.command.orbType.dto.GetOrbTypeDto;
 import com.fletch22.orb.command.orbType.dto.MethodCallDto;
 import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory.CommandProcessActionPackage;
 import com.fletch22.orb.command.processor.OperationResult.OpResult;
@@ -71,6 +72,9 @@ public class CommandProcessor {
 
 	@Autowired
 	OrbManager orbManager;
+	
+	@Autowired
+	GetOrbTypeCommand getOrbTypeCommand;
 	
 	@Autowired
 	InternalIdGenerator internalIdGenerator;
@@ -140,6 +144,10 @@ public class CommandProcessor {
 				this.beginTransactionCommand.fromJson(action.toString());
 				operationResult = executeBeginTransaction(commandProcessActionPackage);
 				break;
+			case CommandExpressor.GET_ORB_TYPE:
+				GetOrbTypeDto getOrbTypeDto = this.getOrbTypeCommand.fromJson(action.toString());
+				operationResult = execute(getOrbTypeDto, commandProcessActionPackage);
+				break;
 			case CommandExpressor.COMMIT_TRANSACTION_WITH_ID:
 				CommitTransactionDto commitTransactionDto = this.commitTransactionCommand.fromJson(action.toString());
 				operationResult = execute(commitTransactionDto, commandProcessActionPackage);
@@ -168,6 +176,22 @@ public class CommandProcessor {
 				throw new RuntimeException("Encountered problem trying to determine json command type from '" + action + "'.");
 			}
 			operationResult.action = new StringBuilder(action);
+		} catch (Exception e) {
+			operationResult.opResult = OpResult.FAILURE;
+			operationResult.operationResultException = e;
+		}
+
+		return operationResult;
+	}
+
+	private OperationResult execute(GetOrbTypeDto getOrbTypeDto, CommandProcessActionPackage commandProcessActionPackage) {
+		OperationResult operationResult = OperationResult.IN_THE_MIDDLE;
+		
+		eventLogCommandProcessPackageHolder.setCommandProcessActionPackage(commandProcessActionPackage);
+		
+		try {
+			OrbType orbType = this.orbTypeManager.getOrbType(getOrbTypeDto.orbTypeInternalId);
+			operationResult = new OperationResult(OpResult.SUCCESS, orbType, true);
 		} catch (Exception e) {
 			operationResult.opResult = OpResult.FAILURE;
 			operationResult.operationResultException = e;

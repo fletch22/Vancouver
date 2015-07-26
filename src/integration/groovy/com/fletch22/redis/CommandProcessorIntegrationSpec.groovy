@@ -2,7 +2,7 @@ package com.fletch22.redis;
 
 import static org.junit.Assert.*
 
-import org.apache.commons.lang3.time.StopWatch;
+import org.apache.commons.lang3.time.StopWatch
 import org.junit.Test
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -13,6 +13,7 @@ import spock.lang.Specification
 
 import com.fletch22.orb.IntegrationSystemInitializer
 import com.fletch22.orb.IntegrationTests
+import com.fletch22.orb.cache.local.OrbTypeCollection.OrbType
 import com.fletch22.orb.command.CommandBundle
 import com.fletch22.orb.command.orbType.AddOrbTypeCommand
 import com.fletch22.orb.command.orbType.GetListOfOrbTypesCommand
@@ -177,9 +178,11 @@ class CommandProcessorIntegrationSpec extends Specification {
 		given:
 		def typeLabel = 'foo'
 		
-		logger.info("In aopActionLoggingTest.");
+		long orbTypeInternalId = orbTypeService.addOrbType("thisisthetype")
+		logger.info("In aopActionLoggingTest. otid: {}", orbTypeInternalId)
 		
-		long orbTypeInternalId = orbTypeService.addOrbType("thisisthetype");
+		OrbType orbType = orbTypeService.getOrbType(orbTypeInternalId)
+		logger.info("Found orb: {}", orbType != null)
 		
 		def operationResult = null
 		
@@ -190,7 +193,7 @@ class CommandProcessorIntegrationSpec extends Specification {
 		
 		int numberIterations = 1
 		numberIterations.times {
-			String json = "{\"command\":{\"methodCall\":{\"className\":\"com.fletch22.orb.cache.local.OrbTypeManagerLocalCache\"},\"methodName\":\"addAttribute\",\"methodParameters\":[{\"parameterTypeName\":\"long\", \"argument\":{\"clazzName\":\"java.lang.Long\",\"objectValueAsJson\":\"" + orbTypeInternalId + "\"}},{\"parameterTypeName\":\"class java.lang.String\", \"argument\":{\"clazzName\":\"java.lang.String\",\"objectValueAsJson\":\"\\\"foo" + i + "\\\"\"}}]}}";
+			String json = "{\"command\":{\"methodCall\":{\"className\":\"com.fletch22.orb.OrbTypeManager\"},\"methodName\":\"addAttribute\",\"methodParameters\":[{\"parameterTypeName\":\"long\", \"argument\":{\"clazzName\":\"java.lang.Long\",\"objectValueAsJson\":\"" + orbTypeInternalId + "\"}},{\"parameterTypeName\":\"class java.lang.String\", \"argument\":{\"clazzName\":\"java.lang.String\",\"objectValueAsJson\":\"\\\"foo" + i + "\\\"\"}}]}}";
 			
 			def action = new StringBuilder(json)
 			def commandProcessActionPackage = this.commandProcessActionPackageFactory.getInstance(action)
@@ -200,7 +203,6 @@ class CommandProcessorIntegrationSpec extends Specification {
 		stopWatch.stop()
 		
 		then:
-		
 		if (operationResult.operationResultException != null) {
 			logger.info("Exception: {}", operationResult.operationResultException)
 		}

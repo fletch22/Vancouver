@@ -5,10 +5,10 @@ apply plugin: 'war'
 apply plugin: 'jetty'
 apply plugin: 'eclipse-wtp'
 
-eclipse { 
-	classpath { 
+eclipse {
+	classpath {
 		downloadSources = true
-	} 
+	}
 }
 
 configurations {
@@ -31,7 +31,7 @@ repositories { mavenCentral() }
 sourceSets {
 	integrationTest {
 		java {
-			srcDirs = ['src/integration/java', 'src/test/java']
+			srcDirs = ['src/integration/java', 'src/test/java'] //, 
 			excludes = ['**/AllIntegrationTests.java']
 		}
 		groovy { srcDirs = ['src/integration/groovy']}
@@ -91,6 +91,7 @@ dependencies {
 	testCompile 'org.spockframework:spock-spring:0.7-groovy-2.0'
 	testCompile 'org.aspectj:aspectjrt:1.8.5'
 	testCompile 'org.aspectj:aspectjtools:1.8.5'
+	testCompile "org.aspectj:aspectjweaver:1.8.4"
 
 	integrationTestCompile sourceSets.main.output
 	integrationTestCompile configurations.testCompile
@@ -112,6 +113,8 @@ test {
 }
 
 task integrationTest(type: Test) {
+	jvmArgs "-javaagent:C:/Users/ninjapop/.gradle/caches/modules-2/files-2.1/org.aspectj/aspectjweaver/1.8.4/2ee166facba0b05c5dc444a934027baa114fddd9/aspectjweaver-1.8.4.jar"
+	
 	testClassesDir = sourceSets.integrationTest.output.classesDir
 	classpath = sourceSets.integrationTest.runtimeClasspath
 

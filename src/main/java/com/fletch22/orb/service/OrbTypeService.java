@@ -5,9 +5,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.fletch22.orb.Orb;
 import com.fletch22.orb.TranDateGenerator;
+import com.fletch22.orb.cache.local.OrbTypeCollection.OrbType;
 import com.fletch22.orb.command.orbType.AddOrbTypeCommand;
 import com.fletch22.orb.command.orbType.DeleteOrbTypeCommand;
+import com.fletch22.orb.command.orbType.GetOrbTypeCommand;
 import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory;
 import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory.CommandProcessActionPackage;
 import com.fletch22.orb.command.processor.CommandProcessor;
@@ -30,6 +33,9 @@ public class OrbTypeService {
 
 	@Autowired
 	TranDateGenerator tranDateGenerator;
+	
+	@Autowired
+	GetOrbTypeCommand getOrbTypeCommand;
 
 	@Autowired
 	CommandProcessActionPackageFactory commandProcessActionPackageFactory;
@@ -56,6 +62,20 @@ public class OrbTypeService {
 		OperationResult operationResult = commandProcessor.processAction(commandProcessActionPackage);
 
 		if (operationResult.opResult.equals(OpResult.FAILURE)) {
+			throw new RuntimeException(operationResult.operationResultException);
+		}
+	}
+	
+	public OrbType getOrbType(long orbTypeInternalId) {
+		StringBuilder action = this.getOrbTypeCommand.toJson(orbTypeInternalId);
+
+		CommandProcessActionPackage commandProcessActionPackage = commandProcessActionPackageFactory.getInstance(action);
+
+		OperationResult operationResult = commandProcessor.processAction(commandProcessActionPackage);
+
+		if (operationResult.opResult.equals(OpResult.SUCCESS)) {
+			return (OrbType) operationResult.operationResultObject;
+		} else {
 			throw new RuntimeException(operationResult.operationResultException);
 		}
 	}

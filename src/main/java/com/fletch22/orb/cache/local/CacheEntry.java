@@ -13,19 +13,19 @@ public class CacheEntry {
 	String label;
 	long typeId;
 	BigDecimal tranDate;
-	List<String> list = new ArrayList<String>();
+	List<String> attributes = new ArrayList<String>();
 
 	public CacheEntry(long id, long typeId, String label, BigDecimal tranDate, List<String> list) {
 		this.id = id;
 		this.label = label;
-		this.list = list;
+		this.attributes = list;
 		this.tranDate = tranDate;
 	}
 
 	public String getValue(String index) {
 		int i = Integer.parseInt(index);
 
-		return (this.list.size() > i) ? list.get(i) : null;
+		return (this.attributes.size() > i) ? attributes.get(i) : null;
 	}
 
 	public static final SimpleAttribute<CacheEntry, Long> ID = new SimpleAttribute<CacheEntry, Long>("ID") {

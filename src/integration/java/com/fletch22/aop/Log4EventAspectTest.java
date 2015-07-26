@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 import org.apache.commons.lang3.time.StopWatch;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -35,10 +36,8 @@ public class Log4EventAspectTest {
 	
 	@Test
 	public void testSuccess() {
-
-		// Arrange
-		logger.info("test logger.");
 		
+		// Arrange
 		int numRuns = 1;
 		
 		// Act
@@ -57,11 +56,24 @@ public class Log4EventAspectTest {
 	}
 	
 	@Test
+	public void testAOPWeaverLoaded() {
+		assertTrue("AspectJWeaver should have been loaded.", isAspectJAgentLoaded());
+	}
+	
+	public static boolean isAspectJAgentLoaded() {
+	    try {
+	        org.aspectj.weaver.loadtime.Agent.getInstrumentation();
+	    } catch (NoClassDefFoundError | UnsupportedOperationException e) {
+	    	logger.info("Exception: ", e);
+	        return false;
+	    }
+	    return true;
+	}
+	
+	@Test
 	public void testExceptionThrown() {
 
 		// Arrange
-		logger.info("test logger.");
-		
 		// Act
 		boolean wasExceptionThrown = false;
 		try {

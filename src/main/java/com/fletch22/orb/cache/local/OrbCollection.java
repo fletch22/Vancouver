@@ -82,29 +82,25 @@ public class OrbCollection {
 	
 	public void addAttribute(long orbTypeInternalId, String name) {
 		
-		logger.info("orbTypeInternalId: {}", orbTypeInternalId);
-		
 		if (allInstances.containsKey(orbTypeInternalId)) {
 			OrbSingleTypesInstanceCollection orbSingleTypesInstanceCollection = allInstances.get(orbTypeInternalId);
-		
 			for (CacheEntry cacheEntry:  orbSingleTypesInstanceCollection.instances) {
 				Orb orb = quickLookup.get(cacheEntry.id);
 				orb.getUserDefinedProperties().put(name, null);
 				
-				cacheEntry.list.add(null);
+				cacheEntry.attributes.add(null);
 			}
 		}
 	}
 	
-	public void removeAttribute(long orbTypeInternalId, String name) {
+	public void removeAttribute(long orbTypeInternalId, int indexOfAttribute, String name) {
 		
 		OrbSingleTypesInstanceCollection orbSingleTypesInstanceCollection = allInstances.get(orbTypeInternalId);
 		
-		int index = orbTypeManager.getIndexOfAttribute(orbTypeInternalId, name);
 		for (CacheEntry cacheEntry:  orbSingleTypesInstanceCollection.instances) {
 			Orb orb = quickLookup.get(cacheEntry.id);
 			orb.getUserDefinedProperties().remove(name);
-			cacheEntry.list.remove(index);
+			cacheEntry.attributes.remove(indexOfAttribute);
 		}
 	}
 }

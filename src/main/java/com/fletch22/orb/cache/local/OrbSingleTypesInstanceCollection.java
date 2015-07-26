@@ -34,7 +34,7 @@ public class OrbSingleTypesInstanceCollection {
 	
 	public void addInstanceFieldToAllInstances(String value) {
 		for (CacheEntry cacheEntry: instances) {
-			cacheEntry.list.add(value);
+			cacheEntry.attributes.add(value);
 		}
 	}
 	
@@ -44,7 +44,7 @@ public class OrbSingleTypesInstanceCollection {
 
 	public void removeInstanceFieldFromAllInstances(int indexOfField) {
 		for (CacheEntry cacheEntry: instances) {
-			cacheEntry.list.remove(indexOfField);
+			cacheEntry.attributes.remove(indexOfField);
 		}
 	}
 }

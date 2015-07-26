@@ -1,6 +1,5 @@
 <aspectj>
     <aspects>
-        <aspect name="com.fletch22.aop.Log4EventRedoAspect"/>
         <aspect name="com.fletch22.aop.Log4EventAspect"/>
     </aspects>
     <!-- <weaver options="-verbose"></weaver> -->

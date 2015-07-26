@@ -109,32 +109,6 @@ class CommandProcessorSpec extends Specification {
 		BeginTransactionCommand.class 	| CommandExpressor.BEGIN_TRANSACTION
 		AddOrbTypeCommand.class			| CommandExpressor.ADD_ORB_TYPE
 		DeleteOrbTypeCommand.class		| CommandExpressor.REMOVE_ORB_TYPE
-		//AddBaseOrbTypeCommand.class		| OrbTypeManager.ORBTYPE_BASETYPE_ID
-	}
-	
-	@Test
-	def 'handleLoggingAndRollbackTest'() {
-		
-		given:
-		CommandProcessActionPackage commandProcessActionPackage = this.commandProcessActionPackageMother.getGoodOne()
-		commandProcessActionPackage.undoActionBundle.getActions().push(new StringBuilder("{}"));
-		
-		OperationResult operationResult = new OperationResult(opResult)
-		operationResult.shouldBeLogged = shouldBeLogged
-		
-		commandProcessActionPackage.isInRestoreMode = isInRestoreMode
-		
-		when:
-		this.commandProcessor.handleLoggingAndRollback(commandProcessActionPackage, operationResult)
-		
-		then:
-		this.commandProcessor
-		commandProcessActionPackage.undoActionBundle.getActions().size() == numberOfUndoActionsRemaining
-		
-		where:
-		shouldBeLogged 	| isInRestoreMode	| opResult			| numberOfUndoActionsRemaining
-		true			| false				| OpResult.SUCCESS	| 1
-		false			| false				| OpResult.FAILURE	| 1
 	}
 	
 	@Test

@@ -17,7 +17,7 @@ import com.fletch22.orb.command.ActionSniffer
 import com.fletch22.orb.command.orbType.AddOrbTypeCommand
 
 @RunWith(SpringJUnit4ClassRunner)
-@ContextConfiguration(locations = 'classpath:/springContext.xml')
+@ContextConfiguration(locations = 'classpath:/springContext-test.xml')
 class ActionSnifferSpec extends Specification {
 	
 	static Logger logger = LoggerFactory.getLogger(ActionSnifferSpec);

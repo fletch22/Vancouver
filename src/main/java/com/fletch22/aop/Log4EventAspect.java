@@ -89,8 +89,7 @@ public class Log4EventAspect {
 				operationResult.internalIdAfterOperation = internalIdGenerator.getCurrentId();
 				operationResult.action = methodCallSerialized;
 
-				RedoAndUndoLogging redoAndUndoLogging = (RedoAndUndoLogging) getBean(RedoAndUndoLogging.class);
-				redoAndUndoLogging.logRedoAndUndo(packageHolder.getCommandProcessActionPackage(), operationResult);
+				logActions(packageHolder, operationResult);
 			}
 		
 			packageHolder.cleanup();
@@ -100,6 +99,11 @@ public class Log4EventAspect {
 			}
 		}
 		return retObject;
+	}
+
+	private void logActions(EventLogCommandProcessPackageHolder packageHolder, OperationResult operationResult) {
+		RedoAndUndoLogging redoAndUndoLogging = (RedoAndUndoLogging) getBean(RedoAndUndoLogging.class);
+		redoAndUndoLogging.logRedoAndUndo(packageHolder.getCommandProcessActionPackage(), operationResult);
 	}
 
 	private void undoLogProcessing(ProceedingJoinPoint proceedingJoinPoint, EventLogCommandProcessPackageHolder packageHolder) {

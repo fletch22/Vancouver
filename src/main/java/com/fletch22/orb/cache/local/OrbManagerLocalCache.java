@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.fletch22.aop.Loggable4Event;
 import com.fletch22.orb.InternalIdGenerator;
 import com.fletch22.orb.Orb;
 import com.fletch22.orb.OrbManager;
@@ -44,9 +45,5 @@ public class OrbManagerLocalCache implements OrbManager {
 	@Override
 	public void deleteAllOrbInstances() {
 		orbCollection.deleteAll();
-	}
-	
-	public void removeAttributeFromInstance(long orbInternalId, String attributeName) {
-		throw new NotImplementedException("Not ready yet.");
 	}
 }
