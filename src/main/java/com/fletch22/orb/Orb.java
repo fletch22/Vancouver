@@ -10,7 +10,7 @@ public class Orb {
 
 	private static final long UNSET = -1;
 	private LinkedHashMap<String, String> userDefinedProperties = new LinkedHashMap<String, String>();
-	private long orbInteralId = UNSET;
+	private long orbInternalId = UNSET;
 	private long orbTypeInternalId = UNSET;
 	private BigDecimal tranDate;
 	
@@ -19,18 +19,18 @@ public class Orb {
 	}
 	
 	public Orb(long internalId, long orbTypeInternalId, BigDecimal tranDate, LinkedHashMap<String, String> userDefinedProperties) {
-		this.orbInteralId = internalId;
+		this.orbInternalId = internalId;
 		this.setOrbTypeInternalId(orbTypeInternalId);
 		this.tranDate = tranDate;
 		this.userDefinedProperties = userDefinedProperties;
 	}
 
-	public long getOrbInteralId() {
-		return orbInteralId;
+	public long getOrbInternalId() {
+		return orbInternalId;
 	}
 
-	public void setOrbInteralId(long orbInteralId) {
-		this.orbInteralId = orbInteralId;
+	public void setOrbInternalId(long orbInteralId) {
+		this.orbInternalId = orbInteralId;
 	}
 
 	public BigDecimal getTranDate() {

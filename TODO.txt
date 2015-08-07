@@ -9,33 +9,41 @@ Each command additions requires the following tasks:
 	5. Addition of executing service class or method-on-existing-service.
 	6. Determination and usage of undo operation.
 	
-AOP Design:
-
-	When an Aspect join point executes, the executed methods, params and values (MPVs) will collect in an accumulator.
-	To create an accumulation of undo operations, call the undo method but in the advice prevent execution of the undo operation. Instead just log the action.
+AOP Design: When an Aspect join point executes, the executed methods, params and values (MPVs) will collect in an accumulator.
+To create an accumulation of undo operations, call the undo method but in the advice prevent execution of the undo operation. Instead just log the action.
+Status: Done
 	
 Tasks:
 
 	Create Rollback Actions for AddOrbType. - Done
 	Add delete instances when deleting type - Done
-	Add/Delete attribute - 
+	Add/Delete attribute - Done 
 	Add/Delete/Update Query -
 	Add/Delete/Update Constraint -
-	
+
+
 Given a called command in execution
 When command 1 calls command 2
 Then command 2 should add to the accumulating actions
 And command 2 should add to the accumulating undos.
+Status: Done.
 	
 Given a called command in execution
 When command 1 calls command 2
 And command 2 throws an exception
 Then 1 *and* 2 should roll back.
+Status:
 
 Restore mode should be handled at the system level, not the action command level.
+Status: 
 
 Add spock class paths to integration command line gradle test.
+Status: Done.
 
 Test compile time weaving.
+Status: Done.
 
 Get eclipse Aspect J plugin to work.
+Status: 
+
+Add test in JsonWrapper for Collections where the element in the collection is tested to see if it can be serialized.

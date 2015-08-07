@@ -19,8 +19,8 @@ import com.googlecode.cqengine.query.option.QueryOptions;
 @Component
 public class OrbTypeCollection {
 
-	IndexedCollection<OrbType> types = new ConcurrentIndexedCollection<OrbType>();
-	Map<Long, OrbType> quickLookup = new HashMap<Long, OrbType>();
+	private IndexedCollection<OrbType> types = new ConcurrentIndexedCollection<OrbType>();
+	private Map<Long, OrbType> quickLookup = new HashMap<Long, OrbType>();
 
 	public OrbTypeCollection() {
 		types.addIndex(UniqueIndex.onAttribute(OrbType.ID));
@@ -57,16 +57,16 @@ public class OrbTypeCollection {
 	}
 
 	public static class OrbType {
-		long id;
-		String label;
+		public long id;
+		public String label;
 		public BigDecimal tranDate;
-		LinkedHashSet<String> customFields = new LinkedHashSet<String>();
+		public LinkedHashSet<String> customFields = new LinkedHashSet<String>();
 		
 		public OrbType(long id, String label, BigDecimal tranDate, LinkedHashSet<String> customFields) {
 			this.id = id;
 			this.label = label;
 			this.tranDate = tranDate;
-			if (customFields != null) this.customFields = customFields;
+			this.customFields = customFields;
 		}
 
 		public LinkedHashSet<String> addField(String customFieldName) {
@@ -85,5 +85,13 @@ public class OrbTypeCollection {
 				return orbType.label;
 			}
 		};
+	}
+	
+	public int getCount()  {
+		return quickLookup.size();
+	}
+	
+	public Map<Long, OrbType> getQuickLookup() {
+		return this.quickLookup;
 	}
 }

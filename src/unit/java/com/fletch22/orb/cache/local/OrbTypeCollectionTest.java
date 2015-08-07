@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.time.StopWatch;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -25,8 +26,15 @@ public class OrbTypeCollectionTest {
 	
 	Logger logger = LoggerFactory.getLogger(OrbTypeCollection.class);
 	
-	@Autowired
 	OrbTypeCollection orbTypeCollection;
+	
+	@Autowired
+	Cache cache;
+	
+	@Before
+	public void before() {
+		orbTypeCollection = cache.orbTypeCollection;
+	}
 
 	@Test
 	public void testReadByIdSpeed() {

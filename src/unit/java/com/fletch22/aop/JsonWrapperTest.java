@@ -1,15 +1,20 @@
 package com.fletch22.aop;
 
+import static org.junit.Assert.assertEquals;
+
 import java.math.BigDecimal;
+import java.util.LinkedHashSet;
 
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 
 public class JsonWrapperTest {
 	
-//	Logger logger = LoggerFactory.getLogger(JsonWrapperTest.class);
+	Logger logger = LoggerFactory.getLogger(JsonWrapperTest.class);
 
 	@Test
 	public void test() {
@@ -111,6 +116,24 @@ public class JsonWrapperTest {
 		
 		testJsonWrapperPerf(jsonWrapper);
 	}
+	
+	@Test
+	public void testJsonWrapperLinkedHashSet() {
+		
+		LinkedHashSet<String> set = new LinkedHashSet<String>();
+		set.add("foo");
+		set.add("bar");
+		
+		JsonWrapper jsonWrapper = new JsonWrapper(set);
+		
+		JsonWrapper jsonWrapper2 = JsonWrapper.fromJson(new Gson(), jsonWrapper.toJson());
+		
+		LinkedHashSet<String> reconstituted = (LinkedHashSet<String>) jsonWrapper2.object;
+		
+		logger.info("jsonWrapper: {}", jsonWrapper.toJson());
+		
+		assertEquals("Should be 2 elements.", reconstituted.size(), 2);
+	}
 
 	private void testJsonWrapperPerf(JsonWrapper jsonWrapper) {
 		
@@ -133,5 +156,7 @@ public class JsonWrapperTest {
 		
 //		logger.info("Elapsed millis per unit: " + millis);
 	}
+	
+	
 	
 }

@@ -2,7 +2,7 @@ package com.fletch22.orb.cache.local;
 
 import static org.junit.Assert.assertTrue
 
-import org.apache.commons.lang3.time.StopWatch
+import org.junit.Before
 import org.junit.Test
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -12,7 +12,6 @@ import org.springframework.test.context.ContextConfiguration
 import spock.lang.Shared
 import spock.lang.Specification
 
-import com.fletch22.Fletch22ApplicationContext;
 import com.fletch22.orb.IntegrationTests
 import com.fletch22.orb.OrbManager
 import com.fletch22.orb.OrbTypeManager
@@ -35,10 +34,16 @@ class OrbCollectionSpec extends Specification {
 	OrbManager orbManager;
 
 	@Autowired
+	Cache cache;
+	
 	OrbCollection orbCollection;
 
-	@Autowired
 	OrbTypeCollection orbTypeCollection;
+	
+	def setup() {
+		orbTypeCollection = cache.orbTypeCollection;
+		orbCollection = cache.orbCollection;
+	}
 
 	@Test
 	def 'test'() {

@@ -1,6 +1,8 @@
 package com.fletch22.orb.cache.external;
 
 import java.math.BigDecimal;
+import java.util.LinkedHashSet;
+import java.util.List;
 
 import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,5 +99,29 @@ public class OrbTypeManagerExternalCache implements OrbTypeManager {
 	@Override
 	public OrbType getOrbType(long orbTypeInternalId) {
 		throw new NotImplementedException("Deprecated implementation.");
+	}
+
+	@Override
+	public long getOrbTypeCount() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public long createOrbType(String label, long orbTypeInternalId, BigDecimal tranDate, LinkedHashSet<String> customFields) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public long createOrbType(String label, LinkedHashSet<String> customFields) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void deleteOrbType(long orbTypeInternalId) {
+		// TODO Auto-generated method stub
+		
 	}
 }

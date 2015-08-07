@@ -60,7 +60,7 @@ public class OrbTransformer {
 
 		json.append("],");
 		json.append("'" + CommandExpressor.ORB_INTERNAL_ID + "':'");
-		json.append(orb.getOrbInteralId());
+		json.append(orb.getOrbInternalId());
         json.append("','" + CommandExpressor.ORB_TYPE_INTERNAL_ID + "':'");
 		json.append(orb.getOrbTypeInternalId());
 		json.append("','" + CommandExpressor.ORB_TRAN_DATE + "':'");

@@ -32,7 +32,7 @@ class OrbTransformerSpec extends Specification {
 		long orbInternalIdExpected = 2134
 		long orbTypeInternalIdExpected = 5678
 		
-		orb.setOrbInteralId(orbInternalIdExpected);
+		orb.setOrbInternalId(orbInternalIdExpected);
 		orb.setOrbTypeInternalId(orbTypeInternalIdExpected);
 		
 		orb.setTranDate(tranDateExpected);
@@ -42,7 +42,7 @@ class OrbTransformerSpec extends Specification {
 		def userDefinedValueExpected1 = 'fooValue1'
 		def userDefinedValueExpected2 = 'fooValue2'
 		
-		Map<String, String> map = new HashMap<>()
+		LinkedHashMap<String, String> map = new LinkedHashMap<>()
 		map.put(userDefinedKey1, userDefinedValueExpected1)
 		map.put(userDefinedKey2, userDefinedValueExpected2)
 		
@@ -61,7 +61,7 @@ class OrbTransformerSpec extends Specification {
 		def userDefinedValue2 = orbActual.getUserDefinedProperties().get(userDefinedKey2)
 		
 		orbActual.getUserDefinedProperties().containsKey(userDefinedKey2)
-		orbActual.orbInteralId == orbInternalIdExpected
+		orbActual.orbInternalId == orbInternalIdExpected
 		orbActual.orbTypeInternalId == orbTypeInternalIdExpected
 		userDefinedValue1 == userDefinedValueExpected1
 		userDefinedValue2 == userDefinedValueExpected2

@@ -2,13 +2,11 @@ package com.fletch22.orb.cache.local;
 
 import java.math.BigDecimal;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.fletch22.aop.Loggable4Event;
 import com.fletch22.orb.InternalIdGenerator;
 import com.fletch22.orb.Orb;
 import com.fletch22.orb.OrbManager;
@@ -25,7 +23,7 @@ public class OrbManagerLocalCache implements OrbManager {
 	InternalIdGenerator internalIdGenerator;
 	
 	@Autowired
-	OrbCollection orbCollection;
+	Cache cache;
 	
 	@Autowired
 	DeleteOrbCommand deleteOrbCommand;
@@ -34,7 +32,7 @@ public class OrbManagerLocalCache implements OrbManager {
 		
 		long orbInternalId = this.internalIdGenerator.getNewId();
 		
-		Orb orb = orbCollection.add(orbInternalId, addOrbDto.orbTypeInternalId, tranDate);
+		Orb orb = cache.orbCollection.add(orbInternalId, addOrbDto.orbTypeInternalId, tranDate);
 		
 		// Add delete to rollback action
 		undoActionBundle.addUndoAction(this.deleteOrbCommand.toJson(orbInternalId, false), tranDate);
@@ -44,6 +42,6 @@ public class OrbManagerLocalCache implements OrbManager {
 
 	@Override
 	public void deleteAllOrbInstances() {
-		orbCollection.deleteAll();
+		cache.orbCollection.deleteAll();
 	}
 }

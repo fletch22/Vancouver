@@ -1,8 +1,8 @@
 package com.fletch22.aop;
 
-import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import com.fletch22.orb.serialization.JsonSerializable;
@@ -60,6 +60,7 @@ public class JsonWrapper {
 		easyToSerialize.add(Float.class);
 		easyToSerialize.add(Double.class);
 		easyToSerialize.add(BigDecimal.class);
+		easyToSerialize.add(LinkedHashSet.class);
 		return easyToSerialize;
 	}
 

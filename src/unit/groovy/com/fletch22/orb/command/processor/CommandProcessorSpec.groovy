@@ -1,6 +1,7 @@
 package com.fletch22.orb.command.processor;
 
 import static org.junit.Assert.*
+import groovy.ui.ConsoleTextEditor.RedoAction;
 
 import org.junit.Test
 import org.slf4j.Logger
@@ -72,8 +73,8 @@ class CommandProcessorSpec extends Specification {
 		OrbTypeManagerExternalCache orbTypeManager = Mock()
 		this.commandProcessor.orbTypeManager = orbTypeManager
 		
-		CommitTransactionCommand commitTransactionCommand = Mock()
-		//this.commandProcessor.commitTransactionCommand
+		RedoAndUndoLogging redoAndUndoLogging = Mock()
+		this.commandProcessor.redoAndUndoLogging = redoAndUndoLogging
 		
 		orbTypeManager.createOrbType(*_) >> 333.longValue()
 

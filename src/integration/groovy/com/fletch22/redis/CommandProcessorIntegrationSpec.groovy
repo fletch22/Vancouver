@@ -15,6 +15,7 @@ import com.fletch22.orb.IntegrationSystemInitializer
 import com.fletch22.orb.IntegrationTests
 import com.fletch22.orb.cache.local.OrbTypeCollection.OrbType
 import com.fletch22.orb.command.CommandBundle
+import com.fletch22.orb.command.orb.AddOrbCommand
 import com.fletch22.orb.command.orbType.AddOrbTypeCommand
 import com.fletch22.orb.command.orbType.GetListOfOrbTypesCommand
 import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory
@@ -41,6 +42,9 @@ class CommandProcessorIntegrationSpec extends Specification {
 	
 	@Autowired
 	AddOrbTypeCommand addOrbTypeCommand
+	
+	@Autowired
+	AddOrbCommand addOrbCommand
 	
 	@Autowired
 	IntegrationSystemInitializer initializer
@@ -241,6 +245,45 @@ class CommandProcessorIntegrationSpec extends Specification {
 		size > 0
 		operationResult != null
 		operationResult.opResult == OpResult.SUCCESS
+		
+	}
+	
+	@Test
+	def 'Test Mixed Method Execution'() {
+		
+		given:
+		// Add 1 type (t) and (n) number of instances of type. t + n = total
+		
+		def typeLabel = 'foo'
+		
+		long orbTypeInternalId = orbTypeService.addOrbType("thisisthetype");
+		
+		def operationResult = null
+		
+		int numberIterations = 1
+		numberIterations.times {
+			StringBuilder action = addOrbCommand.toJson(orbTypeInternalId) 
+			def commandProcessActionPackage = this.commandProcessActionPackageFactory.getInstance(action)
+			operationResult = commandProcessor.executeAction(commandProcessActionPackage)
+		}
+		
+		when:
+		String json = "{\"command\":{\"methodCall\":{\"className\":\"com.fletch22.orb.OrbTypeManager\"},\"methodName\":\"addAttribute\",\"methodParameters\":[{\"parameterTypeName\":\"long\", \"argument\":{\"clazzName\":\"java.lang.Long\",\"objectValueAsJson\":\"" + orbTypeInternalId + "\"}},{\"parameterTypeName\":\"class java.lang.String\", \"argument\":{\"clazzName\":\"java.lang.String\",\"objectValueAsJson\":\"\\\"foo\\\"\"}}]}}";
+		
+		def action = new StringBuilder(json)
+		def commandProcessActionPackage = this.commandProcessActionPackageFactory.getInstance(action)
+		operationResult = commandProcessor.executeAction(commandProcessActionPackage)
+		
+		then:
+		if (operationResult.operationResultException != null) {
+			logger.info("Exception: {}", operationResult.operationResultException)
+		}
+		
+		operationResult != null
+		operationResult.opResult == OpResult.SUCCESS
+		
+		// Verification techniques
+		// Count total actions in db. If successful the total commands should increase commensurately.
 		
 	}
 }

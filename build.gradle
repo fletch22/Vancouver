@@ -60,10 +60,12 @@ task(debug) << {
 }
 
 dependencies {
-	compile 'org.codehaus.groovy:groovy-all:2.3.10'
+	compile('ch.qos.logback:logback-classic:1.1.2') {
+		force = true
+	}
+	compile 'org.codehaus.groovy:groovy-all:2.3.10' 
 	compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
 	compile 'org.slf4j:slf4j-api:1.7.7'
-	compile 'ch.qos.logback:logback-classic:1.1.2'
 	compile 'org.eclipse.jetty:jetty-server:9.3.0.M0'
 	compile 'redis.clients:jedis:2.6.1'
 	compile group: 'junit', name: 'junit', version: '4.11'
@@ -97,6 +99,8 @@ dependencies {
 	integrationTestCompile configurations.testCompile
 	integrationTestCompile sourceSets.test.output
 	integrationTestRuntime configurations.testRuntime
+	
+	
 }
 
 def testLoggingDefault = {
@@ -123,7 +127,11 @@ task integrationTest(type: Test) {
 }
 
 check.dependsOn integrationTest
+
+/**
+ * Configure jettyRun, jettyRunWar and jettyStop tasks.
+ */
+[jettyRun]*.jettyEnvXml = file('src/main/resources/jetty-env.xml')
 httpPort = 8080
 stopPort = 9080
 stopKey = "stopKey"
-
