@@ -16,7 +16,7 @@ public class LocalCacheService implements CacheService {
 	OrbManager orbManager;
 	
 	public void clearAllItemsFromCache() {
-		 orbManager.deleteAllOrbInstances();
+		 orbManager.deleteAllOrbs();
 		 orbTypeManager.deleteAllTypes();
 	}
 	

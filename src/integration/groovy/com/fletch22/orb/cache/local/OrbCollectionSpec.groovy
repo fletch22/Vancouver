@@ -2,7 +2,6 @@ package com.fletch22.orb.cache.local;
 
 import static org.junit.Assert.assertTrue
 
-import org.junit.Before
 import org.junit.Test
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -13,6 +12,7 @@ import spock.lang.Shared
 import spock.lang.Specification
 
 import com.fletch22.orb.IntegrationTests
+import com.fletch22.orb.Orb
 import com.fletch22.orb.OrbManager
 import com.fletch22.orb.OrbTypeManager
 import com.fletch22.orb.cache.local.OrbTypeCollection.OrbType
@@ -46,7 +46,7 @@ class OrbCollectionSpec extends Specification {
 	}
 
 	@Test
-	def 'test'() {
+	def 'testSuccess'() {
 
 		// Arrange
 		given:
@@ -65,7 +65,7 @@ class OrbCollectionSpec extends Specification {
 
 			UndoActionBundle undoActionBundle = new UndoActionBundle()
 
-			orbManager.createOrbInstance(addOrbDto, tranDate, undoActionBundle)
+			orbManager.createOrb(addOrbDto, tranDate, undoActionBundle)
 		}
 
 		when:
@@ -76,7 +76,7 @@ class OrbCollectionSpec extends Specification {
 		orbTypeInternalId != null
 		orbType != null
 	}
-
+	
 	private long createOrbType() {
 		int orbTypeInternalId = 1;
 

@@ -221,7 +221,7 @@ public class CommandProcessor {
 		OperationResult operationResult = OperationResult.IN_THE_MIDDLE;
 
 		try {
-			Orb orb = this.orbManager.createOrbInstance(addOrbDto, commandProcessActionPackage.getTranDate(), commandProcessActionPackage.getUndoActionBundle());
+			Orb orb = this.orbManager.createOrb(addOrbDto, commandProcessActionPackage.getTranDate(), commandProcessActionPackage.getUndoActionBundle());
 			operationResult = new OperationResult(OpResult.SUCCESS, orb, true);
 		} catch (Exception e) {
 			operationResult.opResult = OpResult.FAILURE;

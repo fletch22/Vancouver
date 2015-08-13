@@ -70,6 +70,17 @@ public class OrbCollection {
 		return quickLookup.get(orbInternalId);
 	}
 	
+	public Orb delete(long orbInternalId) {
+		Orb orb = quickLookup.get(orbInternalId);
+		
+		OrbSingleTypesInstanceCollection orbSingleTypesInstanceCollection = allInstances.get(orb.getOrbTypeInternalId());
+		orbSingleTypesInstanceCollection.removeInstance(orb.getOrbInternalId());
+		
+		quickLookup.remove(orbInternalId);
+		
+		return orb;
+	}
+	
 	public void addAttribute(long orbTypeInternalId, String name) {
 		
 		if (allInstances.containsKey(orbTypeInternalId)) {

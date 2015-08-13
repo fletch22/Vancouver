@@ -52,7 +52,7 @@ public class OrbTypeManagerLocalCache implements OrbTypeManager {
 			orbInternalTypeId = this.internalIdGenerator.getNewId();
 		}
 		
-		OrbType orbType = new OrbType(orbInternalTypeId, addOrbTypeDto.label, tranDate, null);
+		OrbType orbType = new OrbType(orbInternalTypeId, addOrbTypeDto.label, tranDate, new LinkedHashSet<>());
 		cache.orbTypeCollection.add(orbType);
 		
 		// Add delete to rollback action

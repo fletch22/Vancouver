@@ -47,3 +47,5 @@ Get eclipse Aspect J plugin to work.
 Status: 
 
 Add test in JsonWrapper for Collections where the element in the collection is tested to see if it can be serialized.
+
+Fix 'testDeleteInstance' in Spock integration test.

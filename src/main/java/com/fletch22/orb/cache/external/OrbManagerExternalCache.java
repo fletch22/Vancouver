@@ -1,6 +1,7 @@
 package com.fletch22.orb.cache.external;
 
 import java.math.BigDecimal;
+import java.util.LinkedHashMap;
 
 import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class OrbManagerExternalCache implements OrbManager {
 	@Autowired
 	DeleteOrbCommand deleteOrbCommand;
 
-	public Orb createOrbInstance(AddOrbDto addOrbDto, BigDecimal tranDate, UndoActionBundle undoActionBundle) {
+	public Orb createOrb(AddOrbDto addOrbDto, BigDecimal tranDate, UndoActionBundle undoActionBundle) {
 		long orbInternalId = this.internalIdGenerator.getNewId();
 		
 		NakedOrb nakedOrb = new NakedOrb(orbInternalId, addOrbDto.orbTypeInternalId, tranDate);
@@ -41,7 +42,32 @@ public class OrbManagerExternalCache implements OrbManager {
 	}
 
 	@Override
-	public void deleteAllOrbInstances() {
+	public void deleteAllOrbs() {
 		throw new NotImplementedException("deleteAllOrbInstances");
+	}
+
+	@Override
+	public Orb createOrb(long orbTypeInternalId, BigDecimal tranDate) {
+		throw new NotImplementedException("createOrbInstance");
+	}
+
+	@Override
+	public void createOrb(Orb orb) {
+		throw new NotImplementedException("createOrb");
+	}
+
+	@Override
+	public void deleteOrb(long orbInternalId) {
+		throw new NotImplementedException("deleteOrb");
+	}
+
+	@Override
+	public Orb setAttribute(long orbInternalId, String attributeName, String value) {
+		throw new NotImplementedException("setAttribute");
+	}
+
+	@Override
+	public Orb getOrb(long orbInternalId) {
+		throw new NotImplementedException("getOrb");
 	}
 }

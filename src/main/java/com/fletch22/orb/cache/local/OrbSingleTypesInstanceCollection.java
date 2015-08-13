@@ -41,6 +41,14 @@ public class OrbSingleTypesInstanceCollection {
 	public void addInstanceFieldToAllInstances() {
 		addInstanceFieldToAllInstances(null);
 	}
+	
+	public void removeInstance(long id) {
+		for (CacheEntry cacheEntry: instances) {
+			if (cacheEntry.getId() == id) {
+				instances.remove(cacheEntry);
+			}
+		}
+	}
 
 	public void removeInstanceFieldFromAllInstances(int indexOfField) {
 		for (CacheEntry cacheEntry: instances) {

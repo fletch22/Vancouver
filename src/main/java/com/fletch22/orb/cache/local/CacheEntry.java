@@ -21,6 +21,10 @@ public class CacheEntry {
 		this.attributes = list;
 		this.tranDate = tranDate;
 	}
+	
+	public long getId() {
+		return id;
+	}
 
 	public String getValue(String index) {
 		int i = Integer.parseInt(index);
