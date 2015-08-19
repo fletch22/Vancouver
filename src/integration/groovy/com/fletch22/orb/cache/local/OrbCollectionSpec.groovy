@@ -14,8 +14,8 @@ import spock.lang.Specification
 import com.fletch22.orb.IntegrationTests
 import com.fletch22.orb.Orb
 import com.fletch22.orb.OrbManager
+import com.fletch22.orb.OrbType;
 import com.fletch22.orb.OrbTypeManager
-import com.fletch22.orb.cache.local.OrbTypeCollection.OrbType
 import com.fletch22.orb.command.orbType.dto.AddOrbDto
 import com.fletch22.orb.command.orbType.dto.AddOrbTypeDto
 import com.fletch22.orb.rollback.UndoActionBundle

@@ -5,9 +5,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.fletch22.orb.Orb;
+import com.fletch22.orb.OrbType;
 import com.fletch22.orb.TranDateGenerator;
-import com.fletch22.orb.cache.local.OrbTypeCollection.OrbType;
 import com.fletch22.orb.command.orbType.AddOrbTypeCommand;
 import com.fletch22.orb.command.orbType.DeleteOrbTypeCommand;
 import com.fletch22.orb.command.orbType.GetOrbTypeCommand;

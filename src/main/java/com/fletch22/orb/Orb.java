@@ -1,17 +1,17 @@
 package com.fletch22.orb;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Map;
+
+import com.fletch22.orb.serialization.JsonSerializable;
 
 
-public class Orb {
+public class Orb implements JsonSerializable {
 
-	private static final long UNSET = -1;
+	public static final long INTERNAL_ID_UNSET = -1;
 	private LinkedHashMap<String, String> userDefinedProperties = new LinkedHashMap<String, String>();
-	private long orbInternalId = UNSET;
-	private long orbTypeInternalId = UNSET;
+	private long orbInternalId = INTERNAL_ID_UNSET;
+	private long orbTypeInternalId = OrbTypeConstants.ORBTYPE_INTERNAL_ID_UNSET;
 	private BigDecimal tranDate;
 	
 	public Orb() {

@@ -2,6 +2,7 @@ package com.fletch22.aop;
 
 import java.math.BigDecimal;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -61,6 +62,7 @@ public class JsonWrapper {
 		easyToSerialize.add(Double.class);
 		easyToSerialize.add(BigDecimal.class);
 		easyToSerialize.add(LinkedHashSet.class);
+		easyToSerialize.add(LinkedHashMap.class);
 		return easyToSerialize;
 	}
 

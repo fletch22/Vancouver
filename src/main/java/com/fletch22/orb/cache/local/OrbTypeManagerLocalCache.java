@@ -13,10 +13,10 @@ import com.fletch22.aop.Log4EventAspect;
 import com.fletch22.aop.Loggable4Event;
 import com.fletch22.orb.InternalIdGenerator;
 import com.fletch22.orb.Orb;
+import com.fletch22.orb.OrbType;
 import com.fletch22.orb.OrbTypeConstants;
 import com.fletch22.orb.OrbTypeManager;
 import com.fletch22.orb.TranDateGenerator;
-import com.fletch22.orb.cache.local.OrbTypeCollection.OrbType;
 import com.fletch22.orb.command.orbType.AddWholeOrbTypeCommand;
 import com.fletch22.orb.command.orbType.DeleteOrbTypeCommand;
 import com.fletch22.orb.command.orbType.DeleteOrbTypeDto;
@@ -107,8 +107,7 @@ public class OrbTypeManagerLocalCache implements OrbTypeManager {
 		for (String customFieldNames : orbType.customFields) {
 			properties.put(customFieldNames, customFieldNames);
 		}
-		Orb orb = new Orb(orbType.id, OrbTypeConstants.ORBTYPE_BASETYPE_ID, tranDate, properties);
-		return orb;
+		return new Orb(orbType.id, OrbTypeConstants.ORBTYPE_BASETYPE_ID, tranDate, properties);
 	}
 
 	@Override
@@ -121,8 +120,6 @@ public class OrbTypeManagerLocalCache implements OrbTypeManager {
 	public void addAttribute(long orbTypeInternalId, String attributeName) {
 		// NOTE: Add it to the type.
 		OrbType orbType = cache.orbTypeCollection.get(orbTypeInternalId);
-		
-		logger.info("OT null? {}", orbType == null);
 		
 		orbType.addField(attributeName);
 		

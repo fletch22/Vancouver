@@ -13,7 +13,7 @@ import spock.lang.Specification
 
 import com.fletch22.orb.IntegrationSystemInitializer
 import com.fletch22.orb.IntegrationTests
-import com.fletch22.orb.cache.local.OrbTypeCollection.OrbType
+import com.fletch22.orb.OrbType
 import com.fletch22.orb.command.CommandBundle
 import com.fletch22.orb.command.orb.AddOrbCommand
 import com.fletch22.orb.command.orbType.AddOrbTypeCommand

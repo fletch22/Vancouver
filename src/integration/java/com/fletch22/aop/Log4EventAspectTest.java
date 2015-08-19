@@ -8,7 +8,6 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 import org.apache.commons.lang3.time.StopWatch;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -38,7 +37,7 @@ public class Log4EventAspectTest {
 	public void testSuccess() {
 		
 		// Arrange
-		int numRuns = 1;
+		int numRuns = 1000;
 		
 		// Act
 		StopWatch stopWatch = new StopWatch();
@@ -102,17 +101,18 @@ public class Log4EventAspectTest {
 		public void runBackwards();
 	}
 	
+	@SuppressWarnings("serial")
 	@Component("BorderCollie")
 	public static class BorderCollie implements Serializable, Dog  {
 		
 		@Loggable4Event
 		public void bark() {
-			logger.info("Inside the bark method.");
+			logger.debug("Inside the bark method.");
 		}
 		
 		@Loggable4Event
 		public void runForwards(boolean hasStickInMouth, boolean throwException) {
-			logger.info("Inside run forward method.");
+			logger.debug("Inside run forward method.");
 			
 			Log4EventAspect.isPreventNextLineFromExecutingAndAddToUndoLog = true;
 			runBackwards();
@@ -126,7 +126,7 @@ public class Log4EventAspectTest {
 		
 		@Loggable4Event
 		private void wagTail() {
-			logger.info("Inside wag tail method.");
+			logger.debug("Inside wag tail method.");
 			
 			Log4EventAspect.isPreventNextLineFromExecutingAndAddToUndoLog = true;
 			unwagTail();
@@ -134,7 +134,7 @@ public class Log4EventAspectTest {
 		
 		@Loggable4Event
 		private void unwagTail() {
-			logger.info("Inside unwagTail tail method.");
+			logger.debug("Inside unwagTail tail method.");
 			
 			Log4EventAspect.isPreventNextLineFromExecutingAndAddToUndoLog = true;
 			wagTail();
@@ -142,7 +142,7 @@ public class Log4EventAspectTest {
 		
 		@Loggable4Event
 		public void runBackwards() {
-			logger.info("Inside dog run backwards method.");
+			logger.debug("Inside dog run backwards method.");
 			
 			Log4EventAspect.isPreventNextLineFromExecutingAndAddToUndoLog = true;
 			runForwards(true, false);

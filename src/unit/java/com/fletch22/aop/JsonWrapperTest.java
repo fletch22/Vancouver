@@ -3,6 +3,7 @@ package com.fletch22.aop;
 import static org.junit.Assert.assertEquals;
 
 import java.math.BigDecimal;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 
 import org.apache.commons.lang3.time.StopWatch;
@@ -16,6 +17,7 @@ public class JsonWrapperTest {
 	
 	Logger logger = LoggerFactory.getLogger(JsonWrapperTest.class);
 
+	@SuppressWarnings("unused")
 	@Test
 	public void test() {
 		
@@ -112,8 +114,6 @@ public class JsonWrapperTest {
 		Boolean isDelicious = null;
 		jsonWrapper = new JsonWrapper(isDelicious);
 		
-//		logger.info(jsonWrapper.toJson());
-		
 		testJsonWrapperPerf(jsonWrapper);
 	}
 	
@@ -128,7 +128,27 @@ public class JsonWrapperTest {
 		
 		JsonWrapper jsonWrapper2 = JsonWrapper.fromJson(new Gson(), jsonWrapper.toJson());
 		
+		@SuppressWarnings("unchecked")
 		LinkedHashSet<String> reconstituted = (LinkedHashSet<String>) jsonWrapper2.object;
+		
+		logger.info("jsonWrapper: {}", jsonWrapper.toJson());
+		
+		assertEquals("Should be 2 elements.", reconstituted.size(), 2);
+	}
+	
+	@Test
+	public void testLinkedHashmap() {
+
+		LinkedHashMap<String, String> set = new LinkedHashMap<String, String>();
+		set.put("fooKey", "fooValue");
+		set.put("barKey", "barKey");
+		
+		JsonWrapper jsonWrapper = new JsonWrapper(set);
+		
+		JsonWrapper jsonWrapper2 = JsonWrapper.fromJson(new Gson(), jsonWrapper.toJson());
+		
+		@SuppressWarnings("unchecked")
+		LinkedHashMap<String, String> reconstituted = (LinkedHashMap<String, String>) jsonWrapper2.object;
 		
 		logger.info("jsonWrapper: {}", jsonWrapper.toJson());
 		
@@ -152,11 +172,9 @@ public class JsonWrapperTest {
 		}
 		stopWatch.stop();
 		
+		@SuppressWarnings("unused")
 		long millis = stopWatch.getNanoTime() / 100000000;
 		
 //		logger.info("Elapsed millis per unit: " + millis);
 	}
-	
-	
-	
 }

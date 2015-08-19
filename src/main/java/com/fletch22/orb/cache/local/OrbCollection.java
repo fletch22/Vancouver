@@ -1,16 +1,14 @@
 package com.fletch22.orb.cache.local;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fletch22.orb.Orb;
-import com.fletch22.orb.cache.local.OrbTypeCollection.OrbType;
+import com.fletch22.orb.OrbType;
 
 public class OrbCollection {
 	
@@ -34,23 +32,6 @@ public class OrbCollection {
 		quickLookup.put(orb.getOrbInternalId(), orb);
 	}
 	
-	public Orb add(long orbInternalId, long orbTypeInternalId, BigDecimal tranDate) {
-		OrbSingleTypesInstanceCollection orbSingleTypesInstanceCollection = allInstances.get(orbTypeInternalId);
-		
-		if (orbSingleTypesInstanceCollection == null) {
-			logger.info("Type not found in single type instance collection. Creating new single type instance collection.");
-			orbSingleTypesInstanceCollection = new OrbSingleTypesInstanceCollection(orbTypeInternalId);
-			allInstances.put(orbTypeInternalId, orbSingleTypesInstanceCollection);
-		}
-
-		orbSingleTypesInstanceCollection.addInstance(orbInternalId, null, tranDate, new ArrayList<String>());
-		
-		Orb orb = new Orb(orbInternalId, orbTypeInternalId, tranDate, new LinkedHashMap<String, String>());
-		quickLookup.put(orb.getOrbInternalId(), orb);
-		
-		return orb;
-	}
-
 	private ArrayList<String> getPropertyValuesInOrder(OrbType orbType, Orb orb) {
 		Map<String, String> properties = orb.getUserDefinedProperties();
 		ArrayList<String> fieldValues = new ArrayList<String>();
@@ -67,7 +48,11 @@ public class OrbCollection {
 	}
 
 	public Orb get(long orbInternalId) {
-		return quickLookup.get(orbInternalId);
+		Orb orb = quickLookup.get(orbInternalId);
+		
+		if (orb == null) throw new RuntimeException("Encountered problem getting orb. Couldn't find orb with id '" + orbInternalId + "'.");
+		
+		return orb;
 	}
 	
 	public Orb delete(long orbInternalId) {
@@ -107,5 +92,13 @@ public class OrbCollection {
 	
 	public Map<Long, Orb> getQuickLookup() {
 		return quickLookup;
+	}
+
+	public boolean doesOrbExist(long orbInternalId) {
+		return quickLookup.containsKey(orbInternalId);
+	}
+
+	public int getCount() {
+		return quickLookup.size();
 	}
 }

@@ -1,9 +1,8 @@
 package com.fletch22.orb.cache.local;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.ArrayList;
 
-import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,12 +22,12 @@ public class OrbSingleTypesInstanceCollection {
 		instances.addIndex(UniqueIndex.onAttribute(CacheEntry.ID));
 	}
 
-	private void createCacheEntry(long id, String label, BigDecimal tranDate, List<String> customFieldValues) {
+	private void createCacheEntry(long id, String label, BigDecimal tranDate, ArrayList<String> customFieldValues) {
 		CacheEntry cacheEntry = new CacheEntry(id, orbTypeInternalId, label, tranDate, customFieldValues);
 		instances.add(cacheEntry);
 	}
 
-	public void addInstance(long id, String label, BigDecimal tranDate, List<String> customFieldValues) {
+	public void addInstance(long id, String label, BigDecimal tranDate, ArrayList<String> customFieldValues) {
 		createCacheEntry(id, label, tranDate, customFieldValues);
 	}
 	

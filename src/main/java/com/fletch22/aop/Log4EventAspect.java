@@ -6,7 +6,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.AfterThrowing;
@@ -112,7 +111,7 @@ public class Log4EventAspect {
 		if (!packageHolder.getCommandProcessActionPackage().isInRestoreMode()) {
 			StringBuilder methodCallSerialized = convertCall(proceedingJoinPoint);
 			
-			logger.info("undolog MCS: {}", methodCallSerialized);
+			logger.debug("undolog MCS: {}", methodCallSerialized);
 			
 			BigDecimal tranDate = packageHolder.getCommandProcessActionPackage().getTranDate();
 			packageHolder.getCommandProcessActionPackage().getUndoActionBundle().addUndoAction(methodCallSerialized, tranDate);
@@ -153,7 +152,7 @@ public class Log4EventAspect {
 		String clazzName = getIocUtil().getBeansSpringSingletonInterface(joinPoint.getTarget()).getName();
 		
 		StringBuilder sb = convertToJson(clazzName, methodName, parametersTypes, args);
-		logger.debug("CN: {}: MN: {}, Nbr args: {}, json: {}", clazzName, methodName, args.length, sb.toString());
+		logger.debug("CN: {}: MN: {}, Nbr args: {}, json: {}", clazzName, methodName, args.length, sb);
 		
 		return sb;
 	}

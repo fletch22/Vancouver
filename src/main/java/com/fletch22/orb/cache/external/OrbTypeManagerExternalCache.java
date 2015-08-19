@@ -2,7 +2,6 @@ package com.fletch22.orb.cache.external;
 
 import java.math.BigDecimal;
 import java.util.LinkedHashSet;
-import java.util.List;
 
 import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,9 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.fletch22.orb.CommandExpressor;
 import com.fletch22.orb.InternalIdGenerator;
 import com.fletch22.orb.Orb;
+import com.fletch22.orb.OrbType;
 import com.fletch22.orb.OrbTypeConstants;
 import com.fletch22.orb.OrbTypeManager;
-import com.fletch22.orb.cache.local.OrbTypeCollection.OrbType;
 import com.fletch22.orb.command.orbType.AddOrbTypeCommand;
 import com.fletch22.orb.command.orbType.AddWholeOrbTypeCommand;
 import com.fletch22.orb.command.orbType.DeleteOrbTypeCommand;

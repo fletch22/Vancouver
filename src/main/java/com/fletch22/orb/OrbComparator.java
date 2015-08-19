@@ -61,17 +61,23 @@ public class OrbComparator {
 			} else {
 				String value1 = userDefinedProperties1.get(key1);
 				String value2 = userDefinedProperties2.get(key1);
-				if (isOneObjectNull(value1, value2)) {
-					comparisonResult.isSame = false;
-					comparisonResult.cacheDifferenceReasons = CacheDifferenceReasons.ONE_ORB_PROPERTIES_VALUE_IS_NULL_AND_THE_OTHER_NOT;
-				} else if (!value1.equals(value2)) {
-					comparisonResult.isSame = false;
-					comparisonResult.cacheDifferenceReasons = CacheDifferenceReasons.ORB_PROPERTIES_VALUES_ARE_DIFFERENT;
+				if (!areBothNull(value1, value2)) {
+					if (isOneObjectNull(value1, value2)) {
+						comparisonResult.isSame = false;
+						comparisonResult.cacheDifferenceReasons = CacheDifferenceReasons.ONE_ORB_PROPERTIES_VALUE_IS_NULL_AND_THE_OTHER_NOT;
+					} else if (!value1.equals(value2)) {
+						comparisonResult.isSame = false;
+						comparisonResult.cacheDifferenceReasons = CacheDifferenceReasons.ORB_PROPERTIES_VALUES_ARE_DIFFERENT;
+					}
 				}
 			}
 		}
 		
 		return comparisonResult;
+	}
+	
+	public boolean areBothNull(String value1, String value2) {
+		return (value1 == null && value2 == null);
 	}
 
 	private boolean isOneObjectNull(Object object1, Object object2) {

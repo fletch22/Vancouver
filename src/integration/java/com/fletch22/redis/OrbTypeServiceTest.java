@@ -65,6 +65,7 @@ public class OrbTypeServiceTest {
 		}
 	}
 	
+	@SuppressWarnings("unused")
 	@Test
 	public void pureJavaCreateTest() {
 		
@@ -95,7 +96,9 @@ public class OrbTypeServiceTest {
 	}
 
 	@Test
+	@Ignore
 	public void test() {
+		@SuppressWarnings("resource")
 		JedisPool pool = new JedisPool(new JedisPoolConfig(), "localhost");
 		
 		/// Jedis implements Closable. Hence, the Jedis instance will be auto-closed after the last statement.
@@ -103,7 +106,8 @@ public class OrbTypeServiceTest {
 		  
 		  /// ... do stuff here ... for example
 		  jedis.set("foo", "bar");
-		  String foobar = jedis.get("foo");
+		  @SuppressWarnings("unused")
+		String foobar = jedis.get("foo");
 		  jedis.zadd("sose", 0, "car"); 
 		  jedis.zadd("sose", 1, "bike");
 		  //jedis.lpush
@@ -179,6 +183,7 @@ public class OrbTypeServiceTest {
 		assertEquals("Should be no keys.", 0, objectTypeCacheService.getTypes().size());
 	}
 	
+	@SuppressWarnings("unused")
 	@Test
 	public void removeType() {
 
@@ -214,6 +219,7 @@ public class OrbTypeServiceTest {
 		return this.randomUtil.getRandomInteger() + "-" + DateTime.now().toString();
 	}
 	
+	@SuppressWarnings("unused")
 	@Test
 	public void createFailWithNullProperties() {
 

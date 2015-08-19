@@ -4,8 +4,6 @@ import java.util.LinkedHashSet;
 
 import org.springframework.stereotype.Component;
 
-import com.fletch22.orb.cache.local.OrbTypeCollection.OrbType;
-
 @Component
 public class OrbTypeCloner {
 

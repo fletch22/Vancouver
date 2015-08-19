@@ -46,6 +46,9 @@ Status: Done.
 Get eclipse Aspect J plugin to work.
 Status: 
 
-Add test in JsonWrapper for Collections where the element in the collection is tested to see if it can be serialized.
+Add test in JsonWrapper for Collections where the element type in the collection is tested to see if it can be serialized.
 
 Fix 'testDeleteInstance' in Spock integration test.
+Status: Done
+
+Modify change orbType attribute name to also change all references of that name.

@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 
 import com.fletch22.orb.Orb;
 import com.fletch22.orb.OrbCloner;
+import com.fletch22.orb.OrbType;
 import com.fletch22.orb.OrbTypeCloner;
-import com.fletch22.orb.cache.local.OrbTypeCollection.OrbType;
 
 @Component
 public class CacheCloner {

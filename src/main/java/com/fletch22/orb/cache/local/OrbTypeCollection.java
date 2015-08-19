@@ -2,19 +2,16 @@ package com.fletch22.orb.cache.local;
 
 import static com.googlecode.cqengine.query.QueryFactory.equal;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
+import com.fletch22.orb.OrbType;
 import com.googlecode.cqengine.ConcurrentIndexedCollection;
 import com.googlecode.cqengine.IndexedCollection;
-import com.googlecode.cqengine.attribute.SimpleAttribute;
 import com.googlecode.cqengine.index.unique.UniqueIndex;
 import com.googlecode.cqengine.query.Query;
-import com.googlecode.cqengine.query.option.QueryOptions;
 
 @Component
 public class OrbTypeCollection {
@@ -37,7 +34,7 @@ public class OrbTypeCollection {
 		boolean wasFound = types.remove(orbType);
 		
 		if (!wasFound) {
-			throw new RuntimeException("Encountered problem removing type from type collection.");
+			throw new RuntimeException("Encountered problem removing type from type collection. Orb type not found.");
 		}
 		return orbType;
 	}
@@ -56,37 +53,6 @@ public class OrbTypeCollection {
 		this.types.clear();
 	}
 
-	public static class OrbType {
-		public long id;
-		public String label;
-		public BigDecimal tranDate;
-		public LinkedHashSet<String> customFields = new LinkedHashSet<String>();
-		
-		public OrbType(long id, String label, BigDecimal tranDate, LinkedHashSet<String> customFields) {
-			this.id = id;
-			this.label = label;
-			this.tranDate = tranDate;
-			this.customFields = customFields;
-		}
-
-		public LinkedHashSet<String> addField(String customFieldName) {
-			customFields.add(customFieldName);
-			return this.customFields;
-		}
-		
-		public static final SimpleAttribute<OrbType, Long> ID = new SimpleAttribute<OrbType, Long>("ID") {
-			public Long getValue(OrbType orbType, QueryOptions queryOptions) {
-				return orbType.id;
-			}
-		};
-
-		public static final SimpleAttribute<OrbType, String> LABEL = new SimpleAttribute<OrbType, String>("LABEL") {
-			public String getValue(OrbType orbType, QueryOptions queryOptions) {
-				return orbType.label;
-			}
-		};
-	}
-	
 	public int getCount()  {
 		return quickLookup.size();
 	}

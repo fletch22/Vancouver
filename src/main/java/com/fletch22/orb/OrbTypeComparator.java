@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 
 import com.fletch22.orb.cache.local.CacheDifferenceReasons;
 import com.fletch22.orb.cache.local.ComparisonResult;
-import com.fletch22.orb.cache.local.OrbTypeCollection.OrbType;
 
 @Component
 public class OrbTypeComparator {

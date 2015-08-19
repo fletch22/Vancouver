@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 
 import com.fletch22.orb.Orb;
 import com.fletch22.orb.OrbComparator;
+import com.fletch22.orb.OrbType;
 import com.fletch22.orb.OrbTypeComparator;
-import com.fletch22.orb.cache.local.OrbTypeCollection.OrbType;
 
 @Component
 public class CacheComponentComparator {
@@ -27,26 +27,37 @@ public class CacheComponentComparator {
 		OrbTypeCollection orbTypeCollection2 = cacheComponentsDto2.orbTypeCollection;
 		
 		if (orbTypeCollection1.getCount() != orbTypeCollection2.getCount()) {
-			
 			comparisonResult.isSame = false;
 			comparisonResult.cacheDifferenceReasons = CacheDifferenceReasons.NUMBER_ORB_TYPES_DIFFERENT;
-			
 		} else {
-			comparisonResult = compareCollectionContents(orbTypeCollection1, orbTypeCollection2);
+			OrbCollection orbCollection1 = cacheComponentsDto1.orbCollection;
+			OrbCollection orbCollection2 = cacheComponentsDto2.orbCollection;
+			
+			if (orbCollection1.getCount() != orbCollection2.getCount()) {
+				comparisonResult.isSame = false;
+				comparisonResult.cacheDifferenceReasons = CacheDifferenceReasons.NUMBER_ORBS_DIFFERENT;
+			} else {
+				comparisonResult = compareCollectionContents(cacheComponentsDto1, cacheComponentsDto2);			
+			}
 		}
-		
 		
 		return comparisonResult;
 	}
 
-	private ComparisonResult compareCollectionContents(OrbTypeCollection orbTypeCollection1, OrbTypeCollection orbTypeCollection2) {
+	private ComparisonResult compareCollectionContents(CacheComponentsDto cacheComponentsDto1, CacheComponentsDto cacheComponentsDto2) {
 		ComparisonResult comparisonResult = new ComparisonResult();
 		comparisonResult.isSame = true;
+		
+		OrbTypeCollection orbTypeCollection1 = cacheComponentsDto1.orbTypeCollection;
+		OrbTypeCollection orbTypeCollection2 = cacheComponentsDto2.orbTypeCollection;
 		
 		comparisonResult = compareOrbTypeCollection(orbTypeCollection1, orbTypeCollection2);
 		
 		if (comparisonResult.isSame) {
+			OrbCollection orbCollection1 = cacheComponentsDto1.orbCollection;
+			OrbCollection orbCollection2 = cacheComponentsDto2.orbCollection;
 			
+			comparisonResult = compareOrbCollection(orbCollection1, orbCollection2);
 		}
 		
 		return comparisonResult;

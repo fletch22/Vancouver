@@ -45,7 +45,7 @@ public class CommandProcessActionPackageMother {
 		return commandProcessActionPackage;
 	}
 	
-	public CommandProcessActionPackage getGoodOne(Class commandClazz) {
+	public CommandProcessActionPackage getGoodOne(Class<?> commandClazz) {
 		
 		StringBuilder action;
 		if (commandClazz == BeginTransactionCommand.class) {

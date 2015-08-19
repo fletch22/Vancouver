@@ -1,7 +1,135 @@
 package com.fletch22.orb.cache.local;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.springframework.stereotype.Component;
+
+import com.fletch22.orb.Orb;
+import com.fletch22.orb.cache.local.OrbReference.DecomposedKey;
+
+@Component
 public class ReferenceCollection {
 
 	public static final String REFERENCE_KEY_PREFIX = "^^^";
+	public static final String ID_ATTRIBUTE_NAME_SEPARATOR = "^";
 	
+	Map<Long, TargetLineup> targetLineups = new LinkedHashMap<Long, TargetLineup>();
+	
+	public void addReferences(long orbInternalId, String attributeName, List<DecomposedKey> keys) {
+		for (DecomposedKey key: keys) {
+			addReference(key.orbInternalId, key.attributeName, orbInternalId, attributeName);
+		}
+	}
+	
+	public void addReference(long orbInternalIdArrow, String nameOfArrowAttribute, long orbInternalIdTarget, String nameOfTargetAttribute) {
+		TargetLineup targetLineup = targetLineups.get(orbInternalIdTarget);
+		
+		if (targetLineup == null) {
+			targetLineup = new TargetLineup();
+			targetLineups.put(orbInternalIdTarget, targetLineup);
+		}
+		
+		Target target = targetLineup.targets.get(nameOfTargetAttribute);
+		if (target == null) {
+			target = new Target();
+			targetLineup.targets.put(nameOfTargetAttribute, target);
+		}
+		
+		ArrowCluster arrowCluster = target.arrowClusterCollection.get(orbInternalIdArrow);
+		
+		if (arrowCluster == null) {
+			arrowCluster = new ArrowCluster();
+			target.arrowClusterCollection.put(orbInternalIdArrow, arrowCluster);
+		}
+		
+		if (!arrowCluster.arrows.contains(nameOfArrowAttribute)) {
+			arrowCluster.arrows.add(nameOfArrowAttribute);
+		}
+	}
+	
+	public void addReference(Orb orbArrow, String nameOfArrowAttribute, Orb orbTarget, String nameOfTargetAttribute) {
+		addReference(orbArrow.getOrbInternalId(), nameOfArrowAttribute, orbTarget.getOrbInternalId(), nameOfTargetAttribute); 
+	}
+	
+	public Map<Long, ArrowCluster> getArrowsPointingAtTarget(long orbTargetInternalId, String attributeName) {
+		LinkedHashMap<Long, ArrowCluster> arrowClusterCollection = new LinkedHashMap<Long, ArrowCluster>();
+		
+		TargetLineup targetLineup = targetLineups.get(orbTargetInternalId);
+		
+		if (targetLineup != null) {
+			Target target = targetLineup.targets.get(attributeName);
+			if (target != null) {
+				arrowClusterCollection = target.arrowClusterCollection;
+			}
+		}
+		
+		return arrowClusterCollection;
+	}
+	
+	public void removeArrows(long orbInternalIdArrow, String attributeNameArrow, List<DecomposedKey> keys) {
+		for (DecomposedKey key: keys) {
+			removeArrows(orbInternalIdArrow, attributeNameArrow, key);
+		}
+	}
+
+	public void removeArrows(long orbInternalIdArrow, String attributeNameArrow, DecomposedKey decomposedKey) {
+		TargetLineup targetLineup = targetLineups.get(decomposedKey.orbInternalId);
+		
+		removeArrowFromLineup(targetLineup, orbInternalIdArrow, attributeNameArrow, decomposedKey);
+	}
+	
+	private void removeArrowFromLineup(TargetLineup targetLineup, long orbInternalIdArrow, String attributeNameArrow, DecomposedKey decomposedKey) {
+		if (targetLineup != null) {
+			Target target = targetLineup.targets.get(decomposedKey.attributeName);
+			if (target != null) {
+				removeArrowFromTarget(target, orbInternalIdArrow, attributeNameArrow);
+			}
+		}
+	}
+
+	private void removeArrowFromTarget(Target target, long orbInternalIdArrow, String attributeNameArrow) {
+		ArrowCluster arrowCluster = target.arrowClusterCollection.get(orbInternalIdArrow);
+		if (arrowCluster != null) {
+			if (arrowCluster.arrows.remove(attributeNameArrow));
+		}
+	}
+	
+	public void removeArrows(long orbInternalId, Map<String, List<DecomposedKey>> namesToValues) {
+		
+		Set<String> attributeNameArrowSet = namesToValues.keySet();
+		for (String attributeNameArrow : attributeNameArrowSet) {
+			List<DecomposedKey> list = namesToValues.get(attributeNameArrow);
+			for (DecomposedKey decomposedKey : list) {
+				removeArrows(orbInternalId, attributeNameArrow, decomposedKey);
+			}
+		}
+	}
+	
+	public void removeTarget(long orbTargetInternalId) {
+		targetLineups.remove(orbTargetInternalId);
+	}
+	
+	public void removeTarget(long orbTargetInternalId, String attributeNameTarget) {
+		TargetLineup targetLineup = targetLineups.get(orbTargetInternalId);
+		if (targetLineup != null) {
+			targetLineup.targets.remove(attributeNameTarget);
+		}
+	}
+	
+	public static class TargetLineup {
+		public LinkedHashMap<String, Target> targets = new LinkedHashMap<String, Target>();	
+	}
+	
+	public static class Target {
+		public LinkedHashMap<Long, ArrowCluster> arrowClusterCollection = new LinkedHashMap<Long, ArrowCluster>();
+	}
+	
+	public static class ArrowCluster {
+		public List<String> arrows = new ArrayList<String>();
+	}
+
 }

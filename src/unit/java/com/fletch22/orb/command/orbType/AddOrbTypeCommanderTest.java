@@ -33,17 +33,19 @@ public class AddOrbTypeCommanderTest {
 	}
 
 	@Test
-	public void test() {
+	public void testSpeed() {
 		
 		logger.info("Start");
 		
 		String json = addOrbTypeCommand.toJson("foo").toString();
 		for (int i = 0; i < 100000; i++) {
+			@SuppressWarnings("unused")
 			AddOrbTypeDto dto = addOrbTypeCommand.fromJson(json);
 		}
 		logger.info("End");  
 	}
 	
+	@SuppressWarnings({ "unused" })
 	@Test
 	public void testComplexJsonConversionSpeed() {
 		
@@ -62,7 +64,6 @@ public class AddOrbTypeCommanderTest {
 		
 		logger.info("Start Complex");
 		
-		String action = addOrbTypeCommand.toJson("foo").toString();
 		for (int i = 0; i < 100000; i++) {
 			JsonElement jsonElement = jsonParser.parse(actionb);
 			JsonObject jsonObject = jsonElement.getAsJsonObject();
@@ -70,11 +71,10 @@ public class AddOrbTypeCommanderTest {
 			JsonElement jsonCommand = jsonObject.getAsJsonObject("action");
 			
 			TransformActionToClassName transformActionToClassName = new TransformActionToClassName();
-			Class clazz = transformActionToClassName.transformAction(actionId);
+			Class<?> clazz = transformActionToClassName.transformAction(actionId);
 			
-			AddOrbTypePackage addTypePackageRedyra = null;
 			try {
-				addTypePackageRedyra = (AddOrbTypePackage) gson.fromJson(jsonCommand, clazz);
+				AddOrbTypePackage addTypePackageRedyra = (AddOrbTypePackage) gson.fromJson(jsonCommand, clazz);
 			} catch (Exception e) {
 				throw new RuntimeException(e.getMessage(), e);
 			}
@@ -87,7 +87,7 @@ public class AddOrbTypeCommanderTest {
 	public class Command<T> {
 		
 		@SuppressWarnings("unchecked")
-		public T getObject(JsonElement jsonCommand, Class type) {
+		public T getObject(JsonElement jsonCommand, Class<?> type) {
 			Gson gson = new Gson();
 			
 			Object object;

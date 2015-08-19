@@ -3,6 +3,7 @@ package com.fletch22.orb.cache.local;
 public enum CacheDifferenceReasons {
 	
 	NUMBER_ORB_TYPES_DIFFERENT,
+	NUMBER_ORBS_DIFFERENT,
 	ORB_TYPE_CUSTOM_FIELDS_DIFFERENT,
 	ORB_TYPE_ID_DIFFERENT, 
 	ORB_ID_DIFFERENT,

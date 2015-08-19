@@ -66,17 +66,18 @@ public class CqEngineTest {
 			cars.add(new Car(i, "red", list));
 		}
 
-		Query query1 = equal(thirdValue, "Banana");
+		Query<Car> query1 = equal(thirdValue, "Banana");
 		ResultSet<Car> resultSet = cars.retrieve(query1);
 		logger.info("Found: {} cars", resultSet.size());
 		for (Car car : resultSet) {
-			// logger.info("Card ID found: {}", car.id);
+			 logger.info("Card ID found: {}", car.id);
 		}
 
 		// doQuery();
 
 	}
 
+	@SuppressWarnings("unused")
 	private void doQuery() {
 		// Arrange
 		IndexedCollection<Car> cars = new ConcurrentIndexedCollection<Car>();
@@ -92,7 +93,7 @@ public class CqEngineTest {
 		}
 
 		// Act
-		Query query1 = endsWith(Car.FIRST_CUSTOM_ATTRIBUTE, "Banana");
+		Query<Car> query1 = endsWith(Car.FIRST_CUSTOM_ATTRIBUTE, "Banana");
 		ResultSet<Car> resultSet = cars.retrieve(query1);
 		logger.info("Found: {} cars", resultSet.size());
 		for (Car car : resultSet) {

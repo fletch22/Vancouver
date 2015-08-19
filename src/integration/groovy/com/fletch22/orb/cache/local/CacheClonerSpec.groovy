@@ -6,13 +6,15 @@ import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
 
-import spock.lang.Ignore
 import spock.lang.Specification
 
 import com.fletch22.orb.IntegrationSystemInitializer
 import com.fletch22.orb.IntegrationTests
+import com.fletch22.orb.InternalIdGenerator;
+import com.fletch22.orb.Orb
+import com.fletch22.orb.OrbManager
+import com.fletch22.orb.OrbType
 import com.fletch22.orb.OrbTypeManager
-import com.fletch22.orb.cache.local.OrbTypeCollection.OrbType
 
 @org.junit.experimental.categories.Category(IntegrationTests.class)
 @ContextConfiguration(locations = ['classpath:/springContext-test.xml'])
@@ -28,6 +30,9 @@ class CacheClonerSpec extends Specification {
 	OrbTypeManager orbTypeManager
 	
 	@Autowired
+	OrbManager orbManager;
+	
+	@Autowired
 	CacheComponentsFactory cacheComponentsFactory
 	
 	@Autowired
@@ -35,6 +40,9 @@ class CacheClonerSpec extends Specification {
 	
 	@Autowired
 	CacheComponentComparator cacheComponentComparator;
+	
+	@Autowired
+	InternalIdGenerator internalIdGenerator;
 
 	def setup() {
 		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems()
@@ -117,15 +125,29 @@ class CacheClonerSpec extends Specification {
 		comparisonResult.cacheDifferenceReasons == CacheDifferenceReasons.ORB_TYPE_CUSTOM_FIELD_DIFFERENT
 	}
 	
-	
-	// TODO: Needs to be finished.
 	@Test
-	@Ignore 
-	public void testOrbComparisonSuccess() {
+	public void testModifiedCustomFieldOrbInstanceValue() {
+		
 		given:
+		CacheComponentsDto cacheComponentsDto = cache.getCacheComponentsDto()
+		long orbTypeInternalId = orbTypeManager.createOrbType("foo", new LinkedHashSet<String>())
+		OrbType orbType = orbTypeManager.getOrbType(orbTypeInternalId)
+		orbType.customFields.add("fire")
+		orbType.customFields.add("water")
+		
+		Orb orb = orbManager.createOrb(orbType, internalIdGenerator.getNewId())
+		orbManager.setAttribute(orb.getOrbInternalId(), "fire", "hot");
+		
+		CacheComponentsDto cacheComponentsDtoOriginal = cacheCloner.clone(cacheComponentsDto)
+		
+		orbManager.setAttribute(orb.getOrbInternalId(), "fire", "not-so-hot");
+
+		CacheComponentsDto cacheComponentsDtoUpdated = cacheCloner.clone(cacheComponentsDto)
 		when:
-		def test = 1
+		def comparisonResult = cacheComponentComparator.areSame(cacheComponentsDtoOriginal, cacheComponentsDtoUpdated)
+		
 		then:
-		1 == 0
+		!comparisonResult.isSame
+		comparisonResult.cacheDifferenceReasons == CacheDifferenceReasons.ORB_PROPERTIES_VALUES_ARE_DIFFERENT
 	}
 }
