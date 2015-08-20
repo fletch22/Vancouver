@@ -91,7 +91,7 @@ public class OrbTypeManagerExternalCache implements OrbTypeManager {
 	}
 
 	@Override
-	public void deleteAttribute(long orbTypeInternalId, String attributeName, CommandProcessActionPackage commandProcessActionPackage) {
+	public void deleteAttribute(long orbTypeInternalId, String attributeName) {
 		throw new NotImplementedException("Deprecated implementation.");		
 	}
 
@@ -102,25 +102,26 @@ public class OrbTypeManagerExternalCache implements OrbTypeManager {
 
 	@Override
 	public long getOrbTypeCount() {
-		// TODO Auto-generated method stub
-		return 0;
+		throw new NotImplementedException("Deprecated implementation.");
 	}
 
 	@Override
 	public long createOrbType(String label, long orbTypeInternalId, BigDecimal tranDate, LinkedHashSet<String> customFields) {
-		// TODO Auto-generated method stub
-		return 0;
+		throw new NotImplementedException("Deprecated implementation.");
 	}
 
 	@Override
 	public long createOrbType(String label, LinkedHashSet<String> customFields) {
-		// TODO Auto-generated method stub
-		return 0;
+		throw new NotImplementedException("Deprecated implementation.");
 	}
 
 	@Override
 	public void deleteOrbType(long orbTypeInternalId) {
-		// TODO Auto-generated method stub
-		
+		throw new NotImplementedException("Deprecated implementation.");
+	}
+
+	@Override
+	public int getIndexOfAttribute(long orbTypeInternalId, String attributeName) {
+		throw new NotImplementedException("Deprecated implementation.");
 	}
 }

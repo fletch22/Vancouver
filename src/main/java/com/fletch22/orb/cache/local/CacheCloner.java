@@ -10,6 +10,7 @@ import com.fletch22.orb.Orb;
 import com.fletch22.orb.OrbCloner;
 import com.fletch22.orb.OrbType;
 import com.fletch22.orb.OrbTypeCloner;
+import com.fletch22.orb.cache.local.OrbCollection.OrbSteamerTrunk;
 
 @Component
 public class CacheCloner {
@@ -38,10 +39,10 @@ public class CacheCloner {
 		
 		OrbCollection orbCollectionCloned = clone.orbCollection;
 		
-		Map<Long, Orb> quickLookup = cacheComponentsDto.orbCollection.getQuickLookup();
+		Map<Long, OrbSteamerTrunk> quickLookup = cacheComponentsDto.orbCollection.getQuickLookup();
 		orbKeySet = quickLookup.keySet();
 		for (long orbInternalId : orbKeySet) {
-			Orb orb = quickLookup.get(orbInternalId);
+			Orb orb = quickLookup.get(orbInternalId).orb;
 			Orb orbCloned = orbCloner.cloneOrb(orb);
 			orbCollectionCloned.add(orbTypeMap.get(orbCloned.getOrbTypeInternalId()), orbCloned);
 		}

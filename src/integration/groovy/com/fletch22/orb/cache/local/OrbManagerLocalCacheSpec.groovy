@@ -40,7 +40,7 @@ class OrbManagerLocalCacheSpec extends Specification {
 	RandomUtil randomUtil
 
 	@Autowired
-	OrbReference orbReference;
+	OrbReference orbReference
 
 	def setup()  {
 		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems()

@@ -10,6 +10,7 @@ import com.fletch22.orb.Orb;
 import com.fletch22.orb.OrbComparator;
 import com.fletch22.orb.OrbType;
 import com.fletch22.orb.OrbTypeComparator;
+import com.fletch22.orb.cache.local.OrbCollection.OrbSteamerTrunk;
 
 @Component
 public class CacheComponentComparator {
@@ -89,12 +90,12 @@ public class CacheComponentComparator {
 		ComparisonResult comparisonResult = new ComparisonResult();
 		comparisonResult.isSame = true;
 		
-		Map<Long, Orb> orbMap1 = orbCollection1.getQuickLookup();
-		Map<Long, Orb> orbMap2 = orbCollection2.getQuickLookup();
+		Map<Long, OrbSteamerTrunk> orbMap1 = orbCollection1.getQuickLookup();
+		Map<Long, OrbSteamerTrunk> orbMap2 = orbCollection2.getQuickLookup();
 		Set<Long> orbIdSet1 = orbMap1.keySet();
 		for (Long orbInternalId : orbIdSet1) {
-			Orb orbType1 = orbMap1.get(orbInternalId);
-			Orb orbType2 = orbMap2.get(orbInternalId);
+			Orb orbType1 = orbMap1.get(orbInternalId).orb;
+			Orb orbType2 = orbMap2.get(orbInternalId).orb;
 			
 			if (orbType2 == null) {
 				comparisonResult.isSame = false;

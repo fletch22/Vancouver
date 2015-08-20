@@ -43,6 +43,9 @@ public class OrbTypeManagerLocalCache implements OrbTypeManager {
 	
 	@Autowired
 	AddWholeOrbTypeCommand addWholeOrbTypeCommand;
+	
+	@Autowired
+	OrbReference orbReference;
 
 	@Override
 	public long createOrbType(AddOrbTypeDto addOrbTypeDto, BigDecimal tranDate, UndoActionBundle undoActionBundle) {
@@ -127,26 +130,27 @@ public class OrbTypeManagerLocalCache implements OrbTypeManager {
 		cache.orbCollection.addAttribute(orbTypeInternalId, attributeName);
 		
 		Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
-		deleteAttribute(orbTypeInternalId, attributeName, null);
+		deleteAttribute(orbTypeInternalId, attributeName);
 	}
 
 	@Override
 	@Loggable4Event
-	public void deleteAttribute(long orbTypeInternalId, String name, CommandProcessActionPackage commandProcessActionPackage) {
-		
-		// NOTE: Delete it from the type.
-		OrbType orbType = cache.orbTypeCollection.get(orbTypeInternalId);
-		orbType.customFields.remove(name);
+	public void deleteAttribute(long orbTypeInternalId, String name) {
 		
 		// NOTE: Delete it from the instance.
 		int index = getIndexOfAttribute(orbTypeInternalId, name);
 		cache.orbCollection.removeAttribute(orbTypeInternalId, index, name);
 		
+		// NOTE: Delete it from the type.
+		OrbType orbType = cache.orbTypeCollection.get(orbTypeInternalId);
+		orbType.customFields.remove(name);
+		
 		Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
 		addAttribute(orbTypeInternalId, name);
 	}
 	
-	private int getIndexOfAttribute(long orbTypeInternalId, String attributeName) {
+	@Override
+	public int getIndexOfAttribute(long orbTypeInternalId, String attributeName) {
 		OrbType orbType = cache.orbTypeCollection.get(orbTypeInternalId);
 		
 		if (!orbType.customFields.contains(attributeName)) {

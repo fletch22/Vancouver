@@ -22,13 +22,14 @@ public class OrbSingleTypesInstanceCollection {
 		instances.addIndex(UniqueIndex.onAttribute(CacheEntry.ID));
 	}
 
-	private void createCacheEntry(long id, String label, BigDecimal tranDate, ArrayList<String> customFieldValues) {
+	private CacheEntry createCacheEntry(long id, String label, BigDecimal tranDate, ArrayList<String> customFieldValues) {
 		CacheEntry cacheEntry = new CacheEntry(id, orbTypeInternalId, label, tranDate, customFieldValues);
 		instances.add(cacheEntry);
+		return cacheEntry;
 	}
 
-	public void addInstance(long id, String label, BigDecimal tranDate, ArrayList<String> customFieldValues) {
-		createCacheEntry(id, label, tranDate, customFieldValues);
+	public CacheEntry addInstance(long id, String label, BigDecimal tranDate, ArrayList<String> customFieldValues) {
+		return createCacheEntry(id, label, tranDate, customFieldValues);
 	}
 	
 	public void addInstanceFieldToAllInstances(String value) {

@@ -5,7 +5,6 @@ import java.util.LinkedHashSet;
 
 import com.fletch22.orb.command.orbType.DeleteOrbTypeDto;
 import com.fletch22.orb.command.orbType.dto.AddOrbTypeDto;
-import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory.CommandProcessActionPackage;
 import com.fletch22.orb.rollback.UndoActionBundle;
 
 public interface OrbTypeManager {
@@ -22,11 +21,13 @@ public interface OrbTypeManager {
 	
 	public void addAttribute(long orbInternalId, String attributeName);
 	
-	public void deleteAttribute(long orbTypeInternalId, String attributeName, CommandProcessActionPackage commandProcessActionPackage);
+	public void deleteAttribute(long orbTypeInternalId, String attributeName);
 	
 	public void deleteOrbType(long orbTypeInternalId);
 
 	public OrbType getOrbType(long orbTypeInternalId);
 	
 	public long getOrbTypeCount();
+
+	int getIndexOfAttribute(long orbTypeInternalId, String attributeName);
 }

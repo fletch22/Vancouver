@@ -1,6 +1,7 @@
 package com.fletch22.orb.cache.external;
 
 import java.math.BigDecimal;
+import java.util.Map;
 
 import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,5 +86,17 @@ public class OrbManagerExternalCache implements OrbManager {
 	public String getAttribute(long orbInternalId, String attributeName) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void removeOrbAttributeFromAllInstances(long orbTypeInternalId, String attributeName) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addAttributeAndValueToInstances(Map<Long, String> map, long orbTypeInternalId, int indexAttribute, String attributeName) {
+		// TODO Auto-generated method stub
+		
 	}
 }

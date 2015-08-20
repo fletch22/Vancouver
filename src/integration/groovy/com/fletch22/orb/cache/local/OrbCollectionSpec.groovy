@@ -2,7 +2,6 @@ package com.fletch22.orb.cache.local;
 
 import static org.junit.Assert.assertTrue
 
-import org.junit.Test
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -11,11 +10,15 @@ import org.springframework.test.context.ContextConfiguration
 import spock.lang.Shared
 import spock.lang.Specification
 
+import com.fletch22.orb.IntegrationSystemInitializer
 import com.fletch22.orb.IntegrationTests
+import com.fletch22.orb.InternalIdGenerator
 import com.fletch22.orb.Orb
 import com.fletch22.orb.OrbManager
-import com.fletch22.orb.OrbType;
+import com.fletch22.orb.OrbType
 import com.fletch22.orb.OrbTypeManager
+import com.fletch22.orb.TranDateGenerator
+import com.fletch22.orb.cache.local.OrbCollection.OrbSteamerTrunk
 import com.fletch22.orb.command.orbType.dto.AddOrbDto
 import com.fletch22.orb.command.orbType.dto.AddOrbTypeDto
 import com.fletch22.orb.rollback.UndoActionBundle
@@ -25,28 +28,37 @@ import com.fletch22.orb.rollback.UndoActionBundle
 @ContextConfiguration(locations = ['classpath:/springContext-test.xml'])
 class OrbCollectionSpec extends Specification {
 
-	@Shared Logger logger = LoggerFactory.getLogger(OrbCollectionSpec.class);
+	@Shared Logger logger = LoggerFactory.getLogger(OrbCollectionSpec.class)
 
 	@Autowired
-	OrbTypeManager orbTypeManager;
+	OrbTypeManager orbTypeManager
 
 	@Autowired
-	OrbManager orbManager;
+	OrbManager orbManager
 
 	@Autowired
-	Cache cache;
+	Cache cache
+
+	OrbCollection orbCollection
+
+	OrbTypeCollection orbTypeCollection
 	
-	OrbCollection orbCollection;
-
-	OrbTypeCollection orbTypeCollection;
+	@Autowired
+	TranDateGenerator tranDateGenerator
+	
+	@Autowired
+	InternalIdGenerator internalIdGenerator
+	
+	@Autowired
+	IntegrationSystemInitializer integrationSystemInitializer
 	
 	def setup() {
 		orbTypeCollection = cache.orbTypeCollection;
+		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems()
 		orbCollection = cache.orbCollection;
 	}
 
-	@Test
-	def 'testSuccess'() {
+	def testSuccess() {
 
 		// Arrange
 		given:
@@ -77,8 +89,44 @@ class OrbCollectionSpec extends Specification {
 		orbType != null
 	}
 	
+	def testRemoveAttributeFromType() {
+		
+		given:
+		long orbTypeInternalId = createOrbType()
+		
+		OrbType orbType = orbTypeManager.getOrbType(orbTypeInternalId)
+		
+		def attributeName = 'foo'
+		orbTypeManager.addAttribute(orbType.id, attributeName)
+		
+		def numberOrbs = 10
+		
+		numberOrbs.times {
+			Orb orb = orbManager.createOrb(orbTypeInternalId, tranDateGenerator.getTranDate())
+		}
+		
+		Map<Long, OrbSteamerTrunk> map = orbCollection.getQuickLookup()
+		assertOrbPropertySize(map, 1)
+		
+		when:
+		orbTypeManager.deleteAttribute(orbTypeInternalId, attributeName)
+		
+		then:
+		map.size() == numberOrbs
+		assertOrbPropertySize(map, 0)
+	}
+
+	private void assertOrbPropertySize(Map<Long, OrbSteamerTrunk> map, long propertySize) {
+		Set<Long> idSet = map.keySet()
+		for (long orbInternalId : idSet) {
+			def orbSteamerTrunk = map.get(orbInternalId)
+			assertTrue orbSteamerTrunk.orb.userDefinedProperties.size() == propertySize
+			assertTrue orbSteamerTrunk.cacheEntry.attributes.size() == propertySize
+		}
+	}
+	
 	private long createOrbType() {
-		int orbTypeInternalId = 1;
+		int orbTypeInternalId = internalIdGenerator.getNewId();
 
 		AddOrbTypeDto addOrbTypeDto = new AddOrbTypeDto("test", orbTypeInternalId);
 

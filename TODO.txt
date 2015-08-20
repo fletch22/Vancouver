@@ -51,4 +51,11 @@ Add test in JsonWrapper for Collections where the element type in the collection
 Fix 'testDeleteInstance' in Spock integration test.
 Status: Done
 
+Add rollback of removeAttribute test with 100 instances
+Status: 
+
+Add procedures to remove orphaned instances and orphaned reference collection items. Go through OTM and OM with fine toothed comb.
+Test: Remove orb type with 100 instances and each instance has a reference. 
+Test Result: All instances and references removed. Other types, instances, and references remain untouched.
+
 Modify change orbType attribute name to also change all references of that name.

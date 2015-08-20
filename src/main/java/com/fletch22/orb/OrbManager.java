@@ -1,6 +1,7 @@
 package com.fletch22.orb;
 
 import java.math.BigDecimal;
+import java.util.Map;
 
 import com.fletch22.orb.command.orbType.dto.AddOrbDto;
 import com.fletch22.orb.rollback.UndoActionBundle;
@@ -26,4 +27,8 @@ public interface OrbManager {
 	public Orb getOrb(long orbInternalId);
 
 	public void deleteAllOrbs();
+
+	void addAttributeAndValueToInstances(Map<Long, String> map, long orbTypeInternalId, int indexOfAttribute, String attributeName);
+
+	void removeOrbAttributeFromAllInstances(long orbTypeInternalId, String attributeName);
 }
