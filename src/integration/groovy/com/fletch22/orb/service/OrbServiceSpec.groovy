@@ -8,6 +8,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
 import com.fletch22.orb.IntegrationTests
 import com.fletch22.orb.Orb
+import com.fletch22.orb.client.service.OrbService;
+import com.fletch22.orb.client.service.OrbTypeService;
 
 @org.junit.experimental.categories.Category(IntegrationTests.class)
 @RunWith(SpringJUnit4ClassRunner.class)

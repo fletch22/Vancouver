@@ -15,6 +15,7 @@ import spock.lang.Unroll
 import com.fletch22.orb.IntegrationSystemInitializer
 import com.fletch22.orb.IntegrationTests
 import com.fletch22.orb.TranDateGenerator
+import com.fletch22.orb.client.service.OrbTypeService;
 import com.fletch22.orb.command.ActionSniffer
 import com.fletch22.orb.command.CommandBundle
 import com.fletch22.orb.command.orbType.AddOrbTypeCommand
@@ -26,7 +27,6 @@ import com.fletch22.orb.command.processor.OperationResult.OpResult
 import com.fletch22.orb.command.transaction.TransactionService
 import com.fletch22.orb.rollback.UndoAction
 import com.fletch22.orb.rollback.UndoActionBundle
-import com.fletch22.orb.service.OrbTypeService
 
 @org.junit.experimental.categories.Category(IntegrationTests.class)
 @ContextConfiguration(locations = ['classpath:/springContext-test.xml'])

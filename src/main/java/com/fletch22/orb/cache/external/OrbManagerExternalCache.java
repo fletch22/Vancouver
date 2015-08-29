@@ -1,7 +1,6 @@
 package com.fletch22.orb.cache.external;
 
 import java.math.BigDecimal;
-import java.util.Map;
 
 import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +9,7 @@ import com.fletch22.orb.InternalIdGenerator;
 import com.fletch22.orb.Orb;
 import com.fletch22.orb.OrbManager;
 import com.fletch22.orb.OrbType;
+import com.fletch22.orb.cache.local.LongStringMap;
 import com.fletch22.orb.command.orb.DeleteOrbCommand;
 import com.fletch22.orb.command.orbType.dto.AddOrbDto;
 import com.fletch22.orb.rollback.UndoActionBundle;
@@ -63,7 +63,7 @@ public class OrbManagerExternalCache implements OrbManager {
 	}
 
 	@Override
-	public Orb setAttribute(long orbInternalId, String attributeName, String value) {
+	public void setAttribute(long orbInternalId, String attributeName, String value) {
 		throw new NotImplementedException("setAttribute");
 	}
 
@@ -84,19 +84,16 @@ public class OrbManagerExternalCache implements OrbManager {
 
 	@Override
 	public String getAttribute(long orbInternalId, String attributeName) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new NotImplementedException("getAttribute");
 	}
 
 	@Override
-	public void removeOrbAttributeFromAllInstances(long orbTypeInternalId, String attributeName) {
-		// TODO Auto-generated method stub
-		
+	public void deleteOrbAttributeFromAllInstances(long orbTypeInternalId, String attributeName, int attributeIndex) {
+		throw new NotImplementedException("removeOrbAttributeFromAllInstances");
 	}
 
 	@Override
-	public void addAttributeAndValueToInstances(Map<Long, String> map, long orbTypeInternalId, int indexAttribute, String attributeName) {
-		// TODO Auto-generated method stub
-		
+	public void addAttributeAndValueToInstances(LongStringMap map, long orbTypeInternalId, int indexAttribute, String attributeName) {
+		throw new NotImplementedException("addAttributeAndValueToInstances");
 	}
 }

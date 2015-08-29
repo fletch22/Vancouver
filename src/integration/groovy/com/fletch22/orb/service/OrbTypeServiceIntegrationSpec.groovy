@@ -14,6 +14,7 @@ import spock.lang.Specification
 
 import com.fletch22.orb.IntegrationSystemInitializer
 import com.fletch22.orb.IntegrationTests
+import com.fletch22.orb.client.service.OrbTypeService;
 import com.fletch22.redis.ObjectTypeCacheService
 import com.fletch22.util.RandomUtil
 

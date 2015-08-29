@@ -1,4 +1,4 @@
-package com.fletch22.orb.transaction;
+package com.fletch22.orb.client.service;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -19,9 +19,9 @@ import com.fletch22.orb.rollback.UndoAction;
 import com.fletch22.orb.rollback.UndoActionBundle;
 
 @Component
-public class RollbackService {
+public class RollbackTransactionService {
 	
-	Logger logger = LoggerFactory.getLogger(RollbackService.class);
+	Logger logger = LoggerFactory.getLogger(RollbackTransactionService.class);
 
 	@Autowired
 	LogActionService logActionService;
@@ -42,18 +42,22 @@ public class RollbackService {
 		OperationResult operationResult = null;
 		for (UndoActionBundle undoActionBundle : undoActionBundleList) {
 			
-			UndoAction undoAction = undoActionBundle.getActions().pop();
-			
-			CommandProcessActionPackage commandProcesActionPackage = this.commandProcessPackageFactory.getInstanceForRestoreMode(undoAction.action, undoAction.tranDate);
-			
-			operationResult = this.commandProcessor.processAction(commandProcesActionPackage);
-			
-			if (operationResult.opResult.equals(OpResult.FAILURE)) {
-				logger.error(operationResult.operationResultException.getMessage());
-				throw new RuntimeException("Encountered problem while trying to rollback database. Database is out of sync with cache. Consider re-initing from startup: ", operationResult.operationResultException);
+			while (undoActionBundle.getActions().size() > 0) {
+				UndoAction undoAction = undoActionBundle.getActions().pop();
+				
+				logger.info("Undoing action: {}", undoAction.action);
+				
+				CommandProcessActionPackage commandProcesActionPackage = this.commandProcessPackageFactory.getInstanceForRestoreMode(undoAction.action, undoAction.tranDate);
+				
+				operationResult = this.commandProcessor.processAction(commandProcesActionPackage);
+				
+				if (operationResult.opResult.equals(OpResult.FAILURE)) {
+					logger.error(operationResult.operationResultException.getMessage());
+					throw new RuntimeException("Encountered problem while trying to rollback database. Database is out of sync with cache. Consider re-initing from startup: ", operationResult.operationResultException);
+				}
 			}
-			
-			this.transactionService.rollbackToBeforeSpecificTransaction(tranId);
 		}
+		
+		this.transactionService.rollbackToBeforeSpecificTransaction(tranId);
 	}
 }

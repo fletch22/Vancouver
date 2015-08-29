@@ -12,12 +12,12 @@ import com.fletch22.orb.Orb;
 import com.fletch22.orb.OrbType;
 import com.fletch22.orb.OrbTypeConstants;
 import com.fletch22.orb.OrbTypeManager;
+import com.fletch22.orb.cache.local.LinkedHashSetString;
 import com.fletch22.orb.command.orbType.AddOrbTypeCommand;
 import com.fletch22.orb.command.orbType.AddWholeOrbTypeCommand;
 import com.fletch22.orb.command.orbType.DeleteOrbTypeCommand;
 import com.fletch22.orb.command.orbType.DeleteOrbTypeDto;
 import com.fletch22.orb.command.orbType.dto.AddOrbTypeDto;
-import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory.CommandProcessActionPackage;
 import com.fletch22.orb.rollback.UndoActionBundle;
 import com.fletch22.redis.ObjectTypeCacheService;
 import com.fletch22.redis.RedisObjectInstanceCacheService;
@@ -106,7 +106,7 @@ public class OrbTypeManagerExternalCache implements OrbTypeManager {
 	}
 
 	@Override
-	public long createOrbType(String label, long orbTypeInternalId, BigDecimal tranDate, LinkedHashSet<String> customFields) {
+	public long createOrbType(String label, long orbTypeInternalId, BigDecimal tranDate, LinkedHashSetString customFields) {
 		throw new NotImplementedException("Deprecated implementation.");
 	}
 
@@ -122,6 +122,11 @@ public class OrbTypeManagerExternalCache implements OrbTypeManager {
 
 	@Override
 	public int getIndexOfAttribute(long orbTypeInternalId, String attributeName) {
-		throw new NotImplementedException("Deprecated implementation.");
+		throw new NotImplementedException("getIndexOfAttribute");
+	}
+
+	@Override
+	public int getIndexOfAttribute(OrbType orbType, String attributeName) {
+		throw new NotImplementedException("getIndexOfAttribute");
 	}
 }

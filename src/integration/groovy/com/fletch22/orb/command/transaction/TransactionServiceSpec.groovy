@@ -15,7 +15,7 @@ import spock.lang.Unroll
 import com.fletch22.dao.LogActionDao
 import com.fletch22.orb.IntegrationSystemInitializer
 import com.fletch22.orb.IntegrationTests
-import com.fletch22.orb.service.OrbTypeService
+import com.fletch22.orb.client.service.OrbTypeService;
 
 @org.junit.experimental.categories.Category(IntegrationTests.class)
 @ContextConfiguration(locations = ['classpath:/springContext-test.xml'])

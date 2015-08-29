@@ -6,16 +6,18 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fletch22.orb.Orb;
 import com.fletch22.orb.OrbType;
+import com.fletch22.orb.cache.local.OrbReference.DecomposedKey;
 
 public class OrbCollection {
 	
 	Logger logger = LoggerFactory.getLogger(OrbCollection.class);
+	
+	public OrbReference orbReference;
 
 	Map<Long, OrbSingleTypesInstanceCollection> allInstances = new HashMap<Long, OrbSingleTypesInstanceCollection>();
 	private Map<Long, OrbSteamerTrunk> quickLookup = new HashMap<Long, OrbSteamerTrunk>();
@@ -24,7 +26,7 @@ public class OrbCollection {
 		OrbSingleTypesInstanceCollection orbSingleTypesInstanceCollection = allInstances.get(orb.getOrbTypeInternalId());
 		
 		if (orbSingleTypesInstanceCollection == null) {
-			logger.info("Type not found in single type instance collection. Creating new single type instance collection.");
+			logger.debug("Type not found in single type instance collection. Creating new single type instance collection.");
 			orbSingleTypesInstanceCollection = new OrbSingleTypesInstanceCollection(orbType.id);
 			allInstances.put(orbType.id, orbSingleTypesInstanceCollection);
 		}
@@ -84,18 +86,27 @@ public class OrbCollection {
 		}
 	}
 	
-	public Map<Long, String> removeAttribute(long orbTypeInternalId, int indexOfAttribute, String name) {
+	public Map<Long, String> removeAttribute(long orbTypeInternalId, int indexOfAttribute, String attributeName) {
 		Map<Long, String> mapRemoved = new HashMap<Long, String>();
 		
 		OrbSingleTypesInstanceCollection orbSingleTypesInstanceCollection = allInstances.get(orbTypeInternalId);
+		
+		orbReference.removeTarget(orbTypeInternalId, attributeName);
 		
 		for (CacheEntry cacheEntry:  orbSingleTypesInstanceCollection.instances) {
 			Orb orb = quickLookup.get(cacheEntry.id).orb;
 			
 			LinkedHashMap<String, String> properties = orb.getUserDefinedProperties();
-			mapRemoved.put(orb.getOrbInternalId(), properties.get(name));
 			
-			properties.remove(name);
+			String attributeValue = properties.get(attributeName);
+			
+			if (orbReference.isValueAReference(attributeValue)) {
+				orbReference.removeArrowsFromIndex(orb.getOrbInternalId(), attributeName, attributeValue);
+			}
+			
+			mapRemoved.put(orb.getOrbInternalId(), attributeValue);
+			
+			properties.remove(attributeName);
 			cacheEntry.attributes.remove(indexOfAttribute);
 		}
 		
@@ -112,9 +123,61 @@ public class OrbCollection {
 			LinkedHashMap<String, String> properties = orbSteamerTrunk.orb.getUserDefinedProperties();
 			properties.put(attributeName, value);
 			
-			orbSteamerTrunk.cacheEntry.attributes.add(indexAttribute, value);
+			if (orbReference.isValueAReference(value)) {
+				orbReference.addReferences(orbInternalId, attributeName, value);
+			}
+			
+			orbSteamerTrunk.cacheEntry.attributes.set(indexAttribute, value);
 		}
 	}
+	
+	public String setAttribute(long orbInternalId, String attributeName, String value) {
+		Orb orb = get(orbInternalId);
+		String oldValue = orb.getUserDefinedProperties().get(attributeName);
+
+		if (!areEqualAttributes(oldValue, value)) {
+			boolean isNewValueAReference = orbReference.isValueAReference(value);
+			if (isNewValueAReference) {
+				if (isTargetAttributeValueAlreadyAReference(value)) {
+					throw new RuntimeException("A reference can't point to another reference. I don't know why but that's not allowed. Figure it out later.");
+				}
+			}
+			
+			
+			if (orbReference.isValueAReference(oldValue)) {
+				orbReference.removeArrowsFromIndex(orbInternalId, attributeName, value);
+			}
+
+			if (isNewValueAReference) {
+				orbReference.addReferences(orbInternalId, attributeName, value);
+			}
+
+			orb.getUserDefinedProperties().put(attributeName, value);
+		}
+		
+		return oldValue;
+	}
+	
+	private boolean isTargetAttributeValueAlreadyAReference(String referenceValue) {
+		boolean isReference = false;
+		
+		DecomposedKey decomposedKey = orbReference.decomposeKey(referenceValue);
+		
+		Orb orb = get(decomposedKey.orbInternalId);
+		
+		String targetValue = orb.getUserDefinedProperties().get(decomposedKey.attributeName);
+		
+		if (orbReference.isValueAReference(targetValue)) {
+			isReference = true;
+		}
+		
+		return isReference;
+	}
+
+	private boolean areEqualAttributes(String value1, String value2) {
+		return (value1 == null ? value2 == null : value1.equals(value2));
+	}
+
 	
 	public Map<Long, OrbSteamerTrunk> getQuickLookup() {
 		return quickLookup;

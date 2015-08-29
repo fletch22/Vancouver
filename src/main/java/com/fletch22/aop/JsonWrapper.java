@@ -1,16 +1,22 @@
 package com.fletch22.aop;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fletch22.orb.serialization.JsonSerializable;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
 public class JsonWrapper {
+	
+	static transient Logger logger = LoggerFactory.getLogger(JsonWrapper.class);
 
 	private static transient final Set<Class<?>> EASY_TO_SERIALIZE = getEasyToSerializeTypes();
 	
@@ -29,7 +35,7 @@ public class JsonWrapper {
 		ensureCanBeSerialized(object);
 
 		this.object = object;
-		
+
 		if (this.object != null) {
 			this.clazzName = this.object.getClass().getName();
 		} else {
@@ -39,9 +45,34 @@ public class JsonWrapper {
 		this.objectValueAsJson = gson.toJson(this.object);
 	}
 
+
+	private Object wrapInGenericWrapper(Object object) {
+		String clazz = object.getClass().getName();
+		
+		if (clazz.equals(HashMap.class.getName()) ) {
+			HashMap hashMap = (HashMap) object;
+			if (!hashMap.isEmpty()) {
+				Object firstKey = hashMap.keySet().iterator().next();
+				Object entry = hashMap.get(firstKey);
+				
+				if (firstKey.getClass().getName().equals(Long.class.getName())) {
+					HashMapLongStringWrapper wrapper = new HashMapLongStringWrapper();
+					wrapper.map = (HashMap<Long, String>) object;
+					object = wrapper;
+				}
+			} 
+		} else {
+			throw new RuntimeException("Special type not set up yet with special special wrapper.");
+		}
+		
+		return object;
+	}
+
+
 	private void ensureCanBeSerialized(Object object) {
 		if (object != null && !(object instanceof JsonSerializable) && !(isEasyToSerialize(object.getClass()))) {
-			throw new RuntimeException("Either modify the JsonWrapper class to allow the serializer to natively serialize object or Object does not (but should) implement " + JsonSerializable.class.getSimpleName() + ".");
+			String clazzName = object.getClass().getSimpleName();
+			throw new RuntimeException("Problem with '" + clazzName + "'. Either modify the JsonWrapper class to allow the serializer to natively serialize object or Object does not (but should) implement " + JsonSerializable.class.getSimpleName() + ".");
 		}
 	}
 
@@ -61,8 +92,6 @@ public class JsonWrapper {
 		easyToSerialize.add(Float.class);
 		easyToSerialize.add(Double.class);
 		easyToSerialize.add(BigDecimal.class);
-		easyToSerialize.add(LinkedHashSet.class);
-		easyToSerialize.add(LinkedHashMap.class);
 		return easyToSerialize;
 	}
 
@@ -86,5 +115,9 @@ public class JsonWrapper {
 		}
 
 		return jsonWrapper;
+	}
+	
+	public static class HashMapLongStringWrapper {
+		public HashMap<Long, String> map;
 	}
 }

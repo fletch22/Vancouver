@@ -3,6 +3,7 @@ package com.fletch22.orb;
 import java.math.BigDecimal;
 import java.util.LinkedHashSet;
 
+import com.fletch22.orb.cache.local.LinkedHashSetString;
 import com.fletch22.orb.command.orbType.DeleteOrbTypeDto;
 import com.fletch22.orb.command.orbType.dto.AddOrbTypeDto;
 import com.fletch22.orb.rollback.UndoActionBundle;
@@ -11,7 +12,7 @@ public interface OrbTypeManager {
 
 	public long createOrbType(AddOrbTypeDto addOrbTypeDto, BigDecimal tranDate, final UndoActionBundle undoActionBundle);
 	
-	public long createOrbType(String label, long orbTypeInternalId, BigDecimal tranDate, LinkedHashSet<String> customFields);
+	public long createOrbType(String label, long orbTypeInternalId, BigDecimal tranDate, LinkedHashSetString customFields);
 	
 	public long createOrbType(String label, LinkedHashSet<String> customFields);
 	
@@ -30,4 +31,6 @@ public interface OrbTypeManager {
 	public long getOrbTypeCount();
 
 	int getIndexOfAttribute(long orbTypeInternalId, String attributeName);
+	
+	int getIndexOfAttribute(OrbType orbType, String attributeName);
 }

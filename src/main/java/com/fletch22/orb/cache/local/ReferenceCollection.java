@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.fletch22.orb.Orb;
@@ -13,6 +15,8 @@ import com.fletch22.orb.cache.local.OrbReference.DecomposedKey;
 
 @Component
 public class ReferenceCollection {
+	
+	Logger logger = LoggerFactory.getLogger(ReferenceCollection.class);
 
 	public static final String REFERENCE_KEY_PREFIX = "^^^";
 	public static final String ID_ATTRIBUTE_NAME_SEPARATOR = "^";
@@ -21,7 +25,7 @@ public class ReferenceCollection {
 	
 	public void addReferences(long orbInternalId, String attributeName, List<DecomposedKey> keys) {
 		for (DecomposedKey key: keys) {
-			addReference(key.orbInternalId, key.attributeName, orbInternalId, attributeName);
+			addReference(orbInternalId, attributeName, key.orbInternalId, key.attributeName);
 		}
 	}
 	
@@ -49,6 +53,28 @@ public class ReferenceCollection {
 		if (!arrowCluster.arrows.contains(nameOfArrowAttribute)) {
 			arrowCluster.arrows.add(nameOfArrowAttribute);
 		}
+	}
+	
+	public int countArrows() {
+		
+		int count = 0;
+		Set<Long> targetLineupSet = targetLineups.keySet();
+		for (long orbInternalIdTarget: targetLineupSet) {
+			TargetLineup targetLineup = targetLineups.get(orbInternalIdTarget);
+			
+			Set<String> targetKeySet = targetLineup.targets.keySet();
+			for (String nameOfAttribute: targetKeySet) {
+				Target target = targetLineup.targets.get(nameOfAttribute);
+				
+				Set<Long> arrowSet = target.arrowClusterCollection.keySet();
+				for (Long arrowTarget: arrowSet)  {
+					ArrowCluster arrowCluster = target.arrowClusterCollection.get(arrowTarget);
+					count += arrowCluster.arrows.size();
+				}
+			}
+		}
+		
+		return count;
 	}
 	
 	public void addReference(Orb orbArrow, String nameOfArrowAttribute, Orb orbTarget, String nameOfTargetAttribute) {
@@ -94,7 +120,7 @@ public class ReferenceCollection {
 	private void removeArrowFromTarget(Target target, long orbInternalIdArrow, String attributeNameArrow) {
 		ArrowCluster arrowCluster = target.arrowClusterCollection.get(orbInternalIdArrow);
 		if (arrowCluster != null) {
-			if (arrowCluster.arrows.remove(attributeNameArrow));
+			arrowCluster.arrows.remove(attributeNameArrow);
 		}
 	}
 	

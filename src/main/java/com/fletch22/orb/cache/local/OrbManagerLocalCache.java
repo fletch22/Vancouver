@@ -3,6 +3,7 @@ package com.fletch22.orb.cache.local;
 import java.math.BigDecimal;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.NotImplementedException;
@@ -19,7 +20,6 @@ import com.fletch22.orb.Orb;
 import com.fletch22.orb.OrbManager;
 import com.fletch22.orb.OrbType;
 import com.fletch22.orb.OrbTypeManager;
-import com.fletch22.orb.cache.local.OrbReference.DecomposedKey;
 import com.fletch22.orb.command.orb.DeleteOrbCommand;
 import com.fletch22.orb.command.orbType.dto.AddOrbDto;
 import com.fletch22.orb.rollback.UndoActionBundle;
@@ -40,9 +40,6 @@ public class OrbManagerLocalCache implements OrbManager {
 
 	@Autowired
 	OrbTypeManager orbTypeManager;
-
-	@Autowired
-	OrbReference orbReference;
 
 	@Override
 	@Loggable4Event
@@ -121,8 +118,17 @@ public class OrbManagerLocalCache implements OrbManager {
 	@Override
 	@Loggable4Event
 	public void deleteOrb(long orbInternalId) {
+		
+		Orb orb = cache.orbCollection.get(orbInternalId);
+		OrbType orbType = orbTypeManager.getOrbType(orb.getOrbTypeInternalId());
+		
+		LinkedHashSet<String> attributeNameSet = orbType.customFields;
+		for (String attributeName: attributeNameSet) {
+			int attributeIndex = orbTypeManager.getIndexOfAttribute(orbType, attributeName);
+			deleteOrbAttributeFromAllInstances(orb.getOrbTypeInternalId(), attributeName, attributeIndex);
+		}
 
-		Orb orb = cache.orbCollection.delete(orbInternalId);
+		orb = cache.orbCollection.delete(orbInternalId);
 
 		Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
 		createOrb(orb);
@@ -138,48 +144,35 @@ public class OrbManagerLocalCache implements OrbManager {
 
 	@Override
 	@Loggable4Event
-	public void addAttributeAndValueToInstances(Map<Long, String> map, long orbTypeInternalId, int indexAttribute, String attributeName) {
+	public void addAttributeAndValueToInstances(LongStringMap longStringMap, long orbTypeInternalId, int indexAttribute, String attributeName) {
 		
-		cache.orbCollection.addAttributeValues(map, orbTypeInternalId, indexAttribute, attributeName);
+		logger.debug("Adding attribute.");
+		cache.orbCollection.addAttributeValues(longStringMap.map, orbTypeInternalId, indexAttribute, attributeName);
 
 		Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
-		removeOrbAttributeFromAllInstances(orbTypeInternalId, attributeName);
+		deleteOrbAttributeFromAllInstances(orbTypeInternalId, attributeName, indexAttribute);
 	}
 
 	@Override
 	@Loggable4Event
-	public void removeOrbAttributeFromAllInstances(long orbTypeInternalId, String attributeName) {
+	public void deleteOrbAttributeFromAllInstances(long orbTypeInternalId, String attributeName, int attributeIndex) {
 
-		int index = orbTypeManager.getIndexOfAttribute(orbTypeInternalId, attributeName);
-		Map<Long, String> mapDeleted = cache.orbCollection.removeAttribute(orbTypeInternalId, index, attributeName);
+		Map<Long, String> mapDeleted = cache.orbCollection.removeAttribute(orbTypeInternalId, attributeIndex, attributeName);
 
 		Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
-		addAttributeAndValueToInstances(mapDeleted, orbTypeInternalId, index, attributeName);
+		addAttributeAndValueToInstances(new LongStringMap(mapDeleted), orbTypeInternalId, attributeIndex, attributeName);
 	}
 
 	@Override
 	@Loggable4Event
-	public Orb setAttribute(long orbInternalId, String attributeName, String value) {
-		Orb orb = cache.orbCollection.get(orbInternalId);
-
-		String oldValue = orb.getUserDefinedProperties().get(attributeName);
-
+	public void setAttribute(long orbInternalId, String attributeName, String value) {
+		
+		String oldValue = cache.orbCollection.setAttribute(orbInternalId, attributeName, value);
+		
 		if (!areEqualAttributes(oldValue, value)) {
-			if (orbReference.isValueAReference(oldValue)) {
-				orbReference.removeReferences(orbInternalId, attributeName, value);
-			}
-
-			if (orbReference.isValueAReference(value)) {
-				orbReference.addReferences(orbInternalId, attributeName, value);
-			}
-
-			orb.getUserDefinedProperties().put(attributeName, value);
-
 			Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
 			setAttribute(orbInternalId, attributeName, oldValue);
 		}
-
-		return orb;
 	}
 
 	public void addReference(long orbInternalIdArrow, String attributeNameArrow, long orbInternalIdTarget, String attributeNameTarget) {
@@ -188,8 +181,8 @@ public class OrbManagerLocalCache implements OrbManager {
 
 		String oldValue = orb.getUserDefinedProperties().get(attributeNameArrow);
 
-		if (StringUtils.isEmpty(oldValue) || orbReference.isValueAReference(oldValue)) {
-			String newValue = orbReference.addReference(orbInternalIdArrow, attributeNameArrow, oldValue, orbInternalIdTarget, attributeNameTarget);
+		if (StringUtils.isEmpty(oldValue) || cache.orbCollection.orbReference.isValueAReference(oldValue)) {
+			String newValue = cache.orbCollection.orbReference.addReference(orbInternalIdArrow, attributeNameArrow, oldValue, orbInternalIdTarget, attributeNameTarget);
 
 			if (!oldValue.equals(newValue)) {
 				orb.getUserDefinedProperties().put(attributeNameArrow, newValue);

@@ -6,6 +6,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.Test;
@@ -19,6 +21,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.fletch22.util.IocUtil;
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/springContext-test.xml")
@@ -99,6 +103,7 @@ public class Log4EventAspectTest {
 	public interface Dog {
 		public void runForwards(boolean hasStickInMouth, boolean throwException);
 		public void runBackwards();
+		public void dancing(Map<String, String> thing);
 	}
 	
 	@SuppressWarnings("serial")
@@ -108,6 +113,11 @@ public class Log4EventAspectTest {
 		@Loggable4Event
 		public void bark() {
 			logger.debug("Inside the bark method.");
+		}
+		
+		@Loggable4Event
+		public void dancing(Map<String, String> thing) {
+			logger.info("In dancing.");
 		}
 		
 		@Loggable4Event

@@ -29,8 +29,8 @@ import redis.clients.jedis.Protocol;
 
 import com.fletch22.orb.IntegrationTests;
 import com.fletch22.orb.cache.external.NakedOrb;
+import com.fletch22.orb.client.service.OrbTypeService;
 import com.fletch22.orb.command.orbType.AddOrbTypeCommand;
-import com.fletch22.orb.service.OrbTypeService;
 import com.fletch22.util.JsonUtil;
 import com.fletch22.util.RandomUtil;
 import com.google.gson.Gson;

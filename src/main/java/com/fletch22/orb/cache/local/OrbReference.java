@@ -27,16 +27,8 @@ public class OrbReference {
 	@Autowired
 	OrbManager orbManager;
 	
-	// TODO Create method to handle removing orb attribute
-	public void handleOrbAttributeRemoved(long orbInternalId, String attributeName, String attributeValueOld) {
-		
+	public void removeTarget(long orbInternalId, String attributeName) {
 		referenceCollection.removeTarget(orbInternalId, attributeName);
-		
-		Set<String> referenceValues = getComposedKeys(attributeValueOld);
-		for (String referenceValue: referenceValues) {
-			DecomposedKey decomposedKey = decomposeKey(referenceValue);
-			referenceCollection.removeArrows(orbInternalId, attributeName, decomposedKey);
-		}
 	}
 	
 	// TODO Create method to handle removing orb;
@@ -103,7 +95,7 @@ public class OrbReference {
 		return ReferenceCollection.REFERENCE_KEY_PREFIX + String.valueOf(orbInternalId) + "^" + attributeName;
 	}
 	
-	private DecomposedKey decomposeKey(String composedKey) {
+	public DecomposedKey decomposeKey(String composedKey) {
 		DecomposedKey key = new DecomposedKey();
 		
 		composedKey = composedKey.substring(ReferenceCollection.REFERENCE_KEY_PREFIX.length());
@@ -121,7 +113,7 @@ public class OrbReference {
 		public String attributeName;
 	}
 
-	public void removeReferences(long orbInternalId, String attributeName, String value) {
+	public void removeArrowsFromIndex(long orbInternalId, String attributeName, String value) {
 		
 		List<DecomposedKey> keys = convertToDecomposedKeys(value);
 		referenceCollection.removeArrows(orbInternalId, attributeName, keys);

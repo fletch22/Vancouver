@@ -49,7 +49,7 @@ public class MethodCallCommand {
 		translation.append(METHOD_PARAMETERS);
 		translation.append("\":[");
 		
-		boolean isFirstParameter = true;
+		int lastParameterIndex = methodCallDto.args.length - 1;
 		for (int i = 0; i < methodCallDto.args.length; i++) {
 			
 			translation.append("{");
@@ -66,10 +66,9 @@ public class MethodCallCommand {
 			translation.append(jsonWrapper.toJson());
 			
 			translation.append("}");
-			if (isFirstParameter) {
+			if (i != lastParameterIndex) {
 				translation.append(",");
 			} 
-			isFirstParameter = false;
 		}
 		translation.append("]}}");
 		

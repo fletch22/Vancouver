@@ -2,6 +2,8 @@ package com.fletch22.orb.command.processor;
 
 import java.math.BigDecimal;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -11,6 +13,8 @@ import com.fletch22.orb.rollback.UndoActionBundle;
 
 @Component
 public class CommandProcessActionPackageFactory {
+	
+	Logger logger = LoggerFactory.getLogger(CommandProcessActionPackageFactory.class);
 	
 	@Autowired
 	TranDateGenerator tranDateGenerator;
@@ -28,6 +32,7 @@ public class CommandProcessActionPackageFactory {
 		CommandProcessActionPackage commandProcessActionPackage = new CommandProcessActionPackage();
 		
 		BigDecimal tranDate = tranDateGenerator.getTranDate();
+		
 		commandProcessActionPackage.setAction(action)
 		.setTranDate(tranDate)
 		.setTranId(tranDate)

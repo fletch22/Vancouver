@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.math.BigDecimal;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.Test;
@@ -149,6 +150,25 @@ public class JsonWrapperTest {
 		
 		@SuppressWarnings("unchecked")
 		LinkedHashMap<String, String> reconstituted = (LinkedHashMap<String, String>) jsonWrapper2.object;
+		
+		logger.info("jsonWrapper: {}", jsonWrapper.toJson());
+		
+		assertEquals("Should be 2 elements.", reconstituted.size(), 2);
+	}
+	
+	@Test
+	public void testMap() {
+
+		Map<Long, String> set = new LinkedHashMap<Long, String>();
+		set.put(1L, "fooValue");
+		set.put(2L, "barKey");
+		
+		JsonWrapper jsonWrapper = new JsonWrapper(set);
+		
+		JsonWrapper jsonWrapper2 = JsonWrapper.fromJson(new Gson(), jsonWrapper.toJson());
+		
+		@SuppressWarnings("unchecked")
+		Map<String, String> reconstituted = (Map<String, String>) jsonWrapper2.object;
 		
 		logger.info("jsonWrapper: {}", jsonWrapper.toJson());
 		

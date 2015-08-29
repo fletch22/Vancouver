@@ -44,7 +44,7 @@ Test compile time weaving.
 Status: Done.
 
 Get eclipse Aspect J plugin to work.
-Status: 
+Status: Deferred until needed.
 
 Add test in JsonWrapper for Collections where the element type in the collection is tested to see if it can be serialized.
 
@@ -52,10 +52,17 @@ Fix 'testDeleteInstance' in Spock integration test.
 Status: Done
 
 Add rollback of removeAttribute test with 100 instances
-Status: 
+Status: Done
 
 Add procedures to remove orphaned instances and orphaned reference collection items. Go through OTM and OM with fine toothed comb.
 Test: Remove orb type with 100 instances and each instance has a reference. 
-Test Result: All instances and references removed. Other types, instances, and references remain untouched.
+Test Result: All instances and references removed. 
+Status: Almost done. Need to fix deleteOrbType to properly log deleted orbs and attributes.
 
 Modify change orbType attribute name to also change all references of that name.
+Status: Not done.
+
+Fix rollback of deleteAttribute;
+Status: Done
+
+Determine impact of DirectInvocation operations not having same tranDate as transaction/log operations.

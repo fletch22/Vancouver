@@ -1,4 +1,4 @@
-package com.fletch22.orb.transaction;
+package com.fletch22.orb.client.service;
 
 import static org.junit.Assert.*
 
@@ -10,6 +10,7 @@ import spock.lang.Specification
 
 import com.fletch22.orb.IntegrationSystemInitializer;
 import com.fletch22.orb.IntegrationTests;
+import com.fletch22.orb.client.service.RollbackTransactionService;
 import com.fletch22.orb.command.CommandBundle
 import com.fletch22.orb.command.orbType.AddOrbTypeCommand
 import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory
@@ -22,7 +23,7 @@ import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory.Com
 class RollbackServiceSpec extends Specification {
 
 	@Autowired
-	RollbackService rollbackService
+	RollbackTransactionService rollbackService
 	
 	@Autowired
 	AddOrbTypeCommand addOrbTypeCommand

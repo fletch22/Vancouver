@@ -11,10 +11,10 @@ import spock.lang.Specification
 import com.fletch22.dao.LogActionDao
 import com.fletch22.orb.IntegrationSystemInitializer
 import com.fletch22.orb.IntegrationTests
+import com.fletch22.orb.client.service.OrbTypeService;
 import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory
 import com.fletch22.orb.command.processor.CommandProcessor
 import com.fletch22.orb.command.transaction.TransactionService
-import com.fletch22.orb.service.OrbTypeService
 
 @org.junit.experimental.categories.Category(IntegrationTests.class)
 @ContextConfiguration(locations = ['classpath:/springContext-test.xml'])

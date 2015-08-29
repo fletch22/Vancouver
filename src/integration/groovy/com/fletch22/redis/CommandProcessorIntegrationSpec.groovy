@@ -14,6 +14,7 @@ import spock.lang.Specification
 import com.fletch22.orb.IntegrationSystemInitializer
 import com.fletch22.orb.IntegrationTests
 import com.fletch22.orb.OrbType
+import com.fletch22.orb.client.service.OrbTypeService;
 import com.fletch22.orb.command.CommandBundle
 import com.fletch22.orb.command.orb.AddOrbCommand
 import com.fletch22.orb.command.orbType.AddOrbTypeCommand
@@ -26,7 +27,6 @@ import com.fletch22.orb.command.processor.OperationResult.OpResult
 import com.fletch22.orb.command.transaction.BeginTransactionCommand
 import com.fletch22.orb.command.transaction.CommitTransactionCommand
 import com.fletch22.orb.command.transaction.TransactionService
-import com.fletch22.orb.service.OrbTypeService
 
 @org.junit.experimental.categories.Category(IntegrationTests.class)
 @ContextConfiguration(locations = ['classpath:/springContext-test.xml'])

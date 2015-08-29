@@ -18,6 +18,7 @@ import com.fletch22.orb.Orb
 import com.fletch22.orb.OrbManager
 import com.fletch22.orb.OrbType
 import com.fletch22.orb.OrbTypeManager
+import com.fletch22.orb.TranDateGenerator;
 import com.fletch22.util.RandomUtil
 import com.sun.xml.internal.ws.api.streaming.XMLStreamReaderFactory.Default;
 
@@ -41,6 +42,9 @@ class OrbManagerLocalCacheSpec extends Specification {
 
 	@Autowired
 	OrbReference orbReference
+	
+	@Autowired
+	TranDateGenerator tranDateGenerator
 
 	def setup()  {
 		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems()
@@ -110,14 +114,22 @@ class OrbManagerLocalCacheSpec extends Specification {
 
 		String tranDateString = orbType.tranDate.toString()
 		BigDecimal tranDate = new BigDecimal(tranDateString)
-
+		
 		Orb orb = orbManager.createOrb(orbTypeInternalId, tranDate)
 
 		StopWatch stopWatch = new StopWatch()
-
+ 
+		stopWatch.start()
 		def numberOfReferences = 100
 		def set1 = getSet(numberOfReferences)
 		def set2 = getSet(numberOfReferences)
+		stopWatch.stop()
+		
+		def elapsedMillis = new BigDecimal(stopWatch.getNanoTime()).divide(1000000)
+		
+		logger.info("Time to get 2 * 2 * {} orbs/orb types: {}", numberOfReferences, elapsedMillis)
+		
+		stopWatch.reset()
 
 		def numberSetActions = 100
 
@@ -146,7 +158,16 @@ class OrbManagerLocalCacheSpec extends Specification {
 		numberOfReferences.times {
 			def orbInternalId = randomUtil.getRandom(1, 1000)
 			def attributeName = randomUtil.getRandomString(10)
-			def composedKey = orbReference.composeReference(orbInternalId, attributeName)
+			
+			LinkedHashSet<String> fieldSet = new LinkedHashSet<String>()
+			fieldSet.add(attributeName)
+			
+			def orbTypeInternalId = orbTypeManager.createOrbType(attributeName, fieldSet)
+			
+			def tranDate = tranDateGenerator.getTranDate()
+			Orb orb = orbManager.createOrb(orbTypeInternalId, tranDate)
+			
+			def composedKey = orbReference.composeReference(orb.getOrbInternalId(), attributeName)
 			set.add(composedKey)
 		}
 

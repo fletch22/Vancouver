@@ -15,7 +15,6 @@ public class MethodCallService {
 
 	Logger logger = LoggerFactory.getLogger(MethodCallService.class);
 	
-
 	public Object process(MethodCallDto methodCallDto) {
 		Object result = null;
 		try {
@@ -28,7 +27,7 @@ public class MethodCallService {
 				logger.debug("Found method: '{}' while looking for method '{}'", methodName, methodCallDto.methodName);
 				if (methodName.equals(methodCallDto.methodName)) {
 					Type[] parameterTypeArray = method.getGenericParameterTypes();
-					logger.info("Found parameter type length: '{}' while looking for parameterTypes array length '{}'", parameterTypeArray.length, methodCallDto.parameterTypes.length);
+					logger.debug("Found parameter type length: '{}' while looking for parameterTypes array length '{}'", parameterTypeArray.length, methodCallDto.parameterTypes.length);
 					
 					if (parameterTypeArray.length == methodCallDto.parameterTypes.length) {
 	
@@ -52,7 +51,7 @@ public class MethodCallService {
 						Object castObject = clazz.cast(objectToExecute);
 						result = method.invoke(castObject, methodCallDto.args);
 						String resultAsString = (result == null) ? "null": result.toString();
-						logger.info("{}.{}() returned {}", methodCallDto.className, methodName, resultAsString);
+						logger.debug("{}.{}() returned {}", methodCallDto.className, methodName, resultAsString);
 						break;
 					}
 				}

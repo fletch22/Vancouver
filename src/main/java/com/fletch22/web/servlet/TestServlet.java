@@ -11,7 +11,7 @@ import org.joda.time.DateTime;
 import org.springframework.context.ApplicationContext;
 
 import com.fletch22.Fletch22ApplicationContext;
-import com.fletch22.orb.service.OrbTypeService;
+import com.fletch22.orb.client.service.OrbTypeService;
 
 public class TestServlet extends HttpServlet {
 

@@ -87,5 +87,6 @@ Problem:
 	 	
 Given an orb saved to the Redis cache
 And properties with null values are removed in order to saved to redis.
-When the orb is retrieved, the missing properties should be reproduced with null values.  
+When the orb is retrieved, the missing properties should be reproduced with null values. 
+
  
