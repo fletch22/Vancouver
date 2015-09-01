@@ -3,20 +3,25 @@ package com.fletch22.orb.cache.local;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.fletch22.orb.Orb;
 import com.fletch22.orb.OrbManager;
+import com.fletch22.orb.cache.local.ReferenceCollection.ArrowCluster;
+import com.fletch22.orb.cache.local.ReferenceCollection.Target;
+import com.fletch22.orb.cache.local.ReferenceCollection.TargetLineup;
 
 @Component
+@Scope("prototype")
 public class OrbReference {
 
 	private static final char REFERENCE_SEPARATOR = ',';
@@ -131,5 +136,53 @@ public class OrbReference {
 			keys.add(decomposeKey(referenceValue));
 		}
 		return keys;
+	}
+
+	public Map<Long, AttributeArrows> getArrowsPointingAtTarget(Orb orb) {
+		Map<Long, AttributeArrows> attributeArrowMap = new HashMap<Long, AttributeArrows>();
+
+		TargetLineup targetLineup = this.referenceCollection.targetLineups.get(orb.getOrbInternalId());
+		
+		if (targetLineup != null) {
+			Set<String> targetKeys = targetLineup.targets.keySet();
+			
+			for (String attributeName: targetKeys) {
+				Target target = targetLineup.targets.get(attributeName);
+				if (target != null) {
+					
+					LinkedHashMap<Long, ArrowCluster> arrowClusterCollection = target.arrowClusterCollection;
+					Set<Long> arrowKeys = arrowClusterCollection.keySet();
+					for (long arrow: arrowKeys) {
+						
+						ArrowCluster arrowCluster = arrowClusterCollection.get(arrow);
+						for (String arrowAttribute : arrowCluster.arrows) {
+						
+							AttributeArrows attributeArrows = attributeArrowMap.get(arrow);
+							if (attributeArrows == null) {
+								attributeArrows = new AttributeArrows();
+								attributeArrowMap.put(arrow, attributeArrows);
+							}
+							attributeArrows.attributesContainingArrows.add(arrowAttribute);
+						}
+					}
+				}
+			}
+		}
+		
+		return attributeArrowMap;
+	}
+
+	public void ensureOrbsArrowsRemoved(Orb orb) {
+		Set<String> attributeKeys = orb.getUserDefinedProperties().keySet();
+		for (String attributeName: attributeKeys) {
+			String value = orb.getUserDefinedProperties().get(attributeName);
+			if (isValueAReference(value)) {
+				removeArrowsFromIndex(orb.getOrbInternalId(), attributeName, value);
+			}
+		}
+	}
+	
+	public static class AttributeArrows {
+		public List<String> attributesContainingArrows;
 	}
 }

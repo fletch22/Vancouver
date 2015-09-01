@@ -66,3 +66,6 @@ Fix rollback of deleteAttribute;
 Status: Done
 
 Determine impact of DirectInvocation operations not having same tranDate as transaction/log operations.
+
+Fix 'test delete instance with references'
+Status: Not done.

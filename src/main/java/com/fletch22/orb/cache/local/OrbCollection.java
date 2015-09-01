@@ -3,6 +3,7 @@ package com.fletch22.orb.cache.local;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import com.fletch22.orb.Orb;
 import com.fletch22.orb.OrbType;
+import com.fletch22.orb.cache.local.OrbReference.AttributeArrows;
 import com.fletch22.orb.cache.local.OrbReference.DecomposedKey;
 
 public class OrbCollection {
@@ -62,8 +64,14 @@ public class OrbCollection {
 		return orb;
 	}
 	
-	public Orb delete(long orbInternalId) {
+	public Map<Long, AttributeArrows> getReferencesToOrb(Orb orb) {
+		return orbReference.getArrowsPointingAtTarget(orb);
+	}
+	
+	public Orb delete(OrbType orbType, long orbInternalId) {
 		Orb orb = quickLookup.get(orbInternalId).orb;
+		
+		orbReference.ensureOrbsArrowsRemoved(orb);
 		
 		OrbSingleTypesInstanceCollection orbSingleTypesInstanceCollection = allInstances.get(orb.getOrbTypeInternalId());
 		orbSingleTypesInstanceCollection.removeInstance(orb.getOrbInternalId());
@@ -72,7 +80,7 @@ public class OrbCollection {
 		
 		return orb;
 	}
-	
+
 	public void addAttribute(long orbTypeInternalId, String name) {
 		
 		if (allInstances.containsKey(orbTypeInternalId)) {
@@ -143,7 +151,6 @@ public class OrbCollection {
 				}
 			}
 			
-			
 			if (orbReference.isValueAReference(oldValue)) {
 				orbReference.removeArrowsFromIndex(orbInternalId, attributeName, value);
 			}
@@ -178,7 +185,6 @@ public class OrbCollection {
 		return (value1 == null ? value2 == null : value1.equals(value2));
 	}
 
-	
 	public Map<Long, OrbSteamerTrunk> getQuickLookup() {
 		return quickLookup;
 	}
@@ -199,5 +205,17 @@ public class OrbCollection {
 			this.orb = orb;
 			this.cacheEntry = cacheEntry;
 		}
+	}
+
+	public List<Orb> getOrbsWithType(long orbTypeInternalId) {
+		OrbSingleTypesInstanceCollection orbSingleTypeInstancesCollection = allInstances.get(orbTypeInternalId);
+		
+		List<Orb> orbsWithType = new ArrayList<Orb>();
+		for (CacheEntry cacheEntry: orbSingleTypeInstancesCollection.instances) {
+			OrbSteamerTrunk trunk = quickLookup.get(cacheEntry.id);
+			orbsWithType.add(trunk.orb);
+		}
+		
+		return orbsWithType;
 	}
 }

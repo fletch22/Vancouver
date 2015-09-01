@@ -21,6 +21,9 @@ public class CacheComponentComparator {
 	@Autowired
 	OrbComparator orbComparator;
 	
+	@Autowired
+	ReferenceCollectionComparator referenceComparatorCollection;
+	
 	public ComparisonResult areSame(CacheComponentsDto cacheComponentsDto1, CacheComponentsDto cacheComponentsDto2) {
 		ComparisonResult comparisonResult = new ComparisonResult();
 		
@@ -83,6 +86,7 @@ public class CacheComponentComparator {
 			}
 			
 		}
+		
 		return comparisonResult;
 	}
 	
@@ -104,6 +108,14 @@ public class CacheComponentComparator {
 				comparisonResult = orbComparator.areSame(orbType1, orbType2);
 			}
 		}
+		
+		if (comparisonResult.isSame) {
+			ReferenceCollection referenceCollection1 = orbCollection1.orbReference.referenceCollection;
+			ReferenceCollection referenceCollection2 = orbCollection2.orbReference.referenceCollection;
+			
+			comparisonResult = referenceComparatorCollection.areSame(referenceCollection1, referenceCollection2);
+		}
+		
 		return comparisonResult;
 	}
 }

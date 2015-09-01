@@ -18,9 +18,10 @@ import com.fletch22.orb.Orb
 import com.fletch22.orb.OrbManager
 import com.fletch22.orb.OrbType
 import com.fletch22.orb.OrbTypeManager
-import com.fletch22.orb.TranDateGenerator;
+import com.fletch22.orb.TranDateGenerator
+import com.fletch22.orb.client.service.BeginTransactionService
+import com.fletch22.orb.client.service.RollbackTransactionService
 import com.fletch22.util.RandomUtil
-import com.sun.xml.internal.ws.api.streaming.XMLStreamReaderFactory.Default;
 
 @org.junit.experimental.categories.Category(IntegrationTests.class)
 @ContextConfiguration(locations = ['classpath:/springContext-test.xml'])
@@ -45,6 +46,21 @@ class OrbManagerLocalCacheSpec extends Specification {
 	
 	@Autowired
 	TranDateGenerator tranDateGenerator
+	
+	@Autowired
+	Cache cache
+	
+	@Autowired
+	CacheCloner cacheCloner
+	
+	@Autowired
+	BeginTransactionService beginTransactionService
+	
+	@Autowired
+	RollbackTransactionService rollbackTransactionService
+	
+	@Autowired
+	CacheComponentComparator cacheComponentComparator
 
 	def setup()  {
 		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems()
@@ -78,7 +94,7 @@ class OrbManagerLocalCacheSpec extends Specification {
 	}
 
 	@Test
-	def 'testDeleteInstance'() {
+	def 'test delete instance no references'() {
 
 		given:
 		long orbTypeInternalId = orbTypeManager.createOrbType("foop", new LinkedHashSet<String>())
@@ -100,6 +116,49 @@ class OrbManagerLocalCacheSpec extends Specification {
 
 		then:
 		!orbManager.doesOrbExist(orb.orbInternalId);
+	}
+	
+	@Test
+	def 'test delete instance with references'() {
+
+		given:
+		def tranDate = beginTransactionService.beginTransaction()
+		
+		def original = cacheCloner.clone(cache.cacheComponentsDto)
+		
+		long orbTypeInternalId = orbTypeManager.createOrbType("foop", new LinkedHashSet<String>())
+
+		String attributeName = "foo"
+		orbTypeManager.addAttribute(orbTypeInternalId, attributeName)
+
+		OrbType orbType = orbTypeManager.getOrbType(orbTypeInternalId)
+
+		String referenceValue = createReferences(orbType, 100)
+
+		Orb orb = orbManager.createOrb(orbTypeInternalId, tranDateGenerator.getTranDate())
+		orbManager.setAttribute(orb.getOrbInternalId(), attributeName, referenceValue)
+		
+		orbManager.deleteOrb(orb.orbInternalId)
+		
+		rollbackTransactionService.rollbackToSpecificTransaction(tranDate)
+		
+		when:
+		def rolledBack = cacheCloner.clone(cache.cacheComponentsDto)
+
+		then:
+		cacheComponentComparator.areSame(original, rolledBack)
+	}
+	
+	def createReferences(OrbType orbType, int numberOfReference) {
+		
+		List<String> referenceList = []
+		numberOfReference.times {
+		Orb orb = orbManager.createOrb(orbType.id, tranDateGenerator.getTranDate())
+		orbManager.setAttribute(orb.orbInternalId, "foo", "bar")
+			referenceList << orbReference.composeReference(orb.orbInternalId, "foo")
+		}
+		
+		return referenceList
 	}
 
 	def testSetReferenceAttribute() {
@@ -152,7 +211,7 @@ class OrbManagerLocalCacheSpec extends Specification {
 		then:
 		fetchedValue == set1 ? true: fetchedValue == set2 ? true: false 
 	}
-
+	
 	def getSet(int numberOfReferences) {
 		Set<String> set = new HashSet<String>()
 		numberOfReferences.times {

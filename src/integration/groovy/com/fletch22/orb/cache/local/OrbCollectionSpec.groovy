@@ -61,9 +61,6 @@ class OrbCollectionSpec extends Specification {
 	@Autowired
 	RollbackTransactionService rollbackTransactionService
 	
-	@Autowired
-	OrbReference orbReference;
-	
 	def setup() {
 		orbTypeCollection = cache.orbTypeCollection;
 		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems()
@@ -121,6 +118,8 @@ class OrbCollectionSpec extends Specification {
 		
 		def numberOrbs = 1
 		
+		OrbReference orbReference = cache.orbCollection.orbReference;
+		
 		numberOrbs.times {
 			
 			tranDate = tranDateGenerator.getTranDate()
@@ -170,6 +169,8 @@ class OrbCollectionSpec extends Specification {
 		logger.info("Tran Date: {}", tranDate.toString());
 		
 		Orb orb1 = orbManager.createOrb(orbTypeInternalId, tranDate)
+		
+		OrbReference orbReference = cache.orbCollection.orbReference
 		
 		tranDate = tranDateGenerator.getTranDate()
 		Orb orb2 = orbManager.createOrb(orbTypeInternalId, tranDate)

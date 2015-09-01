@@ -96,4 +96,10 @@ public class OrbManagerExternalCache implements OrbManager {
 	public void addAttributeAndValueToInstances(LongStringMap map, long orbTypeInternalId, int indexAttribute, String attributeName) {
 		throw new NotImplementedException("addAttributeAndValueToInstances");
 	}
+
+	@Override
+	public void deleteOrbsWithType(long orbTypeInternalId) {
+		// TODO Auto-generated method stub
+		
+	}
 }

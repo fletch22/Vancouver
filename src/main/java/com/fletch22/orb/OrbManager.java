@@ -31,4 +31,6 @@ public interface OrbManager {
 	void addAttributeAndValueToInstances(LongStringMap map, long orbTypeInternalId, int indexOfAttribute, String attributeName);
 
 	void deleteOrbAttributeFromAllInstances(long orbTypeInternalId, String attributeName, int attributeIndex);
+
+	public void deleteOrbsWithType(long orbTypeInternalId);
 }

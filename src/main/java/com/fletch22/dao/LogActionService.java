@@ -53,15 +53,7 @@ public class LogActionService {
 	}
 
 	public List<UndoActionBundle> getUndoActions(long tranId) {
-
-		List<UndoActionBundle> actions = this.logActionDao.getUndosForTransactionAndSubesequentTransactions(tranId);
-
-		Stack<UndoActionBundle> undoActionBundleStack = new Stack<UndoActionBundle>();
-		for (int i = actions.size() - 1; i >= 0; i--) {
-			undoActionBundleStack.add(actions.get(i));
-		}
-
-		return new ArrayList<UndoActionBundle>(undoActionBundleStack);
+		return this.logActionDao.getUndosForTransactionAndSubesequentTransactions(tranId);
 	}
 
 	public void loadCacheFromDb() {

@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
@@ -17,9 +18,11 @@ import com.fletch22.aop.Log4EventAspect;
 import com.fletch22.aop.Loggable4Event;
 import com.fletch22.orb.InternalIdGenerator;
 import com.fletch22.orb.Orb;
+import com.fletch22.orb.OrbCloner;
 import com.fletch22.orb.OrbManager;
 import com.fletch22.orb.OrbType;
 import com.fletch22.orb.OrbTypeManager;
+import com.fletch22.orb.cache.local.OrbReference.AttributeArrows;
 import com.fletch22.orb.command.orb.DeleteOrbCommand;
 import com.fletch22.orb.command.orbType.dto.AddOrbDto;
 import com.fletch22.orb.rollback.UndoActionBundle;
@@ -40,6 +43,9 @@ public class OrbManagerLocalCache implements OrbManager {
 
 	@Autowired
 	OrbTypeManager orbTypeManager;
+	
+	@Autowired
+	OrbCloner orbCloner;
 
 	@Override
 	@Loggable4Event
@@ -108,6 +114,7 @@ public class OrbManagerLocalCache implements OrbManager {
 
 		LinkedHashMap<String, String> propertyMap = orb.getUserDefinedProperties();
 		LinkedHashSet<String> customFields = orbType.customFields;
+		
 		for (String field : customFields) {
 			if (!propertyMap.containsKey(field)) {
 				propertyMap.put(field, null);
@@ -119,19 +126,36 @@ public class OrbManagerLocalCache implements OrbManager {
 	@Loggable4Event
 	public void deleteOrb(long orbInternalId) {
 		
-		Orb orb = cache.orbCollection.get(orbInternalId);
+		OrbCollection orbCollection = cache.orbCollection;
+		
+		Orb orb = orbCollection.get(orbInternalId);
+		
+		Orb orbCopy = orbCloner.cloneOrb(orb);
+		
 		OrbType orbType = orbTypeManager.getOrbType(orb.getOrbTypeInternalId());
 		
-		LinkedHashSet<String> attributeNameSet = orbType.customFields;
-		for (String attributeName: attributeNameSet) {
-			int attributeIndex = orbTypeManager.getIndexOfAttribute(orbType, attributeName);
-			deleteOrbAttributeFromAllInstances(orb.getOrbTypeInternalId(), attributeName, attributeIndex);
-		}
-
-		orb = cache.orbCollection.delete(orbInternalId);
+		// Process references point to orb here.
+		resetAllReferencesPointingToOrb(orb);
+		
+		// Process references inside of orb here.
+		cache.orbCollection.delete(orbType, orbInternalId);
 
 		Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
-		createOrb(orb);
+		createOrb(orbCopy);
+	}
+
+	private void resetAllReferencesPointingToOrb(Orb orb) {
+		
+		OrbCollection orbCollection = cache.orbCollection;
+		Map<Long, AttributeArrows> attributeArrowsCollection = orbCollection.getReferencesToOrb(orb);
+
+		Set<Long> orbInternalIdArrowSet = attributeArrowsCollection.keySet();
+		for (long orbInternalIdArrow : orbInternalIdArrowSet) {
+			AttributeArrows attributeArrows = attributeArrowsCollection.get(orbInternalIdArrow);
+			for (String attributeArrow: attributeArrows.attributesContainingArrows) {
+				setAttribute(orbInternalIdArrow, attributeArrow, null);
+			}
+		}
 	}
 
 	@Override
@@ -221,6 +245,15 @@ public class OrbManagerLocalCache implements OrbManager {
 	@Override
 	public boolean doesOrbExist(long orbInternalId) {
 		return cache.orbCollection.doesOrbExist(orbInternalId);
+	}
+
+	@Override
+	public void deleteOrbsWithType(long orbTypeInternalId) {
+		List<Orb> orbsWithType = cache.orbCollection.getOrbsWithType(orbTypeInternalId);
+		
+		for (Orb orb : orbsWithType) {
+			deleteOrb(orb.getOrbInternalId());
+		}
 	}
 
 }

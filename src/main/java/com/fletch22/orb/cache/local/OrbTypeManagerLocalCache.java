@@ -80,7 +80,7 @@ public class OrbTypeManagerLocalCache implements OrbTypeManager {
 		
 		OrbType orbType = new OrbType(orbTypeInternalId, label, tranDate, customFields.linkedHashSet);
 		cache.orbTypeCollection.add(orbType);
-
+		
 		Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
 		deleteOrbType(orbTypeInternalId);
 		
@@ -100,6 +100,9 @@ public class OrbTypeManagerLocalCache implements OrbTypeManager {
 	@Override
 	@Loggable4Event
 	public void deleteOrbType(long orbTypeInternalId) {
+		
+		orbManager.deleteOrbsWithType(orbTypeInternalId);
+		
 		OrbType orbType = cache.orbTypeCollection.remove(orbTypeInternalId);
 		
 		Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();

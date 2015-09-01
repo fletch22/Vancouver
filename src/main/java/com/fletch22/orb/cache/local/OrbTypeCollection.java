@@ -5,6 +5,8 @@ import static com.googlecode.cqengine.query.QueryFactory.equal;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.fletch22.orb.OrbType;
@@ -15,6 +17,8 @@ import com.googlecode.cqengine.query.Query;
 
 @Component
 public class OrbTypeCollection {
+	
+	Logger logger = LoggerFactory.getLogger(OrbTypeCollection.class);
 
 	private IndexedCollection<OrbType> types = new ConcurrentIndexedCollection<OrbType>();
 	private Map<Long, OrbType> quickLookup = new HashMap<Long, OrbType>();
@@ -25,6 +29,7 @@ public class OrbTypeCollection {
 	}
 
 	public void add(OrbType orbType) {
+		logger.debug("Adding orb type with id: {}", orbType.id);
 		this.quickLookup.put(orbType.id, orbType);
 		this.types.add(orbType);
 	}

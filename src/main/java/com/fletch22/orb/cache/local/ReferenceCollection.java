@@ -8,12 +8,14 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.fletch22.orb.Orb;
 import com.fletch22.orb.cache.local.OrbReference.DecomposedKey;
 
 @Component
+@Scope("prototype")
 public class ReferenceCollection {
 	
 	Logger logger = LoggerFactory.getLogger(ReferenceCollection.class);
