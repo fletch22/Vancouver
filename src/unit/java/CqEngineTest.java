@@ -1,9 +1,11 @@
 import static com.googlecode.cqengine.query.QueryFactory.endsWith;
 import static com.googlecode.cqengine.query.QueryFactory.equal;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.time.StopWatch;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,9 +16,9 @@ import com.googlecode.cqengine.ConcurrentIndexedCollection;
 import com.googlecode.cqengine.IndexedCollection;
 import com.googlecode.cqengine.attribute.SimpleNullableAttribute;
 import com.googlecode.cqengine.index.navigable.NavigableIndex;
-import com.googlecode.cqengine.index.standingquery.StandingQueryIndex;
 import com.googlecode.cqengine.query.Query;
 import com.googlecode.cqengine.resultset.ResultSet;
+
 
 public class CqEngineTest {
 
@@ -25,12 +27,12 @@ public class CqEngineTest {
 	Class<? extends SimpleNullableAttribute<Car, String>> clazz = null;
 
 	@Test
-	public void test() {
+	public void testWithList() {
 		// logger.info(AttributeSourceGenerator.generateAttributesForPastingIntoTargetClass(Car.class));
 		IndexedCollection<Car> cars = new ConcurrentIndexedCollection<Car>();
 		
 		try {
-			clazz = GeneratedClassFactory.getInstance();
+			clazz = GeneratedClassFactory.getInstance(2);
 		} catch (Exception e) {
 			
 			StackTraceElement[] trace = e.getStackTrace();
@@ -49,33 +51,42 @@ public class CqEngineTest {
 		}
 
 		cars.addIndex(NavigableIndex.onAttribute(thirdValue));
-		// cars.addIndex(NavigableIndex.onAttribute(thirdValue));
+		//cars.addIndex(NavigableIndex.onAttribute(thirdValue));
 
 		// 20-25% slower
-		cars.addIndex(StandingQueryIndex.onQuery(equal(thirdValue, "Banana")));
+		//cars.addIndex(StandingQueryIndex.onQuery(equal(thirdValue, "Banana")));
 
 		List<String> list = new ArrayList<String>();
 		list.add("Pear");
 		list.add("Apple");
 		list.add("Banana");
+		
 		Car car1 = new Car(0, "red", list);
 		cars.add(car1);
 
-		int numberObjects = 1000000;
+		int numberObjects = 100;
 		for (int i = 1; i < numberObjects; i++) {
 			cars.add(new Car(i, "red", list));
 		}
 
 		Query<Car> query1 = equal(thirdValue, "Banana");
+		
+		StopWatch stopWatch = new StopWatch();
+		stopWatch.start();
 		ResultSet<Car> resultSet = cars.retrieve(query1);
+		stopWatch.stop();
+		
 		logger.info("Found: {} cars", resultSet.size());
 		for (Car car : resultSet) {
 			 logger.info("Card ID found: {}", car.id);
 		}
 
+		BigDecimal millis = new BigDecimal(stopWatch.getNanoTime()).divide(new BigDecimal(1000000));
+		
 		// doQuery();
-
+		logger.info("Elapsed time for list: {}", millis);
 	}
+	
 
 	@SuppressWarnings("unused")
 	private void doQuery() {
@@ -85,7 +96,7 @@ public class CqEngineTest {
 
 		List<String> list = new ArrayList<String>();
 		list.add("Banana");
-
+		
 		int numberObjects = 1000000;
 		for (int i = 0; i < numberObjects; i++) {
 			Car car1 = new Car(i, "red", list);

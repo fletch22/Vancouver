@@ -1,6 +1,7 @@
 package com.fletch22.orb.search;
 
 import java.util.List;
+import java.util.Map;
 
 import com.googlecode.cqengine.attribute.Attribute;
 import com.googlecode.cqengine.attribute.SimpleAttribute;

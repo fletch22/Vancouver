@@ -68,4 +68,8 @@ Status: Done
 Determine impact of DirectInvocation operations not having same tranDate as transaction/log operations.
 
 Fix 'test delete instance with references'
-Status: Not done.
+Status: Done.
+
+Ensure that when attribute is delete all arrows pointing at attribute are set to null (in addition to removing reference).
+Status: Done.
+
