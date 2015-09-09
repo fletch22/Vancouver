@@ -10,6 +10,8 @@ public interface OrbManager {
 	
 	public void createOrb(Orb orb);
 	
+	public Orb createOrb(long orbTypeInternalId);
+	
 	public Orb createOrb(OrbType orbType, BigDecimal tranDate);
 
 	public Orb createOrb(long orbTypeInternalId, BigDecimal tranDate);

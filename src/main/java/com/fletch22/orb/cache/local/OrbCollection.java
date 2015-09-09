@@ -14,6 +14,8 @@ import com.fletch22.orb.Orb;
 import com.fletch22.orb.OrbType;
 import com.fletch22.orb.cache.local.OrbReference.AttributeArrows;
 import com.fletch22.orb.cache.local.OrbReference.DecomposedKey;
+import com.fletch22.orb.query.ConstraintGrinder;
+import com.fletch22.orb.query.CriteriaFactory.Criteria;
 
 public class OrbCollection {
 	
@@ -41,6 +43,15 @@ public class OrbCollection {
 		quickLookup.put(orb.getOrbInternalId(), orbSteamerTrunk);
 	}
 	
+	public List<CacheEntry> executeQuery(Criteria criteria) {
+		
+		OrbSingleTypesInstanceCollection orbSingleTypesInstanceCollection = allInstances.get(criteria.getOrbTypeInternalId());
+		
+		ConstraintGrinder criteriaGrinder = new ConstraintGrinder(criteria.getOrbTypeInternalId(), criteria.logicalConstraintsList, orbSingleTypesInstanceCollection.instances);
+		
+		return criteriaGrinder.list();
+	}
+	
 	private ArrayList<String> getPropertyValuesInOrder(OrbType orbType, Orb orb) {
 		Map<String, String> properties = orb.getUserDefinedProperties();
 		ArrayList<String> fieldValues = new ArrayList<String>();
@@ -62,6 +73,14 @@ public class OrbCollection {
 		if (orb == null) throw new RuntimeException("Encountered problem getting orb. Couldn't find orb with id '" + orbInternalId + "'.");
 		
 		return orb;
+	}
+	
+	public OrbSteamerTrunk getOrbSteamerTrunk(long orbInternalId) {
+		OrbSteamerTrunk orbSteamerTrunk = quickLookup.get(orbInternalId);
+		
+		if (orbSteamerTrunk == null) throw new RuntimeException("Encountered problem getting orb. Couldn't find orb with id '" + orbInternalId + "'.");
+		
+		return orbSteamerTrunk;
 	}
 	
 	public Map<Long, AttributeArrows> getReferencesToOrb(Orb orb) {
@@ -140,7 +159,9 @@ public class OrbCollection {
 	}
 	
 	public String setAttribute(long orbInternalId, String attributeName, String value) {
-		Orb orb = get(orbInternalId);
+		OrbSteamerTrunk orbSteamerTrunk = getOrbSteamerTrunk(orbInternalId);
+		
+		Orb orb = orbSteamerTrunk.orb;
 		String oldValue = orb.getUserDefinedProperties().get(attributeName);
 
 		if (!areEqualAttributes(oldValue, value)) {
@@ -160,6 +181,20 @@ public class OrbCollection {
 			}
 
 			orb.getUserDefinedProperties().put(attributeName, value);
+			
+			Set<String> set = orb.getUserDefinedProperties().keySet();
+			
+			int indexAttribute = 0;
+			boolean isFound = false;
+			for (String key : set) {
+				if (key.equals(attributeName)) {
+					isFound = true;
+					break;
+				}
+				indexAttribute++;
+			}
+			
+			orbSteamerTrunk.cacheEntry.attributes.set(indexAttribute, value);
 		}
 		
 		return oldValue;

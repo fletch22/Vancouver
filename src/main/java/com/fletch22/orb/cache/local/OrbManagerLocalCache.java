@@ -22,6 +22,7 @@ import com.fletch22.orb.OrbCloner;
 import com.fletch22.orb.OrbManager;
 import com.fletch22.orb.OrbType;
 import com.fletch22.orb.OrbTypeManager;
+import com.fletch22.orb.TranDateGenerator;
 import com.fletch22.orb.cache.local.OrbReference.AttributeArrows;
 import com.fletch22.orb.command.orb.DeleteOrbCommand;
 import com.fletch22.orb.command.orbType.dto.AddOrbDto;
@@ -46,6 +47,9 @@ public class OrbManagerLocalCache implements OrbManager {
 	
 	@Autowired
 	OrbCloner orbCloner;
+	
+	@Autowired
+	TranDateGenerator tranDateGenerator;
 
 	@Override
 	@Loggable4Event
@@ -91,6 +95,14 @@ public class OrbManagerLocalCache implements OrbManager {
 		createOrb(orb);
 
 		return orb;
+	}
+	
+	@Override
+	public Orb createOrb(long orbTypeInternalId) {
+
+		BigDecimal tranDate = tranDateGenerator.getTranDate();
+
+		return createOrb(orbTypeInternalId, tranDate);
 	}
 
 	@Override

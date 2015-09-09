@@ -2,8 +2,6 @@ package com.fletch22.orb.query;
 
 public class ConstraintDetails extends Constraint {
 	
-	LogicalOperator logicalOperator;
-	
 	RelationshipOperator relationshipOperator;
 	String attributeName;
 	String operativeValue;

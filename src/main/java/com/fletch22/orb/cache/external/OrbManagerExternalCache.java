@@ -99,7 +99,11 @@ public class OrbManagerExternalCache implements OrbManager {
 
 	@Override
 	public void deleteOrbsWithType(long orbTypeInternalId) {
-		// TODO Auto-generated method stub
-		
+		throw new NotImplementedException("deleteOrbsWithType");
+	}
+
+	@Override
+	public Orb createOrb(long orbTypeInternalId) {
+		throw new NotImplementedException("createOrb");
 	}
 }
