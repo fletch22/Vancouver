@@ -1,6 +1,6 @@
 package com.fletch22.orb.query;
 
-public class LogicalConstraint {
+public class LogicalConstraint extends Constraint {
 	public LogicalOperator logicalOperator;
 	public Constraint constraint;
 	
@@ -24,5 +24,14 @@ public class LogicalConstraint {
 		LogicalConstraint logicalConstraint = new LogicalConstraint(logicalOperator, constraintCollection);
 		
 		return logicalConstraint;
+	}
+
+	@Override
+	public Constraint[] getConstraints() {
+		
+		Constraint[] constraintReturned = new Constraint[0]; 
+		constraintReturned[0] = this.constraint;
+		
+		return constraintReturned;
 	}
 }

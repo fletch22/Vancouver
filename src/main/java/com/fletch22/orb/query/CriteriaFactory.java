@@ -30,14 +30,12 @@ public class CriteriaFactory {
 		Logger logger = LoggerFactory.getLogger(Criteria.class);
 		
 		long orbTypeInternalId;
-		
 		Cache cache;
+		public List<LogicalConstraint> logicalConstraintsList = new ArrayList<LogicalConstraint>();
 		
 		private Criteria(long orbTypeInternalId) {
 			this.orbTypeInternalId = orbTypeInternalId;
 		}
-
-		public List<LogicalConstraint> logicalConstraintsList = new ArrayList<LogicalConstraint>();
 		
 		public Criteria add(LogicalConstraint logicalConstraint) {
 

@@ -20,6 +20,7 @@ import com.googlecode.cqengine.IndexedCollection;
 import com.googlecode.cqengine.attribute.SimpleNullableAttribute;
 import com.googlecode.cqengine.query.Query;
 import com.googlecode.cqengine.resultset.ResultSet;
+import static com.googlecode.cqengine.query.QueryFactory.*;
 
 public class ConstraintGrinder {
 	
@@ -29,7 +30,7 @@ public class ConstraintGrinder {
 	IndexedCollection<CacheEntry> indexedCollection;
 	long orbTypeInternalId;
 	
-	Query<CacheEntry> query;
+	Query<CacheEntry> query = null;
 	ConstraintKitchen constraintKitchen;
 
 	public ConstraintGrinder(long orbTypeInternalId, List<LogicalConstraint> logicalConstraintList, IndexedCollection<CacheEntry> indexedCollection) {
@@ -37,17 +38,13 @@ public class ConstraintGrinder {
 		this.indexedCollection = indexedCollection;
 		this.orbTypeInternalId = orbTypeInternalId;
 		this.constraintKitchen = (ConstraintKitchen) Fletch22ApplicationContext.getApplicationContext().getBean(ConstraintKitchen.class);
+		
+		for (LogicalConstraint logicalConstraint : logicalConstraintList) {
+			query = processConstraint(logicalConstraint);
+		}
 	}
 	
 	public List<CacheEntry> list() {
-		
-		if (logicalConstraintList.size() > 1) {
-			throw new NotImplementedException("Handling multiple statements not yet implemented.");
-		}
-		
-		for (LogicalConstraint logicalConstraint : logicalConstraintList) {
-			processLogicalConstraint(logicalConstraint);
-		}
 		
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
@@ -67,43 +64,48 @@ public class ConstraintGrinder {
 		return cacheEntryList;
 	}
 
-	private void processLogicalConstraint(LogicalConstraint logicalConstraint) {
+	private Query<CacheEntry> processConstraint(LogicalConstraint logicalConstraint) {
+		Constraint[] constraintArray = logicalConstraint.constraint.getConstraints();
 		
-		if (logicalConstraint.logicalOperator.equals(LogicalOperator.OR)) {
-			throw new NotImplementedException("Handling ORs not yet implemented.");
-		} else if (logicalConstraint.logicalOperator.equals(LogicalOperator.AND)) {
-			Constraint constraint = logicalConstraint.constraint;
-			
-			processConstraint(constraint);
-		}
-	}
-
-	private void processConstraint(Constraint constraint) {
-		Constraint[] constraintArray = constraint.getConstraints();
-		
+		List<Query<CacheEntry>> queries = new ArrayList<Query<CacheEntry>>();
 		for (Constraint constraintInner: constraintArray) {
 			
+			Query<CacheEntry> queryLocal = null;
 			if (constraintInner instanceof ConstraintDetails) {
-				logger.info("Found constraint details.");
-				
-				processConstraintDetails((ConstraintDetails) constraintInner);
-				break;
-				
+				queryLocal = processConstraintDetails((ConstraintDetails) constraintInner);
 			} else if (constraintInner instanceof ConstraintCollection) {
-				throw new NotImplementedException("Constraint collection processing not yet implemented.");
+				LogicalConstraint logicalConstraintLocal = new LogicalConstraint(logicalConstraint.logicalOperator, constraintInner);
+				queryLocal = processConstraint(logicalConstraintLocal);
+			} else if (constraintInner instanceof LogicalConstraint) {
+				queryLocal = processConstraint((LogicalConstraint) constraintInner);
 			}
-			
+			queries.add(queryLocal);
 		}
+		
+		Query<CacheEntry> query = null;
+		
+		if (queries.size() == 1) {
+			query = queries.get(0);
+		} else {
+			if (logicalConstraint.logicalOperator.equals(LogicalOperator.AND)) {
+				query = and(queries);
+			} else if (logicalConstraint.logicalOperator.equals(LogicalOperator.OR)) {
+				query = or(queries);
+			}
+		}
+		
+		return query;
 	}
 	
 	private OrbTypeManager getOrbTypeManager() {
 		return Fletch22ApplicationContext.getApplicationContext().getBean(OrbTypeManager.class);
 	}
 
-	private void processConstraintDetails(ConstraintDetails constraintDetails) {
+	private Query<CacheEntry> processConstraintDetails(ConstraintDetails constraintDetails) {
 
+		Query<CacheEntry> queryLocal = null;	
+		
 		Class<? extends SimpleNullableAttribute<CacheEntry, String>> clazz = getClazzFactory(constraintDetails);
-		Class<? extends SimpleNullableAttribute<CacheEntry, String>> clazz2 = getClazzFactory(constraintDetails);
 
 		SimpleNullableAttribute<CacheEntry, String> simpleNullableAttribute = null;
 		try {
@@ -114,10 +116,12 @@ public class ConstraintGrinder {
 		}
 
 		if (constraintDetails.relationshipOperator == RelationshipOperator.EQUALS) {
-			query = equal(simpleNullableAttribute, constraintDetails.operativeValue);
+			queryLocal = equal(simpleNullableAttribute, constraintDetails.operativeValue);
 		}
+		
+		return queryLocal;
 	}
-
+	
 	private Class<? extends SimpleNullableAttribute<CacheEntry, String>> getClazzFactory(ConstraintDetails constraintDetails) {
 		
 		Class<? extends SimpleNullableAttribute<CacheEntry, String>> clazz = null;
@@ -131,7 +135,6 @@ public class ConstraintGrinder {
 				clazz = (Class<? extends SimpleNullableAttribute<CacheEntry, String>>) getBespokeAttributeClass(compositeKey);
 			} else {
 				clazz = GeneratedCacheEntryClassFactory.getInstance(indexOfAttribute, compositeKey);
-				logger.info("Info: {}", clazz.getTypeName());
 				ensureNameRegistered(compositeKey, clazz);
 			}
 			

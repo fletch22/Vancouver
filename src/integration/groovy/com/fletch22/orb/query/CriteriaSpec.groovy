@@ -2,8 +2,6 @@ package com.fletch22.orb.query;
 
 import static org.junit.Assert.*
 
-import java.math.RoundingMode;
-
 import org.apache.commons.lang3.time.StopWatch
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -57,7 +55,7 @@ class CriteriaSpec extends Specification {
 		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems();
 	}
 
-	def 'test criteria search'() {
+	def 'test criteria search for green'() {
 
 		given:
 		def orbTypeInternalId = loadTestData()
@@ -79,6 +77,60 @@ class CriteriaSpec extends Specification {
 		notThrown Exception
 		results
 		results.size > 0
+	}
+	
+	def 'test criteria search or'() {
+		
+		given:
+		def orbTypeInternalId = loadTestData()
+
+		Criteria criteria = criteriaFactory.getInstance(orbTypeInternalId)
+
+		criteria.add(LogicalConstraint.or(Constraint.eq(ATTRIBUTE_COLOR, "red"), LogicalConstraint.or(Constraint.eq(ATTRIBUTE_COLOR, COLOR_TO_FIND), Constraint.eq(ATTRIBUTE_COLOR, "orange"))))
+
+		when:
+		StopWatch stopWatch = new StopWatch()
+		stopWatch.start()
+		List<CacheEntry> results = cache.orbCollection.executeQuery(criteria);
+		stopWatch.stop()
+		
+		def elapsed = new BigDecimal(stopWatch.nanoTime).divide(new BigDecimal(1000000))
+		logger.info("elapsed time: {}", elapsed)
+		
+		then:
+		notThrown Exception
+		results
+		results.size == 110
+	}
+	
+	def 'test criteria search collection'() {
+		
+		given:
+		def orbTypeInternalId = loadTestData()
+
+		Criteria criteria = criteriaFactory.getInstance(orbTypeInternalId)
+		
+		ConstraintCollection constraintCollection = new ConstraintCollection()
+		constraintCollection.constraintArray = new Constraint[3]
+		constraintCollection.constraintArray[0] = Constraint.eq(ATTRIBUTE_COLOR, "red")
+		constraintCollection.constraintArray[1] = Constraint.eq(ATTRIBUTE_COLOR, COLOR_TO_FIND)
+		constraintCollection.constraintArray[2] = Constraint.eq(ATTRIBUTE_COLOR, "orange")
+		
+		criteria.add(LogicalConstraint.or(constraintCollection))
+
+		when:
+		StopWatch stopWatch = new StopWatch()
+		stopWatch.start()
+		List<CacheEntry> results = cache.orbCollection.executeQuery(criteria);
+		stopWatch.stop()
+		
+		def elapsed = new BigDecimal(stopWatch.nanoTime).divide(new BigDecimal(1000000))
+		logger.info("elapsed time: {}", elapsed)
+		
+		then:
+		notThrown Exception
+		results
+		results.size == 110
 	}
 
 	public long loadTestData() {
