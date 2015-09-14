@@ -24,7 +24,7 @@ import com.fletch22.orb.OrbType;
 @ContextConfiguration(locations = "classpath:/springContext-test.xml")
 public class OrbTypeCollectionTest {
 	
-	Logger logger = LoggerFactory.getLogger(OrbTypeCollection.class);
+	Logger logger = LoggerFactory.getLogger(OrbTypeCollectionTest.class);
 	
 	OrbTypeCollection orbTypeCollection;
 	

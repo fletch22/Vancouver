@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fletch22.orb.command.orbType.dto.MethodCallDto;
+import com.fletch22.util.json.GsonFactory;
 
 public class MethodCallCommandTest {
 
@@ -28,6 +29,9 @@ public class MethodCallCommandTest {
 		MethodCallDto methodCallDto = new MethodCallDto("com.fletch22.Foo", "bar", paramArray, args);
 
 		MethodCallCommand methodCallCommand = new MethodCallCommand();
+		GsonFactory gsonFactory = new GsonFactory();
+		methodCallCommand.gsonFactory = gsonFactory;
+		
 		StringBuilder json = methodCallCommand.toJson(methodCallDto);
 
 		String action = json.toString();

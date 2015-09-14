@@ -1,13 +1,15 @@
 package com.fletch22.orb.query;
 
+import static com.googlecode.cqengine.query.QueryFactory.and;
 import static com.googlecode.cqengine.query.QueryFactory.equal;
+import static com.googlecode.cqengine.query.QueryFactory.in;
+import static com.googlecode.cqengine.query.QueryFactory.or;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +22,6 @@ import com.googlecode.cqengine.IndexedCollection;
 import com.googlecode.cqengine.attribute.SimpleNullableAttribute;
 import com.googlecode.cqengine.query.Query;
 import com.googlecode.cqengine.resultset.ResultSet;
-import static com.googlecode.cqengine.query.QueryFactory.*;
 
 public class ConstraintGrinder {
 	
@@ -51,11 +52,6 @@ public class ConstraintGrinder {
 		ResultSet<CacheEntry> resultSet = this.indexedCollection.retrieve(query);
 		stopWatch.stop();
 		
-		BigDecimal elapsed = new BigDecimal(stopWatch.getNanoTime()).divide(new BigDecimal(1000000));
-		logger.info("Elapsed : {}", elapsed);
-
-		logger.info("Query found {} elements.", resultSet.size());
-		
 		List<CacheEntry> cacheEntryList = new ArrayList<CacheEntry>();
 		for (CacheEntry cacheEntry : resultSet) {
 			cacheEntryList.add(cacheEntry);
@@ -71,8 +67,10 @@ public class ConstraintGrinder {
 		for (Constraint constraintInner: constraintArray) {
 			
 			Query<CacheEntry> queryLocal = null;
-			if (constraintInner instanceof ConstraintDetails) {
-				queryLocal = processConstraintDetails((ConstraintDetails) constraintInner);
+			if (constraintInner instanceof ConstraintDetailsSingleValue) {
+				queryLocal = processConstraintDetailsSingleValue((ConstraintDetailsSingleValue) constraintInner);
+			} else if (constraintInner instanceof ConstraintDetailsList) {
+				queryLocal = processConstraintDetailsList((ConstraintDetailsList) constraintInner);
 			} else if (constraintInner instanceof ConstraintCollection) {
 				LogicalConstraint logicalConstraintLocal = new LogicalConstraint(logicalConstraint.logicalOperator, constraintInner);
 				queryLocal = processConstraint(logicalConstraintLocal);
@@ -97,39 +95,55 @@ public class ConstraintGrinder {
 		return query;
 	}
 	
-	private OrbTypeManager getOrbTypeManager() {
-		return Fletch22ApplicationContext.getApplicationContext().getBean(OrbTypeManager.class);
-	}
-
-	private Query<CacheEntry> processConstraintDetails(ConstraintDetails constraintDetails) {
-
+	private Query<CacheEntry> processConstraintDetailsList(ConstraintDetailsList constraintDetailsList) {
 		Query<CacheEntry> queryLocal = null;	
 		
-		Class<? extends SimpleNullableAttribute<CacheEntry, String>> clazz = getClazzFactory(constraintDetails);
+		SimpleNullableAttribute<CacheEntry, String> simpleNullableAttribute = createSimpleNullableAtttribute(constraintDetailsList);
 
-		SimpleNullableAttribute<CacheEntry, String> simpleNullableAttribute = null;
-		try {
-			simpleNullableAttribute = (SimpleNullableAttribute<CacheEntry, String>) clazz.newInstance();
-			logger.info("Type: {}", simpleNullableAttribute.getClass().getName());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		if (constraintDetails.relationshipOperator == RelationshipOperator.EQUALS) {
-			queryLocal = equal(simpleNullableAttribute, constraintDetails.operativeValue);
+		if (constraintDetailsList.getRelationshipOperator() == RelationshipOperator.IN) {
+			queryLocal = in(simpleNullableAttribute, constraintDetailsList.operativeValueList.toArray(new String[constraintDetailsList.operativeValueList.size()]));
 		}
 		
 		return queryLocal;
 	}
+
+	private OrbTypeManager getOrbTypeManager() {
+		return Fletch22ApplicationContext.getApplicationContext().getBean(OrbTypeManager.class);
+	}
+
+	private Query<CacheEntry> processConstraintDetailsSingleValue(ConstraintDetailsSingleValue constraintDetailsSingleValue) {
+
+		Query<CacheEntry> queryLocal = null;	
+		
+		SimpleNullableAttribute<CacheEntry, String> simpleNullableAttribute = createSimpleNullableAtttribute(constraintDetailsSingleValue);
+
+		if (constraintDetailsSingleValue.getRelationshipOperator() == RelationshipOperator.EQUALS) {
+			queryLocal = equal(simpleNullableAttribute, constraintDetailsSingleValue.operativeValue);
+		}
+		
+		return queryLocal;
+	}
+
+	private SimpleNullableAttribute<CacheEntry, String> createSimpleNullableAtttribute(ConstraintDetails constraintDetails) {
+		Class<? extends SimpleNullableAttribute<CacheEntry, String>> clazz = getClazzFactory(constraintDetails.getAttributeName());
+
+		SimpleNullableAttribute<CacheEntry, String> simpleNullableAttribute = null;
+		try {
+			simpleNullableAttribute = (SimpleNullableAttribute<CacheEntry, String>) clazz.newInstance();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return simpleNullableAttribute;
+	}
 	
-	private Class<? extends SimpleNullableAttribute<CacheEntry, String>> getClazzFactory(ConstraintDetails constraintDetails) {
+	private Class<? extends SimpleNullableAttribute<CacheEntry, String>> getClazzFactory(String attributeName) {
 		
 		Class<? extends SimpleNullableAttribute<CacheEntry, String>> clazz = null;
 		
 		try {
-			int indexOfAttribute = getOrbTypeManager().getIndexOfAttribute(orbTypeInternalId, constraintDetails.attributeName);
+			int indexOfAttribute = getOrbTypeManager().getIndexOfAttribute(orbTypeInternalId, attributeName);
 			
-			String compositeKey = SimpleNullableAttribute.class.getName() + "_" + String.valueOf(orbTypeInternalId) + "_" + String.valueOf(indexOfAttribute) + "_" + constraintDetails.attributeName;
+			String compositeKey = SimpleNullableAttribute.class.getName() + "_" + String.valueOf(orbTypeInternalId) + "_" + String.valueOf(indexOfAttribute) + "_" + attributeName;
 			
 			if (hasBespokeAttributeClassBeenRegistered(compositeKey)) {
 				clazz = (Class<? extends SimpleNullableAttribute<CacheEntry, String>>) getBespokeAttributeClass(compositeKey);

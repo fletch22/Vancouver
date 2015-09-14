@@ -20,7 +20,14 @@ public class ActionSniffer {
 	public String getVerb(StringBuilder action) {
 		String verb = null;
 		
-		verb = getVerbWithPrefix(getPrefixInUse(action), action);
+		String prefix = getPrefixInUse(action);
+		
+		if (prefix.equals(LOG_BUNDLE_PREFIX)) {
+			verb = CommandExpressor.LOG_BUNDLE; 
+		} else {
+			verb = getVerbWithPrefix(prefix, action);
+		}
+		
 		
 		if (null == verb) {
 			throw new RuntimeException("Encountered problem attempting to determine the type of action from string \"" + action + "\".");

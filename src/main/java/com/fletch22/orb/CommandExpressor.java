@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fletch22.orb.rollback.UndoActionBundle;
-import com.fletch22.util.JsonUtil;
+import com.fletch22.util.json.JsonUtil;
 
 @Component
 public class CommandExpressor {

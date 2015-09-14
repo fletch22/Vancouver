@@ -1,18 +1,9 @@
 package com.fletch22.orb.query;
 
-public class ConstraintDetails extends Constraint {
+public abstract class ConstraintDetails extends Constraint {
+
+	public abstract String getAttributeName();
 	
-	RelationshipOperator relationshipOperator;
-	String attributeName;
-	String operativeValue;
+	public abstract RelationshipOperator getRelationshipOperator();
 	
-	@Override
-	public Constraint[] getConstraints() {
-		
-		Constraint[] constraintArray = new Constraint[1];
-		
-		constraintArray[0] = this;
-		
-		return constraintArray;
-	}
 }

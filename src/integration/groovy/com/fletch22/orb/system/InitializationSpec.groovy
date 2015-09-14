@@ -48,8 +48,10 @@ class InitializationSpec extends Specification {
 	}
 	
 	def cleanup() {
-		this.logActionDao.resetCurrentTransaction()
+		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems()
+		TransactionService.transactionTimeoutInSeconds = 10
 	}
+	
 	
 	@Test
 	def 'test'() {

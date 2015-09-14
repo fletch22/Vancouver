@@ -1,8 +1,8 @@
 package com.fletch22.aop;
 
-import com.fletch22.orb.serialization.JsonSerializable;
+import com.fletch22.orb.serialization.GsonSerializable;
 
-public class QueryThing implements JsonSerializable {
+public class QueryThing implements GsonSerializable {
 	private String thing;
 	private Integer that;
 

@@ -24,11 +24,9 @@ public class LogBundler {
         translation.append(CommandExpressor.ID_BEFORE_OPERATION);
         translation.append("\":\"");
         translation.append(internalIdBeforeOperation);
-        translation.append("\"},{\"");
-        translation.append(CommandExpressor.ROOT_LABEL);
-        translation.append("\":");
+        translation.append("\"},");
         translation.append(action);
-        translation.append("}]}");
+        translation.append("]}");
 
         return translation;
 	}
@@ -41,15 +39,16 @@ public class LogBundler {
 		JsonArray logBundleArray = jsonObject.getAsJsonArray(CommandExpressor.LOG_BUNDLE);
 				
 		JsonElement idBeforeOperationElement = logBundleArray.get(0);
-		JsonPrimitive firstElementJsonObject = idBeforeOperationElement.getAsJsonPrimitive();
-		long idBeforeOperation = firstElementJsonObject.getAsLong(); 
+		JsonObject firstElementJsonObject = idBeforeOperationElement.getAsJsonObject();
+		
+		JsonPrimitive jsonPrimitiveFirst = firstElementJsonObject.getAsJsonPrimitive(CommandExpressor.ID_BEFORE_OPERATION);
+		long idBeforeOperation = jsonPrimitiveFirst.getAsLong();
 		
 		JsonElement actionElement = logBundleArray.get(1);
-		JsonPrimitive actionPrimitive = actionElement.getAsJsonPrimitive();
 		
 		LogBundleDto logBundle = new LogBundleDto();
 		logBundle.internalIdBeforeOperation = idBeforeOperation;
-		logBundle.action = new StringBuilder(actionPrimitive.getAsString());
+		logBundle.action = new StringBuilder(actionElement.toString());
 		
 		return logBundle;
 	}

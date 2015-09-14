@@ -1,4 +1,4 @@
-package com.fletch22.util;
+package com.fletch22.util.json;
 
 import org.springframework.stereotype.Component;
 

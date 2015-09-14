@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fletch22.dao.LogActionService;
-import com.fletch22.orb.cache.local.CacheService;
+import com.fletch22.orb.cache.local.Cache;
 import com.fletch22.orb.command.processor.OperationResult;
 import com.fletch22.orb.command.transaction.TransactionService;
 
@@ -22,17 +22,17 @@ public class Initialization {
 	TransactionService transactionService;
 	
 	@Autowired
-	CacheService cacheService;
+	Cache cache;
 	
 	public OperationResult initializeSystem() {
-		OperationResult operationResult = OperationResult.FAILURE;
+		OperationResult operationResult = OperationResult.getInstanceFailure();
 		
 		nukePaveAndRepopulate();
 		if (transactionService.doesDatabaseHaveAnExpiredTransaction()) {
 			logger.info("Database has an expired transaction. Will rollback and repopulate cache.");
 			transactionService.rollbackCurrentTransaction();
 		} else {
-			operationResult = OperationResult.SUCCESS;
+			operationResult = OperationResult.getInstanceSuccess();
 		}
 		
 		return operationResult;
@@ -40,7 +40,8 @@ public class Initialization {
 
 	private void nukePaveAndRepopulate() {
 		
-		cacheService.clearAllItemsFromCache();
+		cache.clearAllItemsFromCache();
+		transactionService.endTransaction();
 		
 		logActionService.loadCacheFromDb();
 	}

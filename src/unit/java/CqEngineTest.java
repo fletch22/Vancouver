@@ -76,14 +76,8 @@ public class CqEngineTest {
 		ResultSet<Car> resultSet = cars.retrieve(query1);
 		stopWatch.stop();
 		
-		logger.info("Found: {} cars", resultSet.size());
-		for (Car car : resultSet) {
-			 logger.info("Card ID found: {}", car.id);
-		}
-
 		BigDecimal millis = new BigDecimal(stopWatch.getNanoTime()).divide(new BigDecimal(1000000));
 		
-		// doQuery();
 		logger.info("Elapsed time for list: {}", millis);
 	}
 	

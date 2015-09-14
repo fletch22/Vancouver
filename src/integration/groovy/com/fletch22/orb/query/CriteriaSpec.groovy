@@ -46,21 +46,24 @@ class CriteriaSpec extends Specification {
 
 	@Autowired
 	IntegrationSystemInitializer integrationSystemInitializer;
+	
+	@Shared
+	def orbType
 
 	def setup() {
-		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems();
+		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems()
+		def orbTypeInternalId = loadTestData()
+		orbType = orbTypeManager.getOrbType(orbTypeInternalId)
 	}
 
 	def cleanup() {
-		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems();
+		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems()
 	}
 
 	def 'test criteria search for green'() {
 
 		given:
-		def orbTypeInternalId = loadTestData()
-
-		Criteria criteria = criteriaFactory.getInstance(orbTypeInternalId)
+		Criteria criteria = criteriaFactory.getInstance(orbType)
 
 		criteria.add(LogicalConstraint.and(Constraint.eq(ATTRIBUTE_COLOR, COLOR_TO_FIND)))
 
@@ -82,9 +85,7 @@ class CriteriaSpec extends Specification {
 	def 'test criteria search or'() {
 		
 		given:
-		def orbTypeInternalId = loadTestData()
-
-		Criteria criteria = criteriaFactory.getInstance(orbTypeInternalId)
+		Criteria criteria = criteriaFactory.getInstance(orbType)
 
 		criteria.add(LogicalConstraint.or(Constraint.eq(ATTRIBUTE_COLOR, "red"), LogicalConstraint.or(Constraint.eq(ATTRIBUTE_COLOR, COLOR_TO_FIND), Constraint.eq(ATTRIBUTE_COLOR, "orange"))))
 
@@ -106,9 +107,7 @@ class CriteriaSpec extends Specification {
 	def 'test criteria search collection'() {
 		
 		given:
-		def orbTypeInternalId = loadTestData()
-
-		Criteria criteria = criteriaFactory.getInstance(orbTypeInternalId)
+		Criteria criteria = criteriaFactory.getInstance(orbType)
 		
 		ConstraintCollection constraintCollection = new ConstraintCollection()
 		constraintCollection.constraintArray = new Constraint[3]
@@ -132,6 +131,32 @@ class CriteriaSpec extends Specification {
 		results
 		results.size == 110
 	}
+	
+	def 'test criteria search collection using in'() {
+		
+		given:
+		Criteria criteria = criteriaFactory.getInstance(orbType)
+		
+		List<String> list = new ArrayList<String>();
+		list.add("red")
+		list.add("orange")
+		
+		criteria.add(Constraint.in(ATTRIBUTE_COLOR, list))
+
+		when:
+		StopWatch stopWatch = new StopWatch()
+		stopWatch.start()
+		List<CacheEntry> results = cache.orbCollection.executeQuery(criteria);
+		stopWatch.stop()
+		
+		def elapsed = new BigDecimal(stopWatch.nanoTime).divide(new BigDecimal(1000000))
+		logger.info("elapsed time: {}", elapsed)
+		
+		then:
+		notThrown Exception
+		results
+		results.size == 70
+	}
 
 	public long loadTestData() {
 
@@ -147,9 +172,7 @@ class CriteriaSpec extends Specification {
 		
 		def numInstances = 60
 		setNumberInstancesToColor(60, orbTypeInternalId, "red")
-		
 		setNumberInstancesToColor(10, orbTypeInternalId, "orange")
-
 		setNumberInstancesToColor(40, orbTypeInternalId, COLOR_TO_FIND)
 		
 		return orbTypeInternalId

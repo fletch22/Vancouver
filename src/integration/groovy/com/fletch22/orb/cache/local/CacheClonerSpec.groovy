@@ -47,6 +47,10 @@ class CacheClonerSpec extends Specification {
 	def setup() {
 		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems()
 	}
+	
+	def cleanup() {
+		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems()
+	}
 
 	@Test
 	public void testSame() {

@@ -1,4 +1,4 @@
-package com.fletch22.aop;
+package com.fletch22.util.json;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -10,8 +10,10 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fletch22.orb.serialization.JsonSerializable;
+import com.fletch22.orb.query.Constraint;
+import com.fletch22.orb.serialization.GsonSerializable;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
 
 public class JsonWrapper {
@@ -29,8 +31,10 @@ public class JsonWrapper {
 	public transient Object object;
 
 	transient Gson gson;
-
-	public JsonWrapper(Object object) {
+	
+	public JsonWrapper(Object object, GsonFactory gsonFactory) {
+		
+		this.gson = gsonFactory.getInstance();
 
 		ensureCanBeSerialized(object);
 
@@ -41,7 +45,7 @@ public class JsonWrapper {
 		} else {
 			this.clazzName = null;
 		}
-		this.gson = new Gson();
+
 		this.objectValueAsJson = gson.toJson(this.object);
 	}
 
@@ -70,9 +74,9 @@ public class JsonWrapper {
 
 
 	private void ensureCanBeSerialized(Object object) {
-		if (object != null && !(object instanceof JsonSerializable) && !(isEasyToSerialize(object.getClass()))) {
+		if (object != null && !(object instanceof GsonSerializable) && !(isEasyToSerialize(object.getClass()))) {
 			String clazzName = object.getClass().getSimpleName();
-			throw new RuntimeException("Problem with '" + clazzName + "'. Either modify the JsonWrapper class to allow the serializer to natively serialize object or Object does not (but should) implement " + JsonSerializable.class.getSimpleName() + ".");
+			throw new RuntimeException("Problem with '" + clazzName + "'. Either modify the JsonWrapper class to allow the serializer to natively serialize object or Object does not (but should) implement " + GsonSerializable.class.getSimpleName() + ".");
 		}
 	}
 

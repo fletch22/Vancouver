@@ -1,4 +1,4 @@
-package com.fletch22.redis;
+package com.fletch22.orb.command.processor;
 
 import static org.junit.Assert.*
 
@@ -284,6 +284,5 @@ class CommandProcessorIntegrationSpec extends Specification {
 		
 		// Verification techniques
 		// Count total actions in db. If successful the total commands should increase commensurately.
-		
 	}
 }

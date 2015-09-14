@@ -23,6 +23,7 @@ import com.fletch22.orb.command.orbType.DeleteOrbTypeCommand;
 import com.fletch22.orb.command.orbType.DeleteOrbTypeDto;
 import com.fletch22.orb.command.orbType.dto.AddOrbTypeDto;
 import com.fletch22.orb.rollback.UndoActionBundle;
+import com.fletch22.util.json.LinkedHashSetString;
 
 @Component(value = "OrbTypeManagerLocalCache")
 public class OrbTypeManagerLocalCache implements OrbTypeManager {
@@ -183,5 +184,17 @@ public class OrbTypeManagerLocalCache implements OrbTypeManager {
 	@Override
 	public long getOrbTypeCount() {
 		return cache.orbTypeCollection.getCount();
+	}
+
+	@Override
+	@Loggable4Event
+	public void renameAttribute(long orbTypeInternalId, String attributeNameOld, String attributeNameNew) {
+		
+		orbManager.renameAttribute(orbTypeInternalId, attributeNameOld, attributeNameNew);
+		
+		cache.orbTypeCollection.renameAttribute(orbTypeInternalId, attributeNameOld, attributeNameNew);
+		
+		Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
+		renameAttribute(orbTypeInternalId, attributeNameNew, attributeNameOld);
 	}
 }

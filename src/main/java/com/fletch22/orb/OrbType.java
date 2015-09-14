@@ -3,11 +3,11 @@ package com.fletch22.orb;
 import java.math.BigDecimal;
 import java.util.LinkedHashSet;
 
-import com.fletch22.orb.serialization.JsonSerializable;
+import com.fletch22.orb.serialization.GsonSerializable;
 import com.googlecode.cqengine.attribute.SimpleAttribute;
 import com.googlecode.cqengine.query.option.QueryOptions;
 
-public class OrbType implements JsonSerializable {
+public class OrbType implements GsonSerializable {
 	
 	public long id;
 	public String label;

@@ -9,11 +9,20 @@ public class OperationResult {
 	}
 
     public static final int UNSET = -1;
-    public static OperationResult SUCCESS = new OperationResult(OpResult.SUCCESS);
-	public static OperationResult IN_THE_MIDDLE = new OperationResult(OpResult.IN_THE_MIDDLE);
-	public static OperationResult FAILURE = new OperationResult(OpResult.FAILURE);
-	
-	public OpResult opResult;
+    
+    public static OperationResult getInstanceSuccess() {
+    	return new OperationResult(OpResult.SUCCESS);
+    }
+    
+    public static OperationResult getInstanceInTheMiddle() {
+    	return new OperationResult(OpResult.IN_THE_MIDDLE);
+    }
+    
+    public static OperationResult getInstanceFailure() {
+    	return new OperationResult(OpResult.FAILURE);
+    }
+
+   public OpResult opResult;
 	public boolean shouldBeLogged = false;
     public long internalIdBeforeOperation = UNSET;
 	public long internalIdAfterOperation = UNSET;

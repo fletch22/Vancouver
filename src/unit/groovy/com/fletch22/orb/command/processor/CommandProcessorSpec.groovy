@@ -1,7 +1,6 @@
 package com.fletch22.orb.command.processor;
 
 import static org.junit.Assert.*
-import groovy.ui.ConsoleTextEditor.RedoAction;
 
 import org.junit.Test
 import org.slf4j.Logger
@@ -15,8 +14,9 @@ import spock.lang.Unroll
 
 import com.fletch22.dao.LogActionService
 import com.fletch22.orb.CommandExpressor
+import com.fletch22.orb.IntegrationSystemInitializer
 import com.fletch22.orb.InternalIdGenerator
-import com.fletch22.orb.cache.external.OrbTypeManagerExternalCache;
+import com.fletch22.orb.cache.local.OrbTypeManagerLocalCache
 import com.fletch22.orb.command.ActionSniffer
 import com.fletch22.orb.command.orbType.AddBaseOrbTypeCommand
 import com.fletch22.orb.command.orbType.AddOrbTypeCommand
@@ -25,9 +25,9 @@ import com.fletch22.orb.command.orbType.dto.AddOrbTypeDto
 import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory.CommandProcessActionPackage
 import com.fletch22.orb.command.processor.OperationResult.OpResult
 import com.fletch22.orb.command.transaction.BeginTransactionCommand
-import com.fletch22.orb.command.transaction.CommitTransactionCommand;
-import com.fletch22.orb.command.transaction.CommitTransactionDto;
-import com.fletch22.orb.command.transaction.TransactionService;
+import com.fletch22.orb.command.transaction.CommitTransactionCommand
+import com.fletch22.orb.command.transaction.CommitTransactionDto
+import com.fletch22.orb.command.transaction.TransactionService
 import com.fletch22.orb.transaction.UndoService
 
 @ContextConfiguration(locations = ['classpath:/springContext-test.xml'])
@@ -41,8 +41,13 @@ class CommandProcessorSpec extends Specification {
 	
 	@Autowired
 	CommandProcessActionPackageMother commandProcessActionPackageMother
-
+	
+	@Autowired
+	IntegrationSystemInitializer integrationSystemInitializer
+	
 	def setup() {
+		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems()
+		
 		this.commandProcessor = new CommandProcessor()
 
 		LogActionService logActionService = Mock()
@@ -70,7 +75,7 @@ class CommandProcessorSpec extends Specification {
 		this.commandProcessor.internalIdGenerator = internalIdGenerator
 		internalIdGenerator.getCurrentId() >> 1001
 		
-		OrbTypeManagerExternalCache orbTypeManager = Mock()
+		OrbTypeManagerLocalCache orbTypeManager = Mock()
 		this.commandProcessor.orbTypeManager = orbTypeManager
 		
 		RedoAndUndoLogging redoAndUndoLogging = Mock()
@@ -83,6 +88,10 @@ class CommandProcessorSpec extends Specification {
 		
 		UndoService rollbackService = Mock()
 		this.commandProcessor.undoService = rollbackService
+	}
+	
+	def cleanup() {
+		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems()
 	}
 
 	@Unroll

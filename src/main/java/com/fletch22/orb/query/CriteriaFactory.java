@@ -9,8 +9,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.fletch22.orb.OrbType;
 import com.fletch22.orb.cache.local.Cache;
-import com.fletch22.orb.cache.local.CacheEntry;
+import com.fletch22.orb.serialization.GsonSerializable;
 
 @Component
 public class CriteriaFactory {
@@ -18,23 +19,25 @@ public class CriteriaFactory {
 	@Autowired
 	Cache cache;
 	
-	public Criteria getInstance(long orbTypeInternalId) {
-		Criteria criteria = new Criteria(orbTypeInternalId);
+	public Criteria getInstance(OrbType orbType) {
+		Criteria criteria = new Criteria(orbType);
 		criteria.cache = cache;
 		
 		return criteria;
 	}
 	
-	public static class Criteria {
+	public static class Criteria implements GsonSerializable {
 		
-		Logger logger = LoggerFactory.getLogger(Criteria.class);
+		transient Logger logger = LoggerFactory.getLogger(Criteria.class);
 		
-		long orbTypeInternalId;
-		Cache cache;
+		OrbType orbType;
+		
+		transient Cache cache;
+		
 		public List<LogicalConstraint> logicalConstraintsList = new ArrayList<LogicalConstraint>();
 		
-		private Criteria(long orbTypeInternalId) {
-			this.orbTypeInternalId = orbTypeInternalId;
+		private Criteria(OrbType orbType) {
+			this.orbType = orbType;
 		}
 		
 		public Criteria add(LogicalConstraint logicalConstraint) {
@@ -44,8 +47,21 @@ public class CriteriaFactory {
 			return this;
 		}
 		
+		public Criteria add(Constraint constraint) {
+
+			LogicalConstraint logicalConstraint = new LogicalConstraint(LogicalOperator.AND, constraint);
+			logicalConstraintsList.add(logicalConstraint);
+			
+			return this;
+		}
+		
 		public long getOrbTypeInternalId() {
-			return this.orbTypeInternalId;
+			return orbType.id;
+		}
+
+//		@Override
+		public StringBuilder toJson() {
+			throw new NotImplementedException("Not yet implemented.");
 		}
 		
 	}

@@ -63,6 +63,7 @@ public class OrbCollection {
 	}
 
 	public void deleteAll() {
+		orbReference.clear();
 		allInstances.clear();
 		quickLookup.clear();
 	}
@@ -194,6 +195,10 @@ public class OrbCollection {
 				indexAttribute++;
 			}
 			
+			if (!isFound) {
+				throw new RuntimeException("Could not find attribute in list of attributes.");
+			}
+			
 			orbSteamerTrunk.cacheEntry.attributes.set(indexAttribute, value);
 		}
 		
@@ -252,5 +257,21 @@ public class OrbCollection {
 		}
 		
 		return orbsWithType;
+	}
+
+	public void renameAttribute(long orbTypeInternalId, String attributeNameOld, String attributeNameNew) {
+		
+		OrbSingleTypesInstanceCollection orbSingleTypeInstancesCollection = allInstances.get(orbTypeInternalId);
+		
+		for (CacheEntry cacheEntry: orbSingleTypeInstancesCollection.instances) {
+			
+			OrbSteamerTrunk trunk = quickLookup.get(cacheEntry.id);
+			Orb orb = trunk.orb;
+			orbReference.referenceCollection.renameAttribute(orb.getOrbInternalId(), attributeNameOld, attributeNameNew);
+			
+			LinkedHashMap<String, String> linkedHashMap = orb.getUserDefinedProperties();
+			String value = linkedHashMap.remove(attributeNameOld);
+			linkedHashMap.put(attributeNameNew, value);
+		}
 	}
 }

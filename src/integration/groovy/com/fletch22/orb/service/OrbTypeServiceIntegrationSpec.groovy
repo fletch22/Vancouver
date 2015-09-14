@@ -15,7 +15,6 @@ import spock.lang.Specification
 import com.fletch22.orb.IntegrationSystemInitializer
 import com.fletch22.orb.IntegrationTests
 import com.fletch22.orb.client.service.OrbTypeService;
-import com.fletch22.redis.ObjectTypeCacheService
 import com.fletch22.util.RandomUtil
 
 @org.junit.experimental.categories.Category(IntegrationTests.class)
@@ -30,9 +29,6 @@ class OrbTypeServiceIntegrationSpec extends Specification {
 	
 	@Autowired
 	RandomUtil randomUtil = new RandomUtil()
-	
-	@Autowired
-	ObjectTypeCacheService objectTypeCacheService
 	
 	@Autowired
 	IntegrationSystemInitializer integrationSystemInitializer;

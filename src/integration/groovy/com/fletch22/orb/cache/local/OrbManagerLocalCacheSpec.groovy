@@ -70,7 +70,6 @@ class OrbManagerLocalCacheSpec extends Specification {
 		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems()
 	}
 
-	@Test
 	def 'testAddIllegalAttributeValue'() {
 
 		given:
@@ -93,7 +92,6 @@ class OrbManagerLocalCacheSpec extends Specification {
 		final Exception exception = thrown()
 	}
 
-	@Test
 	def 'test delete instance no references'() {
 
 		given:
@@ -118,7 +116,6 @@ class OrbManagerLocalCacheSpec extends Specification {
 		!orbManager.doesOrbExist(orb.orbInternalId);
 	}
 	
-	@Test
 	def 'test delete instance with references'() {
 
 		given:
@@ -149,7 +146,7 @@ class OrbManagerLocalCacheSpec extends Specification {
 		cacheComponentComparator.areSame(original, rolledBack)
 	}
 	
-	def createReferences(OrbType orbType, int numberOfReference) {
+	private List<String> createReferences(OrbType orbType, int numberOfReference) {
 		
 		List<String> referenceList = []
 		numberOfReference.times {
@@ -161,7 +158,7 @@ class OrbManagerLocalCacheSpec extends Specification {
 		return referenceList
 	}
 
-	def testSetReferenceAttribute() {
+	def 'test Set Reference Attribute'() {
 
 		given:
 		long orbTypeInternalId = orbTypeManager.createOrbType("foop", new LinkedHashSet<String>())
@@ -201,6 +198,8 @@ class OrbManagerLocalCacheSpec extends Specification {
 			orbManager.setAttribute(orb.getOrbInternalId(), attributeName, setToUse)
 		}
 		stopWatch.stop()
+		
+		Thread.sleep(10000);
 
 		def elapsedMillisPerSetAction = new BigDecimal(stopWatch.getNanoTime()).divide(1000000).divide(numberSetActions)
 
@@ -212,7 +211,7 @@ class OrbManagerLocalCacheSpec extends Specification {
 		fetchedValue == set1 ? true: fetchedValue == set2 ? true: false 
 	}
 	
-	def getSet(int numberOfReferences) {
+	private String getSet(int numberOfReferences) {
 		Set<String> set = new HashSet<String>()
 		numberOfReferences.times {
 			def orbInternalId = randomUtil.getRandom(1, 1000)

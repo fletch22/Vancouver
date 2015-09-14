@@ -79,23 +79,42 @@ public class ReferenceCollection {
 		return count;
 	}
 	
+	public int countArrowsPointingToTarget(long orbInternalIdTarget, String attributeName) {
+		
+		int count = 0;
+		TargetLineup targetLineup = targetLineups.get(orbInternalIdTarget);
+		if (targetLineup != null) {
+			
+			Target target = targetLineup.targets.get(attributeName);
+			if (target != null) {
+				Set<Long> arrowSet = target.arrowClusterCollection.keySet();
+				for (Long arrowTarget: arrowSet)  {
+					ArrowCluster arrowCluster = target.arrowClusterCollection.get(arrowTarget);
+					count += arrowCluster.arrows.size();
+				}
+			}
+		}
+		
+		return count;
+	}
+	
 	public void addReference(Orb orbArrow, String nameOfArrowAttribute, Orb orbTarget, String nameOfTargetAttribute) {
 		addReference(orbArrow.getOrbInternalId(), nameOfArrowAttribute, orbTarget.getOrbInternalId(), nameOfTargetAttribute); 
 	}
 	
 	public Map<Long, ArrowCluster> getArrowsPointingAtTarget(long orbTargetInternalId, String attributeName) {
-		LinkedHashMap<Long, ArrowCluster> arrowClusterCollection = new LinkedHashMap<Long, ArrowCluster>();
+		LinkedHashMap<Long, ArrowCluster> arrowClusterMap = new LinkedHashMap<Long, ArrowCluster>();
 		
 		TargetLineup targetLineup = targetLineups.get(orbTargetInternalId);
 		
 		if (targetLineup != null) {
 			Target target = targetLineup.targets.get(attributeName);
 			if (target != null) {
-				arrowClusterCollection = target.arrowClusterCollection;
+				arrowClusterMap = target.arrowClusterCollection;
 			}
 		}
 		
-		return arrowClusterCollection;
+		return arrowClusterMap;
 	}
 	
 	public void removeArrows(long orbInternalIdArrow, String attributeNameArrow, List<DecomposedKey> keys) {
@@ -158,6 +177,55 @@ public class ReferenceCollection {
 	
 	public static class ArrowCluster {
 		public List<String> arrows = new ArrayList<String>();
+	}
+
+	public void renameAttribute(long orbInternalId, String attributeNameOld, String attributeNameNew) {
+		renameTargets(orbInternalId, attributeNameOld, attributeNameNew);
+		renameArrows(orbInternalId, attributeNameOld, attributeNameNew);
+	}
+
+	private void renameArrows(long orbInternalId, String attributeNameOld, String attributeNameNew) {
+		Set<Long> targetLineupSet = targetLineups.keySet();
+		for (long orbInternalIdTarget: targetLineupSet) {
+			TargetLineup targetLineup = targetLineups.get(orbInternalIdTarget);
+			
+			Set<String> targetKeySet = targetLineup.targets.keySet();
+			for (String nameOfAttribute: targetKeySet) {
+				Target target = targetLineup.targets.get(nameOfAttribute);
+				
+				if (target == null) {
+					Target test = targetLineup.targets.get(attributeNameNew);
+					logger.info("Test target is null? {}", test == null);
+				}
+				
+				Set<Long> arrowSet = target.arrowClusterCollection.keySet();
+				for (long arrowTarget: arrowSet)  {
+					
+					if (arrowTarget == orbInternalId) {
+						ArrowCluster arrowCluster = target.arrowClusterCollection.get(arrowTarget);
+						if (arrowCluster.arrows.contains(attributeNameOld)) {
+							arrowCluster.arrows.remove(attributeNameOld);
+							arrowCluster.arrows.add(attributeNameNew);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	private void renameTargets(long orbInternalIdTarget, String attributeNameTargetOld, String attributeNameTargetNew) {
+		TargetLineup targetLineup = targetLineups.get(orbInternalIdTarget);
+		
+		if (targetLineup != null) {
+			Target target = targetLineup.targets.remove(attributeNameTargetOld);
+			if (target != null) {
+				targetLineup.targets.put(attributeNameTargetNew, target);
+			}
+		}
+	}
+
+	public void clear() {
+		targetLineups.clear();
 	}
 
 }

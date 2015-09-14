@@ -7,7 +7,7 @@ import com.fletch22.orb.CommandExpressor;
 import com.fletch22.orb.InternalIdGenerator;
 import com.fletch22.orb.OrbTypeConstants;
 import com.fletch22.orb.command.orbType.dto.AddOrbTypeDto;
-import com.fletch22.util.JsonUtil;
+import com.fletch22.util.json.JsonUtil;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;

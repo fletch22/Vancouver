@@ -35,8 +35,6 @@ public class CacheCloner {
 		
 		Map<Long, OrbType> orbTypeMap = cacheComponentsDto.orbTypeCollection.getQuickLookup();
 		
-		logger.info("Orb Type Count: {}", orbTypeMap.size());
-		
 		Set<Long> orbKeySet = orbTypeMap.keySet();
 		for (long orbTypeInternalId : orbKeySet) {
 			OrbType orbType = orbTypeMap.get(orbTypeInternalId);
@@ -53,8 +51,6 @@ public class CacheCloner {
 			
 			Orb orbCloned = orbCloner.cloneOrb(orb);
 			OrbType orbType = orbTypeMap.get(orbCloned.getOrbTypeInternalId());
-			
-			logger.info("OrbType: {}", orbType.id);
 			
 			orbCollectionCloned.add(orbType, orbCloned);
 		}

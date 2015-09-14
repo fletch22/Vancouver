@@ -3,6 +3,7 @@ package com.fletch22.orb.cache.local;
 import static com.googlecode.cqengine.query.QueryFactory.equal;
 
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -64,5 +65,31 @@ public class OrbTypeCollection {
 	
 	public Map<Long, OrbType> getQuickLookup() {
 		return this.quickLookup;
+	}
+
+	public void renameAttribute(long orbTypeInternalId, String attributeNameOld, String attributeNameNew) {
+		
+		OrbType orbType = this.quickLookup.get(orbTypeInternalId);
+		
+		if (orbType == null) {
+			String message = String.format("Orb type '%s' cannot be renamed because it does not exist.", orbTypeInternalId);
+			throw new RuntimeException(message);
+		}
+		
+		LinkedHashSet<String> customFields = orbType.customFields;
+		if (!customFields.contains(attributeNameOld)) {
+			String message = String.format("Orb type '%s' with attribute '%s' cannot be renamed because the attribute does not exist.", orbTypeInternalId, attributeNameOld);
+			throw new RuntimeException(message);
+		}
+		
+		LinkedHashSet<String> replacement = new LinkedHashSet<String>();
+		for (String attributeName : replacement) {
+			if (attributeName.equals(attributeNameOld) ) {
+				replacement.add(attributeNameNew);
+			} else {
+				replacement.add(attributeName);	
+			}
+		}
+		orbType.customFields = replacement;
 	}
 }

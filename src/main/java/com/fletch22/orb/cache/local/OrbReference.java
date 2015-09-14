@@ -36,7 +36,6 @@ public class OrbReference {
 		referenceCollection.removeTarget(orbInternalId, attributeName);
 	}
 	
-	// TODO Create method to handle removing orb;
 	public void handleOrbRemoved(long orbInternalId, Orb orb) {
 		
 		referenceCollection.removeTarget(orbInternalId);
@@ -184,5 +183,9 @@ public class OrbReference {
 	
 	public static class AttributeArrows {
 		public List<String> attributesContainingArrows;
+	}
+
+	public void clear() {
+		referenceCollection.clear();
 	}
 }

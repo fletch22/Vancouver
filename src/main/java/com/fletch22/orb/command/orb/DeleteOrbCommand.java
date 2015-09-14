@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 
 import com.fletch22.orb.CommandExpressor;
 import com.fletch22.orb.command.orbType.DeleteOrbDto;
-import com.fletch22.util.JsonUtil;
+import com.fletch22.util.json.JsonUtil;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;

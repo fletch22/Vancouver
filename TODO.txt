@@ -81,3 +81,6 @@ Status: Not done.
 
 Add orbTypeInternalId/label to constraintDetail so passing it in is unnecessary.
 Status: Not done.
+
+Optimize CriteriaSpec test to set up data once.
+Status: Not done.

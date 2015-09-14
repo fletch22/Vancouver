@@ -38,6 +38,7 @@ class TransactionServiceSpec extends Specification {
 	IntegrationSystemInitializer integrationSystemInitializer
 	
 	def setup() {
+		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems();
 		this.transactionService.@transactionIdInFlight == TransactionService.NO_TRANSACTION_IN_FLIGHT
 	}
 	

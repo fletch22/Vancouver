@@ -27,6 +27,7 @@ import com.fletch22.orb.cache.local.OrbReference.AttributeArrows;
 import com.fletch22.orb.command.orb.DeleteOrbCommand;
 import com.fletch22.orb.command.orbType.dto.AddOrbDto;
 import com.fletch22.orb.rollback.UndoActionBundle;
+import com.fletch22.util.json.MapLongString;
 
 @Component(value = "OrbManagerLocalCache")
 public class OrbManagerLocalCache implements OrbManager {
@@ -180,7 +181,7 @@ public class OrbManagerLocalCache implements OrbManager {
 
 	@Override
 	@Loggable4Event
-	public void addAttributeAndValueToInstances(LongStringMap longStringMap, long orbTypeInternalId, int indexAttribute, String attributeName) {
+	public void addAttributeAndValueToInstances(MapLongString longStringMap, long orbTypeInternalId, int indexAttribute, String attributeName) {
 		
 		logger.debug("Adding attribute.");
 		cache.orbCollection.addAttributeValues(longStringMap.map, orbTypeInternalId, indexAttribute, attributeName);
@@ -196,7 +197,7 @@ public class OrbManagerLocalCache implements OrbManager {
 		Map<Long, String> mapDeleted = cache.orbCollection.removeAttribute(orbTypeInternalId, attributeIndex, attributeName);
 
 		Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
-		addAttributeAndValueToInstances(new LongStringMap(mapDeleted), orbTypeInternalId, attributeIndex, attributeName);
+		addAttributeAndValueToInstances(new MapLongString(mapDeleted), orbTypeInternalId, attributeIndex, attributeName);
 	}
 
 	@Override
@@ -248,6 +249,11 @@ public class OrbManagerLocalCache implements OrbManager {
 
 		return orb;
 	}
+	
+	@Override
+	public List<Orb> getOrbsOfType(long orbTypeInternalId) {
+		return cache.orbCollection.getOrbsWithType(orbTypeInternalId);
+	}
 
 	@Override
 	public void deleteAllOrbs() {
@@ -268,4 +274,8 @@ public class OrbManagerLocalCache implements OrbManager {
 		}
 	}
 
+	@Override
+	public void renameAttribute(long orbTypeInternalId, String attributeNameOld, String attributeNameNew) {
+		cache.orbCollection.renameAttribute(orbTypeInternalId, attributeNameOld, attributeNameNew);
+	}
 }

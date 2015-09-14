@@ -45,7 +45,7 @@ public class RollbackTransactionService {
 			while (undoActionBundle.getActions().size() > 0) {
 				UndoAction undoAction = undoActionBundle.getActions().pop();
 				
-				logger.info("Undoing action: {}", undoAction.action);
+				logger.debug("Undoing action: {}", undoAction.action);
 				
 				CommandProcessActionPackage commandProcesActionPackage = this.commandProcessPackageFactory.getInstanceForRestoreMode(undoAction.action, undoAction.tranDate);
 				

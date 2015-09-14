@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.time.StopWatch;
@@ -21,8 +20,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.fletch22.util.IocUtil;
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/springContext-test.xml")
@@ -41,7 +38,7 @@ public class Log4EventAspectTest {
 	public void testSuccess() {
 		
 		// Arrange
-		int numRuns = 1000;
+		int numRuns = 100;
 		
 		// Act
 		StopWatch stopWatch = new StopWatch();

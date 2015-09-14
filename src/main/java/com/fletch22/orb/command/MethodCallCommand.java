@@ -5,11 +5,13 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.fletch22.aop.JsonWrapper;
 import com.fletch22.orb.CommandExpressor;
 import com.fletch22.orb.command.orbType.dto.MethodCallDto;
+import com.fletch22.util.json.GsonFactory;
+import com.fletch22.util.json.JsonWrapper;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -29,6 +31,9 @@ public class MethodCallCommand {
 	private static final String PARAMETER_TYPE_NAME = "parameterTypeName";
 
 	private static final String ARGUMENT = "argument";
+	
+	@Autowired
+	GsonFactory gsonFactory;
 	
 	public StringBuilder toJson(MethodCallDto methodCallDto) {
 		StringBuilder translation = new StringBuilder();
@@ -62,7 +67,7 @@ public class MethodCallCommand {
 			translation.append("\":");
 			
 			Object parameter = methodCallDto.args[i];
-			JsonWrapper jsonWrapper = new JsonWrapper(parameter);
+			JsonWrapper jsonWrapper = new JsonWrapper(parameter, this.gsonFactory);
 			translation.append(jsonWrapper.toJson());
 			
 			translation.append("}");

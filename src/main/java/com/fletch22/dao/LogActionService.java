@@ -15,6 +15,7 @@ import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory;
 import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory.CommandProcessActionPackage;
 import com.fletch22.orb.command.processor.CommandProcessor;
 import com.fletch22.orb.command.processor.OperationResult;
+import com.fletch22.orb.command.processor.OperationResult.OpResult;
 import com.fletch22.orb.rollback.UndoActionBundle;
 import com.google.gson.Gson;
 
@@ -63,7 +64,7 @@ public class LogActionService {
 			CommandProcessActionPackage commandProcessActionPackage = this.commandProcessActionPackageFactory.getInstanceForRestoreMode(actionInfo.action, actionInfo.tranDate);
 			OperationResult operationResult = commandProcessor.processAction(commandProcessActionPackage);
 			
-			if (operationResult.equals(OperationResult.FAILURE)) {
+			if (operationResult.opResult.equals(OpResult.FAILURE)) {
 				throw new RuntimeException("Encountered problem reloading database into cache.", operationResult.operationResultException);
 			}
 		}

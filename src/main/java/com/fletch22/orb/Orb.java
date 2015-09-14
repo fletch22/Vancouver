@@ -3,10 +3,10 @@ package com.fletch22.orb;
 import java.math.BigDecimal;
 import java.util.LinkedHashMap;
 
-import com.fletch22.orb.serialization.JsonSerializable;
+import com.fletch22.orb.serialization.GsonSerializable;
 
 
-public class Orb implements JsonSerializable {
+public class Orb implements GsonSerializable {
 
 	public static final long INTERNAL_ID_UNSET = -1;
 	private LinkedHashMap<String, String> userDefinedProperties = new LinkedHashMap<String, String>();

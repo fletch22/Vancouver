@@ -111,7 +111,7 @@ public class CommandProcessor {
 
 	public OperationResult processAction(CommandProcessActionPackage commandProcessActionPackage) {
 
-		OperationResult operationResult = OperationResult.IN_THE_MIDDLE;
+		OperationResult operationResult = OperationResult.getInstanceInTheMiddle();
 		try {
 			Log4EventAspect.isInvokeFromSerializedMethod = true;
 			operationResult = executeAction(commandProcessActionPackage);
@@ -125,7 +125,7 @@ public class CommandProcessor {
 	}
 
 	public OperationResult executeAction(CommandProcessActionPackage commandProcessActionPackage) {
-		OperationResult operationResult = OperationResult.IN_THE_MIDDLE;
+		OperationResult operationResult = OperationResult.getInstanceInTheMiddle();
 
 		try {
 			StringBuilder action = commandProcessActionPackage.getAction();
@@ -185,7 +185,7 @@ public class CommandProcessor {
 	}
 
 	private OperationResult execute(GetOrbTypeDto getOrbTypeDto, CommandProcessActionPackage commandProcessActionPackage) {
-		OperationResult operationResult = OperationResult.IN_THE_MIDDLE;
+		OperationResult operationResult = OperationResult.getInstanceInTheMiddle();
 		
 		eventLogCommandProcessPackageHolder.setCommandProcessActionPackage(commandProcessActionPackage);
 		
@@ -202,7 +202,7 @@ public class CommandProcessor {
 
 	private OperationResult execute(MethodCallDto methodCallDto, CommandProcessActionPackage commandProcessActionPackage) {
 		
-		OperationResult operationResult = OperationResult.IN_THE_MIDDLE;
+		OperationResult operationResult = OperationResult.getInstanceInTheMiddle();
 		
 		eventLogCommandProcessPackageHolder.setCommandProcessActionPackage(commandProcessActionPackage);
 		
@@ -218,7 +218,7 @@ public class CommandProcessor {
 	}
 
 	private OperationResult execute(AddOrbDto addOrbDto, CommandProcessActionPackage commandProcessActionPackage) {
-		OperationResult operationResult = OperationResult.IN_THE_MIDDLE;
+		OperationResult operationResult = OperationResult.getInstanceInTheMiddle();
 
 		try {
 			Orb orb = this.orbManager.createOrb(addOrbDto, commandProcessActionPackage.getTranDate(), commandProcessActionPackage.getUndoActionBundle());
@@ -232,7 +232,7 @@ public class CommandProcessor {
 	}
 
 	private OperationResult execute(CommitTransactionDto commitTransactionDto, CommandProcessActionPackage commandProcessActionPackage) {
-		OperationResult operationResult = OperationResult.IN_THE_MIDDLE;
+		OperationResult operationResult = OperationResult.getInstanceInTheMiddle();
 
 		try {
 			transactionService.commitTransaction();
@@ -246,7 +246,7 @@ public class CommandProcessor {
 	}
 
 	private OperationResult executeBeginTransaction(CommandProcessActionPackage commandProcessActionPackage) {
-		OperationResult operationResult = OperationResult.IN_THE_MIDDLE;
+		OperationResult operationResult = OperationResult.getInstanceInTheMiddle();
 
 		try {
 			operationResult.operationResultObject = transactionService.beginTransaction(commandProcessActionPackage.getTranId());
@@ -260,7 +260,7 @@ public class CommandProcessor {
 	}
 
 	private OperationResult execute(CommandBundle commandBundle, final CommandProcessActionPackage commandProcessActionPackage) {
-		OperationResult operationResult = OperationResult.IN_THE_MIDDLE;
+		OperationResult operationResult = OperationResult.getInstanceInTheMiddle();
 
 		for (StringBuilder action : commandBundle.getActionList()) {
 			commandProcessActionPackage.setAction(action);
@@ -273,7 +273,7 @@ public class CommandProcessor {
 	}
 
 	private OperationResult execute(UndoActionBundle undoActionBundle, final CommandProcessActionPackage commandProcessActionPackage) {
-		OperationResult operationResult = OperationResult.IN_THE_MIDDLE;
+		OperationResult operationResult = OperationResult.getInstanceInTheMiddle();
 
 		while (!undoActionBundle.getActions().empty()) {
 			UndoAction undoAction = undoActionBundle.getActions().pop();
@@ -289,7 +289,7 @@ public class CommandProcessor {
 
 	private OperationResult execute(LogBundleDto logBundle, CommandProcessActionPackage commandProcessActionPackage) {
 
-		OperationResult operationResult = OperationResult.IN_THE_MIDDLE;
+		OperationResult operationResult = OperationResult.getInstanceInTheMiddle();
 		operationResult.internalIdBeforeOperation = this.internalIdGenerator.getCurrentId();
 
 		try {
@@ -322,7 +322,7 @@ public class CommandProcessor {
 
 	private OperationResult execute(DeleteOrbTypeDto deleteOrbTypeDto, CommandProcessActionPackage commandProcessActionPackage) {
 
-		OperationResult operationResult = OperationResult.IN_THE_MIDDLE;
+		OperationResult operationResult = OperationResult.getInstanceInTheMiddle();
 		operationResult.internalIdBeforeOperation = this.internalIdGenerator.getCurrentId();
 
 		try {

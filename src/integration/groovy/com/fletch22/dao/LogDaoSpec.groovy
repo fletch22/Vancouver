@@ -15,6 +15,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import spock.lang.Specification
 
 import com.fletch22.orb.CommandExpressor
+import com.fletch22.orb.IntegrationSystemInitializer
 import com.fletch22.orb.IntegrationTests
 import com.fletch22.orb.TranDateGenerator
 import com.fletch22.orb.command.orbType.AddOrbTypeCommand
@@ -46,14 +47,15 @@ class LogDaoSpec extends Specification {
 	@Autowired
 	TransactionService transactionService
 	
-	def setup()  {
-		logDao.clearOutDatabase()
+	@Autowired
+	IntegrationSystemInitializer integrationSystemInitializer
+	
+	def setup() {
+		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems()
 	}
 	
 	def cleanup() {
-		logDao.clearOutDatabase()
-		
-		transactionService
+		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems()
 	}
 
 	@Test
