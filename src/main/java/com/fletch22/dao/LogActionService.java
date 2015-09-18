@@ -1,8 +1,6 @@
 package com.fletch22.dao;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,5 +66,9 @@ public class LogActionService {
 				throw new RuntimeException("Encountered problem reloading database into cache.", operationResult.operationResultException);
 			}
 		}
+	}
+	
+	public void clearOutDatabase() {
+		logActionDao.clearOutDatabase();
 	}
 }

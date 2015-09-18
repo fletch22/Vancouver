@@ -23,7 +23,7 @@ public interface OrbManager {
 	
 	public void setAttribute(long orbInternalId, String attributeName, String value);
 	
-	public void deleteOrb(long orbInternalId);
+	public Orb deleteOrb(long orbInternalId);
 	
 	public boolean doesOrbExist(long orbInternalId);
 	

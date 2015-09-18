@@ -15,6 +15,7 @@ import com.googlecode.cqengine.ConcurrentIndexedCollection;
 import com.googlecode.cqengine.IndexedCollection;
 import com.googlecode.cqengine.index.unique.UniqueIndex;
 import com.googlecode.cqengine.query.Query;
+import com.googlecode.cqengine.resultset.ResultSet;
 
 @Component
 public class OrbTypeCollection {
@@ -50,8 +51,18 @@ public class OrbTypeCollection {
 	}
 
 	public boolean doesTypeWithLabelExist(String label) {
-		Query<OrbType> query = equal(OrbType.LABEL, label);
+		Query<OrbType> query = getQueryByLabel(label);
 		return types.retrieve(query).isEmpty();
+	}
+	
+	public ResultSet<OrbType> findTypeByLabel(String label) {
+		Query<OrbType> query = getQueryByLabel(label);
+		return types.retrieve(query);
+	}
+
+	private Query<OrbType> getQueryByLabel(String label) {
+		Query<OrbType> query = equal(OrbType.LABEL, label);
+		return query;
 	}
 	
 	public void deleteAll() {
@@ -91,5 +102,11 @@ public class OrbTypeCollection {
 			}
 		}
 		orbType.customFields = replacement;
+	}
+
+	public OrbType getFromLabel(String label) {
+		
+		ResultSet<OrbType> resultSet = findTypeByLabel(label);
+		return resultSet.uniqueResult();
 	}
 }

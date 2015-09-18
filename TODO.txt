@@ -60,7 +60,7 @@ Test Result: All instances and references removed.
 Status: Almost done. Need to fix deleteOrbType to properly log deleted orbs and attributes.
 
 Modify change orbType attribute name to also change all references of that name.
-Status: Not done.
+Status: Done.
 
 Fix rollback of deleteAttribute;
 Status: Done
@@ -79,8 +79,17 @@ Status: Not done.
 Create lookup of attribute index in OrbTypeManager to make setAttribute and other things faster.
 Status: Not done.
 
-Add orbTypeInternalId/label to constraintDetail so passing it in is unnecessary.
+Add OrbType to constraintDetail so passing it in is unnecessary.
+Status: Done.
+
+Make Criteria use label instead of orbinternalId?
 Status: Not done.
 
 Optimize CriteriaSpec test to set up data once.
+Status: Done.
+
+Modify Queries collection when the following occurs:
+	Delete orb
+	Rename orb
+	Remove attribute
 Status: Not done.

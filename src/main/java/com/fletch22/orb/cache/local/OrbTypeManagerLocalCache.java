@@ -49,6 +49,26 @@ public class OrbTypeManagerLocalCache implements OrbTypeManager {
 	OrbManager orbManager;
 	
 	@Override
+	public void initializeOrbTypes() {
+		OrbTypeConstants.SystemOrbTypes query = OrbTypeConstants.SystemOrbTypes.QUERY;
+		LinkedHashSet<String> fields = new LinkedHashSet<String>();
+		createSystemOrbType(query.getLabel(), query.getId(), fields);
+	}
+	
+	public void createSystemOrbType(String label, long id, LinkedHashSet<String> fields) {
+		
+		if (id > this.internalIdGenerator.START_ID ) {
+			String message = String.format("Encountered a problem trying to create system type with id %s; however no system orb type id should be less than %s", id, this.internalIdGenerator.START_ID);
+			throw new RuntimeException(message);
+		}
+
+		BigDecimal tranDate = this.tranDateGenerator.getTranDate();
+		
+		OrbType orbType = new OrbType(id, label, tranDate, fields);
+		cache.orbTypeCollection.add(orbType);
+	}
+	
+	@Override
 	public long createOrbType(AddOrbTypeDto addOrbTypeDto, BigDecimal tranDate, UndoActionBundle undoActionBundle) {
 
 		long orbInternalTypeId = addOrbTypeDto.orbTypeInternalId;
@@ -90,6 +110,9 @@ public class OrbTypeManagerLocalCache implements OrbTypeManager {
 
 	@Override
 	public void deleteOrbType(DeleteOrbTypeDto deleteOrbTypeDto, BigDecimal tranDate, UndoActionBundle rollbackAction) {
+		
+		ensureNotASystemOrbType(deleteOrbTypeDto.orbTypeInternalId);
+		
 		OrbType orbType = cache.orbTypeCollection.remove(deleteOrbTypeDto.orbTypeInternalId);
 		
 		// TODO: Transform to orb until we get rid of redis stuff. Then we can use OrbType natively.
@@ -97,10 +120,19 @@ public class OrbTypeManagerLocalCache implements OrbTypeManager {
 		
 		rollbackAction.addUndoAction(this.addWholeOrbTypeCommand.toJson(orb), tranDate);
 	}
+
+	private void ensureNotASystemOrbType(long orbTypeInternalId) {
+		if (orbTypeInternalId < InternalIdGenerator.START_ID) {
+			String message = String.format("Encountered a problem trying to delete orb type '%s'. Because this id is a system orb type id this type cannot be deleted.", orbTypeInternalId);
+			throw new RuntimeException(message);
+		}
+	}
 	
 	@Override
 	@Loggable4Event
 	public void deleteOrbType(long orbTypeInternalId) {
+		
+		ensureNotASystemOrbType(orbTypeInternalId);
 		
 		orbManager.deleteOrbsWithType(orbTypeInternalId);
 		
@@ -126,6 +158,9 @@ public class OrbTypeManagerLocalCache implements OrbTypeManager {
 	@Override
 	@Loggable4Event
 	public void addAttribute(long orbTypeInternalId, String attributeName) {
+		
+		ensureNotASystemOrbType(orbTypeInternalId);
+		
 		// NOTE: Add it to the type.
 		OrbType orbType = cache.orbTypeCollection.get(orbTypeInternalId);
 		orbType.addField(attributeName);
@@ -140,6 +175,8 @@ public class OrbTypeManagerLocalCache implements OrbTypeManager {
 	@Override
 	@Loggable4Event
 	public void deleteAttribute(long orbTypeInternalId, String attributeName) {
+		
+		ensureNotASystemOrbType(orbTypeInternalId);
 		
 		// NOTE: Delete it from the instance.\
 		int attributeIndex = getIndexOfAttribute(orbTypeInternalId, attributeName);
@@ -180,6 +217,11 @@ public class OrbTypeManagerLocalCache implements OrbTypeManager {
 	public OrbType getOrbType(long orbTypeInternalId) {
 		return cache.orbTypeCollection.get(orbTypeInternalId);
 	}
+	
+	@Override
+	public OrbType getOrbType(String label) {
+		return cache.orbTypeCollection.getFromLabel(label);
+	}
 
 	@Override
 	public long getOrbTypeCount() {
@@ -189,6 +231,8 @@ public class OrbTypeManagerLocalCache implements OrbTypeManager {
 	@Override
 	@Loggable4Event
 	public void renameAttribute(long orbTypeInternalId, String attributeNameOld, String attributeNameNew) {
+		
+		ensureNotASystemOrbType(orbTypeInternalId);
 		
 		orbManager.renameAttribute(orbTypeInternalId, attributeNameOld, attributeNameNew);
 		

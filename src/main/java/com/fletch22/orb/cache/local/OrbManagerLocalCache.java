@@ -137,7 +137,7 @@ public class OrbManagerLocalCache implements OrbManager {
 
 	@Override
 	@Loggable4Event
-	public void deleteOrb(long orbInternalId) {
+	public Orb deleteOrb(long orbInternalId) {
 		
 		OrbCollection orbCollection = cache.orbCollection;
 		
@@ -155,6 +155,8 @@ public class OrbManagerLocalCache implements OrbManager {
 
 		Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
 		createOrb(orbCopy);
+		
+		return orbCopy;
 	}
 
 	private void resetAllReferencesPointingToOrb(Orb orb) {

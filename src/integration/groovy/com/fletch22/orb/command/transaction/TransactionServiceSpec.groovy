@@ -15,7 +15,8 @@ import spock.lang.Unroll
 import com.fletch22.dao.LogActionDao
 import com.fletch22.orb.IntegrationSystemInitializer
 import com.fletch22.orb.IntegrationTests
-import com.fletch22.orb.client.service.OrbTypeService;
+import com.fletch22.orb.cache.local.Cache
+import com.fletch22.orb.client.service.OrbTypeService
 
 @org.junit.experimental.categories.Category(IntegrationTests.class)
 @ContextConfiguration(locations = ['classpath:/springContext-test.xml'])
@@ -37,9 +38,12 @@ class TransactionServiceSpec extends Specification {
 	@Autowired
 	IntegrationSystemInitializer integrationSystemInitializer
 	
+	@Autowired
+	Cache cache;
+	
 	def setup() {
 		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems();
-		this.transactionService.@transactionIdInFlight == TransactionService.NO_TRANSACTION_IN_FLIGHT
+		transactionService.@transactionIdInFlight == TransactionService.NO_TRANSACTION_IN_FLIGHT
 	}
 	
 	def cleanup() {
@@ -51,27 +55,27 @@ class TransactionServiceSpec extends Specification {
 	def 'test tran id generator no transaction in flight'() {
 	
 		given:
-		assert this.transactionService.@transactionIdInFlight == TransactionService.NO_TRANSACTION_IN_FLIGHT
+		assert transactionService.@transactionIdInFlight == TransactionService.NO_TRANSACTION_IN_FLIGHT
 		
 		when:
 		def tranId = this.transactionService.generateTranId()
 	
 		then:
 		tranId
-		this.transactionService.@transactionIdInFlight == TransactionService.NO_TRANSACTION_IN_FLIGHT
+		transactionService.@transactionIdInFlight == TransactionService.NO_TRANSACTION_IN_FLIGHT
 	}
 	
 	@Test
 	def 'test tran id generator while a transaction in flight'() {
 	
 		given:
-		this.transactionService.@transactionIdInFlight = new BigDecimal("123")
+		transactionService.@transactionIdInFlight = new BigDecimal("123")
 		
 		when:
 		def tranId = this.transactionService.generateTranId()
 	
 		then:
-		tranId.compareTo(this.transactionService.@transactionIdInFlight) != 0
+		tranId.compareTo(transactionService.@transactionIdInFlight) != 0
 	}
 	
 	@Unroll
@@ -79,7 +83,7 @@ class TransactionServiceSpec extends Specification {
 	def 'test begin and rollback transaction'() {
 		
 		given:
-		this.transactionService.@transactionIdInFlight = TransactionService.NO_TRANSACTION_IN_FLIGHT
+		transactionService.@transactionIdInFlight = TransactionService.NO_TRANSACTION_IN_FLIGHT
 		assert !this.transactionService.isTransactionInFlight()
 		
 		BigDecimal tranId = 123;
@@ -100,7 +104,7 @@ class TransactionServiceSpec extends Specification {
 	def 'test begin and commit transaction'() {
 		
 		given:
-		this.transactionService.@transactionIdInFlight = TransactionService.NO_TRANSACTION_IN_FLIGHT
+		transactionService.@transactionIdInFlight = TransactionService.NO_TRANSACTION_IN_FLIGHT
 		assert !this.transactionService.isTransactionInFlight()
 		
 		BigDecimal tranId = 123;

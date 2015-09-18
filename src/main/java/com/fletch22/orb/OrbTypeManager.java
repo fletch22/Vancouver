@@ -10,6 +10,8 @@ import com.fletch22.util.json.LinkedHashSetString;
 
 public interface OrbTypeManager {
 
+	public void initializeOrbTypes();
+	
 	public long createOrbType(AddOrbTypeDto addOrbTypeDto, BigDecimal tranDate, final UndoActionBundle undoActionBundle);
 	
 	public long createOrbType(String label, long orbTypeInternalId, BigDecimal tranDate, LinkedHashSetString customFields);
@@ -29,6 +31,8 @@ public interface OrbTypeManager {
 	public void deleteOrbType(long orbTypeInternalId);
 
 	public OrbType getOrbType(long orbTypeInternalId);
+	
+	public OrbType getOrbType(String label);
 	
 	public long getOrbTypeCount();
 
