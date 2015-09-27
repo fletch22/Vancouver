@@ -3,6 +3,7 @@ package com.fletch22.orb.cache.local;
 import static org.junit.Assert.assertTrue
 import junit.framework.Assert
 
+import org.apache.commons.lang3.time.StopWatch
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -24,7 +25,13 @@ import com.fletch22.orb.client.service.BeginTransactionService
 import com.fletch22.orb.client.service.RollbackTransactionService
 import com.fletch22.orb.command.orbType.dto.AddOrbDto
 import com.fletch22.orb.command.orbType.dto.AddOrbTypeDto
+import com.fletch22.orb.query.QueryManager
+import com.fletch22.orb.query.ResultSet
+import com.fletch22.orb.query.CriteriaFactory.Criteria
+import com.fletch22.orb.query.sort.CriteriaSortInfo
+import com.fletch22.orb.query.sort.SortInfo.SortDirection
 import com.fletch22.orb.rollback.UndoActionBundle
+import com.fletch22.orb.test.data.TestDataSimple
 
 
 @org.junit.experimental.categories.Category(IntegrationTests.class)
@@ -61,6 +68,12 @@ class OrbCollectionSpec extends Specification {
 	@Autowired
 	RollbackTransactionService rollbackTransactionService
 	
+	@Autowired
+	TestDataSimple testDataSimple
+	
+	@Autowired
+	QueryManager queryManager
+	
 	def setup() {
 		orbTypeCollection = cache.orbTypeCollection;
 		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems()
@@ -69,6 +82,37 @@ class OrbCollectionSpec extends Specification {
 	
 	def cleanup() {
 		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems()
+	}
+	
+	def 'testQuery'() {
+		
+		given:
+		testDataSimple.loadTestData()
+		long orbInternalIdQuery = testDataSimple.addSimpleCriteria()
+		
+		Criteria criteria = queryManager.get(orbInternalIdQuery)
+		List<CriteriaSortInfo> criteriaSortInfoList = criteria.getSortInfoList()
+		
+		CriteriaSortInfo criteriaSortInfo = new CriteriaSortInfo()
+		criteriaSortInfo.sortDirection = SortDirection.DESC
+		criteriaSortInfoList.add(criteriaSortInfo)
+		criteriaSortInfo.sortAttributeName = TestDataSimple.ATTRIBUTE_COLOR
+		
+		logger.info("Criteria null? {}", criteria == null)
+		
+		when:
+		StopWatch stopWatch = new StopWatch()
+		stopWatch.start()
+		ResultSet resultSet = cache.orbCollection.executeQuery(criteria)
+		stopWatch.stop()
+		
+		BigDecimal millis = new BigDecimal(stopWatch.nanoTime).divide(new BigDecimal(1000000))
+		
+		logger.info("Elapsed query time: {}", millis)
+		
+		then:
+		resultSet.size > 0
+		resultSet.size == 40
 	}
 
 	def testSuccess() {
@@ -139,7 +183,7 @@ class OrbCollectionSpec extends Specification {
 		
 		def tranId = beginTransactionService.beginTransaction()
 		
-		orbTypeManager.deleteAttribute(orbTypeInternalId, attributeName)
+		orbTypeManager.deleteAttribute(orbTypeInternalId, attributeName, true)
 		
 		map.size() == numberOrbs
 		assertOrbPropertySize(map, 0)

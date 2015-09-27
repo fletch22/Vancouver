@@ -8,8 +8,6 @@ import com.googlecode.cqengine.query.option.QueryOptions;
 
 public class CacheEntry {
 	
-//	Logger logger = LoggerFactory.getLogger(CacheEntry.class);
-
 	long id;
 	String label;
 	long typeId;
@@ -31,6 +29,10 @@ public class CacheEntry {
 		int i = Integer.parseInt(index);
 		
 		return (this.attributes.size() > i) ? attributes.get(i) : null;
+	}
+	
+	public ArrayList<String> getAttributes() {
+		return attributes;
 	}
 
 	public static final SimpleAttribute<CacheEntry, Long> ID = new SimpleAttribute<CacheEntry, Long>("ID") {

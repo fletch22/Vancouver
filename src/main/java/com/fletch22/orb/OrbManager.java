@@ -23,7 +23,9 @@ public interface OrbManager {
 	
 	public void setAttribute(long orbInternalId, String attributeName, String value);
 	
-	public Orb deleteOrb(long orbInternalId);
+	public Orb deleteOrb(long orbInternalId, boolean isDeleteDependencies);
+	
+	public Orb deleteOrbIgnoreQueryDependencies(long orbInternalId, boolean isDeleteDependencies);
 	
 	public boolean doesOrbExist(long orbInternalId);
 	
@@ -37,7 +39,13 @@ public interface OrbManager {
 
 	void deleteOrbAttributeFromAllInstances(long orbTypeInternalId, String attributeName, int attributeIndex);
 
-	public void deleteOrbsWithType(long orbTypeInternalId);
+	public void deleteOrbsWithType(long orbTypeInternalId, boolean isDeleteDependencies);
 
 	public void renameAttribute(long orbTypeInternalId, String attributeNameOld, String attributeNameNew);
+	
+	public void resetAllReferencesPointingToOrb(Orb orb);
+
+	public long countOrbsOfType(long id);
+
+	public boolean doesOrbWithTypeExist(long orbTypeInternalId);
 }

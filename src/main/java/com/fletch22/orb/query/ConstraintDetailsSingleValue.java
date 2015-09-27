@@ -3,7 +3,6 @@ package com.fletch22.orb.query;
 public class ConstraintDetailsSingleValue extends ConstraintDetails {
 	
 	RelationshipOperator relationshipOperator;
-	String attributeName;
 	String operativeValue;
 	
 	@Override

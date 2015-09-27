@@ -95,7 +95,7 @@ public class OrbReference {
 		return set;
 	}
 	
-	private String composeReference(long orbInternalId, String attributeName) {
+	public String composeReference(long orbInternalId, String attributeName) {
 		return ReferenceCollection.REFERENCE_KEY_PREFIX + String.valueOf(orbInternalId) + "^" + attributeName;
 	}
 	
@@ -187,5 +187,9 @@ public class OrbReference {
 
 	public void clear() {
 		referenceCollection.clear();
+	}
+
+	public int countArrowsPointToTarget(Orb orb) {
+		return getArrowsPointingAtTarget(orb).size();
 	}
 }

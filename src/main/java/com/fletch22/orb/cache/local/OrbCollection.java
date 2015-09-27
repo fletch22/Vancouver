@@ -16,6 +16,7 @@ import com.fletch22.orb.cache.local.OrbReference.AttributeArrows;
 import com.fletch22.orb.cache.local.OrbReference.DecomposedKey;
 import com.fletch22.orb.query.ConstraintGrinder;
 import com.fletch22.orb.query.CriteriaFactory.Criteria;
+import com.fletch22.orb.query.ResultSet;
 
 public class OrbCollection {
 	
@@ -43,11 +44,11 @@ public class OrbCollection {
 		quickLookup.put(orb.getOrbInternalId(), orbSteamerTrunk);
 	}
 	
-	public List<CacheEntry> executeQuery(Criteria criteria) {
+	public ResultSet executeQuery(Criteria criteria) {
 		
 		OrbSingleTypesInstanceCollection orbSingleTypesInstanceCollection = allInstances.get(criteria.getOrbTypeInternalId());
 		
-		ConstraintGrinder criteriaGrinder = new ConstraintGrinder(criteria.getOrbTypeInternalId(), criteria.logicalConstraintsList, orbSingleTypesInstanceCollection.instances);
+		ConstraintGrinder criteriaGrinder = new ConstraintGrinder(criteria, orbSingleTypesInstanceCollection.instances);
 		
 		return criteriaGrinder.list();
 	}
@@ -69,11 +70,15 @@ public class OrbCollection {
 	}
 
 	public Orb get(long orbInternalId) {
-		Orb orb = quickLookup.get(orbInternalId).orb;
 		
-		if (orb == null) throw new RuntimeException("Encountered problem getting orb. Couldn't find orb with id '" + orbInternalId + "'.");
+		OrbSteamerTrunk orbSteamerTrunk = quickLookup.get(orbInternalId);
 		
-		return orb;
+		if (orbSteamerTrunk == null
+		|| orbSteamerTrunk.orb == null) {
+			throw new RuntimeException("Encountered problem getting orb. Couldn't find orb with id '" + orbInternalId + "'.");
+		}
+		
+		return orbSteamerTrunk.orb;
 	}
 	
 	public OrbSteamerTrunk getOrbSteamerTrunk(long orbInternalId) {
@@ -273,5 +278,20 @@ public class OrbCollection {
 			String value = linkedHashMap.remove(attributeNameOld);
 			linkedHashMap.put(attributeNameNew, value);
 		}
+	}
+
+	public long getCountOrbsOfType(long orbTypeInternalId) {
+		OrbSingleTypesInstanceCollection orbSingleTypeInstancesCollection = allInstances.get(orbTypeInternalId);
+		
+		long count = 0;
+		if (orbSingleTypeInstancesCollection != null)  {
+			count = orbSingleTypeInstancesCollection.instances.size();
+		}
+		
+		return count;
+	}
+
+	public boolean doesReferenceToOrbExist(Orb orb) {
+		return orbReference.countArrowsPointToTarget(orb) > 0;
 	}
 }

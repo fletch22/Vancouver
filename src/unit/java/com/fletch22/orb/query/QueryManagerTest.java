@@ -1,6 +1,8 @@
 package com.fletch22.orb.query;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
 
@@ -17,9 +19,14 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.fletch22.orb.IntegrationSystemInitializer;
 import com.fletch22.orb.Orb;
+import com.fletch22.orb.OrbManager;
 import com.fletch22.orb.OrbType;
 import com.fletch22.orb.OrbTypeManager;
+import com.fletch22.orb.cache.local.Cache;
+import com.fletch22.orb.client.service.BeginTransactionService;
+import com.fletch22.orb.client.service.RollbackTransactionService;
 import com.fletch22.orb.query.CriteriaFactory.Criteria;
+import com.fletch22.orb.systemType.SystemType;
 import com.fletch22.orb.test.data.TestDataSimple;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -35,6 +42,9 @@ public class QueryManagerTest {
 	OrbTypeManager orbTypeManager;
 	
 	@Autowired
+	OrbManager orbManager;
+	
+	@Autowired
 	TestDataSimple testDataSimple;
 	
 	@Autowired
@@ -42,6 +52,15 @@ public class QueryManagerTest {
 	
 	@Autowired
 	QueryManagerImpl queryManager;
+	
+	@Autowired
+	BeginTransactionService beginTransactionService;
+	
+	@Autowired
+	RollbackTransactionService rollbackTransactionService;
+	
+	@Autowired
+	Cache cache;
 	
 	@Before
 	public void before() {
@@ -63,17 +82,91 @@ public class QueryManagerTest {
 		stopWatch.start();
 		OrbType orbType = orbTypeManager.getOrbType(orbTypeInternalId);
 		
-		Criteria criteria = criteriaFactory.getInstance(orbType);
+		Criteria criteria = criteriaFactory.getInstance(orbType, "foo");
 		
 		// Act
 		long orbInternalId = queryManager.create(criteria);
 		stopWatch.stop();
 		
 		BigDecimal millis = new BigDecimal(stopWatch.getNanoTime()).divide(new BigDecimal(1000000));
-		logger.info("Elapsed time: {}", millis);
+		logger.info("Elapsed time: {} millis.", millis);
 		
 		// Assert
 		assertFalse(orbInternalId == Orb.INTERNAL_ID_UNSET);
+	}
+	
+	@Test
+	public void testAttemptSaveQueryWithDupeNames() {
+		
+		// Arrange
+		long orbTypeInternalId = testDataSimple.loadTestData();
+		
+		OrbType orbType = orbTypeManager.getOrbType(orbTypeInternalId);
+		
+		String dupeName = "bar";
+		
+		Criteria criteria1 = criteriaFactory.getInstance(orbType, dupeName);
+		queryManager.create(criteria1);
+		
+		Criteria criteria2 = criteriaFactory.getInstance(orbType, dupeName);
+		
+		boolean wasExceptionThrown = false;
+		try {
+			queryManager.create(criteria2);
+		} catch (Exception e) {
+			wasExceptionThrown = true;
+		}
+		
+		// Act
+		assertTrue(wasExceptionThrown);
+	}
+	
+	@Test
+	public void testRollbackQuery() throws Exception {
+		
+		// Arrange
+		long orbTypeInternalId = testDataSimple.loadTestData();
+		
+		assertEquals(0, orbManager.countOrbsOfType(SystemType.QUERY.getId()));
+		
+		BigDecimal tranId = beginTransactionService.beginTransaction();
+		
+		OrbType orbType = orbTypeManager.getOrbType(orbTypeInternalId);
+		
+		Criteria criteria = criteriaFactory.getInstance(orbType, "foo");
+		
+		long orbInternalId = queryManager.create(criteria);
+
+		// Act
+		rollbackTransactionService.rollbackToSpecificTransaction(tranId);
+		
+		// Assert
+		assertEquals(0, cache.queryCollection.getSize());
+		
+		// There should be no orbs of type 'query'
+		assertEquals(0, orbManager.countOrbsOfType(SystemType.QUERY.getId()));
+	}
+	
+	@Test
+	public void tesDeleteQueryWhenDeletingOrb() throws Exception {
+		
+		// Arrange
+		long orbTypeInternalId = testDataSimple.loadTestData();
+		
+		OrbType orbType = orbTypeManager.getOrbType(orbTypeInternalId);
+		
+		Criteria criteria = criteriaFactory.getInstance(orbType, "foo");
+		
+		long orbInternalId = queryManager.create(criteria);
+		
+		// Act
+		orbManager.deleteOrb(orbInternalId, true);
+		
+		// Assert
+		assertEquals(0, cache.queryCollection.getSize());
+		
+		// There should be no orbs of type 'query'
+		assertEquals(0, orbManager.countOrbsOfType(SystemType.QUERY.getId()));
 	}
 
 }

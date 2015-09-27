@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import com.fletch22.orb.Orb;
 import com.fletch22.orb.cache.local.OrbReference.DecomposedKey;
 
 @Component
@@ -96,10 +95,6 @@ public class ReferenceCollection {
 		}
 		
 		return count;
-	}
-	
-	public void addReference(Orb orbArrow, String nameOfArrowAttribute, Orb orbTarget, String nameOfTargetAttribute) {
-		addReference(orbArrow.getOrbInternalId(), nameOfArrowAttribute, orbTarget.getOrbInternalId(), nameOfTargetAttribute); 
 	}
 	
 	public Map<Long, ArrowCluster> getArrowsPointingAtTarget(long orbTargetInternalId, String attributeName) {

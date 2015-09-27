@@ -1,5 +1,6 @@
 package com.fletch22.orb.command.processor;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -321,18 +322,8 @@ public class CommandProcessor {
 	}
 
 	private OperationResult execute(DeleteOrbTypeDto deleteOrbTypeDto, CommandProcessActionPackage commandProcessActionPackage) {
-
-		OperationResult operationResult = OperationResult.getInstanceInTheMiddle();
-		operationResult.internalIdBeforeOperation = this.internalIdGenerator.getCurrentId();
-
-		try {
-			this.orbTypeManager.deleteOrbType(deleteOrbTypeDto, commandProcessActionPackage.getTranDate(), commandProcessActionPackage.getUndoActionBundle());
-
-			operationResult = new OperationResult(OpResult.SUCCESS, true);
-		} catch (Exception e) {
-			operationResult = new OperationResult(OpResult.FAILURE, e);
-		}
-
-		return operationResult;
+		
+		throw new NotImplementedException("This method has been deprecated. See Git for history of implementation.");
+		
 	}
 }

@@ -233,7 +233,7 @@ public class JsonWrapperTest {
 		OrbType orbType = new OrbType(123, "foo", new BigDecimal("3456"), set);
 		long orbTypeInternalIdOriginal = orbType.id;
 		
-		Criteria criteria = criteriaFactory.getInstance(orbType);
+		Criteria criteria = criteriaFactory.getInstance(orbType, "foo");
 		
 		JsonWrapper jsonWrapper = new JsonWrapper(criteria, gsonFactory);
 		
@@ -255,7 +255,7 @@ public class JsonWrapperTest {
 		OrbType orbType = new OrbType(123, "foo", new BigDecimal("3456"), set);
 		long orbTypeInternalIdOriginal = orbType.id;
 		
-		Criteria criteria = criteriaFactory.getInstance(orbType); 
+		Criteria criteria = criteriaFactory.getInstance(orbType, "foo"); 
 		
 		Constraint constraint = Constraint.eq("bar", "somevalue");
 		criteria.add(constraint);
@@ -271,7 +271,7 @@ public class JsonWrapperTest {
 		
 		logger.info("jsonWrapper: {}", jsonWrapper.toJson());
 		
-		List<LogicalConstraint> logicalConstraintList = reconstituted.logicalConstraintsList;
+		List<LogicalConstraint> logicalConstraintList = reconstituted.logicalConstraintList;
 		
 		assertEquals(logicalConstraintList.size(), 1);
 		

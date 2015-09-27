@@ -1,7 +1,5 @@
 package com.fletch22.orb.cache.local;
 
-import java.math.BigDecimal;
-
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +8,7 @@ import org.springframework.stereotype.Component;
 import com.fletch22.orb.OrbManager;
 import com.fletch22.orb.OrbTypeManager;
 import com.fletch22.orb.cache.query.QueryCollection;
+import com.fletch22.orb.query.QueryManager;
 
 @Component
 public class Cache {
@@ -23,6 +22,9 @@ public class Cache {
 	
 	@Autowired
 	OrbManager orbManager;
+	
+	@Autowired 
+	QueryManager queryManager;
 	
 	@Autowired
 	CacheComponentsFactory cacheComponentsFactory;
@@ -42,5 +44,6 @@ public class Cache {
 	public void clearAllItemsFromCache() {
 		 orbManager.deleteAllOrbs();
 		 orbTypeManager.deleteAllTypes();
+		 queryManager.deleteAllQueries();
 	}
 }

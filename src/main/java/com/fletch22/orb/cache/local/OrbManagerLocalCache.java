@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +25,10 @@ import com.fletch22.orb.TranDateGenerator;
 import com.fletch22.orb.cache.local.OrbReference.AttributeArrows;
 import com.fletch22.orb.command.orb.DeleteOrbCommand;
 import com.fletch22.orb.command.orbType.dto.AddOrbDto;
+import com.fletch22.orb.dependency.DependencyHandler;
+import com.fletch22.orb.dependency.DependencyHandlerEngine;
+import com.fletch22.orb.dependency.DependencyHandlerFactory;
+import com.fletch22.orb.query.QueryManager;
 import com.fletch22.orb.rollback.UndoActionBundle;
 import com.fletch22.util.json.MapLongString;
 
@@ -51,6 +54,12 @@ public class OrbManagerLocalCache implements OrbManager {
 	
 	@Autowired
 	TranDateGenerator tranDateGenerator;
+	
+	@Autowired
+	QueryManager queryManager;
+	
+	@Autowired
+	DependencyHandlerFactory dependencyHandlerFactory;
 
 	@Override
 	@Loggable4Event
@@ -67,7 +76,7 @@ public class OrbManagerLocalCache implements OrbManager {
 		cache.orbCollection.add(orbType, orb);
 
 		Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
-		deleteOrb(orb.getOrbInternalId());
+		deleteOrb(orb.getOrbInternalId(), true);
 	}
 
 	@Override
@@ -82,7 +91,7 @@ public class OrbManagerLocalCache implements OrbManager {
 		cache.orbCollection.add(orbType, orb);
 
 		Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
-		deleteOrb(orb.getOrbInternalId());
+		deleteOrb(orb.getOrbInternalId(), true);
 
 		return orb;
 	}
@@ -137,7 +146,7 @@ public class OrbManagerLocalCache implements OrbManager {
 
 	@Override
 	@Loggable4Event
-	public Orb deleteOrb(long orbInternalId) {
+	public Orb deleteOrb(long orbInternalId, boolean isDeleteDependencies) {
 		
 		OrbCollection orbCollection = cache.orbCollection;
 		
@@ -147,8 +156,7 @@ public class OrbManagerLocalCache implements OrbManager {
 		
 		OrbType orbType = orbTypeManager.getOrbType(orb.getOrbTypeInternalId());
 		
-		// Process references point to orb here.
-		resetAllReferencesPointingToOrb(orb);
+		handleDependenciesForOrbDeletion(orb, isDeleteDependencies);
 		
 		// Process references inside of orb here.
 		cache.orbCollection.delete(orbType, orbInternalId);
@@ -158,8 +166,75 @@ public class OrbManagerLocalCache implements OrbManager {
 		
 		return orbCopy;
 	}
+	
+	@Override
+	@Loggable4Event
+	public Orb deleteOrbIgnoreQueryDependencies(long orbInternalId, boolean isDeleteDependencies) {
+		
+		OrbCollection orbCollection = cache.orbCollection;
+		
+		Orb orb = orbCollection.get(orbInternalId);
+		
+		Orb orbCopy = orbCloner.cloneOrb(orb);
+		
+		OrbType orbType = orbTypeManager.getOrbType(orb.getOrbTypeInternalId());
+		
+		handleOrbReferenceDependenciesForOrbDeletion(orb, isDeleteDependencies);
+		
+		// Process references inside of orb here.
+		cache.orbCollection.delete(orbType, orbInternalId);
 
-	private void resetAllReferencesPointingToOrb(Orb orb) {
+		Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
+		createOrb(orbCopy);
+		
+		return orbCopy;
+	}
+	
+	private void handleDependenciesForOrbDeletion(Orb orb, boolean isDeleteDependencies) {
+		handleQueryDependenciesForOrbDeletion(orb, isDeleteDependencies);
+		handleOrbReferenceDependenciesForOrbDeletion(orb, isDeleteDependencies);
+	}
+	
+	private void handleDependenciesForOrbDeletion2(Orb orb, boolean isDeleteDependencies) {
+		DependencyHandler handler1 = dependencyHandlerFactory.getOrbDeletionForQueryInstance(orb, isDeleteDependencies);
+		DependencyHandler handler2 = dependencyHandlerFactory.getOrbDeltionForReferencesInstance(orb, isDeleteDependencies);
+		
+		DependencyHandlerEngine dependencyHandlerEngine = new DependencyHandlerEngine();
+		dependencyHandlerEngine.addHandler(handler1);
+		dependencyHandlerEngine.addHandler(handler2);
+		
+		dependencyHandlerEngine.check();
+	}
+
+	private void handleQueryDependenciesForOrbDeletion(Orb orb, boolean isDeleteDependencies) {
+		long orbInternalId = orb.getOrbInternalId();
+		if (isDeleteDependencies) {
+			queryManager.removeQueryFromCollection(orbInternalId);
+		} else {
+			boolean doesExist = queryManager.doesQueryExist(orbInternalId);
+			if (doesExist) {
+				String message = String.format("Encountered problem deleting orb '%s'. Orb has at least one dependency. A query exists that depends on the orb.", orbInternalId);
+				throw new RuntimeException(message);
+			}
+		}
+	}
+	
+	public void handleOrbReferenceDependenciesForOrbDeletion(Orb orb, boolean isDeleteDependencies) {
+		
+		if (isDeleteDependencies) {
+			resetAllReferencesPointingToOrb(orb);
+		} else {
+			long orbInternalId = orb.getOrbInternalId();
+			boolean doesExist = this.cache.orbCollection.doesReferenceToOrbExist(orb);
+			if (doesExist) {
+				String message = String.format("Encountered problem deleting orb '%s'. Orb has at least one dependency. Specify that dependencies should be deleted automatically by passing 'true' for 'isDeleteDependencies'.", orbInternalId);
+				throw new RuntimeException(message);
+			}
+		}
+	}
+
+	@Override
+	public void resetAllReferencesPointingToOrb(Orb orb) {
 		
 		OrbCollection orbCollection = cache.orbCollection;
 		Map<Long, AttributeArrows> attributeArrowsCollection = orbCollection.getReferencesToOrb(orb);
@@ -185,7 +260,6 @@ public class OrbManagerLocalCache implements OrbManager {
 	@Loggable4Event
 	public void addAttributeAndValueToInstances(MapLongString longStringMap, long orbTypeInternalId, int indexAttribute, String attributeName) {
 		
-		logger.debug("Adding attribute.");
 		cache.orbCollection.addAttributeValues(longStringMap.map, orbTypeInternalId, indexAttribute, attributeName);
 
 		Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
@@ -197,7 +271,7 @@ public class OrbManagerLocalCache implements OrbManager {
 	public void deleteOrbAttributeFromAllInstances(long orbTypeInternalId, String attributeName, int attributeIndex) {
 
 		Map<Long, String> mapDeleted = cache.orbCollection.removeAttribute(orbTypeInternalId, attributeIndex, attributeName);
-
+		
 		Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
 		addAttributeAndValueToInstances(new MapLongString(mapDeleted), orbTypeInternalId, attributeIndex, attributeName);
 	}
@@ -234,10 +308,6 @@ public class OrbManagerLocalCache implements OrbManager {
 		}
 	}
 
-	public void removeReference(long orbInternalIdArrow, String attributeNameArrow, long orbInternalIdTarget, String attributeNameTarget) {
-		throw new NotImplementedException("RemoveReference not done yet.");
-	}
-
 	private boolean areEqualAttributes(String value1, String value2) {
 		return (value1 == null ? value2 == null : value1.equals(value2));
 	}
@@ -246,8 +316,9 @@ public class OrbManagerLocalCache implements OrbManager {
 	public Orb getOrb(long orbInternalId) {
 		Orb orb = cache.orbCollection.get(orbInternalId);
 
-		if (orb == null)
+		if (orb == null) {
 			throw new RuntimeException("Encountered problem getting orb. Couldn't find orb with id '" + orbInternalId + "'.");
+		}
 
 		return orb;
 	}
@@ -268,16 +339,26 @@ public class OrbManagerLocalCache implements OrbManager {
 	}
 
 	@Override
-	public void deleteOrbsWithType(long orbTypeInternalId) {
+	public void deleteOrbsWithType(long orbTypeInternalId, boolean isDeleteDependencies) {
 		List<Orb> orbsWithType = cache.orbCollection.getOrbsWithType(orbTypeInternalId);
 		
 		for (Orb orb : orbsWithType) {
-			deleteOrb(orb.getOrbInternalId());
+			deleteOrb(orb.getOrbInternalId(), isDeleteDependencies);
 		}
 	}
 
 	@Override
 	public void renameAttribute(long orbTypeInternalId, String attributeNameOld, String attributeNameNew) {
 		cache.orbCollection.renameAttribute(orbTypeInternalId, attributeNameOld, attributeNameNew);
+	}
+
+	@Override
+	public long countOrbsOfType(long orbTypeInternalId) {
+		return cache.orbCollection.getCountOrbsOfType(orbTypeInternalId);
+	}
+
+	@Override
+	public boolean doesOrbWithTypeExist(long orbTypeInternalId) {
+		return countOrbsOfType(orbTypeInternalId) > 0;
 	}
 }

@@ -5,7 +5,6 @@ import java.util.List;
 public class ConstraintDetailsList extends ConstraintDetails {
 	
 	RelationshipOperator relationshipOperator;
-	String attributeName;
 	List<String> operativeValueList;
 	
 	@Override

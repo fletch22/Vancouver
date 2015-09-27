@@ -66,6 +66,7 @@ Fix rollback of deleteAttribute;
 Status: Done
 
 Determine impact of DirectInvocation operations not having same tranDate as transaction/log operations.
+Status: Not done.
 
 Fix 'test delete instance with references'
 Status: Done.
@@ -74,7 +75,7 @@ Ensure that when attribute is delete all arrows pointing at attribute are set to
 Status: Done.
 
 Cache creation of queries/query objects.
-Status: Not done.
+Status: Done.
 
 Create lookup of attribute index in OrbTypeManager to make setAttribute and other things faster.
 Status: Not done.
@@ -89,7 +90,44 @@ Optimize CriteriaSpec test to set up data once.
 Status: Done.
 
 Modify Queries collection when the following occurs:
-	Delete orb
-	Rename orb
-	Remove attribute
+	Delete orb - Done.
+	Delete attribute - Done.
+	Remove attribute - Done.
+	
+Finish delete dependencies boolean add to all delete methods.
+Status: Done.
+
+Fix deleteQuery which calls both deleteOrb and removeQuery. Should not call removeQuery.
+Status: Done.
+
+Finish execute query by label returning resultSet.
+Status: Done.
+
+Rename "deleteAll" to "nukeAll"
 Status: Not done.
+
+Add column list to Criteria
+Status: Not done.
+
+Add cacheing to CriteriaGrinder. Cache queries based on last update of flag based on orbType.
+Status: Not done.
+
+Create tests for QueryAttributeRenameHandler
+Status: Not done.
+
+Refactor/Extract attributeDeleteHandler to external class (from QueryManager)
+Status: Not done.
+
+Create tests for attributeDeleteHandler
+Status: Not done.
+
+Fix delete query on dependencies delete flag == true such that when query is deleted, the processing on it stops.
+Status: Not done.
+
+Add Uniqeuness index constraint for Query instance Label;
+Status: Not done.
+
+Add executeQuery that returns only one result; if over one throw exception.
+Status: Not done.
+
+

@@ -1,11 +1,7 @@
 package com.fletch22.orb.test.data;
 
-import java.math.BigDecimal;
 import java.util.LinkedHashSet;
 
-import org.apache.commons.lang3.time.StopWatch;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -13,15 +9,15 @@ import com.fletch22.orb.Orb;
 import com.fletch22.orb.OrbManager;
 import com.fletch22.orb.OrbType;
 import com.fletch22.orb.OrbTypeManager;
+import com.fletch22.orb.cache.local.Cache;
 import com.fletch22.orb.query.Constraint;
+import com.fletch22.orb.query.ConstraintDetailsSingleValue;
 import com.fletch22.orb.query.CriteriaFactory;
 import com.fletch22.orb.query.CriteriaFactory.Criteria;
 import com.fletch22.orb.query.QueryManager;
 
 @Component
-public class TestDataSimple {
-	
-	Logger logger = LoggerFactory.getLogger(TestDataSimple.class);
+public class TestDataWithReferences {
 	
 	@Autowired
 	OrbTypeManager orbTypeManager;
@@ -35,35 +31,45 @@ public class TestDataSimple {
 	@Autowired
 	QueryManager queryManager;
 	
+	@Autowired
+	Cache cache;
+	
 	public static final String ATTRIBUTE_COLOR = "color";
+	public static final String ATTRIBUTE_SPEED = "speed";
+	public static final String ATTRIBUTE_FLAVOR = "flavor";
+	
 	public static final String ATTRIBUTE_GREEN = "green";
 	public static final String ATTRIBUTE_ORANGE = "orange";
 	public static final String ATTRIBUTE_RED = "red";
 	
-	private static final int MULTIPLIER = 1;
-	public static final int NUMBER_GREEN = 40 * MULTIPLIER;
-	public static final int NUMBER_ORANGE = 10 * MULTIPLIER;
-	public static final int NUMBER_RED = 60 * MULTIPLIER;
+	public static final int NUMBER_GREEN = 40;
+	public static final int NUMBER_ORANGE = 10;
+	public static final int NUMBER_RED = 60;
 	
 	public static final int TOTAL_NUMBER_INSTANCES = NUMBER_GREEN + NUMBER_ORANGE + NUMBER_RED;
 	
 	long orbTypeInternalId;
 
-	public long loadTestData() {
+	public Orb loadTestData(int numberOfInstances) {
 
 		LinkedHashSet<String> customFields = new LinkedHashSet<String>();
-
 		customFields.add(ATTRIBUTE_COLOR);
-		customFields.add("size");
-		customFields.add("speed");
-
-		orbTypeInternalId = orbTypeManager.createOrbType("foo", customFields);
-
-		setNumberInstancesToColor(NUMBER_RED, orbTypeInternalId, ATTRIBUTE_RED);
-		setNumberInstancesToColor(NUMBER_ORANGE, orbTypeInternalId, ATTRIBUTE_ORANGE);
-		setNumberInstancesToColor(NUMBER_GREEN, orbTypeInternalId, ATTRIBUTE_GREEN);
+		customFields.add(ATTRIBUTE_SPEED);
+		customFields.add(ATTRIBUTE_FLAVOR);
 		
-		return orbTypeInternalId;
+		this.orbTypeInternalId = orbTypeManager.createOrbType("foo", customFields);
+		
+		Orb orbWithReference = orbManager.createOrb(orbTypeInternalId);
+		orbManager.setAttribute(orbWithReference.getOrbInternalId(), ATTRIBUTE_COLOR, "green");
+		
+		String reference = cache.orbCollection.orbReference.composeReference(orbWithReference.getOrbInternalId(), ATTRIBUTE_COLOR);
+		
+		for (int i = 0; i < numberOfInstances; i++) {
+			Orb orb = orbManager.createOrb(orbTypeInternalId);
+			orbManager.setAttribute(orb.getOrbInternalId(), ATTRIBUTE_COLOR, reference);
+		}
+		
+		return orbWithReference;
 	}
 	
 	public long addSimpleCriteria() {
@@ -71,19 +77,14 @@ public class TestDataSimple {
 		OrbType orbType = orbTypeManager.getOrbType(orbTypeInternalId);
 		
 		Criteria criteria = criteriaFactory.getInstance(orbType, "foo");
-		criteria.add(Constraint.eq(ATTRIBUTE_COLOR, ATTRIBUTE_GREEN));
+		
+		Constraint constraint = Constraint.eq(ATTRIBUTE_COLOR, "green");
+		
+		criteria.add(constraint);
 		
 		long orbInternalIdQuery = queryManager.create(criteria);
 		
 		return orbInternalIdQuery;
 	}
 	
-	private void setNumberInstancesToColor(int numInstances, long orbTypeInternalId, String color) {
-		
-		for (int i = 0; i < numInstances; i++) {
-			
-			Orb orb = orbManager.createOrb(orbTypeInternalId);
-			orbManager.setAttribute(orb.getOrbInternalId(), ATTRIBUTE_COLOR, color);
-		}
-	}
 }

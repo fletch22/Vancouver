@@ -3,23 +3,30 @@ package com.fletch22.orb.cache.local;
 import static org.junit.Assert.*
 
 import org.junit.Assert
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
 
 import spock.lang.Shared
 import spock.lang.Specification
 
-import com.fletch22.orb.IntegrationSystemInitializer;
+import com.fletch22.orb.IntegrationSystemInitializer
 import com.fletch22.orb.IntegrationTests
 import com.fletch22.orb.Orb
 import com.fletch22.orb.OrbManager
 import com.fletch22.orb.OrbTypeManager
 import com.fletch22.orb.TranDateGenerator
-import com.fletch22.orb.cache.local.ReferenceCollection.ArrowCluster
+import com.fletch22.orb.query.ConstraintDetailsSingleValue
+import com.fletch22.orb.query.QueryManager
+import com.fletch22.orb.query.CriteriaFactory.Criteria
+import com.fletch22.orb.test.data.TestDataWithReferences
 
 @org.junit.experimental.categories.Category(IntegrationTests.class)
 @ContextConfiguration(locations = ['classpath:/springContext-test.xml'])
 class OrbTypeManagerLocalCacheSpec extends Specification {
+	
+	Logger logger = LoggerFactory.getLogger(OrbTypeManagerLocalCacheSpec)
 	
 	@Autowired
 	OrbTypeManager orbTypeManager
@@ -39,6 +46,9 @@ class OrbTypeManagerLocalCacheSpec extends Specification {
 	@Autowired
 	CacheComponentComparator cacheComponentComparator
 	
+	@Autowired
+	TestDataWithReferences testDataWithReferences;
+	
 	private static final String ATTR_COLOR = "color"
 	private static final String ATTR_SPEED = "speed"
 	private static final String ATTR_FLAVOR = "flavor"
@@ -49,6 +59,9 @@ class OrbTypeManagerLocalCacheSpec extends Specification {
 	@Autowired
 	IntegrationSystemInitializer integrationSystemInitializer
 	
+	@Autowired
+	QueryManager queryManager
+	
 	def setup() {
 		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems();
 	}
@@ -57,8 +70,7 @@ class OrbTypeManagerLocalCacheSpec extends Specification {
 		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems();
 	}
 	
-	
-	def 'testDeleteOnlyOrb'() {
+	def 'test delete type orb'() {
 		
 		given:
 		def originalCount = orbTypeManager.getOrbTypeCount()
@@ -77,7 +89,7 @@ class OrbTypeManagerLocalCacheSpec extends Specification {
 		createOrbs(1, orbTypeInternalId)
 		
 		when:
-		orbTypeManager.deleteOrbType(orbTypeInternalId)
+		orbTypeManager.deleteOrbType(orbTypeInternalId, true)
 		
 		then:
 		orbTypeManager.getOrbTypeCount() == originalCount
@@ -87,11 +99,51 @@ class OrbTypeManagerLocalCacheSpec extends Specification {
 		orbReference
 	}
 	
+	def 'test delete attribute do not delete if has dependencies'() {
+		
+		given:
+		def numInstances = 10
+		Orb orbWithReference = testDataWithReferences.loadTestData(numInstances)
+		long orbInternalIdQuery = testDataWithReferences.addSimpleCriteria()
+		
+		long orbTypeInternalId = orbWithReference.getOrbTypeInternalId()
+		
+		when:
+		int indexOriginal = findIndexOfKey(orbTypeInternalId, ATTR_COLOR)
+		orbTypeManager.deleteAttribute(orbTypeInternalId, ATTR_COLOR, false)
+		
+		then:
+		thrown Exception
+	}
+	
+	def 'test delete attribute and dependencies'() {
+		
+		given:
+		def numInstances = 10
+		Orb orbWithReference = testDataWithReferences.loadTestData(numInstances)
+		long orbInternalIdQuery = testDataWithReferences.addSimpleCriteria()
+		long orbTypeInternalId = orbWithReference.getOrbTypeInternalId()
+		
+		when:
+		int indexOriginal = findIndexOfKey(orbTypeInternalId, TestDataWithReferences.ATTRIBUTE_COLOR)
+		orbTypeManager.deleteAttribute(orbTypeInternalId, TestDataWithReferences.ATTRIBUTE_COLOR, true)
+		
+		logger.info("orbInternalIdQuery: {}", orbInternalIdQuery);
+		
+		then:
+		notThrown Exception
+		Criteria criteria = queryManager.get(orbInternalIdQuery);
+		criteria == null
+	}
+	
 	def 'test rename attribute'() {
 		
 		given:
 		def numInstances = 10
-		long orbTypeInternalId = createData(numInstances)
+		Orb orbWithReference = testDataWithReferences.loadTestData(numInstances)
+		long orbInternalIdQuery = testDataWithReferences.addSimpleCriteria()
+		
+		long orbTypeInternalId = orbWithReference.getOrbTypeInternalId()
 		
 		int countOrig = cache.orbCollection.orbReference.referenceCollection.countArrowsPointingToTarget(orbWithReference.orbInternalId, ATTR_COLOR);
 		assert countOrig == numInstances
@@ -99,7 +151,6 @@ class OrbTypeManagerLocalCacheSpec extends Specification {
 		def attributeNameNew = "hue"
 		
 		when:
-		
 		int indexOriginal = findIndexOfKey(orbTypeInternalId, ATTR_COLOR)
 		orbTypeManager.renameAttribute(orbTypeInternalId, ATTR_COLOR, attributeNameNew)
 		int indexNew = findIndexOfKey(orbTypeInternalId, attributeNameNew)
@@ -117,6 +168,12 @@ class OrbTypeManagerLocalCacheSpec extends Specification {
 		assertEquals("Index order of attribute should be same.", indexOriginal, indexNew)
 		assert countArrowsOld == 0
 		assert countArrowsNew == numInstances
+		
+		Criteria criteria = queryManager.get(orbInternalIdQuery)
+		criteria
+		ConstraintDetailsSingleValue constraintDetailSingleValue = (ConstraintDetailsSingleValue) criteria.logicalConstraintsList.get(0).constraint
+		constraintDetailSingleValue
+		constraintDetailSingleValue.attributeName == attributeNameNew
 	}
 	
 	public int findIndexOfKey(long orbTypeInternalId, String key) {
@@ -148,26 +205,4 @@ class OrbTypeManagerLocalCacheSpec extends Specification {
 		}
 	}
 	
-	private long createData(int numberOfInstances) {
-		
-		LinkedHashSet<String> customFields = new LinkedHashSet<String>();
-		customFields.add(ATTR_COLOR)
-		customFields.add(ATTR_SPEED)
-		customFields.add(ATTR_FLAVOR)
-		
-		long orbTypeInternalId = orbTypeManager.createOrbType("foo", customFields)
-		
-		orbWithReference = orbManager.createOrb(orbTypeInternalId)
-		orbManager.setAttribute(orbWithReference.orbInternalId, ATTR_COLOR, "green")
-		
-		String reference = cache.orbCollection.orbReference.composeReference(orbWithReference.orbInternalId, ATTR_COLOR)
-		
-		numberOfInstances.times {
-			Orb orb = orbManager.createOrb(orbTypeInternalId);
-			orbManager.setAttribute(orb.orbInternalId, ATTR_COLOR, reference)
-		}
-		
-		return orbTypeInternalId
-	}
-
 }

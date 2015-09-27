@@ -1,6 +1,6 @@
 package com.fletch22.orb;
 
-import java.util.LinkedHashSet;
+
 
 public class OrbTypeConstants {
 	public static final String ORBTYPE_LABEL = "ORB_TYPE";
@@ -12,24 +12,4 @@ public class OrbTypeConstants {
     public static final int ORBTYPE_INTERNAL_ID_UNSET = -1;
     public static final int ORBTYPE_ATTR_ORDINAL_UNSET = -1;
 	public static final int ORBTYPE_BASETYPE_ID = 0;
-	
-	public enum SystemOrbTypes {
-		QUERY("query", 1);
-		
-		private String label;
-		private long id;
-		
-		private SystemOrbTypes(String label, long id) {
-			this.label = label;
-			this.id = id;
-		}
-
-		public String getLabel() {
-			return label;
-		}
-
-		public long getId() {
-			return id;
-		}
-	}
 }
