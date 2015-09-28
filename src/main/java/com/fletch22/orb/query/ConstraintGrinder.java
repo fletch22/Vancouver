@@ -47,19 +47,28 @@ public class ConstraintGrinder {
 		this.constraintKitchen = (ConstraintKitchen) Fletch22ApplicationContext.getApplicationContext().getBean(ConstraintKitchen.class);
 		this.orbTypeManager = (OrbTypeManager) Fletch22ApplicationContext.getApplicationContext().getBean(OrbTypeManager.class);
 		
+		List<Query<CacheEntry>> queries = new ArrayList<Query<CacheEntry>>();
+		LogicalOperator logicalOperator = LogicalOperator.AND;
 		for (LogicalConstraint logicalConstraint : criteria.logicalConstraintList) {
-			query = processConstraint(logicalConstraint);
+			Query<CacheEntry> query = processConstraint(logicalConstraint);
+			queries.add(query);
+			logicalOperator = logicalConstraint.logicalOperator;
 		}
 		
-		logger.info("Query is null? {}", query == null);
+		if (queries.size() == 1) {
+			query = queries.get(0);
+		} else {
+			if (logicalOperator.equals(LogicalOperator.AND)) {
+				query = and(queries);
+			} else if (logicalOperator.equals(LogicalOperator.OR)) {
+				query = or(queries);
+			}
+		}
 	}
 	
 	public List<CacheEntry> listCacheEntries() {
 		
-		StopWatch stopWatch = new StopWatch();
-		stopWatch.start();
 		ResultSet<CacheEntry> resultSet = this.indexedCollection.retrieve(query);
-		stopWatch.stop();
 		
 		List<CacheEntry> cacheEntryList = new ArrayList<CacheEntry>();
 		for (CacheEntry cacheEntry : resultSet) {

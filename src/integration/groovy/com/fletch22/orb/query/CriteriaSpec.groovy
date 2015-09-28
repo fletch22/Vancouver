@@ -18,6 +18,7 @@ import com.fletch22.orb.OrbManager
 import com.fletch22.orb.OrbTypeManager
 import com.fletch22.orb.cache.local.Cache
 import com.fletch22.orb.cache.local.CacheEntry
+import com.fletch22.orb.cache.local.OrbSingleTypesInstanceCollection;
 import com.fletch22.orb.query.CriteriaFactory.Criteria
 
 @org.junit.experimental.categories.Category(IntegrationTests.class)
@@ -63,14 +64,18 @@ class CriteriaSpec extends Specification {
 	def 'test criteria search for green'() {
 
 		given:
-		Criteria criteria = criteriaFactory.getInstance(orbType)
+		Criteria criteria = criteriaFactory.createInstance(orbType, "foo")
 
 		criteria.add(LogicalConstraint.and(Constraint.eq(ATTRIBUTE_COLOR, COLOR_TO_FIND)))
 
+		OrbSingleTypesInstanceCollection orbSingleTypesInstanceCollection = cache.orbCollection.allInstances.get(criteria.getOrbTypeInternalId());
+		
+		ConstraintGrinder criteriaGrinder = new ConstraintGrinder(criteria, orbSingleTypesInstanceCollection.instances);
+		
 		when:
 		StopWatch stopWatch = new StopWatch()
 		stopWatch.start()
-		List<CacheEntry> results = cache.orbCollection.executeQuery(criteria);
+		ResultSet resultSet = criteriaGrinder.list();
 		stopWatch.stop()
 		
 		def elapsed = new BigDecimal(stopWatch.nanoTime).divide(new BigDecimal(1000000))
@@ -78,21 +83,20 @@ class CriteriaSpec extends Specification {
 		
 		then:
 		notThrown Exception
-		results
-		results.size > 0
+		resultSet.rows.size() > 0
 	}
 	
 	def 'test criteria search or'() {
 		
 		given:
-		Criteria criteria = criteriaFactory.getInstance(orbType)
+		Criteria criteria = criteriaFactory.createInstance(orbType, "foo")
 
 		criteria.add(LogicalConstraint.or(Constraint.eq(ATTRIBUTE_COLOR, "red"), LogicalConstraint.or(Constraint.eq(ATTRIBUTE_COLOR, COLOR_TO_FIND), Constraint.eq(ATTRIBUTE_COLOR, "orange"))))
 
 		when:
 		StopWatch stopWatch = new StopWatch()
 		stopWatch.start()
-		List<CacheEntry> results = cache.orbCollection.executeQuery(criteria);
+		ResultSet resultSet = cache.orbCollection.executeQuery(criteria);
 		stopWatch.stop()
 		
 		def elapsed = new BigDecimal(stopWatch.nanoTime).divide(new BigDecimal(1000000))
@@ -100,14 +104,14 @@ class CriteriaSpec extends Specification {
 		
 		then:
 		notThrown Exception
-		results
-		results.size == 110
+		resultSet
+		resultSet.rows.size == 110
 	}
 	
 	def 'test criteria search collection'() {
 		
 		given:
-		Criteria criteria = criteriaFactory.getInstance(orbType)
+		Criteria criteria = criteriaFactory.createInstance(orbType, "foo")
 		
 		ConstraintCollection constraintCollection = new ConstraintCollection()
 		constraintCollection.constraintArray = new Constraint[3]
@@ -120,7 +124,7 @@ class CriteriaSpec extends Specification {
 		when:
 		StopWatch stopWatch = new StopWatch()
 		stopWatch.start()
-		List<CacheEntry> results = cache.orbCollection.executeQuery(criteria);
+		ResultSet resultSet = cache.orbCollection.executeQuery(criteria);
 		stopWatch.stop()
 		
 		def elapsed = new BigDecimal(stopWatch.nanoTime).divide(new BigDecimal(1000000))
@@ -128,14 +132,14 @@ class CriteriaSpec extends Specification {
 		
 		then:
 		notThrown Exception
-		results
-		results.size == 110
+		resultSet
+		resultSet.rows.size == 110
 	}
 	
 	def 'test criteria search collection using in'() {
 		
 		given:
-		Criteria criteria = criteriaFactory.getInstance(orbType)
+		Criteria criteria = criteriaFactory.createInstance(orbType, "foo")
 		
 		List<String> list = new ArrayList<String>();
 		list.add("red")
@@ -146,7 +150,7 @@ class CriteriaSpec extends Specification {
 		when:
 		StopWatch stopWatch = new StopWatch()
 		stopWatch.start()
-		List<CacheEntry> results = cache.orbCollection.executeQuery(criteria);
+		ResultSet resultSet = cache.orbCollection.executeQuery(criteria);
 		stopWatch.stop()
 		
 		def elapsed = new BigDecimal(stopWatch.nanoTime).divide(new BigDecimal(1000000))
@@ -154,8 +158,8 @@ class CriteriaSpec extends Specification {
 		
 		then:
 		notThrown Exception
-		results
-		results.size == 70
+		resultSet
+		resultSet.rows.size == 70
 	}
 
 	public long loadTestData() {

@@ -41,9 +41,9 @@ public class Cache {
 		return cacheComponentsFactory.getInstance(this);
 	}
 
-	public void clearAllItemsFromCache() {
-		 orbManager.deleteAllOrbs();
-		 orbTypeManager.deleteAllTypes();
-		 queryManager.deleteAllQueries();
+	public void nukeAllItemsFromCache() {
+		 orbManager.nukeAllOrbs();
+		 orbTypeManager.nukeAllTypes();
+		 queryManager.nukeAllQueries();
 	}
 }

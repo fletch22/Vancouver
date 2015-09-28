@@ -41,4 +41,11 @@ public class ResultSet {
 	public long getSize() {
 		return rows.size();
 	}
+	
+	public Row uniqueResult() {
+		if (getSize() > 1) {
+			throw new RuntimeException("Encountered a problem processing result set; there is more than one result. Only one result was expected.");
+		}
+		return rows.get(0);
+	}
 }

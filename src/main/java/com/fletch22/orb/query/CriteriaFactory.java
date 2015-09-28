@@ -19,7 +19,7 @@ public class CriteriaFactory {
 	@Autowired
 	Cache cache;
 	
-	public Criteria getInstance(OrbType orbType, String label) {
+	public Criteria createInstance(OrbType orbType, String label) {
 		Criteria criteria = new Criteria(orbType, label);
 		criteria.cache = cache;
 		
@@ -50,14 +50,27 @@ public class CriteriaFactory {
 		
 		public Criteria add(LogicalConstraint logicalConstraint) {
 
+			validateAddedLogicalConstraint(logicalConstraint);
+			
 			logicalConstraintList.add(logicalConstraint);
 			
 			return this;
 		}
+
+		private void validateAddedLogicalConstraint(LogicalConstraint logicalConstraint) {
+			if (logicalConstraintList.size() > 0) {
+				LogicalOperator logicalOperator = logicalConstraintList.get(0).logicalOperator;
+				if (!logicalConstraint.logicalOperator.equals(logicalOperator)) {
+					throw new RuntimeException("Encountered problem adding constraint with logical operator that is different than grouping''s common logical operator.");
+				}
+			}
+		}
 		
 		public Criteria add(Constraint constraint) {
-
+			
 			LogicalConstraint logicalConstraint = new LogicalConstraint(LogicalOperator.AND, constraint);
+			validateAddedLogicalConstraint(logicalConstraint);
+			
 			logicalConstraintList.add(logicalConstraint);
 			
 			return this;

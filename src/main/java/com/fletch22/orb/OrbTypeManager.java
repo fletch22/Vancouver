@@ -17,7 +17,7 @@ public interface OrbTypeManager {
 	
 	public long createOrbType(String label, LinkedHashSet<String> customFields);
 	
-	public void deleteAllTypes();
+	public void nukeAllTypes();
 	
 	public void addAttribute(long orbInternalId, String attributeName);
 	

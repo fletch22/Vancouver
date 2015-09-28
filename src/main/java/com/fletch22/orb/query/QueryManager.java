@@ -14,7 +14,7 @@ public interface QueryManager {
 	
 	public void removeQueryFromCollection(long orbInternalIdQuery);
 
-	public void deleteAllQueries();
+	public void nukeAllQueries();
 	
 	public boolean doesQueryExist(long orbInternalIdQuery);
 	

@@ -104,7 +104,7 @@ Finish execute query by label returning resultSet.
 Status: Done.
 
 Rename "deleteAll" to "nukeAll"
-Status: Not done.
+Status: Done.
 
 Add column list to Criteria
 Status: Not done.
@@ -113,21 +113,21 @@ Add cacheing to CriteriaGrinder. Cache queries based on last update of flag base
 Status: Not done.
 
 Create tests for QueryAttributeRenameHandler
-Status: Not done.
+Status: Done.
 
 Refactor/Extract attributeDeleteHandler to external class (from QueryManager)
-Status: Not done.
+Status: Done.
 
 Create tests for attributeDeleteHandler
-Status: Not done.
+Status: Done.
 
 Fix delete query on dependencies delete flag == true such that when query is deleted, the processing on it stops.
-Status: Not done.
+Status: Done.
 
 Add Uniqeuness index constraint for Query instance Label;
 Status: Not done.
 
 Add executeQuery that returns only one result; if over one throw exception.
-Status: Not done.
+Status: Done.
 
 

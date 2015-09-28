@@ -33,7 +33,7 @@ public interface OrbManager {
 	
 	public List<Orb> getOrbsOfType(long orbInternalId);
 
-	public void deleteAllOrbs();
+	public void nukeAllOrbs();
 
 	void addAttributeAndValueToInstances(MapLongString map, long orbTypeInternalId, int indexOfAttribute, String attributeName);
 

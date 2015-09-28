@@ -329,7 +329,7 @@ public class OrbManagerLocalCache implements OrbManager {
 	}
 
 	@Override
-	public void deleteAllOrbs() {
+	public void nukeAllOrbs() {
 		cache.orbCollection.deleteAll();
 	}
 

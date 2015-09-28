@@ -82,7 +82,7 @@ public class QueryManagerTest {
 		stopWatch.start();
 		OrbType orbType = orbTypeManager.getOrbType(orbTypeInternalId);
 		
-		Criteria criteria = criteriaFactory.getInstance(orbType, "foo");
+		Criteria criteria = criteriaFactory.createInstance(orbType, "foo");
 		
 		// Act
 		long orbInternalId = queryManager.create(criteria);
@@ -105,10 +105,10 @@ public class QueryManagerTest {
 		
 		String dupeName = "bar";
 		
-		Criteria criteria1 = criteriaFactory.getInstance(orbType, dupeName);
+		Criteria criteria1 = criteriaFactory.createInstance(orbType, dupeName);
 		queryManager.create(criteria1);
 		
-		Criteria criteria2 = criteriaFactory.getInstance(orbType, dupeName);
+		Criteria criteria2 = criteriaFactory.createInstance(orbType, dupeName);
 		
 		boolean wasExceptionThrown = false;
 		try {
@@ -133,7 +133,7 @@ public class QueryManagerTest {
 		
 		OrbType orbType = orbTypeManager.getOrbType(orbTypeInternalId);
 		
-		Criteria criteria = criteriaFactory.getInstance(orbType, "foo");
+		Criteria criteria = criteriaFactory.createInstance(orbType, "foo");
 		
 		long orbInternalId = queryManager.create(criteria);
 
@@ -155,7 +155,7 @@ public class QueryManagerTest {
 		
 		OrbType orbType = orbTypeManager.getOrbType(orbTypeInternalId);
 		
-		Criteria criteria = criteriaFactory.getInstance(orbType, "foo");
+		Criteria criteria = criteriaFactory.createInstance(orbType, "foo");
 		
 		long orbInternalId = queryManager.create(criteria);
 		

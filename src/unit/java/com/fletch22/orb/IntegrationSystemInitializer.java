@@ -35,14 +35,14 @@ public class IntegrationSystemInitializer {
 	
 	public void nukeAndPaveAllIntegratedSystems() {
 		transactionService.endTransaction();
-		cache.clearAllItemsFromCache();
+		cache.nukeAllItemsFromCache();
 		logActionService.clearOutDatabase();
 		initializeSystemTypes();
 	}
 	
 	public void initializeSystem() {
 		transactionService.endTransaction();
-		cache.clearAllItemsFromCache();
+		cache.nukeAllItemsFromCache();
 		logActionService.loadCacheFromDb();
 	}
 }
