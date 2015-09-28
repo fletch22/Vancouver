@@ -36,7 +36,7 @@ public class CriteriaFactory {
 		
 		transient Cache cache;
 		
-		public List<LogicalConstraint> logicalConstraintList = new ArrayList<LogicalConstraint>();
+		public LogicalConstraint logicalConstraint = null;
 		
 		private Criteria(OrbType orbType, String label) {
 			this.orbType = orbType;
@@ -48,34 +48,38 @@ public class CriteriaFactory {
 			this.sortInfoList.add(criteriaSortInfo);
 		}
 		
-		public Criteria add(LogicalConstraint logicalConstraint) {
+		public Criteria addAnd(Constraint ... constraintArray) {
 
-			validateAddedLogicalConstraint(logicalConstraint);
-			
-			logicalConstraintList.add(logicalConstraint);
+			for (Constraint constraint : constraintArray) {
+				add(LogicalOperator.AND, constraint);
+			}
 			
 			return this;
 		}
+		
+		public Criteria addOr(Constraint ... constraintArray) {
 
-		private void validateAddedLogicalConstraint(LogicalConstraint logicalConstraint) {
-			if (logicalConstraintList.size() > 0) {
-				LogicalOperator logicalOperator = logicalConstraintList.get(0).logicalOperator;
-				if (!logicalConstraint.logicalOperator.equals(logicalOperator)) {
+			for (Constraint constraint : constraintArray) {
+				add(LogicalOperator.OR, constraint);
+			}
+			
+			return this;
+		}
+		
+		private Criteria add(LogicalOperator logicalOperator, Constraint constraint) {
+
+			if (this.logicalConstraint == null) {
+				this.logicalConstraint = new LogicalConstraint(logicalOperator, constraint);
+			} else {
+				if (!logicalOperator.equals(this.logicalConstraint.logicalOperator)) {
 					throw new RuntimeException("Encountered problem adding constraint with logical operator that is different than grouping''s common logical operator.");
 				}
+				this.logicalConstraint.constraintList.add(constraint);
 			}
-		}
-		
-		public Criteria add(Constraint constraint) {
-			
-			LogicalConstraint logicalConstraint = new LogicalConstraint(LogicalOperator.AND, constraint);
-			validateAddedLogicalConstraint(logicalConstraint);
-			
-			logicalConstraintList.add(logicalConstraint);
 			
 			return this;
 		}
-		
+
 		public long getOrbTypeInternalId() {
 			return getOrbType().id;
 		}

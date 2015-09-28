@@ -1,12 +1,15 @@
 package com.fletch22.orb.query;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class LogicalConstraint extends Constraint {
 	public LogicalOperator logicalOperator;
-	public Constraint constraint;
+	public ArrayList<Constraint> constraintList = new ArrayList<Constraint>();
 	
-	public LogicalConstraint(LogicalOperator logicalOperator, Constraint constraint) {
+	public LogicalConstraint(LogicalOperator logicalOperator, Constraint ...constraintArray) {
 		this.logicalOperator = logicalOperator;
-		this.constraint = constraint;
+		this.constraintList.addAll(Arrays.asList(constraintArray));
 	}
 	
 	public static LogicalConstraint and(Constraint... constraintArray) {
@@ -18,10 +21,7 @@ public class LogicalConstraint extends Constraint {
 	}
 	
 	private static LogicalConstraint createLogicalConstraint(LogicalOperator logicalOperator, Constraint[] constraintArray) {
-		ConstraintCollection constraintCollection = new ConstraintCollection();
-		constraintCollection.constraintArray = constraintArray;
-
-		LogicalConstraint logicalConstraint = new LogicalConstraint(logicalOperator, constraintCollection);
+		LogicalConstraint logicalConstraint = new LogicalConstraint(logicalOperator, constraintArray);
 		
 		return logicalConstraint;
 	}
@@ -29,9 +29,6 @@ public class LogicalConstraint extends Constraint {
 	@Override
 	public Constraint[] getConstraints() {
 		
-		Constraint[] constraintReturned = new Constraint[0]; 
-		constraintReturned[0] = this.constraint;
-		
-		return constraintReturned;
+		return constraintList.toArray(new Constraint[constraintList.size()]);
 	}
 }

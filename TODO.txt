@@ -130,4 +130,5 @@ Status: Not done.
 Add executeQuery that returns only one result; if over one throw exception.
 Status: Done.
 
+Cache constructed Grinder. Replace when query updated.
 

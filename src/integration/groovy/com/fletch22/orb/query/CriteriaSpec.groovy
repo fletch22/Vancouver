@@ -66,7 +66,7 @@ class CriteriaSpec extends Specification {
 		given:
 		Criteria criteria = criteriaFactory.createInstance(orbType, "foo")
 
-		criteria.add(LogicalConstraint.and(Constraint.eq(ATTRIBUTE_COLOR, COLOR_TO_FIND)))
+		criteria.addAnd(Constraint.eq(ATTRIBUTE_COLOR, COLOR_TO_FIND))
 
 		OrbSingleTypesInstanceCollection orbSingleTypesInstanceCollection = cache.orbCollection.allInstances.get(criteria.getOrbTypeInternalId());
 		
@@ -91,7 +91,7 @@ class CriteriaSpec extends Specification {
 		given:
 		Criteria criteria = criteriaFactory.createInstance(orbType, "foo")
 
-		criteria.add(LogicalConstraint.or(Constraint.eq(ATTRIBUTE_COLOR, "red"), LogicalConstraint.or(Constraint.eq(ATTRIBUTE_COLOR, COLOR_TO_FIND), Constraint.eq(ATTRIBUTE_COLOR, "orange"))))
+		criteria.addOr(Constraint.eq(ATTRIBUTE_COLOR, "red"), Constraint.eq(ATTRIBUTE_COLOR, COLOR_TO_FIND), Constraint.eq(ATTRIBUTE_COLOR, "orange"))
 
 		when:
 		StopWatch stopWatch = new StopWatch()
@@ -113,13 +113,12 @@ class CriteriaSpec extends Specification {
 		given:
 		Criteria criteria = criteriaFactory.createInstance(orbType, "foo")
 		
-		ConstraintCollection constraintCollection = new ConstraintCollection()
-		constraintCollection.constraintArray = new Constraint[3]
-		constraintCollection.constraintArray[0] = Constraint.eq(ATTRIBUTE_COLOR, "red")
-		constraintCollection.constraintArray[1] = Constraint.eq(ATTRIBUTE_COLOR, COLOR_TO_FIND)
-		constraintCollection.constraintArray[2] = Constraint.eq(ATTRIBUTE_COLOR, "orange")
+		Constraint[] constraintArray = new Constraint[3]
+		constraintArray[0] = Constraint.eq(ATTRIBUTE_COLOR, "red")
+		constraintArray[1] = Constraint.eq(ATTRIBUTE_COLOR, COLOR_TO_FIND)
+		constraintArray[2] = Constraint.eq(ATTRIBUTE_COLOR, "orange")
 		
-		criteria.add(LogicalConstraint.or(constraintCollection))
+		criteria.addOr(constraintArray)
 
 		when:
 		StopWatch stopWatch = new StopWatch()
@@ -145,7 +144,7 @@ class CriteriaSpec extends Specification {
 		list.add("red")
 		list.add("orange")
 		
-		criteria.add(Constraint.in(ATTRIBUTE_COLOR, list))
+		criteria.addAnd(Constraint.in(ATTRIBUTE_COLOR, list))
 
 		when:
 		StopWatch stopWatch = new StopWatch()

@@ -80,7 +80,7 @@ public class TestDataWithReferences {
 		
 		Constraint constraint = Constraint.eq(ATTRIBUTE_COLOR, "green");
 		
-		criteria.add(constraint);
+		criteria.addAnd(constraint);
 		
 		long orbInternalIdQuery = queryManager.create(criteria);
 		

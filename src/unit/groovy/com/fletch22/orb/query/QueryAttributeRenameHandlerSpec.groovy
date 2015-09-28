@@ -25,7 +25,7 @@ class QueryAttributeRenameHandlerSpec extends Specification {
 		
 		ConstraintDetailsSingleValue constraintDetailSingleValue = (ConstraintDetailsSingleValue) Constraint.eq(ORIGINAL_ATTRIBUTE_NAME, "someValue")
 		
-		criteria.add(constraintDetailSingleValue)
+		criteria.addAnd(constraintDetailSingleValue)
 		
 		when:
 		queryAttributeRenameHandler.renameInConstraints(criteria, ORIGINAL_ATTRIBUTE_NAME, "Bar")
@@ -51,7 +51,7 @@ class QueryAttributeRenameHandlerSpec extends Specification {
 		criteriaSortInfo.sortAttributeName = ORIGINAL_ATTRIBUTE_NAME
 		criteria.setSortOrder()
 		
-		criteria.add(constraintDetailSingleValue)
+		criteria.addAnd(constraintDetailSingleValue)
 		
 		when:
 		queryAttributeRenameHandler.renameInConstraints(criteria, ORIGINAL_ATTRIBUTE_NAME, "Bar")

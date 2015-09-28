@@ -29,7 +29,7 @@ class QueryAttributeDeleteHandlerSpec extends Specification {
 		
 		ConstraintDetailsSingleValue constraintDetailSingleValue = (ConstraintDetailsSingleValue) Constraint.eq(ORIGINAL_ATTRIBUTE_NAME, "someValue")
 		
-		criteria.add(constraintDetailSingleValue)
+		criteria.addAnd(constraintDetailSingleValue)
 		
 		Cache cache = Mock(Cache)
 		QueryCollection queryCollection = new QueryCollection()

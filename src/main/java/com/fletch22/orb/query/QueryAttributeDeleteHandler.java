@@ -27,15 +27,7 @@ public class QueryAttributeDeleteHandler {
 
 			Criteria criteria = queryCollection.get(key);
 			if (criteria.getOrbType().id == orbTypeInternalId) {
-
-				boolean hasQueryBeenDeleted = false;
-				List<LogicalConstraint> logicalConstraintList = criteria.logicalConstraintList;
-				for (LogicalConstraint logicalConstraint : logicalConstraintList) {
-					hasQueryBeenDeleted = handleAttributeDeletion(logicalConstraint, key, attributeName, isDeleteDependencies);
-					if (hasQueryBeenDeleted) {
-						break;
-					}
-				}
+				handleAttributeDeletion(criteria.logicalConstraint, key, attributeName, isDeleteDependencies);
 			}
 		}
 	}
@@ -58,18 +50,15 @@ public class QueryAttributeDeleteHandler {
 	}
 
 	private boolean hasAttribute(LogicalConstraint logicalConstraint, String attributeName) {
-		Constraint[] constraintArray = logicalConstraint.constraint.getConstraints();
+		List<Constraint> constraintList = logicalConstraint.constraintList;
 		boolean hasAttribute = false;
 
-		for (Constraint constraintInner : constraintArray) {
+		for (Constraint constraintInner : constraintList) {
 
 			if (constraintInner instanceof ConstraintDetailsSingleValue) {
 				hasAttribute = hasAttribute((ConstraintDetails) constraintInner, attributeName);
 			} else if (constraintInner instanceof ConstraintDetailsList) {
 				hasAttribute = hasAttribute((ConstraintDetails) constraintInner, attributeName);
-			} else if (constraintInner instanceof ConstraintCollection) {
-				LogicalConstraint logicalConstraintLocal = new LogicalConstraint(logicalConstraint.logicalOperator, constraintInner);
-				hasAttribute = hasAttribute(logicalConstraintLocal, attributeName);
 			} else if (constraintInner instanceof LogicalConstraint) {
 				hasAttribute = hasAttribute((LogicalConstraint) constraintInner, attributeName);
 			}

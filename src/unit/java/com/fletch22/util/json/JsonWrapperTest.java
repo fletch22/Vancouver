@@ -258,7 +258,7 @@ public class JsonWrapperTest {
 		Criteria criteria = criteriaFactory.createInstance(orbType, "foo"); 
 		
 		Constraint constraint = Constraint.eq("bar", "somevalue");
-		criteria.add(constraint);
+		criteria.addAnd(constraint);
 		
 		JsonWrapper jsonWrapper = new JsonWrapper(criteria, gsonFactory);
 		
@@ -271,15 +271,13 @@ public class JsonWrapperTest {
 		
 		logger.info("jsonWrapper: {}", jsonWrapper.toJson());
 		
-		List<LogicalConstraint> logicalConstraintList = reconstituted.logicalConstraintList;
+		LogicalConstraint logicalConstraint = reconstituted.logicalConstraint;
 		
-		assertEquals(logicalConstraintList.size(), 1);
-		
-		LogicalConstraint logicalConstraint = logicalConstraintList.get(0);
+		assertEquals(logicalConstraint.constraintList.size(), 1);
 		
 		assertEquals(logicalConstraint.logicalOperator, LogicalOperator.AND);
 
-		Constraint constraintRecon = logicalConstraint.constraint;
+		Constraint constraintRecon = logicalConstraint.constraintList.get(0);
 		
 		assertTrue(constraintRecon instanceof ConstraintDetailsSingleValue);
 		

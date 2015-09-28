@@ -47,23 +47,7 @@ public class ConstraintGrinder {
 		this.constraintKitchen = (ConstraintKitchen) Fletch22ApplicationContext.getApplicationContext().getBean(ConstraintKitchen.class);
 		this.orbTypeManager = (OrbTypeManager) Fletch22ApplicationContext.getApplicationContext().getBean(OrbTypeManager.class);
 		
-		List<Query<CacheEntry>> queries = new ArrayList<Query<CacheEntry>>();
-		LogicalOperator logicalOperator = LogicalOperator.AND;
-		for (LogicalConstraint logicalConstraint : criteria.logicalConstraintList) {
-			Query<CacheEntry> query = processConstraint(logicalConstraint);
-			queries.add(query);
-			logicalOperator = logicalConstraint.logicalOperator;
-		}
-		
-		if (queries.size() == 1) {
-			query = queries.get(0);
-		} else {
-			if (logicalOperator.equals(LogicalOperator.AND)) {
-				query = and(queries);
-			} else if (logicalOperator.equals(LogicalOperator.OR)) {
-				query = or(queries);
-			}
-		}
+		this.query = processConstraint(criteria.logicalConstraint);
 	}
 	
 	public List<CacheEntry> listCacheEntries() {
@@ -108,19 +92,16 @@ public class ConstraintGrinder {
 	}
 	
 	private Query<CacheEntry> processConstraint(LogicalConstraint logicalConstraint) {
-		Constraint[] constraintArray = logicalConstraint.constraint.getConstraints();
+		List<Constraint> constraintList = logicalConstraint.constraintList;
 		
 		List<Query<CacheEntry>> queries = new ArrayList<Query<CacheEntry>>();
-		for (Constraint constraintInner: constraintArray) {
+		for (Constraint constraintInner: constraintList) {
 			
 			Query<CacheEntry> queryLocal = null;
 			if (constraintInner instanceof ConstraintDetailsSingleValue) {
 				queryLocal = processConstraintDetailsSingleValue((ConstraintDetailsSingleValue) constraintInner);
 			} else if (constraintInner instanceof ConstraintDetailsList) {
 				queryLocal = processConstraintDetailsList((ConstraintDetailsList) constraintInner);
-			} else if (constraintInner instanceof ConstraintCollection) {
-				LogicalConstraint logicalConstraintLocal = new LogicalConstraint(logicalConstraint.logicalOperator, constraintInner);
-				queryLocal = processConstraint(logicalConstraintLocal);
 			} else if (constraintInner instanceof LogicalConstraint) {
 				queryLocal = processConstraint((LogicalConstraint) constraintInner);
 			}
