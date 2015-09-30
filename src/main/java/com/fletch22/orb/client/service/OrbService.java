@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fletch22.orb.Orb;
+import com.fletch22.orb.OrbType;
+import com.fletch22.orb.OrbTypeManager;
 import com.fletch22.orb.TranDateGenerator;
 import com.fletch22.orb.command.orb.AddOrbCommand;
 import com.fletch22.orb.command.orbType.DeleteOrbTypeCommand;
@@ -31,6 +33,9 @@ public class OrbService {
 
 	@Autowired
 	TranDateGenerator tranDateGenerator;
+	
+	@Autowired
+	OrbTypeManager orbTypeManager;
 
 	@Autowired
 	CommandProcessActionPackageFactory commandProcessActionPackageFactory;
@@ -59,5 +64,9 @@ public class OrbService {
 		if (operationResult.opResult.equals(OpResult.FAILURE)) {
 			throw new RuntimeException(operationResult.operationResultException);
 		}
+	}
+
+	public OrbType getOrbTypeByLabel(String typeLabel) {
+		return orbTypeManager.getOrbType(typeLabel);
 	}
 }

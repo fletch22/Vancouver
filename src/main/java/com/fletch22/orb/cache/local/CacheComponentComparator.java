@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fletch22.orb.Orb;
-import com.fletch22.orb.OrbComparator;
+import com.fletch22.orb.OrbComparer;
 import com.fletch22.orb.OrbType;
 import com.fletch22.orb.OrbTypeComparator;
 import com.fletch22.orb.cache.local.OrbCollection.OrbSteamerTrunk;
@@ -19,7 +19,7 @@ public class CacheComponentComparator {
 	OrbTypeComparator orbTypeComparator;
 	
 	@Autowired
-	OrbComparator orbComparator;
+	OrbComparer orbComparator;
 	
 	@Autowired
 	ReferenceCollectionComparator referenceComparatorCollection;

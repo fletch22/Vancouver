@@ -9,7 +9,7 @@ import com.fletch22.orb.cache.local.CacheDifferenceReasons;
 import com.fletch22.orb.cache.local.ComparisonResult;
 
 @Component
-public class OrbComparator {
+public class OrbComparer {
 
 	public ComparisonResult areSame(Orb orb1, Orb orb2) {
 		ComparisonResult comparisonResult = new ComparisonResult();

@@ -75,7 +75,7 @@ class CriteriaSpec extends Specification {
 		when:
 		StopWatch stopWatch = new StopWatch()
 		stopWatch.start()
-		ResultSet resultSet = criteriaGrinder.list();
+		List<Orb> orbList = criteriaGrinder.list();
 		stopWatch.stop()
 		
 		def elapsed = new BigDecimal(stopWatch.nanoTime).divide(new BigDecimal(1000000))
@@ -83,7 +83,7 @@ class CriteriaSpec extends Specification {
 		
 		then:
 		notThrown Exception
-		resultSet.rows.size() > 0
+		orbList.size() > 0
 	}
 	
 	def 'test criteria search or'() {
@@ -96,7 +96,7 @@ class CriteriaSpec extends Specification {
 		when:
 		StopWatch stopWatch = new StopWatch()
 		stopWatch.start()
-		ResultSet resultSet = cache.orbCollection.executeQuery(criteria);
+		List<Orb> orbList = cache.orbCollection.executeQuery(criteria);
 		stopWatch.stop()
 		
 		def elapsed = new BigDecimal(stopWatch.nanoTime).divide(new BigDecimal(1000000))
@@ -104,8 +104,8 @@ class CriteriaSpec extends Specification {
 		
 		then:
 		notThrown Exception
-		resultSet
-		resultSet.rows.size == 110
+		orbList
+		orbList.size == 110
 	}
 	
 	def 'test criteria search collection'() {
@@ -123,7 +123,7 @@ class CriteriaSpec extends Specification {
 		when:
 		StopWatch stopWatch = new StopWatch()
 		stopWatch.start()
-		ResultSet resultSet = cache.orbCollection.executeQuery(criteria);
+		List<Orb> orbList = cache.orbCollection.executeQuery(criteria);
 		stopWatch.stop()
 		
 		def elapsed = new BigDecimal(stopWatch.nanoTime).divide(new BigDecimal(1000000))
@@ -131,8 +131,8 @@ class CriteriaSpec extends Specification {
 		
 		then:
 		notThrown Exception
-		resultSet
-		resultSet.rows.size == 110
+		orbList
+		orbList.size == 110
 	}
 	
 	def 'test criteria search collection using in'() {
@@ -149,7 +149,7 @@ class CriteriaSpec extends Specification {
 		when:
 		StopWatch stopWatch = new StopWatch()
 		stopWatch.start()
-		ResultSet resultSet = cache.orbCollection.executeQuery(criteria);
+		List<Orb> orbList = cache.orbCollection.executeQuery(criteria);
 		stopWatch.stop()
 		
 		def elapsed = new BigDecimal(stopWatch.nanoTime).divide(new BigDecimal(1000000))
@@ -157,8 +157,8 @@ class CriteriaSpec extends Specification {
 		
 		then:
 		notThrown Exception
-		resultSet
-		resultSet.rows.size == 70
+		orbList
+		orbList.size == 70
 	}
 
 	public long loadTestData() {

@@ -103,7 +103,7 @@ class OrbCollectionSpec extends Specification {
 		when:
 		StopWatch stopWatch = new StopWatch()
 		stopWatch.start()
-		ResultSet resultSet = cache.orbCollection.executeQuery(criteria)
+		List<Orb> orbList = cache.orbCollection.executeQuery(criteria)
 		stopWatch.stop()
 		
 		BigDecimal millis = new BigDecimal(stopWatch.nanoTime).divide(new BigDecimal(1000000))
@@ -111,8 +111,8 @@ class OrbCollectionSpec extends Specification {
 		logger.info("Elapsed query time: {}", millis)
 		
 		then:
-		resultSet.size > 0
-		resultSet.size == 40
+		orbList.size > 0
+		orbList.size == 40
 	}
 
 	def testSuccess() {

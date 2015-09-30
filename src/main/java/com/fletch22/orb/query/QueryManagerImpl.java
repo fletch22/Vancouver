@@ -3,6 +3,7 @@ package com.fletch22.orb.query;
 
 import java.util.List;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -125,9 +126,14 @@ public class QueryManagerImpl implements QueryManager {
 	}
 
 	@Override
-	public ResultSet executeQuery(String queryLabel) {
+	public List<Orb> executeQuery(String queryLabel) {
 		
 		Criteria criteria = findQuery(queryLabel);
+		return cache.orbCollection.executeQuery(criteria);
+	}
+	
+	@Override
+	public List<Orb> executeQuery(Criteria criteria) {
 		return cache.orbCollection.executeQuery(criteria);
 	}
 
@@ -147,5 +153,17 @@ public class QueryManagerImpl implements QueryManager {
 			}
 		}
 		return criteria;
+	}
+
+	@Override
+	public Orb findDistinctByAttribute(long orbTypeInternalId, String attributeName, String attributeValueToFind) {
+		
+		OrbType orbType = orbTypeManager.getOrbType(orbTypeInternalId);
+		Criteria criteria = criteriaFactory.createInstance(orbType, "findByAttribute");
+		criteria.addAnd(Constraint.eq(attributeName, attributeValueToFind));
+		
+		throw new NotImplementedException("findDistinctByAttribute");
+//		return executeQuery(criteria).uniqueResult();
+		
 	}
 }

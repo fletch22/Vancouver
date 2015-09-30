@@ -131,4 +131,19 @@ Add executeQuery that returns only one result; if over one throw exception.
 Status: Done.
 
 Cache constructed Grinder. Replace when query updated.
+Status: Not done.
+
+Verify that we should keep checks for LogicalConstraint in methods like 'hasAttribute' in QueryAttributeDeleteHandler.
+Status: Not done.
+
+Add in-orb validation/support for query scan validations.
+Status: Not done.
+
+Add List<Orb> Comparator See QueryManager.findDistinctByAttribute.
+Status: Done.
+
+Change List<Orb> to OrbResultSet and add uniqueResult() method;
+Status: Not done.
+  
+
 

@@ -10,17 +10,20 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fletch22.Fletch22ApplicationContext;
+import com.fletch22.orb.Orb;
+import com.fletch22.orb.OrbType;
 import com.fletch22.orb.OrbTypeManager;
+import com.fletch22.orb.cache.local.Cache;
 import com.fletch22.orb.cache.local.CacheEntry;
+import com.fletch22.orb.cache.local.OrbCollection;
 import com.fletch22.orb.query.CriteriaFactory.Criteria;
 import com.fletch22.orb.query.sort.CriteriaSortInfo;
 import com.fletch22.orb.query.sort.GrinderSortInfo;
-import com.fletch22.orb.query.sort.RowComparator;
+import com.fletch22.orb.query.sort.OrbComparator;
 import com.fletch22.orb.search.GeneratedCacheEntryClassFactory;
 import com.googlecode.cqengine.IndexedCollection;
 import com.googlecode.cqengine.attribute.SimpleNullableAttribute;
@@ -40,12 +43,15 @@ public class ConstraintGrinder {
 
 	private OrbTypeManager orbTypeManager;
 	
+	private OrbCollection orbCollection;
+	
 	public ConstraintGrinder(Criteria criteria, IndexedCollection<CacheEntry> indexedCollection) {
 		this.criteria = criteria;
 		this.indexedCollection = indexedCollection;
 		this.orbTypeInternalId = criteria.getOrbTypeInternalId();
 		this.constraintKitchen = (ConstraintKitchen) Fletch22ApplicationContext.getApplicationContext().getBean(ConstraintKitchen.class);
 		this.orbTypeManager = (OrbTypeManager) Fletch22ApplicationContext.getApplicationContext().getBean(OrbTypeManager.class);
+		this.orbCollection = (OrbCollection) Fletch22ApplicationContext.getApplicationContext().getBean(Cache.class).orbCollection;
 		
 		this.query = processConstraint(criteria.logicalConstraint);
 	}
@@ -62,14 +68,15 @@ public class ConstraintGrinder {
 		return cacheEntryList;
 	}
 	
-	public com.fletch22.orb.query.ResultSet list() {
+	public List<Orb> list() {
 		
 		ResultSet<CacheEntry> resultSetCacheEntries = this.indexedCollection.retrieve(query);
 		
-		com.fletch22.orb.query.ResultSet resultSet = new com.fletch22.orb.query.ResultSet(criteria.getOrbType().customFields);
+		List<Orb> orbList = new ArrayList<Orb>(resultSetCacheEntries.size());
 		
 		for (CacheEntry cacheEntry : resultSetCacheEntries) {
-			resultSet.addRow(cacheEntry.getAttributes());
+			Orb orb = orbCollection.get(cacheEntry.getId());
+			orbList.add(orb);
 		}
 		
 		if (criteria.hasSortCriteria()) {
@@ -84,11 +91,12 @@ public class ConstraintGrinder {
 				grinderSortInfoList.add(grinderSortInfo);
 			}
 			
-			RowComparator rowComparator = new RowComparator(grinderSortInfoList);
-			Collections.sort(resultSet.rows, rowComparator);
+			OrbType orbType = orbTypeManager.getOrbType(this.orbTypeInternalId);
+			OrbComparator rowComparator = new OrbComparator(grinderSortInfoList, orbType);
+			Collections.sort(orbList, rowComparator);
 		}
 		
-		return resultSet;
+		return orbList;
 	}
 	
 	private Query<CacheEntry> processConstraint(LogicalConstraint logicalConstraint) {

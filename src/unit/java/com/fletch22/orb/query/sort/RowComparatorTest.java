@@ -2,19 +2,13 @@ package com.fletch22.orb.query.sort;
 
 import static org.junit.Assert.assertEquals;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.junit.Test;
 
 import com.fletch22.orb.query.ResultSet.Row;
-import com.fletch22.util.RandomUtil;
-import com.fletch22.util.StopWatch;
 
 public class RowComparatorTest {
 

@@ -23,7 +23,7 @@ public class OrbCollection {
 	Logger logger = LoggerFactory.getLogger(OrbCollection.class);
 	
 	public OrbReference orbReference;
-
+	
 	Map<Long, OrbSingleTypesInstanceCollection> allInstances = new HashMap<Long, OrbSingleTypesInstanceCollection>();
 	private Map<Long, OrbSteamerTrunk> quickLookup = new HashMap<Long, OrbSteamerTrunk>();
 	
@@ -44,7 +44,7 @@ public class OrbCollection {
 		quickLookup.put(orb.getOrbInternalId(), orbSteamerTrunk);
 	}
 	
-	public ResultSet executeQuery(Criteria criteria) {
+	public List<Orb> executeQuery(Criteria criteria) {
 		
 		OrbSingleTypesInstanceCollection orbSingleTypesInstanceCollection = allInstances.get(criteria.getOrbTypeInternalId());
 		
