@@ -1,8 +1,10 @@
 package com.fletch22.orb.cache.local;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
+import com.fletch22.Fletch22ApplicationContext;
 import com.fletch22.orb.cache.query.QueryCollection;
 
 @Component
@@ -13,12 +15,16 @@ public class CacheComponentsFactory {
 	
 	public CacheComponentsDto getInstance() {
 		CacheComponentsDto cacheComponentsDto = new CacheComponentsDto();
-		cacheComponentsDto.orbTypeCollection = new OrbTypeCollection();
-		cacheComponentsDto.orbCollection = new OrbCollection();
+		cacheComponentsDto.orbTypeCollection = (OrbTypeCollection) getApplicationContext().getBean(OrbTypeCollection.class);
+		cacheComponentsDto.orbCollection = (OrbCollection) getApplicationContext().getBean(OrbCollection.class); 
 		cacheComponentsDto.orbCollection.orbReference = orbReference;
-		cacheComponentsDto.queryCollection = new QueryCollection();
+		cacheComponentsDto.queryCollection = (QueryCollection) getApplicationContext().getBean(QueryCollection.class);
 		
 		return cacheComponentsDto;
+	}
+	
+	public ApplicationContext getApplicationContext() {
+		return Fletch22ApplicationContext.getApplicationContext();
 	}
 	
 	public CacheComponentsDto getInstance(Cache cache) {

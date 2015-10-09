@@ -13,8 +13,13 @@ import com.fletch22.orb.query.QueryManager;
 @Component
 public class Cache {
 
+	@Autowired
 	public OrbCollection orbCollection;
+	
+	@Autowired
 	public OrbTypeCollection orbTypeCollection;
+	
+	@Autowired
 	public QueryCollection queryCollection;
 	
 	@Autowired
@@ -28,14 +33,6 @@ public class Cache {
 	
 	@Autowired
 	CacheComponentsFactory cacheComponentsFactory;
-	
-	@PostConstruct
-	public void postConstruct() {
-		CacheComponentsDto dto = cacheComponentsFactory.getInstance();
-		orbTypeCollection = dto.orbTypeCollection;
-		orbCollection = dto.orbCollection;
-		queryCollection = dto.queryCollection;
-	}
 	
 	public CacheComponentsDto getCacheComponentsDto() {
 		return cacheComponentsFactory.getInstance(this);

@@ -25,8 +25,8 @@ import com.fletch22.orb.client.service.BeginTransactionService
 import com.fletch22.orb.client.service.RollbackTransactionService
 import com.fletch22.orb.command.orbType.dto.AddOrbDto
 import com.fletch22.orb.command.orbType.dto.AddOrbTypeDto
+import com.fletch22.orb.query.OrbResultSet
 import com.fletch22.orb.query.QueryManager
-import com.fletch22.orb.query.ResultSet
 import com.fletch22.orb.query.CriteriaFactory.Criteria
 import com.fletch22.orb.query.sort.CriteriaSortInfo
 import com.fletch22.orb.query.sort.SortInfo.SortDirection
@@ -103,7 +103,7 @@ class OrbCollectionSpec extends Specification {
 		when:
 		StopWatch stopWatch = new StopWatch()
 		stopWatch.start()
-		List<Orb> orbList = cache.orbCollection.executeQuery(criteria)
+		OrbResultSet orbResultSet = cache.orbCollection.executeQuery(criteria)
 		stopWatch.stop()
 		
 		BigDecimal millis = new BigDecimal(stopWatch.nanoTime).divide(new BigDecimal(1000000))
@@ -111,8 +111,8 @@ class OrbCollectionSpec extends Specification {
 		logger.info("Elapsed query time: {}", millis)
 		
 		then:
-		orbList.size > 0
-		orbList.size == 40
+		orbResultSet.getOrbList().size > 0
+		orbResultSet.getOrbList().size == 40
 	}
 
 	def testSuccess() {

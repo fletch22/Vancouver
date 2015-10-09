@@ -1,7 +1,5 @@
 package com.fletch22.orb.query;
 
-import java.util.List;
-
 import com.fletch22.orb.Orb;
 import com.fletch22.orb.query.CriteriaFactory.Criteria;
 
@@ -22,13 +20,13 @@ public interface QueryManager {
 	
 	public Criteria get(long orbInternalIdQuery);
 	
-	public List<Orb> executeQuery(String queryLabel);
+	public OrbResultSet executeQuery(String queryLabel);
 	
-	public List<Orb> executeQuery(Criteria criteria);
+	public OrbResultSet executeQuery(Criteria criteria);
 	
 	public void handleAttributeRename(long orbTypeInternalId, String attributeOldName, String attributeNewName);
 
 	public void handleAttributeDeletion(long orbTypeInternalId, String attributeName, boolean isDeleteQueryIfAttributeFound);
 	
-	public Orb findDistinctByAttribute(long orbTypeInternalId, String attributeName, String attributeValueToFind);
+	public OrbResultSet findByAttribute(long orbTypeInternalId, String attributeName, String attributeValueToFind);
 }

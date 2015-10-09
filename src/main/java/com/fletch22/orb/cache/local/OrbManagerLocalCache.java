@@ -63,7 +63,7 @@ public class OrbManagerLocalCache implements OrbManager {
 
 	@Override
 	@Loggable4Event
-	public void createOrb(Orb orb) {
+	public Orb createOrb(Orb orb) {
 
 		if (orb.getOrbInternalId() == Orb.INTERNAL_ID_UNSET) {
 			orb.setOrbInternalId(this.internalIdGenerator.getNewId());
@@ -77,6 +77,8 @@ public class OrbManagerLocalCache implements OrbManager {
 
 		Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
 		deleteOrb(orb.getOrbInternalId(), true);
+		
+		return orb;
 	}
 
 	@Override

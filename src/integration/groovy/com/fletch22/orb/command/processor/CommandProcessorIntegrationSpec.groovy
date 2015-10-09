@@ -14,14 +14,12 @@ import spock.lang.Specification
 import com.fletch22.orb.IntegrationSystemInitializer
 import com.fletch22.orb.IntegrationTests
 import com.fletch22.orb.OrbType
-import com.fletch22.orb.client.service.OrbTypeService;
+import com.fletch22.orb.OrbTypeManager
+import com.fletch22.orb.client.service.OrbTypeService
 import com.fletch22.orb.command.CommandBundle
 import com.fletch22.orb.command.orb.AddOrbCommand
 import com.fletch22.orb.command.orbType.AddOrbTypeCommand
 import com.fletch22.orb.command.orbType.GetListOfOrbTypesCommand
-import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory
-import com.fletch22.orb.command.processor.CommandProcessor
-import com.fletch22.orb.command.processor.OperationResult
 import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory.CommandProcessActionPackage
 import com.fletch22.orb.command.processor.OperationResult.OpResult
 import com.fletch22.orb.command.transaction.BeginTransactionCommand
@@ -63,6 +61,9 @@ class CommandProcessorIntegrationSpec extends Specification {
 	
 	@Autowired
 	OrbTypeService orbTypeService
+	
+	@Autowired
+	OrbTypeManager orbTypeManager
 	
 	def setup() {
 		initializer.nukeAndPaveAllIntegratedSystems();
@@ -109,7 +110,7 @@ class CommandProcessorIntegrationSpec extends Specification {
 		def commandProcessActionPackage = this.commandProcessActionPackageFactory.getInstance(commandBundle.toJson());
 		
 		when:
-		this.commandProcessor.processAction(commandProcessActionPackage)
+		OperationResult operationResult = this.commandProcessor.processAction(commandProcessActionPackage)
 		
 		then:
 		commandProcessActionPackage.undoActionBundle
@@ -124,9 +125,11 @@ class CommandProcessorIntegrationSpec extends Specification {
 		
 		def orbTypeName1 = 'foo1'
 		
+		long orbTypeInternalId = orbTypeManager.createOrbType("foo", null)
+		
 		CommandBundle commandBundle = new CommandBundle()
-		def jsonAddOrbTypeCommand = this.addOrbTypeCommand.toJson(orbTypeName1)
-		commandBundle.addCommand(jsonAddOrbTypeCommand)
+		def jsonAddOrbCommand = this.addOrbCommand.toJson(orbTypeInternalId)
+		commandBundle.addCommand(jsonAddOrbCommand)
 		commandBundle.addCommand(new StringBuilder('{\"AllOfYourPieces\": \"Ridonculous command\"}'))
 		
 		def commandProcessActionPackage = this.commandProcessActionPackageFactory.getInstance(commandBundle.toJson())

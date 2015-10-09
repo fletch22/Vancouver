@@ -9,6 +9,9 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import com.fletch22.orb.Orb;
 import com.fletch22.orb.OrbType;
@@ -16,12 +19,15 @@ import com.fletch22.orb.cache.local.OrbReference.AttributeArrows;
 import com.fletch22.orb.cache.local.OrbReference.DecomposedKey;
 import com.fletch22.orb.query.ConstraintGrinder;
 import com.fletch22.orb.query.CriteriaFactory.Criteria;
-import com.fletch22.orb.query.ResultSet;
+import com.fletch22.orb.query.OrbResultSet;
 
+@Component
+@Scope("prototype")
 public class OrbCollection {
 	
 	Logger logger = LoggerFactory.getLogger(OrbCollection.class);
 	
+	@Autowired
 	public OrbReference orbReference;
 	
 	Map<Long, OrbSingleTypesInstanceCollection> allInstances = new HashMap<Long, OrbSingleTypesInstanceCollection>();
@@ -37,20 +43,31 @@ public class OrbCollection {
 		}
 		
 		ArrayList<String> fields = getPropertyValuesInOrder(orbType, orb);
+
 		CacheEntry cacheEntry = orbSingleTypesInstanceCollection.addInstance(orb.getOrbInternalId(), null, orb.getTranDate(), fields);
 		
 		OrbSteamerTrunk orbSteamerTrunk = new OrbSteamerTrunk(orb, cacheEntry);
 		
 		quickLookup.put(orb.getOrbInternalId(), orbSteamerTrunk);
+		
+		for (String attributeName: fields) {
+			setAttribute(orb.getOrbInternalId(),  attributeName, orb.getUserDefinedProperties().get(attributeName));
+		}
 	}
 	
-	public List<Orb> executeQuery(Criteria criteria) {
+	public OrbResultSet executeQuery(Criteria criteria) {
 		
 		OrbSingleTypesInstanceCollection orbSingleTypesInstanceCollection = allInstances.get(criteria.getOrbTypeInternalId());
 		
-		ConstraintGrinder criteriaGrinder = new ConstraintGrinder(criteria, orbSingleTypesInstanceCollection.instances);
+		OrbResultSet orbResultSet = null;
+		if (orbSingleTypesInstanceCollection == null) {
+			orbResultSet = new OrbResultSet();
+		} else {
+			ConstraintGrinder criteriaGrinder = new ConstraintGrinder(criteria, orbSingleTypesInstanceCollection.instances);
+			orbResultSet = criteriaGrinder.list();
+		}
 		
-		return criteriaGrinder.list();
+		return orbResultSet;
 	}
 	
 	private ArrayList<String> getPropertyValuesInOrder(OrbType orbType, Orb orb) {

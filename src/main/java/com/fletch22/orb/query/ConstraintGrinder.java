@@ -68,7 +68,7 @@ public class ConstraintGrinder {
 		return cacheEntryList;
 	}
 	
-	public List<Orb> list() {
+	public OrbResultSet list() {
 		
 		ResultSet<CacheEntry> resultSetCacheEntries = this.indexedCollection.retrieve(query);
 		
@@ -96,7 +96,7 @@ public class ConstraintGrinder {
 			Collections.sort(orbList, rowComparator);
 		}
 		
-		return orbList;
+		return new OrbResultSet(orbList);
 	}
 	
 	private Query<CacheEntry> processConstraint(LogicalConstraint logicalConstraint) {

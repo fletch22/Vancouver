@@ -110,7 +110,7 @@ class OrbManagerLocalCacheSpec extends Specification {
 		orbManager.setAttribute(orb.getOrbInternalId(), attributeName, "bar")
 
 		when:
-		orbManager.deleteOrb(orb.orbInternalId)
+		orbManager.deleteOrb(orb.orbInternalId, true)
 
 		then:
 		!orbManager.doesOrbExist(orb.orbInternalId);
@@ -135,7 +135,7 @@ class OrbManagerLocalCacheSpec extends Specification {
 		Orb orb = orbManager.createOrb(orbTypeInternalId, tranDateGenerator.getTranDate())
 		orbManager.setAttribute(orb.getOrbInternalId(), attributeName, referenceValue)
 		
-		orbManager.deleteOrb(orb.orbInternalId)
+		orbManager.deleteOrb(orb.orbInternalId, true)
 		
 		rollbackTransactionService.rollbackToSpecificTransaction(tranDate)
 		

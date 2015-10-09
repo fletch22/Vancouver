@@ -9,7 +9,7 @@ import com.fletch22.util.json.MapLongString;
 
 public interface OrbManager {
 	
-	public void createOrb(Orb orb);
+	public Orb createOrb(Orb orb);
 	
 	public Orb createOrb(long orbTypeInternalId);
 	

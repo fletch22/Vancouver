@@ -118,7 +118,6 @@ class CommandProcessorSpec extends Specification {
 		commandTypeClazz 				| actionVerb
 		BeginTransactionCommand.class 	| CommandExpressor.BEGIN_TRANSACTION
 		AddOrbTypeCommand.class			| CommandExpressor.ADD_ORB_TYPE
-		DeleteOrbTypeCommand.class		| CommandExpressor.REMOVE_ORB_TYPE
 	}
 	
 	@Test

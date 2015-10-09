@@ -171,7 +171,7 @@ class OrbTypeManagerLocalCacheSpec extends Specification {
 		
 		Criteria criteria = queryManager.get(orbInternalIdQuery)
 		criteria
-		ConstraintDetailsSingleValue constraintDetailSingleValue = (ConstraintDetailsSingleValue) criteria.logicalConstraintsList.get(0).constraint
+		ConstraintDetailsSingleValue constraintDetailSingleValue = (ConstraintDetailsSingleValue) criteria.logicalConstraint.constraintList.get(0)
 		constraintDetailSingleValue
 		constraintDetailSingleValue.attributeName == attributeNameNew
 	}

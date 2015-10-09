@@ -1,5 +1,7 @@
 package com.fletch22.orb.transaction;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,6 +16,8 @@ import com.fletch22.orb.rollback.UndoActionBundle;
 @Component
 public class UndoService {
 	
+	static Logger logger = LoggerFactory.getLogger(UndoService.class);
+	
 	@Autowired
 	CommandProcessor commandProcessor;
 	
@@ -25,12 +29,14 @@ public class UndoService {
 		while (!undoActionBundle.getActions().empty()) {
 			UndoAction undoAction = undoActionBundle.getActions().pop();
 			
+			logger.info("Action: {}", undoAction.action);
+			
 			CommandProcessActionPackage commandProcessActionPackage = commandProcessActionPackageFactory.getInstanceForRestoreMode(undoAction.action, undoAction.tranDate);
 			
 			OperationResult operationResult = this.commandProcessor.executeAction(commandProcessActionPackage);
 			
 			if (operationResult.opResult == OpResult.FAILURE) {
-				throw new RuntimeException("Encountered problem while trying to undo actions. Log and Cache are out of sync. Consider rolling back or re-initing from full log.");
+				throw new RuntimeException("Encountered problem while trying to undo actions. Log and Cache are out of sync. Consider rolling back or re-initing from full log.", operationResult.operationResultException);
 			}
 		}
 	}

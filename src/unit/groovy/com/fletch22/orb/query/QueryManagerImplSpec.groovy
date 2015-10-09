@@ -56,5 +56,4 @@ class QueryManagerImplSpec extends Specification {
 		orb.getUserDefinedProperties().put(SystemType.QUERY_INSTANCE_ATTRIBUTE_LABEL, label);
 		orbList.add(orb)
 	}
-
 }

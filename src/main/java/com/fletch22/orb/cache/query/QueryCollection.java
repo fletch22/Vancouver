@@ -4,8 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
 import com.fletch22.orb.query.CriteriaFactory.Criteria;
 
+@Component
+@Scope("prototype")
 public class QueryCollection {
 
 	private Map<Long, Criteria> queries = new HashMap<Long, Criteria>();
