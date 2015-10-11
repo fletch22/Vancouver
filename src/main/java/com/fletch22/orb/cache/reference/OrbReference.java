@@ -131,7 +131,7 @@ public class OrbReference {
 	}
 
 	public Map<Long, AttributeArrows> getArrowsPointingAtTarget(Orb orb) {
-		return referenceCollection.getArrowsPointingAtTarget(orb.getOrbInternalId());
+		return referenceCollection.getAttributeReferencesPointingAtTarget(orb.getOrbInternalId());
 	}
 
 	public void ensureOrbsArrowsRemoved(Orb orb) {

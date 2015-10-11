@@ -54,7 +54,7 @@ public class ReferenceCollection {
 		attributeReferenceCollection.removeTarget(orbTargetInternalId, attributeNameTarget);
 	}
 	
-	public void renameAttribute(long orbInternalId, String attributeNameOld, String attributeNameNew) {
+	public void renameAttributeReference(long orbInternalId, String attributeNameOld, String attributeNameNew) {
 		attributeReferenceCollection.renameAttribute(orbInternalId, attributeNameOld, attributeNameNew);
 	}
 
@@ -62,7 +62,7 @@ public class ReferenceCollection {
 		attributeReferenceCollection.targetLineups.clear();
 	}
 	
-	public Map<Long, AttributeArrows> getArrowsPointingAtTarget(long orbInternalIdTarget) {
+	public Map<Long, AttributeArrows> getAttributeReferencesPointingAtTarget(long orbInternalIdTarget) {
 		return attributeReferenceCollection.getArrowsPointingAtTarget(orbInternalIdTarget);
 	}
 

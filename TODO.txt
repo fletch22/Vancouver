@@ -145,10 +145,11 @@ Status: Done.
 Add uniqueResult() to criteria;
 Status: Not done.
 
-Add index initializer in initialization method;
+Add index initializer in initialization method for each designer object.
 Status: Not done.
 
 Test putting logging and rollback into before and after methods;
 Status: Not done.
 
-
+When resetting reference to orb, do not set to null - remove from list if ref value is multi-ref list.
+Status: Not done.

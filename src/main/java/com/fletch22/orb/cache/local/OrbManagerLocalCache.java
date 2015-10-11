@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -238,13 +238,15 @@ public class OrbManagerLocalCache implements OrbManager {
 	public void resetAllReferencesPointingToOrb(Orb orb) {
 		
 		OrbCollection orbCollection = cache.orbCollection;
-		Map<Long, List<String>> attributeReferenceMap = orbCollection.getReferencesToOrb(orb);
+		Map<Long, List<String>> attributeReferenceMap = orbCollection.getAttributeReferencesToOrb(orb);
 
 		Set<Long> orbInternalIdSet = attributeReferenceMap.keySet();
 		for (long orbInternalId : orbInternalIdSet) {
 			List<String> attributeNameList = attributeReferenceMap.get(orbInternalId);
 			for (String attributeArrow: attributeNameList) {
 				setAttribute(orbInternalId, attributeArrow, null);
+				
+				throw new NotImplementedException("Should not use set attribute here. Should remove reference from ref list.");
 			}
 		}
 	}

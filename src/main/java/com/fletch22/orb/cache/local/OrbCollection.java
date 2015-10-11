@@ -106,7 +106,7 @@ public class OrbCollection {
 		return orbSteamerTrunk;
 	}
 	
-	public Map<Long, List<String>> getReferencesToOrb(Orb orb) {
+	public Map<Long, List<String>> getAttributeReferencesToOrb(Orb orb) {
 		Map<Long, AttributeArrows> arrows = orbReference.getArrowsPointingAtTarget(orb);
 		
 		Map<Long, List<String>> attributeMap = new HashMap<Long, List<String>>();
@@ -298,7 +298,7 @@ public class OrbCollection {
 			
 			OrbSteamerTrunk trunk = quickLookup.get(cacheEntry.id);
 			Orb orb = trunk.orb;
-			orbReference.referenceCollection.renameAttribute(orb.getOrbInternalId(), attributeNameOld, attributeNameNew);
+			orbReference.referenceCollection.renameAttributeReference(orb.getOrbInternalId(), attributeNameOld, attributeNameNew);
 			
 			LinkedHashMap<String, String> linkedHashMap = orb.getUserDefinedProperties();
 			String value = linkedHashMap.remove(attributeNameOld);
