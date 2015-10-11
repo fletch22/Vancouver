@@ -1,4 +1,4 @@
-package com.fletch22.orb.cache.local;
+package com.fletch22.orb.cache.reference;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,9 +16,7 @@ import org.springframework.stereotype.Component;
 
 import com.fletch22.orb.Orb;
 import com.fletch22.orb.OrbManager;
-import com.fletch22.orb.cache.local.ReferenceCollection.ArrowCluster;
-import com.fletch22.orb.cache.local.ReferenceCollection.Target;
-import com.fletch22.orb.cache.local.ReferenceCollection.TargetLineup;
+import com.fletch22.orb.cache.local.AttributeArrows;
 
 @Component
 @Scope("prototype")
@@ -27,7 +25,7 @@ public class OrbReference {
 	private static final char REFERENCE_SEPARATOR = ',';
 
 	@Autowired
-	ReferenceCollection referenceCollection;
+	public ReferenceCollection referenceCollection;
 	
 	@Autowired
 	OrbManager orbManager;
@@ -54,31 +52,31 @@ public class OrbReference {
 		referenceCollection.removeArrows(orbInternalId, nameValuesMap);
 	}
 	
-	public String removeReferenceFromAttributeValue(String attributeValue, String composedReference) {
-		Set<String> references = getComposedKeys(attributeValue);
-		references.remove(composedReference);
-		
-		return StringUtils.join(references, REFERENCE_SEPARATOR);
-	}
+//	public String removeReferenceFromAttributeValue(String attributeValue, String composedReference) {
+//		Set<String> references = getComposedKeys(attributeValue);
+//		references.remove(composedReference);
+//		
+//		return StringUtils.join(references, REFERENCE_SEPARATOR);
+//	}
+//	
+//	public void addReferenceToAttributeValue(String attributeValue, String composedReference) {
+//		Set<String> references = getComposedKeys(attributeValue);
+//		references.add(composedReference);
+//	}
 	
-	public void addReferenceToAttributeValue(String attributeValue, String composedReference) {
-		Set<String> references = getComposedKeys(attributeValue);
-		references.add(composedReference);
-	}
-	
-	public String addReference(long orbInternalIdArrow, String attributeNameArrow, String oldValue, long orbInternalIdTarget, String attributeNameTarget) {
-		Set<String> references = getComposedKeys(oldValue);
-		
-		String composedReference = composeReference(orbInternalIdTarget, attributeNameTarget);
-		
-		if (!references.contains(composedReference)) {
-			references.add(composedReference);
-			referenceCollection.addReference(orbInternalIdArrow, attributeNameArrow, orbInternalIdTarget, attributeNameTarget);
-			oldValue = oldValue + String.valueOf(REFERENCE_SEPARATOR) + composedReference;
-		}
-		
-		return oldValue;
-	}
+//	public String addReference(long orbInternalIdArrow, String attributeNameArrow, String oldValue, long orbInternalIdTarget, String attributeNameTarget) {
+//		Set<String> references = getComposedKeys(oldValue);
+//		
+//		String composedReference = composeReference(orbInternalIdTarget, attributeNameTarget);
+//		
+//		if (!references.contains(composedReference)) {
+//			references.add(composedReference);
+//			referenceCollection.addReference(orbInternalIdArrow, attributeNameArrow, orbInternalIdTarget, attributeNameTarget);
+//			oldValue = oldValue + String.valueOf(REFERENCE_SEPARATOR) + composedReference;
+//		}
+//		
+//		return oldValue;
+//	}
 	
 	public boolean isValueAReference(String attributeValue) {
 		return (attributeValue == null ? false: attributeValue.startsWith(ReferenceCollection.REFERENCE_KEY_PREFIX));
@@ -112,11 +110,6 @@ public class OrbReference {
 		return key;
 	}
 
-	public static class DecomposedKey {
-		public long orbInternalId;
-		public String attributeName;
-	}
-
 	public void removeArrowsFromIndex(long orbInternalId, String attributeName, String value) {
 		
 		List<DecomposedKey> keys = convertToDecomposedKeys(value);
@@ -138,37 +131,7 @@ public class OrbReference {
 	}
 
 	public Map<Long, AttributeArrows> getArrowsPointingAtTarget(Orb orb) {
-		Map<Long, AttributeArrows> attributeArrowMap = new HashMap<Long, AttributeArrows>();
-
-		TargetLineup targetLineup = this.referenceCollection.targetLineups.get(orb.getOrbInternalId());
-		
-		if (targetLineup != null) {
-			Set<String> targetKeys = targetLineup.targets.keySet();
-			
-			for (String attributeName: targetKeys) {
-				Target target = targetLineup.targets.get(attributeName);
-				if (target != null) {
-					
-					LinkedHashMap<Long, ArrowCluster> arrowClusterCollection = target.arrowClusterCollection;
-					Set<Long> arrowKeys = arrowClusterCollection.keySet();
-					for (long arrow: arrowKeys) {
-						
-						ArrowCluster arrowCluster = arrowClusterCollection.get(arrow);
-						for (String arrowAttribute : arrowCluster.arrows) {
-						
-							AttributeArrows attributeArrows = attributeArrowMap.get(arrow);
-							if (attributeArrows == null) {
-								attributeArrows = new AttributeArrows();
-								attributeArrowMap.put(arrow, attributeArrows);
-							}
-							attributeArrows.attributesContainingArrows.add(arrowAttribute);
-						}
-					}
-				}
-			}
-		}
-		
-		return attributeArrowMap;
+		return referenceCollection.getArrowsPointingAtTarget(orb.getOrbInternalId());
 	}
 
 	public void ensureOrbsArrowsRemoved(Orb orb) {
@@ -179,10 +142,6 @@ public class OrbReference {
 				removeArrowsFromIndex(orb.getOrbInternalId(), attributeName, value);
 			}
 		}
-	}
-	
-	public static class AttributeArrows {
-		public List<String> attributesContainingArrows;
 	}
 
 	public void clear() {

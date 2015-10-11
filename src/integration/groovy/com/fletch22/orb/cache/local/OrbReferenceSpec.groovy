@@ -4,6 +4,8 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import com.fletch22.orb.cache.reference.OrbReference;
+
 import spock.lang.Specification;
 
 class OrbReferenceSpec extends Specification {

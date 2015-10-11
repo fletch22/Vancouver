@@ -22,7 +22,6 @@ import com.fletch22.orb.OrbManager;
 import com.fletch22.orb.OrbType;
 import com.fletch22.orb.OrbTypeManager;
 import com.fletch22.orb.TranDateGenerator;
-import com.fletch22.orb.cache.local.OrbReference.AttributeArrows;
 import com.fletch22.orb.command.orb.DeleteOrbCommand;
 import com.fletch22.orb.command.orbType.dto.AddOrbDto;
 import com.fletch22.orb.dependency.DependencyHandler;
@@ -239,13 +238,13 @@ public class OrbManagerLocalCache implements OrbManager {
 	public void resetAllReferencesPointingToOrb(Orb orb) {
 		
 		OrbCollection orbCollection = cache.orbCollection;
-		Map<Long, AttributeArrows> attributeArrowsCollection = orbCollection.getReferencesToOrb(orb);
+		Map<Long, List<String>> attributeReferenceMap = orbCollection.getReferencesToOrb(orb);
 
-		Set<Long> orbInternalIdArrowSet = attributeArrowsCollection.keySet();
-		for (long orbInternalIdArrow : orbInternalIdArrowSet) {
-			AttributeArrows attributeArrows = attributeArrowsCollection.get(orbInternalIdArrow);
-			for (String attributeArrow: attributeArrows.attributesContainingArrows) {
-				setAttribute(orbInternalIdArrow, attributeArrow, null);
+		Set<Long> orbInternalIdSet = attributeReferenceMap.keySet();
+		for (long orbInternalId : orbInternalIdSet) {
+			List<String> attributeNameList = attributeReferenceMap.get(orbInternalId);
+			for (String attributeArrow: attributeNameList) {
+				setAttribute(orbInternalId, attributeArrow, null);
 			}
 		}
 	}
@@ -290,25 +289,25 @@ public class OrbManagerLocalCache implements OrbManager {
 		}
 	}
 
-	public void addReference(long orbInternalIdArrow, String attributeNameArrow, long orbInternalIdTarget, String attributeNameTarget) {
-
-		Orb orb = cache.orbCollection.get(orbInternalIdArrow);
-
-		String oldValue = orb.getUserDefinedProperties().get(attributeNameArrow);
-
-		if (StringUtils.isEmpty(oldValue) || cache.orbCollection.orbReference.isValueAReference(oldValue)) {
-			String newValue = cache.orbCollection.orbReference.addReference(orbInternalIdArrow, attributeNameArrow, oldValue, orbInternalIdTarget, attributeNameTarget);
-
-			if (!oldValue.equals(newValue)) {
-				orb.getUserDefinedProperties().put(attributeNameArrow, newValue);
-
-				Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
-				setAttribute(orbInternalIdArrow, attributeNameArrow, oldValue);
-			}
-		} else {
-			throw new RuntimeException(String.valueOf(orbInternalIdArrow) + "'s original value '" + oldValue + "' is not a reference.");
-		}
-	}
+//	public void addReference(long orbInternalIdArrow, String attributeNameArrow, long orbInternalIdTarget, String attributeNameTarget) {
+//
+//		Orb orb = cache.orbCollection.get(orbInternalIdArrow);
+//
+//		String oldValue = orb.getUserDefinedProperties().get(attributeNameArrow);
+//
+//		if (StringUtils.isEmpty(oldValue) || cache.orbCollection.orbReference.isValueAReference(oldValue)) {
+//			String newValue = cache.orbCollection.orbReference.addReference(orbInternalIdArrow, attributeNameArrow, oldValue, orbInternalIdTarget, attributeNameTarget);
+//
+//			if (!oldValue.equals(newValue)) {
+//				orb.getUserDefinedProperties().put(attributeNameArrow, newValue);
+//
+//				Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
+//				setAttribute(orbInternalIdArrow, attributeNameArrow, oldValue);
+//			}
+//		} else {
+//			throw new RuntimeException(String.valueOf(orbInternalIdArrow) + "'s original value '" + oldValue + "' is not a reference.");
+//		}
+//	}
 
 	private boolean areEqualAttributes(String value1, String value2) {
 		return (value1 == null ? value2 == null : value1.equals(value2));

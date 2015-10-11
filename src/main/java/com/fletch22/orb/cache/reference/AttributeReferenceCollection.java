@@ -1,6 +1,6 @@
-package com.fletch22.orb.cache.local;
+package com.fletch22.orb.cache.reference;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,18 +11,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import com.fletch22.orb.cache.local.OrbReference.DecomposedKey;
+import com.fletch22.orb.cache.local.AttributeArrows;
 
 @Component
 @Scope("prototype")
-public class ReferenceCollection {
-	
-	Logger logger = LoggerFactory.getLogger(ReferenceCollection.class);
+public class AttributeReferenceCollection {
 
-	public static final String REFERENCE_KEY_PREFIX = "^^^";
-	public static final String ID_ATTRIBUTE_NAME_SEPARATOR = "^";
-	
-	Map<Long, TargetLineup> targetLineups = new LinkedHashMap<Long, TargetLineup>();
+public Map<Long, TargetLineup> targetLineups = new LinkedHashMap<Long, TargetLineup>();
+
+	static Logger logger = LoggerFactory.getLogger(AttributeReferenceCollection.class);
 	
 	public void addReferences(long orbInternalId, String attributeName, List<DecomposedKey> keys) {
 		for (DecomposedKey key: keys) {
@@ -56,7 +53,7 @@ public class ReferenceCollection {
 		}
 	}
 	
-	public int countArrows() {
+	protected int countArrows() {
 		
 		int count = 0;
 		Set<Long> targetLineupSet = targetLineups.keySet();
@@ -78,7 +75,7 @@ public class ReferenceCollection {
 		return count;
 	}
 	
-	public int countArrowsPointingToTarget(long orbInternalIdTarget, String attributeName) {
+	protected int countArrowsPointingToTarget(long orbInternalIdTarget, String attributeName) {
 		
 		int count = 0;
 		TargetLineup targetLineup = targetLineups.get(orbInternalIdTarget);
@@ -97,31 +94,35 @@ public class ReferenceCollection {
 		return count;
 	}
 	
-	public Map<Long, ArrowCluster> getArrowsPointingAtTarget(long orbTargetInternalId, String attributeName) {
-		LinkedHashMap<Long, ArrowCluster> arrowClusterMap = new LinkedHashMap<Long, ArrowCluster>();
-		
-		TargetLineup targetLineup = targetLineups.get(orbTargetInternalId);
-		
-		if (targetLineup != null) {
-			Target target = targetLineup.targets.get(attributeName);
-			if (target != null) {
-				arrowClusterMap = target.arrowClusterCollection;
-			}
-		}
-		
-		return arrowClusterMap;
-	}
+//	public Map<Long, ArrowCluster> getArrowsPointingAtTarget(long orbTargetInternalId, String attributeName) {
+//		LinkedHashMap<Long, ArrowCluster> arrowClusterMap = new LinkedHashMap<Long, ArrowCluster>();
+//		
+//		TargetLineup targetLineup = targetLineups.get(orbTargetInternalId);
+//		
+//		if (targetLineup != null) {
+//			Target target = targetLineup.targets.get(attributeName);
+//			if (target != null) {
+//				arrowClusterMap = target.arrowClusterCollection;
+//			}
+//		}
+//		
+//		return arrowClusterMap;
+//	}
 	
 	public void removeArrows(long orbInternalIdArrow, String attributeNameArrow, List<DecomposedKey> keys) {
 		for (DecomposedKey key: keys) {
-			removeArrows(orbInternalIdArrow, attributeNameArrow, key);
+			removeArrowsFromAttributeRefs(orbInternalIdArrow, attributeNameArrow, key);
 		}
 	}
 
-	public void removeArrows(long orbInternalIdArrow, String attributeNameArrow, DecomposedKey decomposedKey) {
+	private void removeArrowsFromAttributeRefs(long orbInternalIdArrow, String attributeNameArrow, DecomposedKey decomposedKey) {
 		TargetLineup targetLineup = targetLineups.get(decomposedKey.orbInternalId);
 		
 		removeArrowFromLineup(targetLineup, orbInternalIdArrow, attributeNameArrow, decomposedKey);
+		
+		if (targetLineup != null && targetLineup.targets.size() == 0) {
+			targetLineups.remove(decomposedKey.orbInternalId);
+		}
 	}
 	
 	private void removeArrowFromLineup(TargetLineup targetLineup, long orbInternalIdArrow, String attributeNameArrow, DecomposedKey decomposedKey) {
@@ -129,6 +130,9 @@ public class ReferenceCollection {
 			Target target = targetLineup.targets.get(decomposedKey.attributeName);
 			if (target != null) {
 				removeArrowFromTarget(target, orbInternalIdArrow, attributeNameArrow);
+				if (target.arrowClusterCollection.size() == 0) {
+					targetLineup.targets.remove(decomposedKey.attributeName);
+				}
 			}
 		}
 	}
@@ -137,16 +141,19 @@ public class ReferenceCollection {
 		ArrowCluster arrowCluster = target.arrowClusterCollection.get(orbInternalIdArrow);
 		if (arrowCluster != null) {
 			arrowCluster.arrows.remove(attributeNameArrow);
+			if (arrowCluster.arrows.size() == 0) {
+				target.arrowClusterCollection.remove(orbInternalIdArrow);
+			}
 		}
 	}
 	
-	public void removeArrows(long orbInternalId, Map<String, List<DecomposedKey>> namesToValues) {
+	public void removeArrows(long orbInternalId, Map<String, List<DecomposedKey>> namesToValuesMap) {
 		
-		Set<String> attributeNameArrowSet = namesToValues.keySet();
+		Set<String> attributeNameArrowSet = namesToValuesMap.keySet();
 		for (String attributeNameArrow : attributeNameArrowSet) {
-			List<DecomposedKey> list = namesToValues.get(attributeNameArrow);
+			List<DecomposedKey> list = namesToValuesMap.get(attributeNameArrow);
 			for (DecomposedKey decomposedKey : list) {
-				removeArrows(orbInternalId, attributeNameArrow, decomposedKey);
+				removeArrowsFromAttributeRefs(orbInternalId, attributeNameArrow, decomposedKey);
 			}
 		}
 	}
@@ -162,18 +169,6 @@ public class ReferenceCollection {
 		}
 	}
 	
-	public static class TargetLineup {
-		public LinkedHashMap<String, Target> targets = new LinkedHashMap<String, Target>();	
-	}
-	
-	public static class Target {
-		public LinkedHashMap<Long, ArrowCluster> arrowClusterCollection = new LinkedHashMap<Long, ArrowCluster>();
-	}
-	
-	public static class ArrowCluster {
-		public List<String> arrows = new ArrayList<String>();
-	}
-
 	public void renameAttribute(long orbInternalId, String attributeNameOld, String attributeNameNew) {
 		renameTargets(orbInternalId, attributeNameOld, attributeNameNew);
 		renameArrows(orbInternalId, attributeNameOld, attributeNameNew);
@@ -221,6 +216,40 @@ public class ReferenceCollection {
 
 	public void clear() {
 		targetLineups.clear();
+	}
+	
+	public Map<Long, AttributeArrows> getArrowsPointingAtTarget(long orbInternalIdTarget) {
+		Map<Long, AttributeArrows> attributeArrowMap = new HashMap<Long, AttributeArrows>();
+
+		TargetLineup targetLineup = this.targetLineups.get(orbInternalIdTarget);
+		
+		if (targetLineup != null) {
+			Set<String> targetKeys = targetLineup.targets.keySet();
+			
+			for (String attributeName: targetKeys) {
+				Target target = targetLineup.targets.get(attributeName);
+				if (target != null) {
+					
+					LinkedHashMap<Long, ArrowCluster> arrowClusterCollection = target.arrowClusterCollection;
+					Set<Long> arrowSet = arrowClusterCollection.keySet();
+					for (long arrow: arrowSet) {
+						
+						ArrowCluster arrowCluster = arrowClusterCollection.get(arrow);
+						for (String arrowAttribute : arrowCluster.arrows) {
+						
+							AttributeArrows attributeArrows = attributeArrowMap.get(arrow);
+							if (attributeArrows == null) {
+								attributeArrows = new AttributeArrows();
+								attributeArrowMap.put(arrow, attributeArrows);
+							}
+							attributeArrows.attributesContainingArrows.add(arrowAttribute);
+						}
+					}
+				}
+			}
+		}
+		
+		return attributeArrowMap;
 	}
 
 }

@@ -17,6 +17,7 @@ import com.fletch22.orb.Orb
 import com.fletch22.orb.OrbManager
 import com.fletch22.orb.OrbTypeManager
 import com.fletch22.orb.TranDateGenerator
+import com.fletch22.orb.cache.reference.OrbReference;
 import com.fletch22.orb.query.ConstraintDetailsSingleValue
 import com.fletch22.orb.query.QueryManager
 import com.fletch22.orb.query.CriteriaFactory.Criteria

@@ -11,6 +11,8 @@ import com.fletch22.orb.OrbComparer;
 import com.fletch22.orb.OrbType;
 import com.fletch22.orb.OrbTypeComparator;
 import com.fletch22.orb.cache.local.OrbCollection.OrbSteamerTrunk;
+import com.fletch22.orb.cache.reference.ReferenceCollection;
+import com.fletch22.orb.cache.reference.ReferenceCollectionComparator;
 
 @Component
 public class CacheComponentComparator {

@@ -19,6 +19,8 @@ import com.fletch22.orb.OrbManager
 import com.fletch22.orb.OrbType
 import com.fletch22.orb.OrbTypeManager
 import com.fletch22.orb.TranDateGenerator
+import com.fletch22.orb.cache.reference.OrbReference;
+import com.fletch22.orb.cache.reference.ReferenceCollection;
 import com.fletch22.orb.client.service.BeginTransactionService
 import com.fletch22.orb.client.service.RollbackTransactionService
 import com.fletch22.util.RandomUtil

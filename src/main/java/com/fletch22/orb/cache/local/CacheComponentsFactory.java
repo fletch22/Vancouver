@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import com.fletch22.Fletch22ApplicationContext;
 import com.fletch22.orb.cache.query.QueryCollection;
+import com.fletch22.orb.cache.reference.OrbReference;
 
 @Component
 public class CacheComponentsFactory {

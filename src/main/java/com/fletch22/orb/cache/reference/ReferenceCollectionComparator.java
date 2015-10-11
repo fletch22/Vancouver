@@ -1,4 +1,4 @@
-package com.fletch22.orb.cache.local;
+package com.fletch22.orb.cache.reference;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -7,29 +7,32 @@ import java.util.Set;
 
 import org.springframework.stereotype.Component;
 
-import com.fletch22.orb.cache.local.ReferenceCollection.ArrowCluster;
-import com.fletch22.orb.cache.local.ReferenceCollection.Target;
-import com.fletch22.orb.cache.local.ReferenceCollection.TargetLineup;
+import com.fletch22.orb.cache.local.CacheDifferenceReasons;
+import com.fletch22.orb.cache.local.ComparisonResult;
 
 @Component
 public class ReferenceCollectionComparator {
 
 	public ComparisonResult areSame(ReferenceCollection referenceCollection1, ReferenceCollection referenceCollection2) {
+		return areSameAttributeCollections(referenceCollection1.attributeReferenceCollection, referenceCollection2.attributeReferenceCollection);
+	}
+	
+	private ComparisonResult areSameAttributeCollections(AttributeReferenceCollection attributeReferenceCollection1, AttributeReferenceCollection attributeReferenceCollection2) {
 		ComparisonResult comparisonResult = new ComparisonResult();
 		comparisonResult.isSame = true;
 		
 		// Check for same size
-		Map<Long, TargetLineup> targetLineupMap1 = referenceCollection1.targetLineups;
-		Map<Long, TargetLineup> targetLineupMap2 = referenceCollection2.targetLineups;
+		Map<Long, TargetLineup> targetLineupMap1 = attributeReferenceCollection1.targetLineups;
+		Map<Long, TargetLineup> targetLineupMap2 = attributeReferenceCollection2.targetLineups;
 		
 		if (targetLineupMap1.size() != targetLineupMap2.size()) {
 			comparisonResult.isSame = false;
-			comparisonResult.cacheDifferenceReasons = CacheDifferenceReasons.ORB_REFERENCE_REPOSITORY_DIFFERS;
+			comparisonResult.cacheDifferenceReasons = CacheDifferenceReasons.ORB_ATTRIBUTE_REFERENCE_REPOSITORY_DIFFERS;
 		} else {
 			Set<Long> targetLineupsKeys = targetLineupMap1.keySet();
 			for (long orbTypeInternalIdTarget: targetLineupsKeys) {
 				
-				comparisonResult = compareTargetLineups(referenceCollection1, referenceCollection2, orbTypeInternalIdTarget);
+				comparisonResult = compareTargetLineups(targetLineupMap1, targetLineupMap2, orbTypeInternalIdTarget);
 				if (!comparisonResult.isSame) {
 					return comparisonResult;
 				}
@@ -39,18 +42,18 @@ public class ReferenceCollectionComparator {
 		return comparisonResult;
 	}
 
-	private ComparisonResult compareTargetLineups(ReferenceCollection referenceCollection1, ReferenceCollection referenceCollection2, long orbTypeInternalIdTarget) {
+	private ComparisonResult compareTargetLineups(Map<Long, TargetLineup> targetLineupMap1, Map<Long, TargetLineup> targetLineupMap2, long orbTypeInternalIdTarget) {
 		ComparisonResult comparisonResult = new ComparisonResult();
 		comparisonResult.isSame = true;
 		
-		TargetLineup targetLineup1 = referenceCollection1.targetLineups.get(orbTypeInternalIdTarget);
-		if (!referenceCollection2.targetLineups.containsKey(orbTypeInternalIdTarget)) {
+		TargetLineup targetLineup1 = targetLineupMap1.get(orbTypeInternalIdTarget);
+		if (!targetLineupMap2.containsKey(orbTypeInternalIdTarget)) {
 			comparisonResult.isSame = false;
 			comparisonResult.cacheDifferenceReasons = CacheDifferenceReasons.ORB_REFERENCE_TARGET_LINEUPS_DIFFER;
 			return comparisonResult;
 		}
 		
-		TargetLineup targetLineup2 = referenceCollection2.targetLineups.get(orbTypeInternalIdTarget);
+		TargetLineup targetLineup2 = targetLineupMap2.get(orbTypeInternalIdTarget);
 		
 		return compareTargetAttributes(targetLineup1, targetLineup2);
 	}

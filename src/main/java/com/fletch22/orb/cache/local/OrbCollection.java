@@ -15,8 +15,8 @@ import org.springframework.stereotype.Component;
 
 import com.fletch22.orb.Orb;
 import com.fletch22.orb.OrbType;
-import com.fletch22.orb.cache.local.OrbReference.AttributeArrows;
-import com.fletch22.orb.cache.local.OrbReference.DecomposedKey;
+import com.fletch22.orb.cache.reference.DecomposedKey;
+import com.fletch22.orb.cache.reference.OrbReference;
 import com.fletch22.orb.query.ConstraintGrinder;
 import com.fletch22.orb.query.CriteriaFactory.Criteria;
 import com.fletch22.orb.query.OrbResultSet;
@@ -106,8 +106,17 @@ public class OrbCollection {
 		return orbSteamerTrunk;
 	}
 	
-	public Map<Long, AttributeArrows> getReferencesToOrb(Orb orb) {
-		return orbReference.getArrowsPointingAtTarget(orb);
+	public Map<Long, List<String>> getReferencesToOrb(Orb orb) {
+		Map<Long, AttributeArrows> arrows = orbReference.getArrowsPointingAtTarget(orb);
+		
+		Map<Long, List<String>> attributeMap = new HashMap<Long, List<String>>();
+		Set<Long> arrowKeys = arrows.keySet();
+		for (long orbInternalIdArrow: arrowKeys) {
+			AttributeArrows attributeArrows = arrows.get(orbInternalIdArrow);
+			attributeMap.put(orbInternalIdArrow, attributeArrows.attributesContainingArrows);
+		}
+		
+		return attributeMap;
 	}
 	
 	public Orb delete(OrbType orbType, long orbInternalId) {
