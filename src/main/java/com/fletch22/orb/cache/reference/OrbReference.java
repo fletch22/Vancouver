@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -93,19 +94,18 @@ public class OrbReference {
 		return set;
 	}
 	
-	public String composeReference(long orbInternalId, String attributeName) {
-		return ReferenceCollection.REFERENCE_KEY_PREFIX + String.valueOf(orbInternalId) + "^" + attributeName;
-	}
-	
 	public DecomposedKey decomposeKey(String composedKey) {
-		DecomposedKey key = new DecomposedKey();
 		
 		composedKey = composedKey.substring(ReferenceCollection.REFERENCE_KEY_PREFIX.length());
 		
 		int index = composedKey.indexOf(ReferenceCollection.ID_ATTRIBUTE_NAME_SEPARATOR);
 		
-		key.orbInternalId = Long.parseLong(composedKey.substring(0, index));
-		key.attributeName = composedKey.substring(index + 1);
+		DecomposedKey key = null;
+		if (index < 0) {
+			key = new DecomposedKey(Long.parseLong(composedKey.substring(0, index)), composedKey.substring(index + 1));
+		} else {
+			key = new DecomposedKey(Long.parseLong(composedKey.substring(0, index)));
+		}
 		
 		return key;
 	}

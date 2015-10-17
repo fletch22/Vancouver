@@ -238,11 +238,11 @@ public class OrbManagerLocalCache implements OrbManager {
 	public void resetAllReferencesPointingToOrb(Orb orb) {
 		
 		OrbCollection orbCollection = cache.orbCollection;
-		Map<Long, List<String>> attributeReferenceMap = orbCollection.getAttributeReferencesToOrb(orb);
+		Map<Long, Set<String>> attributeReferenceMap = orbCollection.getAttributeReferencesToOrb(orb);
 
 		Set<Long> orbInternalIdSet = attributeReferenceMap.keySet();
 		for (long orbInternalId : orbInternalIdSet) {
-			List<String> attributeNameList = attributeReferenceMap.get(orbInternalId);
+			Set<String> attributeNameList = attributeReferenceMap.get(orbInternalId);
 			for (String attributeArrow: attributeNameList) {
 				setAttribute(orbInternalId, attributeArrow, null);
 				

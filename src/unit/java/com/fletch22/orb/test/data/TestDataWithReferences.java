@@ -10,8 +10,8 @@ import com.fletch22.orb.OrbManager;
 import com.fletch22.orb.OrbType;
 import com.fletch22.orb.OrbTypeManager;
 import com.fletch22.orb.cache.local.Cache;
+import com.fletch22.orb.cache.reference.ReferenceUtil;
 import com.fletch22.orb.query.Constraint;
-import com.fletch22.orb.query.ConstraintDetailsSingleValue;
 import com.fletch22.orb.query.CriteriaFactory;
 import com.fletch22.orb.query.CriteriaFactory.Criteria;
 import com.fletch22.orb.query.QueryManager;
@@ -30,6 +30,9 @@ public class TestDataWithReferences {
 	
 	@Autowired
 	QueryManager queryManager;
+	
+	@Autowired
+	ReferenceUtil referenceUtil;
 	
 	@Autowired
 	Cache cache;
@@ -62,7 +65,7 @@ public class TestDataWithReferences {
 		Orb orbWithReference = orbManager.createOrb(orbTypeInternalId);
 		orbManager.setAttribute(orbWithReference.getOrbInternalId(), ATTRIBUTE_COLOR, "green");
 		
-		String reference = cache.orbCollection.orbReference.composeReference(orbWithReference.getOrbInternalId(), ATTRIBUTE_COLOR);
+		String reference = referenceUtil.composeReference(orbWithReference.getOrbInternalId(), ATTRIBUTE_COLOR);
 		
 		for (int i = 0; i < numberOfInstances; i++) {
 			Orb orb = orbManager.createOrb(orbTypeInternalId);

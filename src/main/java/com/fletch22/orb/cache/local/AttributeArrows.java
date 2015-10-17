@@ -1,7 +1,8 @@
 package com.fletch22.orb.cache.local;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class AttributeArrows {
-	public List<String> attributesContainingArrows;
+	public Set<String> attributesContainingArrows = new HashSet<String>();
 }

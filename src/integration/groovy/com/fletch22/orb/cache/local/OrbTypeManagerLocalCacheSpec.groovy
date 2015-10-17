@@ -146,7 +146,7 @@ class OrbTypeManagerLocalCacheSpec extends Specification {
 		
 		long orbTypeInternalId = orbWithReference.getOrbTypeInternalId()
 		
-		int countOrig = cache.orbCollection.orbReference.referenceCollection.countArrowsPointingToTarget(orbWithReference.orbInternalId, ATTR_COLOR);
+		int countOrig = cache.orbCollection.orbReference.referenceCollection.countArrowsPointingToTargetAttribute(orbWithReference.orbInternalId, ATTR_COLOR);
 		assert countOrig == numInstances
 		
 		def attributeNameNew = "hue"
@@ -155,8 +155,8 @@ class OrbTypeManagerLocalCacheSpec extends Specification {
 		int indexOriginal = findIndexOfKey(orbTypeInternalId, ATTR_COLOR)
 		orbTypeManager.renameAttribute(orbTypeInternalId, ATTR_COLOR, attributeNameNew)
 		int indexNew = findIndexOfKey(orbTypeInternalId, attributeNameNew)
-		int countArrowsOld = cache.orbCollection.orbReference.referenceCollection.countArrowsPointingToTarget(orbWithReference.orbInternalId, ATTR_COLOR);
-		int countArrowsNew = cache.orbCollection.orbReference.referenceCollection.countArrowsPointingToTarget(orbWithReference.orbInternalId, attributeNameNew);
+		int countArrowsOld = cache.orbCollection.orbReference.referenceCollection.countArrowsPointingToTargetAttribute(orbWithReference.orbInternalId, ATTR_COLOR);
+		int countArrowsNew = cache.orbCollection.orbReference.referenceCollection.countArrowsPointingToTargetAttribute(orbWithReference.orbInternalId, attributeNameNew);
 		
 		then:
 		List<Orb> orbListAfterRename = orbManager.getOrbsOfType(orbTypeInternalId)

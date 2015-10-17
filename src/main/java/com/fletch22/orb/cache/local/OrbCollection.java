@@ -106,10 +106,10 @@ public class OrbCollection {
 		return orbSteamerTrunk;
 	}
 	
-	public Map<Long, List<String>> getAttributeReferencesToOrb(Orb orb) {
+	public Map<Long, Set<String>> getAttributeReferencesToOrb(Orb orb) {
 		Map<Long, AttributeArrows> arrows = orbReference.getArrowsPointingAtTarget(orb);
 		
-		Map<Long, List<String>> attributeMap = new HashMap<Long, List<String>>();
+		Map<Long, Set<String>> attributeMap = new HashMap<Long, Set<String>>();
 		Set<Long> arrowKeys = arrows.keySet();
 		for (long orbInternalIdArrow: arrowKeys) {
 			AttributeArrows attributeArrows = arrows.get(orbInternalIdArrow);
@@ -241,12 +241,15 @@ public class OrbCollection {
 		
 		DecomposedKey decomposedKey = orbReference.decomposeKey(referenceValue);
 		
-		Orb orb = get(decomposedKey.orbInternalId);
-		
-		String targetValue = orb.getUserDefinedProperties().get(decomposedKey.attributeName);
-		
-		if (orbReference.isValueAReference(targetValue)) {
-			isReference = true;
+		if (decomposedKey.isKeyPointingToAttribute()) {
+			
+			Orb orb = get(decomposedKey.getOrbInternalId());
+			
+			String targetValue = orb.getUserDefinedProperties().get(decomposedKey.getAttributeName());
+			
+			if (orbReference.isValueAReference(targetValue)) {
+				isReference = true;
+			}
 		}
 		
 		return isReference;

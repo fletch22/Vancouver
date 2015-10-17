@@ -1,7 +1,5 @@
 package com.fletch22.orb.cache.reference;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -26,28 +24,59 @@ public class ReferenceCollection {
 	@Autowired
 	AttributeReferenceCollection attributeReferenceCollection;
 	
-	public void addReferences(long orbInternalId, String attributeName, List<DecomposedKey> keys) {
-		attributeReferenceCollection.addReferences(orbInternalId, attributeName, keys);
+	@Autowired
+	OrbReferenceCollection orbReferenceCollection;
+	
+	public void addReferences(long arrowOrbInternalId, String arrowAttributeName, List<DecomposedKey> targets) {
+		
+		for (DecomposedKey key: targets) {
+			
+			if (key.isKeyPointingToAttribute()) {
+				attributeReferenceCollection.addReference(arrowOrbInternalId, arrowAttributeName, key.getOrbInternalId(), key.getAttributeName());
+			} else {
+				orbReferenceCollection.addReference(arrowOrbInternalId, arrowAttributeName, key.getOrbInternalId());
+			}
+		}
 	}
 	
 	protected int countArrows() {
-		return attributeReferenceCollection.countArrows();
+		return attributeReferenceCollection.countArrows() + orbReferenceCollection.countArrows(); 
+			
 	}
 	
-	protected int countArrowsPointingToTarget(long orbInternalIdTarget, String attributeName) {
-		return attributeReferenceCollection.countArrowsPointingToTarget(orbInternalIdTarget, attributeName);
+	protected int countArrowsPointingToTargetAttribute(long orbInternalIdTarget, String attributeTargetName) {
+		return attributeReferenceCollection.countArrowsPointingToTarget(orbInternalIdTarget, attributeTargetName);
 	}
 	
 	public void removeArrows(long orbInternalIdArrow, String attributeNameArrow, List<DecomposedKey> keys) {
-		attributeReferenceCollection.removeArrows(orbInternalIdArrow, attributeNameArrow, keys);
+		
+		for (DecomposedKey key: keys) {
+			if (key.isKeyPointingToAttribute()) {
+				attributeReferenceCollection.removeArrowsFromAttributeRefs(orbInternalIdArrow, attributeNameArrow, key);
+			} else {
+				orbReferenceCollection.removeArrowsFromRefs(orbInternalIdArrow, attributeNameArrow, key);
+			}
+		}
 	}
 
 	public void removeArrows(long orbInternalId, Map<String, List<DecomposedKey>> namesToValuesMap) {
-		attributeReferenceCollection.removeArrows(orbInternalId, namesToValuesMap);
+		
+		Set<String> attributeNameArrowSet = namesToValuesMap.keySet();
+		for (String attributeNameArrow : attributeNameArrowSet) {
+			List<DecomposedKey> list = namesToValuesMap.get(attributeNameArrow);
+			for (DecomposedKey decomposedKey : list) {
+				if (decomposedKey.isKeyPointingToAttribute()) {
+					attributeReferenceCollection.removeArrowsFromAttributeRefs(orbInternalId, attributeNameArrow, decomposedKey);
+				} else {
+					orbReferenceCollection.removeArrowsFromRefs(orbInternalId, attributeNameArrow, decomposedKey);
+				}
+			}
+		}
 	}
 	
 	public void removeTarget(long orbTargetInternalId) {
 		attributeReferenceCollection.removeTarget(orbTargetInternalId);
+		orbReferenceCollection.removeTarget(orbTargetInternalId);
 	}
 	
 	public void removeTarget(long orbTargetInternalId, String attributeNameTarget) {
@@ -56,14 +85,36 @@ public class ReferenceCollection {
 	
 	public void renameAttributeReference(long orbInternalId, String attributeNameOld, String attributeNameNew) {
 		attributeReferenceCollection.renameAttribute(orbInternalId, attributeNameOld, attributeNameNew);
+		orbReferenceCollection.renameAttribute(orbInternalId, attributeNameOld, attributeNameNew);
 	}
 
 	public void clear() {
-		attributeReferenceCollection.targetLineups.clear();
+		attributeReferenceCollection.clear();
+		orbReferenceCollection.clear();
 	}
 	
 	public Map<Long, AttributeArrows> getAttributeReferencesPointingAtTarget(long orbInternalIdTarget) {
-		return attributeReferenceCollection.getArrowsPointingAtTarget(orbInternalIdTarget);
+		Map<Long, AttributeArrows> attributeArrowsMap = this.attributeReferenceCollection.getArrowsPointingAtTarget(orbInternalIdTarget);
+		Map<Long, AttributeArrows> orbRefAttributeArrows = this.orbReferenceCollection.getArrowsPointingAtTarget(orbInternalIdTarget);
+		
+		return combineAttributeArrowMaps(attributeArrowsMap, orbRefAttributeArrows);
+	}
+
+	private Map<Long, AttributeArrows> combineAttributeArrowMaps(Map<Long, AttributeArrows> attributeArrowsMap, Map<Long, AttributeArrows> orbRefAttributeArrows) {
+		
+		Set<Long> orbRefKeySet = orbRefAttributeArrows.keySet();
+		for (Long orbInternalId : orbRefKeySet) {
+			AttributeArrows attributeArrowsOrbRef = orbRefAttributeArrows.get(orbInternalId);
+			
+			boolean isEntryExist = attributeArrowsMap.containsKey(orbInternalId);
+			if (isEntryExist) {
+				AttributeArrows attributeArrowsDoesExist = attributeArrowsMap.get(orbInternalId);
+				attributeArrowsDoesExist.attributesContainingArrows.addAll(attributeArrowsOrbRef.attributesContainingArrows);
+			} else {
+				attributeArrowsMap.put(orbInternalId, attributeArrowsOrbRef);
+			}
+		}
+		return attributeArrowsMap;
 	}
 
 }
