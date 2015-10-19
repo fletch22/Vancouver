@@ -5,12 +5,10 @@ import static org.junit.Assert.*
 import java.sql.Connection
 
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
 import spock.lang.Specification
 
@@ -23,7 +21,6 @@ import com.fletch22.orb.command.orbType.DeleteOrbTypeCommand
 import com.fletch22.orb.command.transaction.TransactionService
 
 @org.junit.experimental.categories.Category(IntegrationTests.class)
-@RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/springContext-test.xml")
 class LogDaoSpec extends Specification {
 	

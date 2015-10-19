@@ -2,25 +2,20 @@ package com.fletch22.orb.command.orbType;
 
 import static org.junit.Assert.*
 
-import org.junit.Test
-import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
 import spock.lang.Specification
 
 import com.fletch22.orb.Orb
 import com.fletch22.orb.command.orbType.dto.AddWholeOrbTypeDto
 
-@RunWith(SpringJUnit4ClassRunner)
 @ContextConfiguration(locations = ['classpath:/springContext-test.xml'])
 class AddWholeOrbTypeCommandSpec extends Specification {
 	
 	@Autowired
 	AddWholeOrbTypeCommand addWholeOrbTypeCommand
 
-	@Test
 	def 'test serialize and deserialize AddWholeOrbTypeCommand'() {
 		
 		given:

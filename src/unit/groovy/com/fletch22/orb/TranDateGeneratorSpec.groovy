@@ -9,12 +9,10 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
 import spock.lang.Specification
 import spock.lang.Unroll
 
-@RunWith(SpringJUnit4ClassRunner)
 @ContextConfiguration(locations = 'classpath:/springContext-test.xml')
 class TranDateGeneratorSpec extends Specification {
 	
@@ -23,11 +21,6 @@ class TranDateGeneratorSpec extends Specification {
 	@Autowired
 	TranDateGenerator tranDateGenerator
 	
-	def setup() {
-		this.tranDateGenerator = new TranDateGenerator();
-	}
-	
-	@Test
 	@Unroll
 	def 'test generator'() {
 		
@@ -43,7 +36,6 @@ class TranDateGeneratorSpec extends Specification {
 		tranDate1 != null
 	}
 	
-	@Test
 	@Unroll
 	def 'test generator multiple'() {
 		
@@ -62,7 +54,6 @@ class TranDateGeneratorSpec extends Specification {
 		1 == 1
 	}
 	
-	@Test
 	@Unroll
 	def 'test time resets generator'() {
 		
@@ -84,7 +75,6 @@ class TranDateGeneratorSpec extends Specification {
 		logger.info("lastOne: {}", String.format("%10.10f%n", tranDateGenerator.@lastTranDateRaw));
 	}
 	
-	@Test
 	@Unroll
 	def 'test time resets generator exceeds max'() {
 		

@@ -2,23 +2,19 @@ package com.fletch22.orb.service;
 
 import static org.junit.Assert.*
 
-import org.junit.Test
-import org.junit.runner.RunWith
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
 import spock.lang.Specification
 
 import com.fletch22.orb.IntegrationSystemInitializer
 import com.fletch22.orb.IntegrationTests
-import com.fletch22.orb.client.service.OrbTypeService;
+import com.fletch22.orb.client.service.OrbTypeService
 import com.fletch22.util.RandomUtil
 
 @org.junit.experimental.categories.Category(IntegrationTests.class)
-@RunWith(SpringJUnit4ClassRunner)
 @ContextConfiguration(locations = 'classpath:/springContext-test.xml')
 class OrbTypeServiceIntegrationSpec extends Specification {
 	
@@ -41,7 +37,6 @@ class OrbTypeServiceIntegrationSpec extends Specification {
 		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems();
 	}
 
-	@Test
 	def 'test create orb type'() {
 		
 		given:
@@ -56,7 +51,6 @@ class OrbTypeServiceIntegrationSpec extends Specification {
 		orbInternalId > 0;
 	}
 	
-	@Test
 	def 'test volume create'() {
 		
 		given:

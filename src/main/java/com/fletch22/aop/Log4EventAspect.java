@@ -60,6 +60,9 @@ public class Log4EventAspect {
 		
 		boolean isInRestoreMode = packageHolder.getCommandProcessActionPackage().isInRestoreMode();
 		
+		logger.debug("Is in restore mode: {}", isInRestoreMode);
+		logger.debug("hasInitialCommandActionBeenAdded: {}", packageHolder.hasInitialCommandActionBeenAdded());
+		
 		if (packageHolder.hasInitialCommandActionBeenAdded() || isInRestoreMode) {
 			retObject = proceedingJoinPoint.proceed();
 		} else {

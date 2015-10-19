@@ -224,4 +224,9 @@ public class OrbTypeManagerLocalCache implements OrbTypeManager {
 		Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
 		renameAttribute(orbTypeInternalId, attributeNameNew, attributeNameOld);
 	}
+
+	@Override
+	public boolean doesOrbTypeExist(long orbTypeInternalId) {
+		return cache.orbTypeCollection.get(orbTypeInternalId) != null;
+	}
 }

@@ -8,11 +8,9 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
 import spock.lang.Specification
 
-@RunWith(SpringJUnit4ClassRunner)
 @ContextConfiguration(locations = ['classpath:/springContext-test.xml'])
 class OrbTransformerSpec extends Specification {
 	
@@ -21,7 +19,6 @@ class OrbTransformerSpec extends Specification {
 	@Autowired
 	OrbTransformer orbTransformer
 	
-	@Test
 	def 'test orb serialize and deserialize'() {
 		
 		given:

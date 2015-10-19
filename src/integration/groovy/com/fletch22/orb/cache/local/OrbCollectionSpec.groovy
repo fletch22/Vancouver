@@ -21,11 +21,12 @@ import com.fletch22.orb.OrbType
 import com.fletch22.orb.OrbTypeManager
 import com.fletch22.orb.TranDateGenerator
 import com.fletch22.orb.cache.local.OrbCollection.OrbSteamerTrunk
-import com.fletch22.orb.cache.reference.OrbReference;
+import com.fletch22.orb.cache.reference.OrbReference
+import com.fletch22.orb.cache.reference.ReferenceUtil
 import com.fletch22.orb.client.service.BeginTransactionService
-import com.fletch22.orb.client.service.RollbackTransactionService
 import com.fletch22.orb.command.orbType.dto.AddOrbDto
 import com.fletch22.orb.command.orbType.dto.AddOrbTypeDto
+import com.fletch22.orb.command.transaction.RollbackTransactionService;
 import com.fletch22.orb.query.OrbResultSet
 import com.fletch22.orb.query.QueryManager
 import com.fletch22.orb.query.CriteriaFactory.Criteria
@@ -74,6 +75,9 @@ class OrbCollectionSpec extends Specification {
 	
 	@Autowired
 	QueryManager queryManager
+	
+	@Autowired
+	ReferenceUtil referenceUtil
 	
 	def setup() {
 		orbTypeCollection = cache.orbTypeCollection;
@@ -172,7 +176,7 @@ class OrbCollectionSpec extends Specification {
 			
 			Orb orb = orbManager.createOrb(orbTypeInternalId, tranDate)
 			
-			def referenceValue = orbReference.composeReference(orbToTarget.getOrbInternalId(), "foo");
+			def referenceValue = referenceUtil.composeReference(orbToTarget.getOrbInternalId(), "foo");
 			
 			orbManager.setAttribute(orb.getOrbInternalId(), attributeName, referenceValue);
 		}
@@ -219,12 +223,12 @@ class OrbCollectionSpec extends Specification {
 		
 		tranDate = tranDateGenerator.getTranDate()
 		Orb orb2 = orbManager.createOrb(orbTypeInternalId, tranDate)
-		def referenceValue = orbReference.composeReference(orb1.getOrbInternalId(), "foo")
+		def referenceValue = referenceUtil.composeReference(orb1.getOrbInternalId(), "foo")
 		orbManager.setAttribute(orb2.getOrbInternalId(), attributeName, referenceValue)
 
 		tranDate = tranDateGenerator.getTranDate()
 		Orb orb3 = orbManager.createOrb(orbTypeInternalId, tranDate)
-		referenceValue = orbReference.composeReference(orb2.getOrbInternalId(), "foo")
+		referenceValue = referenceUtil.composeReference(orb2.getOrbInternalId(), "foo")
 		
 		when:
 		orbManager.setAttribute(orb1.getOrbInternalId(), attributeName, referenceValue)

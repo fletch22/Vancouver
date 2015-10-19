@@ -14,6 +14,7 @@ import com.fletch22.orb.OrbTypeManager
 import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory
 import com.fletch22.orb.command.processor.CommandProcessor
 import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory.CommandProcessActionPackage
+import com.fletch22.orb.command.transaction.RollbackTransactionService;
 
 @org.junit.experimental.categories.Category(IntegrationTests.class)
 @ContextConfiguration(locations = ['classpath:/springContext-test.xml'])

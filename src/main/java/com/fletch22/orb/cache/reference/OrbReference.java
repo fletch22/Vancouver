@@ -3,14 +3,14 @@ package com.fletch22.orb.cache.reference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -22,6 +22,8 @@ import com.fletch22.orb.cache.local.AttributeArrows;
 @Component
 @Scope("prototype")
 public class OrbReference {
+	
+	static Logger logger = LoggerFactory.getLogger(OrbReference.class);
 
 	private static final char REFERENCE_SEPARATOR = ',';
 
@@ -31,8 +33,11 @@ public class OrbReference {
 	@Autowired
 	OrbManager orbManager;
 	
-	public void removeTarget(long orbInternalId, String attributeName) {
-		referenceCollection.removeTarget(orbInternalId, attributeName);
+	@Autowired
+	ReferenceUtil referenceUtil;
+	
+	public void removeTargetAttribute(long orbInternalId, String attributeName) {
+		referenceCollection.removeTargetAttribute(orbInternalId, attributeName);
 	}
 	
 	public void handleOrbRemoved(long orbInternalId, Orb orb) {
@@ -65,19 +70,73 @@ public class OrbReference {
 //		references.add(composedReference);
 //	}
 	
-//	public String addReference(long orbInternalIdArrow, String attributeNameArrow, String oldValue, long orbInternalIdTarget, String attributeNameTarget) {
-//		Set<String> references = getComposedKeys(oldValue);
-//		
-//		String composedReference = composeReference(orbInternalIdTarget, attributeNameTarget);
-//		
-//		if (!references.contains(composedReference)) {
-//			references.add(composedReference);
-//			referenceCollection.addReference(orbInternalIdArrow, attributeNameArrow, orbInternalIdTarget, attributeNameTarget);
-//			oldValue = oldValue + String.valueOf(REFERENCE_SEPARATOR) + composedReference;
-//		}
-//		
-//		return oldValue;
-//	}
+	public StringBuffer addReference(long orbInternalIdArrow, String attributeNameArrow, StringBuffer oldValue, long orbInternalIdTarget, String attributeNameTarget) {
+		Set<String> references = getComposedKeys(oldValue.toString());
+		
+		String composedReference = referenceUtil.composeReference(orbInternalIdTarget, attributeNameTarget);
+		
+		if (!references.contains(composedReference)) {
+			DecomposedKey decomposedKey = new DecomposedKey(orbInternalIdTarget, attributeNameTarget);
+			referenceCollection.addReference(orbInternalIdArrow, attributeNameArrow, decomposedKey);
+			
+			if (!StringUtils.isBlank(oldValue)) {
+				oldValue.append(REFERENCE_SEPARATOR);
+			}
+			oldValue.append(composedReference);
+		}
+		
+		return oldValue;
+	}
+	
+	public StringBuffer addReference(long orbInternalIdArrow, String attributeNameArrow, StringBuffer oldValue, long orbInternalIdTarget) {
+		Set<String> references = getComposedKeys(oldValue.toString());
+		
+		String composedReference = referenceUtil.composeReference(orbInternalIdTarget);
+		
+		if (!references.contains(composedReference)) {
+			DecomposedKey decomposedKey = new DecomposedKey(orbInternalIdTarget);
+			referenceCollection.addReference(orbInternalIdArrow, attributeNameArrow, decomposedKey);
+			
+			if (!StringUtils.isBlank(oldValue)) {
+				oldValue.append(REFERENCE_SEPARATOR);
+			}
+			oldValue.append(composedReference);
+		}
+		
+		return oldValue;
+	}
+	
+	public StringBuffer removeReference(long arrowOrbInternalId, String arrowAttributeName, StringBuffer oldValue, long targetOrbInternalId) {
+		Set<String> references = getComposedKeys(oldValue.toString());
+		
+		String composedReference = referenceUtil.composeReference(targetOrbInternalId);
+		
+		StringBuffer newValue = new StringBuffer();
+		if (references.contains(composedReference)) {
+			DecomposedKey decomposedKey = new DecomposedKey(targetOrbInternalId);
+			referenceCollection.removeReference(arrowOrbInternalId, arrowAttributeName, decomposedKey);
+			references.remove(composedReference);
+			newValue = referenceUtil.composeReferences(references);
+		}
+		
+		return newValue;
+	}
+	
+	public StringBuffer removeReference(long arrowOrbInternalId, String arrowAttributeName, StringBuffer oldValue, long targetOrbInternalId, String targetAttributeName) {
+		Set<String> references = getComposedKeys(oldValue.toString());
+		
+		String composedReference = referenceUtil.composeReference(targetOrbInternalId, targetAttributeName);
+		
+		StringBuffer newValue = new StringBuffer();
+		if (references.contains(composedReference)) {
+			DecomposedKey decomposedKey = new DecomposedKey(targetOrbInternalId, targetAttributeName);
+			referenceCollection.removeReference(arrowOrbInternalId, arrowAttributeName, decomposedKey);
+			references.remove(composedReference);
+			newValue = referenceUtil.composeReferences(references);
+		}
+		
+		return newValue;
+	}
 	
 	public boolean isValueAReference(String attributeValue) {
 		return (attributeValue == null ? false: attributeValue.startsWith(ReferenceCollection.REFERENCE_KEY_PREFIX));
@@ -100,17 +159,21 @@ public class OrbReference {
 		
 		int index = composedKey.indexOf(ReferenceCollection.ID_ATTRIBUTE_NAME_SEPARATOR);
 		
+		logger.debug("Composed Key: {}", composedKey);
+		
 		DecomposedKey key = null;
 		if (index < 0) {
-			key = new DecomposedKey(Long.parseLong(composedKey.substring(0, index)), composedKey.substring(index + 1));
+			key = new DecomposedKey(Long.parseLong(composedKey.substring(0)));
 		} else {
-			key = new DecomposedKey(Long.parseLong(composedKey.substring(0, index)));
+			key = new DecomposedKey(Long.parseLong(composedKey.substring(0, index)), composedKey.substring(index + 1));
 		}
 		
 		return key;
 	}
 
 	public void removeArrowsFromIndex(long orbInternalId, String attributeName, String value) {
+		
+		logger.debug("rafi: {}", value);
 		
 		List<DecomposedKey> keys = convertToDecomposedKeys(value);
 		referenceCollection.removeArrows(orbInternalId, attributeName, keys);
@@ -123,6 +186,9 @@ public class OrbReference {
 
 	private List<DecomposedKey> convertToDecomposedKeys(String value) {
 		List<DecomposedKey> keys = new ArrayList<DecomposedKey>();
+		
+		logger.debug("CTDK: {}", value);	
+		
 		Set<String> referenceValues = getComposedKeys(value);
 		for (String referenceValue: referenceValues) {
 			keys.add(decomposeKey(referenceValue));
@@ -151,4 +217,5 @@ public class OrbReference {
 	public int countArrowsPointToTarget(Orb orb) {
 		return getArrowsPointingAtTarget(orb).size();
 	}
+
 }

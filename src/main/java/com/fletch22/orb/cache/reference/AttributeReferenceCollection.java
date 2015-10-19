@@ -112,11 +112,11 @@ public class AttributeReferenceCollection {
 	
 	public void removeArrows(long orbInternalIdArrow, String attributeNameArrow, List<DecomposedKey> keyList) {
 		for (DecomposedKey key: keyList) {
-			removeArrowsFromAttributeRefs(orbInternalIdArrow, attributeNameArrow, key);
+			removeArrowsFromRefs(orbInternalIdArrow, attributeNameArrow, key);
 		}
 	}
 
-	public void removeArrowsFromAttributeRefs(long orbInternalIdArrow, String attributeNameArrow, DecomposedKey decomposedKey) {
+	public void removeArrowsFromRefs(long orbInternalIdArrow, String attributeNameArrow, DecomposedKey decomposedKey) {
 		TargetLineup targetLineup = targetLineups.get(decomposedKey.getOrbInternalId());
 		
 		if (targetLineup != null) {
@@ -154,7 +154,7 @@ public class AttributeReferenceCollection {
 		for (String attributeNameArrow : attributeNameArrowSet) {
 			List<DecomposedKey> list = namesToValuesMap.get(attributeNameArrow);
 			for (DecomposedKey decomposedKey : list) {
-				removeArrowsFromAttributeRefs(orbInternalId, attributeNameArrow, decomposedKey);
+				removeArrowsFromRefs(orbInternalId, attributeNameArrow, decomposedKey);
 			}
 		}
 	}
@@ -252,5 +252,4 @@ public class AttributeReferenceCollection {
 		
 		return attributeArrowMap;
 	}
-
 }

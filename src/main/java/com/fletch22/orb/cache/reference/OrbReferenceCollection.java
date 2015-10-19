@@ -162,7 +162,7 @@ static Logger logger = LoggerFactory.getLogger(AttributeReferenceCollection.clas
 			for (Long orbInternalIdArrow: clusterMapKeySet) {
 				OrbRefArrowCluster orbRefArrowCluster = orbRefTarget.orbRefArrowClusterMap.get(orbInternalIdArrow);
 				
-				if (orbRefArrowCluster != null) {
+				if (orbRefArrowCluster != null && orbRefArrowCluster.arrows.size() > 0) {
 					
 					AttributeArrows attributeArrows = attributeArrowMap.get(orbInternalIdArrow);
 					if (attributeArrows == null) {

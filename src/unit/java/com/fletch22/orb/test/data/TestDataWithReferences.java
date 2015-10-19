@@ -2,6 +2,8 @@ package com.fletch22.orb.test.data;
 
 import java.util.LinkedHashSet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +20,8 @@ import com.fletch22.orb.query.QueryManager;
 
 @Component
 public class TestDataWithReferences {
+	
+	static Logger logger = LoggerFactory.getLogger(TestDataWithReferences.class);
 	
 	@Autowired
 	OrbTypeManager orbTypeManager;
@@ -62,17 +66,19 @@ public class TestDataWithReferences {
 		
 		this.orbTypeInternalId = orbTypeManager.createOrbType("foo", customFields);
 		
-		Orb orbWithReference = orbManager.createOrb(orbTypeInternalId);
-		orbManager.setAttribute(orbWithReference.getOrbInternalId(), ATTRIBUTE_COLOR, "green");
+		Orb orbTarget = orbManager.createOrb(orbTypeInternalId);
+		orbManager.setAttribute(orbTarget.getOrbInternalId(), ATTRIBUTE_COLOR, "green");
 		
-		String reference = referenceUtil.composeReference(orbWithReference.getOrbInternalId(), ATTRIBUTE_COLOR);
+		String reference = referenceUtil.composeReference(orbTarget.getOrbInternalId(), ATTRIBUTE_COLOR);
+		
+		logger.info("Ref: {}", reference);
 		
 		for (int i = 0; i < numberOfInstances; i++) {
 			Orb orb = orbManager.createOrb(orbTypeInternalId);
 			orbManager.setAttribute(orb.getOrbInternalId(), ATTRIBUTE_COLOR, reference);
 		}
 		
-		return orbWithReference;
+		return orbTarget;
 	}
 	
 	public long addSimpleCriteria() {

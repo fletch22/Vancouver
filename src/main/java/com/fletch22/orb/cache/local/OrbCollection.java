@@ -150,7 +150,7 @@ public class OrbCollection {
 		
 		OrbSingleTypesInstanceCollection orbSingleTypesInstanceCollection = allInstances.get(orbTypeInternalId);
 		
-		orbReference.removeTarget(orbTypeInternalId, attributeName);
+		orbReference.removeTargetAttribute(orbTypeInternalId, attributeName);
 		
 		for (CacheEntry cacheEntry:  orbSingleTypesInstanceCollection.instances) {
 			Orb orb = quickLookup.get(cacheEntry.id).orb;
@@ -205,7 +205,10 @@ public class OrbCollection {
 			}
 			
 			if (orbReference.isValueAReference(oldValue)) {
-				orbReference.removeArrowsFromIndex(orbInternalId, attributeName, value);
+				
+				logger.debug("setAttribute oldValue: {}", oldValue);
+				
+				orbReference.removeArrowsFromIndex(orbInternalId, attributeName, oldValue);
 			}
 
 			if (isNewValueAReference) {
@@ -285,9 +288,12 @@ public class OrbCollection {
 		OrbSingleTypesInstanceCollection orbSingleTypeInstancesCollection = allInstances.get(orbTypeInternalId);
 		
 		List<Orb> orbsWithType = new ArrayList<Orb>();
-		for (CacheEntry cacheEntry: orbSingleTypeInstancesCollection.instances) {
-			OrbSteamerTrunk trunk = quickLookup.get(cacheEntry.id);
-			orbsWithType.add(trunk.orb);
+		
+		if (orbSingleTypeInstancesCollection != null) {
+			for (CacheEntry cacheEntry: orbSingleTypeInstancesCollection.instances) {
+				OrbSteamerTrunk trunk = quickLookup.get(cacheEntry.id);
+				orbsWithType.add(trunk.orb);
+			}
 		}
 		
 		return orbsWithType;

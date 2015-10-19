@@ -24,7 +24,7 @@ import com.fletch22.orb.OrbType;
 import com.fletch22.orb.OrbTypeManager;
 import com.fletch22.orb.cache.local.Cache;
 import com.fletch22.orb.client.service.BeginTransactionService;
-import com.fletch22.orb.client.service.RollbackTransactionService;
+import com.fletch22.orb.command.transaction.RollbackTransactionService;
 import com.fletch22.orb.query.CriteriaFactory.Criteria;
 import com.fletch22.orb.systemType.SystemType;
 import com.fletch22.orb.test.data.TestDataSimple;

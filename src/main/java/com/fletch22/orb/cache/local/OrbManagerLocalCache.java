@@ -5,9 +5,11 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.commons.lang3.NotImplementedException;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -285,34 +287,10 @@ public class OrbManagerLocalCache implements OrbManager {
 		
 		String oldValue = cache.orbCollection.setAttribute(orbInternalId, attributeName, value);
 		
-		if (!areEqualAttributes(oldValue, value)) {
+		if (!Objects.equals(oldValue, value)) {
 			Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
 			setAttribute(orbInternalId, attributeName, oldValue);
 		}
-	}
-
-//	public void addReference(long orbInternalIdArrow, String attributeNameArrow, long orbInternalIdTarget, String attributeNameTarget) {
-//
-//		Orb orb = cache.orbCollection.get(orbInternalIdArrow);
-//
-//		String oldValue = orb.getUserDefinedProperties().get(attributeNameArrow);
-//
-//		if (StringUtils.isEmpty(oldValue) || cache.orbCollection.orbReference.isValueAReference(oldValue)) {
-//			String newValue = cache.orbCollection.orbReference.addReference(orbInternalIdArrow, attributeNameArrow, oldValue, orbInternalIdTarget, attributeNameTarget);
-//
-//			if (!oldValue.equals(newValue)) {
-//				orb.getUserDefinedProperties().put(attributeNameArrow, newValue);
-//
-//				Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
-//				setAttribute(orbInternalIdArrow, attributeNameArrow, oldValue);
-//			}
-//		} else {
-//			throw new RuntimeException(String.valueOf(orbInternalIdArrow) + "'s original value '" + oldValue + "' is not a reference.");
-//		}
-//	}
-
-	private boolean areEqualAttributes(String value1, String value2) {
-		return (value1 == null ? value2 == null : value1.equals(value2));
 	}
 
 	@Override
@@ -363,5 +341,102 @@ public class OrbManagerLocalCache implements OrbManager {
 	@Override
 	public boolean doesOrbWithTypeExist(long orbTypeInternalId) {
 		return countOrbsOfType(orbTypeInternalId) > 0;
+	}
+	
+	@Override
+	@Loggable4Event
+	public void addReference(long orbInternalIdArrow, String attributeNameArrow, long orbInternalIdTarget, String attributeNameTarget) {
+
+		Orb orb = cache.orbCollection.get(orbInternalIdArrow);
+
+		String oldValue = orb.getUserDefinedProperties().get(attributeNameArrow);
+
+		if (StringUtils.isEmpty(oldValue) || cache.orbCollection.orbReference.isValueAReference(oldValue)) {
+			StringBuffer sb = new StringBuffer((StringUtils.isBlank(oldValue) ? "": oldValue));
+			
+			StringBuffer newValue = cache.orbCollection.orbReference.addReference(orbInternalIdArrow, attributeNameArrow, sb, orbInternalIdTarget, attributeNameTarget);
+
+			if (!Objects.equals(oldValue, newValue)) {
+				orb.getUserDefinedProperties().put(attributeNameArrow, newValue.toString());
+
+				Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
+				setAttribute(orbInternalIdArrow, attributeNameArrow, oldValue);
+			}
+		} else {
+			throw new RuntimeException(String.valueOf(orbInternalIdArrow) + "'s original value '" + oldValue + "' is not a reference.");
+		}
+	}
+
+	@Override
+	@Loggable4Event
+	public void addReference(long arrowOrbInternalId, String arrowAttributeName, long targetOrbInternalId) {
+		
+		Orb orb = cache.orbCollection.get(arrowOrbInternalId);
+
+		String oldValue = orb.getUserDefinedProperties().get(arrowAttributeName);
+
+		if (StringUtils.isEmpty(oldValue) || cache.orbCollection.orbReference.isValueAReference(oldValue)) {
+			
+			StringBuffer sb = new StringBuffer((StringUtils.isBlank(oldValue) ? "": oldValue));
+			
+			StringBuffer newValue = cache.orbCollection.orbReference.addReference(arrowOrbInternalId, arrowAttributeName, sb, targetOrbInternalId);
+
+			if (!Objects.equals(oldValue, newValue)) {
+				orb.getUserDefinedProperties().put(arrowAttributeName, newValue.toString());
+
+				Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
+				removeReference(arrowOrbInternalId, arrowAttributeName, targetOrbInternalId);
+			}
+		} else {
+			throw new RuntimeException(String.valueOf(arrowOrbInternalId) + "'s original value '" + oldValue + "' is not a reference.");
+		}
+	}
+	
+	@Override
+	@Loggable4Event
+	public void removeReference(long arrowOrbInternalId, String arrowAttributeName, long targetOrbInternalId) {
+		Orb orb = cache.orbCollection.get(arrowOrbInternalId);
+
+		String oldValue = orb.getUserDefinedProperties().get(arrowAttributeName);
+		
+		if (StringUtils.isEmpty(oldValue) || cache.orbCollection.orbReference.isValueAReference(oldValue)) {
+			StringBuffer sb = new StringBuffer((StringUtils.isBlank(oldValue) ? "": oldValue));
+			
+			StringBuffer newValue = cache.orbCollection.orbReference.removeReference(arrowOrbInternalId, arrowAttributeName, sb, targetOrbInternalId);
+
+			if (!Objects.equals(oldValue, newValue)) {
+				orb.getUserDefinedProperties().put(arrowAttributeName, newValue.toString());
+
+				Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
+				addReference(arrowOrbInternalId, arrowAttributeName, targetOrbInternalId);
+			}
+		} else {
+			throw new RuntimeException(String.valueOf(arrowOrbInternalId) + "'s original value '" + oldValue + "' is not a reference.");
+		}
+	}
+	
+	@Override
+	@Loggable4Event
+	public void removeReference(long arrowOrbInternalId, String arrowAttributeName, long targetOrbInternalId, String targetAttributeName) {
+		Orb orb = cache.orbCollection.get(arrowOrbInternalId);
+
+		String oldValue = orb.getUserDefinedProperties().get(arrowAttributeName);
+		
+		logger.info("Removing ref: {}", oldValue);
+
+		if (StringUtils.isEmpty(oldValue) || cache.orbCollection.orbReference.isValueAReference(oldValue)) {
+			StringBuffer sb = new StringBuffer((StringUtils.isBlank(oldValue) ? "": oldValue));
+			
+			StringBuffer newValue = cache.orbCollection.orbReference.removeReference(arrowOrbInternalId, arrowAttributeName, sb, targetOrbInternalId, targetAttributeName);
+
+			if (!Objects.equals(oldValue, newValue)) {
+				orb.getUserDefinedProperties().put(arrowAttributeName, newValue.toString());
+
+				Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
+				addReference(arrowOrbInternalId, arrowAttributeName, targetOrbInternalId, targetAttributeName);
+			}
+		} else {
+			throw new RuntimeException(String.valueOf(arrowOrbInternalId) + "'s original value '" + oldValue + "' is not a reference.");
+		}
 	}
 }

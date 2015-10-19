@@ -8,7 +8,6 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
 import spock.lang.Specification
 
@@ -16,7 +15,6 @@ import com.fletch22.orb.CommandExpressor
 import com.fletch22.orb.command.ActionSniffer
 import com.fletch22.orb.command.orbType.AddOrbTypeCommand
 
-@RunWith(SpringJUnit4ClassRunner)
 @ContextConfiguration(locations = 'classpath:/springContext-test.xml')
 class ActionSnifferSpec extends Specification {
 	
@@ -28,7 +26,6 @@ class ActionSnifferSpec extends Specification {
 	@Autowired
 	AddOrbTypeCommand addOrbTypeCommand
 
-	@Test
 	def 'test root verb sniffer'() {
 		
 		given:
@@ -42,7 +39,6 @@ class ActionSnifferSpec extends Specification {
 		verb == CommandExpressor.ADD_ORB_TYPE
 	}
 	
-	@Test
 	def 'test root verb sniffer multi'() {
 		
 		given:
@@ -58,5 +54,4 @@ class ActionSnifferSpec extends Specification {
 		verb
 		verb == CommandExpressor.ADD_ORB_TYPE
 	}
-
 }

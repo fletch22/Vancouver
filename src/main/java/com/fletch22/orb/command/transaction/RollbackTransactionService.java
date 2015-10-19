@@ -1,4 +1,4 @@
-package com.fletch22.orb.client.service;
+package com.fletch22.orb.command.transaction;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -14,7 +14,7 @@ import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory.Com
 import com.fletch22.orb.command.processor.CommandProcessor;
 import com.fletch22.orb.command.processor.OperationResult;
 import com.fletch22.orb.command.processor.OperationResult.OpResult;
-import com.fletch22.orb.command.transaction.TransactionService;
+import com.fletch22.orb.logging.EventLogCommandProcessPackageHolder;
 import com.fletch22.orb.rollback.UndoAction;
 import com.fletch22.orb.rollback.UndoActionBundle;
 
@@ -34,6 +34,9 @@ public class RollbackTransactionService {
 	
 	@Autowired
 	CommandProcessActionPackageFactory commandProcessPackageFactory;
+	
+	@Autowired
+	EventLogCommandProcessPackageHolder eventLogCommandProcessPackageHolder;
 	
 	public void rollbackToSpecificTransaction(BigDecimal tranId) {
 		
@@ -59,5 +62,7 @@ public class RollbackTransactionService {
 		}
 		
 		this.transactionService.rollbackToBeforeSpecificTransaction(tranId);
+		
+		eventLogCommandProcessPackageHolder.cleanup();
 	}
 }

@@ -5,6 +5,8 @@ import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -13,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.fletch22.orb.IntegrationSystemInitializer;
 import com.fletch22.orb.IntegrationTests;
 import com.fletch22.util.RandomUtil;
 
@@ -28,6 +31,9 @@ public class ReferenceCollectionTest {
 	
 	@Autowired
 	RandomUtil randomUtil;
+	
+	@Autowired
+	IntegrationSystemInitializer integrationSystemInitializer;
 
 //	@Test
 //	public void testRemoveArrows() {
@@ -40,6 +46,16 @@ public class ReferenceCollectionTest {
 //		
 //		// Assert
 //	}
+	
+	@Before
+	public void before() {
+		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems();
+	}
+	
+	@After
+	public void cleanup() {
+		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems();
+	}
 	
 	@Test
 	public void testAddReferences() {
@@ -91,6 +107,35 @@ public class ReferenceCollectionTest {
 		
 		// Assert
 		assertEquals("References should match number of ones added.", numberOfArrowsToPoint, countPointingToTarget);
+	}
+	
+	@Test
+	public void testRemoveArrows() {
+		
+		// Arrange
+		List<DecomposedKey> targets = new ArrayList<DecomposedKey>();
+		
+		long arrowOrbInternalId = 456;
+		String arrowAttributeName = "test";
+		long targetOrbInternalId = 668;
+		String targetAttributeName = "funny";
+				
+		DecomposedKey decomposedKey = new DecomposedKey(targetOrbInternalId, targetAttributeName);
+		targets.add(decomposedKey);
+		decomposedKey = new DecomposedKey(13 + targetOrbInternalId, "soo" + targetAttributeName);
+		targets.add(decomposedKey);
+		
+		referenceCollection.addReferences(arrowOrbInternalId, arrowAttributeName, targets);
+
+		int count = referenceCollection.countArrowsPointingToTargetAttribute(targetOrbInternalId, targetAttributeName);
+		assertEquals("Should be one arrow pointing to target.", 1, count);
+		
+		// Act
+		referenceCollection.removeArrows(arrowOrbInternalId, arrowAttributeName, targets);
+		
+		// Assert
+		count = referenceCollection.countArrowsPointingToTargetAttribute(targetOrbInternalId, targetAttributeName);
+		assertEquals("Should be zero arrows pointing to target.", 0, count);
 	}
 	
 	private List<DecomposedKey> createRefList(long orbInternalId, String attributeName, int numberOfAttrRefs, int numberOfOrbRefs) {

@@ -1,20 +1,18 @@
 package com.fletch22.orb.service
 
-import org.junit.Test
-import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+
+import spock.lang.Specification
 
 import com.fletch22.orb.IntegrationTests
 import com.fletch22.orb.Orb
-import com.fletch22.orb.client.service.OrbService;
-import com.fletch22.orb.client.service.OrbTypeService;
+import com.fletch22.orb.client.service.OrbService
+import com.fletch22.orb.client.service.OrbTypeService
 
 @org.junit.experimental.categories.Category(IntegrationTests.class)
-@RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/springContext-test.xml")
-class OrbServiceSpec {
+class OrbServiceSpec extends Specification {
 
 	@Autowired
 	OrbService orbService
@@ -22,8 +20,7 @@ class OrbServiceSpec {
 	@Autowired
 	OrbTypeService orbTypeService
 
-	@Test
-	def void 'test create orb'() {
+	def 'test create orb'() {
 
 		given:
 		def orbTypeInternalId = orbTypeService.addOrbType("test")

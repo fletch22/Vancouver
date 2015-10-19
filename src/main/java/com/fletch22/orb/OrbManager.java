@@ -9,6 +9,10 @@ import com.fletch22.util.json.MapLongString;
 
 public interface OrbManager {
 	
+	public void addReference(long arrowOrbInternalId, String arrowAttributeName, long targetOrbInternalId, String targetAttributeName);
+	
+	public void addReference(long arrowOrbInternalId, String arrowAttributeName, long targetOrbInternalId);
+	
 	public Orb createOrb(Orb orb);
 	
 	public Orb createOrb(long orbTypeInternalId);
@@ -44,6 +48,10 @@ public interface OrbManager {
 	public void renameAttribute(long orbTypeInternalId, String attributeNameOld, String attributeNameNew);
 	
 	public void resetAllReferencesPointingToOrb(Orb orb);
+	
+	void removeReference(long arrowOrbInternalId, String arrowAttributeName, long targetOrbInternalId);
+	
+	void removeReference(long arrowOrbInternalId, String arrowAttributeName, long targetOrbInternalId, String targetAttributeName);
 
 	public long countOrbsOfType(long id);
 

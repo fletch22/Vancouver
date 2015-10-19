@@ -32,6 +32,13 @@ public class TransactionService {
 	
 	private BigDecimal transactionIdInFlight;
 	
+	public BigDecimal beginTransaction() {
+		
+		BigDecimal tranId = tranDateGenerator.getTranDate();
+		
+		return beginTransaction(tranId);
+	}
+	
 	public BigDecimal beginTransaction(BigDecimal tranId) {
 		if (isTransactionInFlight()) {
 			String tranIdMessage = (NO_TRANSACTION_IN_FLIGHT == this.transactionIdInFlight) ? "(null)" : this.transactionIdInFlight.toString();
@@ -63,6 +70,7 @@ public class TransactionService {
 
 	public void rollbackToBeforeSpecificTransaction(BigDecimal tranId) {
 		this.logActionDao.rollbackToBeforeSpecificTransaction(tranId);
+		this.transactionIdInFlight = NO_TRANSACTION_IN_FLIGHT;
 	}
 	
 	public void rollbackCurrentTransaction() {

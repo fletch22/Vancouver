@@ -4,7 +4,6 @@ import static org.junit.Assert.*
 
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.time.StopWatch
-import org.junit.Test
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -19,10 +18,11 @@ import com.fletch22.orb.OrbManager
 import com.fletch22.orb.OrbType
 import com.fletch22.orb.OrbTypeManager
 import com.fletch22.orb.TranDateGenerator
-import com.fletch22.orb.cache.reference.OrbReference;
-import com.fletch22.orb.cache.reference.ReferenceCollection;
+import com.fletch22.orb.cache.reference.OrbReference
+import com.fletch22.orb.cache.reference.ReferenceCollection
+import com.fletch22.orb.cache.reference.ReferenceUtil
 import com.fletch22.orb.client.service.BeginTransactionService
-import com.fletch22.orb.client.service.RollbackTransactionService
+import com.fletch22.orb.command.transaction.RollbackTransactionService;
 import com.fletch22.util.RandomUtil
 
 @org.junit.experimental.categories.Category(IntegrationTests.class)
@@ -63,6 +63,9 @@ class OrbManagerLocalCacheSpec extends Specification {
 	
 	@Autowired
 	CacheComponentComparator cacheComponentComparator
+	
+	@Autowired
+	ReferenceUtil referenceUtil
 
 	def setup()  {
 		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems()
@@ -154,7 +157,7 @@ class OrbManagerLocalCacheSpec extends Specification {
 		numberOfReference.times {
 		Orb orb = orbManager.createOrb(orbType.id, tranDateGenerator.getTranDate())
 		orbManager.setAttribute(orb.orbInternalId, "foo", "bar")
-			referenceList << orbReference.composeReference(orb.orbInternalId, "foo")
+			referenceList << referenceUtil.composeReference(orb.orbInternalId, "foo")
 		}
 		
 		return referenceList
@@ -213,6 +216,36 @@ class OrbManagerLocalCacheSpec extends Specification {
 		fetchedValue == set1 ? true: fetchedValue == set2 ? true: false 
 	}
 	
+	def 'test add reference'() {
+		
+		given:
+		String attributeNameArrow = 'foo'
+		String attributeNameTarget = 'banana'
+		
+		Set<String> customFields = new LinkedHashSet<String>()
+		customFields.add(attributeNameArrow)
+		customFields.add(attributeNameTarget)
+		long orbInternalIdType = orbTypeManager.createOrbType(attributeNameArrow, customFields)
+		
+		Orb orbTarget = orbManager.createOrb(orbInternalIdType)
+		String targetRef = referenceUtil.composeReference(orbTarget.orbInternalId, 'foo')
+		
+		Orb orbArrow = orbManager.createOrb(orbInternalIdType)
+		orbManager.setAttribute(orbArrow.getOrbInternalId(), attributeNameArrow, targetRef)
+		
+		when:
+		OrbManagerLocalCache orbManagerLocalCache = (OrbManagerLocalCache) orbManager
+		orbManagerLocalCache.addReference(orbArrow.orbInternalId, attributeNameArrow, orbTarget.orbInternalId, attributeNameTarget)
+				
+		int countArrows = orbManagerLocalCache.cache.orbCollection.orbReference.referenceCollection.countArrowsPointingToTargetAttribute(orbTarget.orbInternalId, attributeNameTarget)
+		int countTotalArrows = orbManagerLocalCache.cache.orbCollection.orbReference.referenceCollection.countArrows()
+		
+		then:
+		countArrows == 1
+		
+		countTotalArrows == 2
+	}
+	
 	private String getSet(int numberOfReferences) {
 		Set<String> set = new HashSet<String>()
 		numberOfReferences.times {
@@ -227,7 +260,7 @@ class OrbManagerLocalCacheSpec extends Specification {
 			def tranDate = tranDateGenerator.getTranDate()
 			Orb orb = orbManager.createOrb(orbTypeInternalId, tranDate)
 			
-			def composedKey = orbReference.composeReference(orb.getOrbInternalId(), attributeName)
+			def composedKey = referenceUtil.composeReference(orb.getOrbInternalId(), attributeName)
 			set.add(composedKey)
 		}
 

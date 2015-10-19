@@ -8,14 +8,12 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
 import spock.lang.Shared
 import spock.lang.Specification
 
 import com.fletch22.orb.command.orbType.AddOrbTypeCommand
 
-@RunWith(SpringJUnit4ClassRunner)
 @ContextConfiguration(locations = ['classpath:/springContext-test.xml'])
 class CommandBundleSpec extends Specification {
 	
@@ -24,7 +22,6 @@ class CommandBundleSpec extends Specification {
 	@Autowired
 	AddOrbTypeCommand addOrbTypeCommand
 	
-	@Test
 	def 'test serialization and deserialization'() {
 		
 		given:
@@ -37,16 +34,11 @@ class CommandBundleSpec extends Specification {
 		
 		assertNotNull(jsonExpected)
 		
-		logger.info("Is JE null? {}", null == jsonExpected)
-		logger.info('JE: {}', jsonExpected);
-		
 		def commandBundleActual = CommandBundle.fromJson(jsonExpected)
 		
 		when:
 		def jsonActual = commandBundleActual.toJson()
 		
-		logger.info("JA: {}", jsonActual);
-				
 		then:
 		jsonActual.toString() == jsonExpected.toString()
 	}
