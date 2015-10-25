@@ -13,7 +13,6 @@ public class OrbCloner {
 		
 		clone.setOrbTypeInternalId(orb.getOrbTypeInternalId());
 		clone.setOrbInternalId(orb.getOrbInternalId());
-		clone.setTranDate(orb.getTranDate());
 		
 		Map<String, String> properties = orb.getUserDefinedProperties();
 		Set<String> keySet = properties.keySet();

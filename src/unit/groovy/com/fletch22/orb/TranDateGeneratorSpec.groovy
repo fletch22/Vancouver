@@ -43,11 +43,11 @@ class TranDateGeneratorSpec extends Specification {
 		Set<Long> tranDateList = new HashSet<Long>()
 		
 		when:
-		logger.info("Start")
+		logger.debug("Start")
 		1000.times {
 			def tranDate = tranDateGenerator.getTranDate()
 		}
-		logger.info("Stop")
+		logger.debug("Stop")
 		
 		def etst = ''
 		then:
@@ -71,8 +71,8 @@ class TranDateGeneratorSpec extends Specification {
 		
 		then:
 		finalTranDate.compareTo(tranDateGenerator.@lastTranDateRaw) > 0
-		logger.info("final: {}", String.format("%10.10f%n", finalTranDate));
-		logger.info("lastOne: {}", String.format("%10.10f%n", tranDateGenerator.@lastTranDateRaw));
+		logger.debug("final: {}", String.format("%10.10f%n", finalTranDate));
+		logger.debug("lastOne: {}", String.format("%10.10f%n", tranDateGenerator.@lastTranDateRaw));
 	}
 	
 	@Unroll
@@ -85,8 +85,8 @@ class TranDateGeneratorSpec extends Specification {
 		
 		long rollbackMillis = new DateTime(tranDateGenerator.@lastTranDateRaw.longValue()).minusSeconds(10).getMillis()
 		
-		logger.info("LTDR: {}", tranDateGenerator.@lastTranDateRaw.longValue());
-		logger.info("RM: {}", rollbackMillis);
+		logger.debug("LTDR: {}", tranDateGenerator.@lastTranDateRaw.longValue());
+		logger.debug("RM: {}", rollbackMillis);
 		
 		when:
 		def finalTranDate = tranDateGenerator.ensureGoodLogDate(new BigDecimal(rollbackMillis))

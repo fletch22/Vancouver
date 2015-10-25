@@ -56,7 +56,7 @@ public class OrbTypeCollectionTest {
 		stopWatch.stop();
 		
 		double seconds = (double)stopWatch.getNanoTime() / 1000000000.0;
-		logger.info("Map Time: {}", seconds);
+		logger.debug("Map Time: {}", seconds);
 		
 		orbTypeCollection.deleteAll();
 		
@@ -73,8 +73,8 @@ public class OrbTypeCollectionTest {
 		stopWatch.stop();
 		
 		seconds = (double)stopWatch.getNanoTime() / 1000000000.0;
-		logger.info("CG Time: {}", seconds);
-		logger.info("Nano time: {}", stopWatch.getNanoTime());
+		logger.debug("CG Time: {}", seconds);
+		logger.debug("Nano time: {}", stopWatch.getNanoTime());
 		assertTrue(stopWatch.getNanoTime() < 45000); 
 	}
 

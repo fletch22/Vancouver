@@ -18,12 +18,6 @@ public class OrbComparer {
 		if (orb1.getOrbInternalId() != orb2.getOrbInternalId()) {
 			comparisonResult.isSame = false;
 			comparisonResult.cacheDifferenceReasons = CacheDifferenceReasons.ORB_ID_DIFFERENT;
-		} else if (isOneObjectNull(orb1.getTranDate(), orb2.getTranDate())) {
-			comparisonResult.isSame = false;
-			comparisonResult.cacheDifferenceReasons = CacheDifferenceReasons.ONE_ORB_TRAN_DATE_IS_NULL_AND_THE_OTHER_NOT;
-		} else if (!orb1.getTranDate().equals(orb2.getTranDate())) {
-			comparisonResult.isSame = false;
-			comparisonResult.cacheDifferenceReasons = CacheDifferenceReasons.ORB_TRAN_DATES_ARE_DIFFERENT;
 		} else {
 			comparisonResult = compareProperties(orb1.getUserDefinedProperties(), orb2.getUserDefinedProperties());
 		}

@@ -44,7 +44,7 @@ public class OrbCollection {
 		
 		ArrayList<String> fields = getPropertyValuesInOrder(orbType, orb);
 
-		CacheEntry cacheEntry = orbSingleTypesInstanceCollection.addInstance(orb.getOrbInternalId(), null, orb.getTranDate(), fields);
+		CacheEntry cacheEntry = orbSingleTypesInstanceCollection.addInstance(orb.getOrbInternalId(), null, fields);
 		
 		OrbSteamerTrunk orbSteamerTrunk = new OrbSteamerTrunk(orb, cacheEntry);
 		

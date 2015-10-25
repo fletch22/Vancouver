@@ -15,6 +15,7 @@ import com.fletch22.orb.search.GeneratedClassFactory;
 import com.googlecode.cqengine.ConcurrentIndexedCollection;
 import com.googlecode.cqengine.IndexedCollection;
 import com.googlecode.cqengine.attribute.SimpleNullableAttribute;
+import com.googlecode.cqengine.codegen.AttributeSourceGenerator;
 import com.googlecode.cqengine.index.navigable.NavigableIndex;
 import com.googlecode.cqengine.query.Query;
 import com.googlecode.cqengine.resultset.ResultSet;
@@ -28,7 +29,7 @@ public class CqEngineTest {
 
 	@Test
 	public void testWithList() {
-		// logger.info(AttributeSourceGenerator.generateAttributesForPastingIntoTargetClass(Car.class));
+		logger.debug(AttributeSourceGenerator.generateAttributesForPastingIntoTargetClass(Car.class));
 		IndexedCollection<Car> cars = new ConcurrentIndexedCollection<Car>();
 		
 		try {
@@ -84,6 +85,7 @@ public class CqEngineTest {
 
 	@SuppressWarnings("unused")
 	private void doQuery() {
+		
 		// Arrange
 		IndexedCollection<Car> cars = new ConcurrentIndexedCollection<Car>();
 		cars.addIndex(NavigableIndex.onAttribute(Car.CAR_ID));
@@ -102,7 +104,7 @@ public class CqEngineTest {
 		ResultSet<Car> resultSet = cars.retrieve(query1);
 		logger.info("Found: {} cars", resultSet.size());
 		for (Car car : resultSet) {
-			logger.info("Card ID found: {}", car.id);
+			logger.debug("Card ID found: {}", car.id);
 		}
 	}
 	

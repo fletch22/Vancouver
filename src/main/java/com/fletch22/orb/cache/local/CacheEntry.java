@@ -11,14 +11,12 @@ public class CacheEntry {
 	long id;
 	String label;
 	long typeId;
-	BigDecimal tranDate;
 	ArrayList<String> attributes = new ArrayList<String>();
 
-	public CacheEntry(long id, long typeId, String label, BigDecimal tranDate, ArrayList<String> list) {
+	public CacheEntry(long id, long typeId, String label, ArrayList<String> list) {
 		this.id = id;
 		this.label = label;
 		this.attributes = list;
-		this.tranDate = tranDate;
 	}
 	
 	public long getId() {

@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 import java.math.BigDecimal;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.time.StopWatch;
@@ -58,8 +57,6 @@ public class JsonWrapperTest {
 		stopWatch.stop();
 		
 		long millis = stopWatch.getNanoTime() / 100000000;
-		
-		//logger.info("Elapsed millis per unit: " + millis);
 	}
 	
 	@Test
@@ -73,7 +70,7 @@ public class JsonWrapperTest {
 		String stringThing = "funny";
 		jsonWrapper = new JsonWrapper(stringThing, gsonFactory);
 		
-		//logger.info(jsonWrapper.toJson());
+		logger.debug(jsonWrapper.toJson());
 		
 		testJsonWrapperPerf(jsonWrapper);
 	}
@@ -89,7 +86,7 @@ public class JsonWrapperTest {
 		BigDecimal bigDecimal = new BigDecimal("1.200000123123213");
 		jsonWrapper = new JsonWrapper(bigDecimal, gsonFactory);
 		
-//		logger.info(jsonWrapper.toJson());
+		logger.debug(jsonWrapper.toJson());
 		
 		testJsonWrapperPerf(jsonWrapper);
 	}
@@ -105,7 +102,7 @@ public class JsonWrapperTest {
 		boolean isDelicious = true;
 		jsonWrapper = new JsonWrapper(isDelicious, gsonFactory);
 		
-//		logger.info(jsonWrapper.toJson());
+		logger.debug(jsonWrapper.toJson());
 		
 		testJsonWrapperPerf(jsonWrapper);
 	}
@@ -121,7 +118,7 @@ public class JsonWrapperTest {
 		Boolean isDelicious = new Boolean(true);
 		jsonWrapper = new JsonWrapper(isDelicious, gsonFactory);
 		
-//		logger.info(jsonWrapper.toJson());
+		logger.debug(jsonWrapper.toJson());
 		
 		testJsonWrapperPerf(jsonWrapper);
 	}
@@ -156,7 +153,7 @@ public class JsonWrapperTest {
 		@SuppressWarnings("unchecked")
 		LinkedHashSetString reconstituted = (LinkedHashSetString) jsonWrapper2.object;
 		
-		logger.info("jsonWrapper: {}", jsonWrapper.toJson());
+		logger.debug("jsonWrapper: {}", jsonWrapper.toJson());
 		
 		assertEquals("Should be 2 elements.", reconstituted.linkedHashSet.size(), 2);
 	}
@@ -177,7 +174,7 @@ public class JsonWrapperTest {
 		@SuppressWarnings("unchecked")
 		LinkedHashMapStringString reconstituted = (LinkedHashMapStringString) jsonWrapper2.object;
 		
-		logger.info("jsonWrapper: {}", jsonWrapper.toJson());
+		logger.debug("jsonWrapper: {}", jsonWrapper.toJson());
 		
 		assertEquals("Should be 2 elements.", reconstituted.linkedHashMap.size(), 2);
 	}
@@ -197,7 +194,7 @@ public class JsonWrapperTest {
 		
 		MapLongString reconstituted = (MapLongString) jsonWrapper2.object;
 		
-		logger.info("jsonWrapper: {}", jsonWrapper.toJson());
+		logger.debug("jsonWrapper: {}", jsonWrapper.toJson());
 		
 		assertEquals("Should be 2 elements.", reconstituted.map.size(), 2);
 	}
@@ -205,7 +202,7 @@ public class JsonWrapperTest {
 	private void testJsonWrapperPerf(JsonWrapper jsonWrapper) {
 		
 		String json = jsonWrapper.toJson();
-//		logger.info(json);
+		logger.debug(json);
 		
 		Gson gson = new Gson();
 		
@@ -215,14 +212,14 @@ public class JsonWrapperTest {
 		stopWatch.start(); 
 		for (int i = 0; i < maxTimes; i++) {
 			jsonWrapper = JsonWrapper.fromJson(gson, json);
-//			logger.info("object: {}", jsonWrapper.object);
+			logger.debug("object: {}", jsonWrapper.object);
 		}
 		stopWatch.stop();
 		
 		@SuppressWarnings("unused")
 		long millis = stopWatch.getNanoTime() / 100000000;
 		
-//		logger.info("Elapsed millis per unit: " + millis);
+		logger.debug("Elapsed millis per unit: " + millis);
 	}
 	
 	@Test
@@ -242,7 +239,7 @@ public class JsonWrapperTest {
 		@SuppressWarnings("unchecked")
 		Criteria reconstituted = (Criteria) jsonWrapper2.object;
 		
-		logger.info("jsonWrapper: {}", jsonWrapper.toJson());
+		logger.debug("jsonWrapper: {}", jsonWrapper.toJson());
 		
 		assertEquals("Should be 2 elements.", reconstituted.getOrbTypeInternalId(), orbTypeInternalIdOriginal);
 	}
@@ -269,7 +266,7 @@ public class JsonWrapperTest {
 		@SuppressWarnings("unchecked")
 		Criteria reconstituted = (Criteria) jsonWrapper2.object;
 		
-		logger.info("jsonWrapper: {}", jsonWrapper.toJson());
+		logger.debug("jsonWrapper: {}", jsonWrapper.toJson());
 		
 		LogicalConstraint logicalConstraint = reconstituted.logicalConstraint;
 		

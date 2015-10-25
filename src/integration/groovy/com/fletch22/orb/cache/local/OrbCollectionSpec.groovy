@@ -80,9 +80,9 @@ class OrbCollectionSpec extends Specification {
 	ReferenceUtil referenceUtil
 	
 	def setup() {
-		orbTypeCollection = cache.orbTypeCollection;
 		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems()
 		orbCollection = cache.orbCollection;
+		orbTypeCollection = cache.orbTypeCollection;
 	}
 	
 	def cleanup() {
@@ -103,7 +103,7 @@ class OrbCollectionSpec extends Specification {
 		criteriaSortInfoList.add(criteriaSortInfo)
 		criteriaSortInfo.sortAttributeName = TestDataSimple.ATTRIBUTE_COLOR
 		
-		logger.info("Criteria null? {}", criteria == null)
+		logger.debug("Criteria null? {}", criteria == null)
 		
 		when:
 		StopWatch stopWatch = new StopWatch()
@@ -113,7 +113,7 @@ class OrbCollectionSpec extends Specification {
 		
 		BigDecimal millis = new BigDecimal(stopWatch.nanoTime).divide(new BigDecimal(1000000))
 		
-		logger.info("Elapsed query time: {}", millis)
+		logger.debug("Elapsed query time: {}", millis)
 		
 		then:
 		orbResultSet.getOrbList().size > 0
@@ -162,8 +162,7 @@ class OrbCollectionSpec extends Specification {
 		def attributeName = 'foo'
 		orbTypeManager.addAttribute(orbType.id, attributeName)
 		
-		BigDecimal tranDate = tranDateGenerator.getTranDate()
-		Orb orbToTarget = orbManager.createOrb(orbTypeInternalId, tranDate)
+		Orb orbToTarget = orbManager.createOrb(orbTypeInternalId)
 		
 		def numberOrbs = 1
 		
@@ -171,10 +170,7 @@ class OrbCollectionSpec extends Specification {
 		
 		numberOrbs.times {
 			
-			tranDate = tranDateGenerator.getTranDate()
-			logger.info("Tran Date: {}", tranDate.toString());
-			
-			Orb orb = orbManager.createOrb(orbTypeInternalId, tranDate)
+			Orb orb = orbManager.createOrb(orbTypeInternalId)
 			
 			def referenceValue = referenceUtil.composeReference(orbToTarget.getOrbInternalId(), "foo");
 			
@@ -200,7 +196,7 @@ class OrbCollectionSpec extends Specification {
 		
 		then:
 		assertOrbPropertySize(map, 1)
-		logger.info("Arrows: {}", orbReference.@referenceCollection.countArrows())
+		logger.debug("Arrows: {}", orbReference.@referenceCollection.countArrows())
 		orbReference.@referenceCollection.countArrows() == numberOrbs
 	}
 	
@@ -214,20 +210,15 @@ class OrbCollectionSpec extends Specification {
 		def attributeName = 'foo'
 		orbTypeManager.addAttribute(orbType.id, attributeName)
 		
-		BigDecimal tranDate = tranDateGenerator.getTranDate()
-		logger.info("Tran Date: {}", tranDate.toString());
-		
-		Orb orb1 = orbManager.createOrb(orbTypeInternalId, tranDate)
+		Orb orb1 = orbManager.createOrb(orbTypeInternalId)
 		
 		OrbReference orbReference = cache.orbCollection.orbReference
 		
-		tranDate = tranDateGenerator.getTranDate()
-		Orb orb2 = orbManager.createOrb(orbTypeInternalId, tranDate)
+		Orb orb2 = orbManager.createOrb(orbTypeInternalId)
 		def referenceValue = referenceUtil.composeReference(orb1.getOrbInternalId(), "foo")
 		orbManager.setAttribute(orb2.getOrbInternalId(), attributeName, referenceValue)
 
-		tranDate = tranDateGenerator.getTranDate()
-		Orb orb3 = orbManager.createOrb(orbTypeInternalId, tranDate)
+		Orb orb3 = orbManager.createOrb(orbTypeInternalId)
 		referenceValue = referenceUtil.composeReference(orb2.getOrbInternalId(), "foo")
 		
 		when:
@@ -256,7 +247,7 @@ class OrbCollectionSpec extends Specification {
 
 		BigDecimal tranDate = tranDateGenerator.getTranDate()
 		
-		logger.info("Tran Date: {}", tranDate.toString());
+		logger.debug("Tran Date: {}", tranDate.toString());
 
 		UndoActionBundle undoActionBundle = new UndoActionBundle();
 

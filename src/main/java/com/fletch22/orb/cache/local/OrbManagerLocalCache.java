@@ -83,46 +83,21 @@ public class OrbManagerLocalCache implements OrbManager {
 	}
 
 	@Override
-	@Loggable4Event
-	public Orb createOrb(OrbType orbType, BigDecimal tranDate) {
+	public Orb createOrb(long orbTypeInternalId) {
 
 		long orbInternalId = this.internalIdGenerator.getNewId();
-		Orb orb = new Orb(orbInternalId, orbType.id, tranDate, new LinkedHashMap<String, String>());
-
-		populateOrbMap(orbType, orb);
-
-		cache.orbCollection.add(orbType, orb);
-
-		Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
-		deleteOrb(orb.getOrbInternalId(), true);
-
-		return orb;
-	}
-
-	@Override
-	public Orb createOrb(long orbTypeInternalId, BigDecimal tranDate) {
-
-		long orbInternalId = this.internalIdGenerator.getNewId();
-		Orb orb = new Orb(orbInternalId, orbTypeInternalId, tranDate, new LinkedHashMap<String, String>());
+		Orb orb = new Orb(orbInternalId, orbTypeInternalId, new LinkedHashMap<String, String>());
 
 		createOrb(orb);
 
 		return orb;
-	}
-	
-	@Override
-	public Orb createOrb(long orbTypeInternalId) {
-
-		BigDecimal tranDate = tranDateGenerator.getTranDate();
-
-		return createOrb(orbTypeInternalId, tranDate);
 	}
 
 	@Override
 	public Orb createOrb(AddOrbDto addOrbDto, BigDecimal tranDate, UndoActionBundle undoActionBundle) {
 
 		long orbInternalId = this.internalIdGenerator.getNewId();
-		Orb orb = new Orb(orbInternalId, addOrbDto.orbTypeInternalId, tranDate, new LinkedHashMap<String, String>());
+		Orb orb = new Orb(orbInternalId, addOrbDto.orbTypeInternalId, new LinkedHashMap<String, String>());
 		OrbType orbType = orbTypeManager.getOrbType(orb.getOrbTypeInternalId());
 
 		populateOrbMap(orbType, orb);
@@ -438,5 +413,22 @@ public class OrbManagerLocalCache implements OrbManager {
 		} else {
 			throw new RuntimeException(String.valueOf(arrowOrbInternalId) + "'s original value '" + oldValue + "' is not a reference.");
 		}
+	}
+
+	@Override
+	public void updateOrb(Orb orb) {
+		
+		Orb orbToUpdate = cache.orbCollection.get(orb.getOrbInternalId());
+		
+		Orb orbClone = this.orbCloner.cloneOrb(orbToUpdate);
+			
+		LinkedHashMap<String, String> userDefinedPropMap = orbToUpdate.getUserDefinedProperties();
+		Set<String> keySet = userDefinedPropMap.keySet();
+		for (String fieldName: keySet) {
+			setAttribute(orb.getOrbInternalId(), fieldName, orb.getUserDefinedProperties().get(fieldName));
+		}
+		
+		Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
+		updateOrb(orbClone);
 	}
 }

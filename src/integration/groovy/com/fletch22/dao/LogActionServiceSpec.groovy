@@ -99,7 +99,7 @@ class LogActionServiceSpec extends Specification {
 		undoActionBundleList.size() == 1
 		UndoActionBundle undoActionBundle = undoActionBundleList.get(0)
 		
-		logger.info(undoActionBundle.toJson().toString());
+		logger.debug(undoActionBundle.toJson().toString());
 		
 		where:
 		numberOfAdds << [1, 5000]
@@ -136,7 +136,7 @@ class LogActionServiceSpec extends Specification {
 			
 			UndoActionBundle.fromJson(new StringBuilder(undoAction.action));
 			
-			logger.info(undoAction.action.toString());
+			logger.debug(undoAction.action.toString());
 		}
 		
 		where:
@@ -174,7 +174,7 @@ class LogActionServiceSpec extends Specification {
 		List<String> allActionsList = this.logActionDao.getAllActions()
 		
 		for (String action : allActionsList) {
-			logger.info(action);
+			logger.debug(action);
 		}
 		
 		then:
@@ -198,10 +198,10 @@ class LogActionServiceSpec extends Specification {
 		List<String> allActionsList = this.logActionDao.getAllActions()
 		
 		for (String action : allActionsList) {
-			logger.info(action);
+			logger.debug(action);
 		}
 		
-		logger.info("Result: {}", operationResult.operationResultException.toString());
+		logger.debug("Result: {}", operationResult.operationResultException.toString());
 				
 		then:
 		operationResult.opResult == OpResult.SUCCESS

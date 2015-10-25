@@ -1,8 +1,5 @@
 package com.fletch22.app.designer;
 
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,14 +22,11 @@ public class AppDesignerInitialization {
 	
 	public void initialize() {
 		
-		LinkedHashSet<String> fields = new LinkedHashSet<String>();
-		fields.add(AppContainer.ATTR_LABEL);
-		fields.add(AppContainer.ATTR_APPS);
-		long orbTypeInternalId = orbTypeManager.createOrbType(AppContainer.TYPE_LABEL, fields);
+		long orbTypeInternalId = orbTypeManager.createOrbType(AppContainer.TYPE_LABEL, AppContainer.ATTRIBUTE_LIST);
 		
+		// TODO: 10-24-2015: Primes the indexes. Need to do this without logging.
 		Orb orb = orbManager.createOrb(orbTypeInternalId);
 		orbManager.deleteOrb(orb.getOrbInternalId(), false);
-		
 		this.queryManager.findByAttribute(orbTypeInternalId, AppContainer.ATTR_LABEL, "joe");
 	}
 }

@@ -25,6 +25,7 @@ import com.fletch22.orb.command.processor.OperationResult.OpResult
 import com.fletch22.orb.command.transaction.BeginTransactionCommand
 import com.fletch22.orb.command.transaction.CommitTransactionCommand
 import com.fletch22.orb.command.transaction.TransactionService
+import com.fletch22.orb.logging.EventLogCommandProcessPackageHolder;
 
 @org.junit.experimental.categories.Category(IntegrationTests.class)
 @ContextConfiguration(locations = ['classpath:/springContext-test.xml'])
@@ -65,6 +66,9 @@ class CommandProcessorIntegrationSpec extends Specification {
 	@Autowired
 	OrbTypeManager orbTypeManager
 	
+	@Autowired
+	IntegrationSystemInitializer integrationSystemInitializer
+	
 	def setup() {
 		initializer.nukeAndPaveAllIntegratedSystems();
 	}
@@ -87,6 +91,9 @@ class CommandProcessorIntegrationSpec extends Specification {
 		then:
 		commandProcessActionPackage.undoActionBundle
 		commandProcessActionPackage.undoActionBundle.getActions().size() == 1
+		
+		cleanup:
+		integrationSystemInitializer.verifyClean()
 	}
 	
 	@Test
@@ -115,6 +122,9 @@ class CommandProcessorIntegrationSpec extends Specification {
 		then:
 		commandProcessActionPackage.undoActionBundle
 		commandProcessActionPackage.undoActionBundle.getActions().size() == 2
+		
+		cleanup:
+		integrationSystemInitializer.verifyClean()
 	}
 	
 	@Test
@@ -183,13 +193,15 @@ class CommandProcessorIntegrationSpec extends Specification {
 	def 'AopActionLoggingTest'() {
 		
 		given:
+		integrationSystemInitializer.verifyClean()
 		def typeLabel = 'foo'
+	
 		
 		long orbTypeInternalId = orbTypeService.addOrbType("thisisthetype")
-		logger.info("In aopActionLoggingTest. otid: {}", orbTypeInternalId)
+		logger.debug("In aopActionLoggingTest. otid: {}", orbTypeInternalId)
 		
 		OrbType orbType = orbTypeService.getOrbType(orbTypeInternalId)
-		logger.info("Found orb: {}", orbType != null)
+		logger.debug("Found orb: {}", orbType != null)
 		
 		def operationResult = null
 		
@@ -217,6 +229,8 @@ class CommandProcessorIntegrationSpec extends Specification {
 		operationResult != null
 		operationResult.opResult == OpResult.SUCCESS
 		
+		cleanup:
+		integrationSystemInitializer.verifyClean()
 	}
 	
 	@Test
@@ -249,6 +263,8 @@ class CommandProcessorIntegrationSpec extends Specification {
 		operationResult != null
 		operationResult.opResult == OpResult.SUCCESS
 		
+		cleanup:
+		integrationSystemInitializer.verifyClean()
 	}
 	
 	@Test
@@ -287,5 +303,7 @@ class CommandProcessorIntegrationSpec extends Specification {
 		
 		// Verification techniques
 		// Count total actions in db. If successful the total commands should increase commensurately.
+		cleanup:
+		integrationSystemInitializer.verifyClean()
 	}
 }

@@ -9,51 +9,49 @@ import com.fletch22.util.json.MapLongString;
 
 public interface OrbManager {
 	
-	public void addReference(long arrowOrbInternalId, String arrowAttributeName, long targetOrbInternalId, String targetAttributeName);
+	void addAttributeAndValueToInstances(MapLongString map, long orbTypeInternalId, int indexOfAttribute, String attributeName);
 	
 	public void addReference(long arrowOrbInternalId, String arrowAttributeName, long targetOrbInternalId);
 	
-	public Orb createOrb(Orb orb);
+	public void addReference(long arrowOrbInternalId, String arrowAttributeName, long targetOrbInternalId, String targetAttributeName);
 	
-	public Orb createOrb(long orbTypeInternalId);
-	
-	public Orb createOrb(OrbType orbType, BigDecimal tranDate);
-
-	public Orb createOrb(long orbTypeInternalId, BigDecimal tranDate);
+	public long countOrbsOfType(long id);
 	
 	public Orb createOrb(AddOrbDto addOrbDto, BigDecimal tranDate, UndoActionBundle undoActionBundle);
+
+	public Orb createOrb(long orbTypeInternalId);
 	
-	public String getAttribute(long orbInternalId, String attributeName);
-	
-	public void setAttribute(long orbInternalId, String attributeName, String value);
+	public Orb createOrb(Orb orb);
 	
 	public Orb deleteOrb(long orbInternalId, boolean isDeleteDependencies);
 	
+	void deleteOrbAttributeFromAllInstances(long orbTypeInternalId, String attributeName, int attributeIndex);
+	
 	public Orb deleteOrbIgnoreQueryDependencies(long orbInternalId, boolean isDeleteDependencies);
 	
+	public void deleteOrbsWithType(long orbTypeInternalId, boolean isDeleteDependencies);
+	
 	public boolean doesOrbExist(long orbInternalId);
-	
+
+	public boolean doesOrbWithTypeExist(long orbTypeInternalId);
+
+	public String getAttribute(long orbInternalId, String attributeName);
+
 	public Orb getOrb(long orbInternalId);
-	
+
 	public List<Orb> getOrbsOfType(long orbInternalId);
 
 	public void nukeAllOrbs();
-
-	void addAttributeAndValueToInstances(MapLongString map, long orbTypeInternalId, int indexOfAttribute, String attributeName);
-
-	void deleteOrbAttributeFromAllInstances(long orbTypeInternalId, String attributeName, int attributeIndex);
-
-	public void deleteOrbsWithType(long orbTypeInternalId, boolean isDeleteDependencies);
-
-	public void renameAttribute(long orbTypeInternalId, String attributeNameOld, String attributeNameNew);
-	
-	public void resetAllReferencesPointingToOrb(Orb orb);
 	
 	void removeReference(long arrowOrbInternalId, String arrowAttributeName, long targetOrbInternalId);
 	
 	void removeReference(long arrowOrbInternalId, String arrowAttributeName, long targetOrbInternalId, String targetAttributeName);
+	
+	public void renameAttribute(long orbTypeInternalId, String attributeNameOld, String attributeNameNew);
 
-	public long countOrbsOfType(long id);
+	public void resetAllReferencesPointingToOrb(Orb orb);
 
-	public boolean doesOrbWithTypeExist(long orbTypeInternalId);
+	public void setAttribute(long orbInternalId, String attributeName, String value);
+
+	void updateOrb(Orb orb);
 }

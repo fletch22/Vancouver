@@ -118,7 +118,7 @@ class LogDaoSpec extends Specification {
 		tranDate = tranDate.add(new BigDecimal(".000000000001"));
 		def tranId = tranDate;
 		
-		logger.info("TD: {}", tranDate);
+		logger.debug("TD: {}", tranDate);
 		
 		when:
 		logDao.logAction(action, undoAction, tranDate, tranId);

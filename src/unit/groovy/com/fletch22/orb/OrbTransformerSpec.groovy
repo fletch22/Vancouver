@@ -24,15 +24,11 @@ class OrbTransformerSpec extends Specification {
 		given:
 		Orb orb = new Orb();
 		
-		BigDecimal tranDateExpected = new BigDecimal("1234123312423414231");
-		
 		long orbInternalIdExpected = 2134
 		long orbTypeInternalIdExpected = 5678
 		
 		orb.setOrbInternalId(orbInternalIdExpected);
 		orb.setOrbTypeInternalId(orbTypeInternalIdExpected);
-		
-		orb.setTranDate(tranDateExpected);
 		
 		def userDefinedKey1 = 'foo1'
 		def userDefinedKey2 = 'foo2'

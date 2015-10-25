@@ -85,10 +85,7 @@ class OrbManagerLocalCacheSpec extends Specification {
 
 		OrbType orbType = orbTypeManager.getOrbType(orbTypeInternalId)
 
-		String tranDateString = orbType.tranDate.toString()
-		BigDecimal tranDate = new BigDecimal(tranDateString)
-
-		Orb orb = orbManager.createOrb(orbTypeInternalId, tranDate)
+		Orb orb = orbManager.createOrb(orbTypeInternalId)
 
 		when:
 		orbManager.setAttribute(orb.getOrbInternalId(), attributeName, ReferenceCollection.REFERENCE_KEY_PREFIX)
@@ -107,10 +104,7 @@ class OrbManagerLocalCacheSpec extends Specification {
 
 		OrbType orbType = orbTypeManager.getOrbType(orbTypeInternalId)
 
-		String tranDateString = orbType.tranDate.toString()
-		BigDecimal tranDate = new BigDecimal(tranDateString)
-
-		Orb orb = orbManager.createOrb(orbTypeInternalId, tranDate)
+		Orb orb = orbManager.createOrb(orbTypeInternalId)
 
 		orbManager.setAttribute(orb.getOrbInternalId(), attributeName, "bar")
 
@@ -137,7 +131,7 @@ class OrbManagerLocalCacheSpec extends Specification {
 
 		String referenceValue = createReferences(orbType, 100)
 
-		Orb orb = orbManager.createOrb(orbTypeInternalId, tranDateGenerator.getTranDate())
+		Orb orb = orbManager.createOrb(orbTypeInternalId)
 		orbManager.setAttribute(orb.getOrbInternalId(), attributeName, referenceValue)
 		
 		orbManager.deleteOrb(orb.orbInternalId, true)
@@ -155,7 +149,7 @@ class OrbManagerLocalCacheSpec extends Specification {
 		
 		List<String> referenceList = []
 		numberOfReference.times {
-		Orb orb = orbManager.createOrb(orbType.id, tranDateGenerator.getTranDate())
+		Orb orb = orbManager.createOrb(orbType.id)
 		orbManager.setAttribute(orb.orbInternalId, "foo", "bar")
 			referenceList << referenceUtil.composeReference(orb.orbInternalId, "foo")
 		}
@@ -173,10 +167,7 @@ class OrbManagerLocalCacheSpec extends Specification {
 
 		OrbType orbType = orbTypeManager.getOrbType(orbTypeInternalId)
 
-		String tranDateString = orbType.tranDate.toString()
-		BigDecimal tranDate = new BigDecimal(tranDateString)
-		
-		Orb orb = orbManager.createOrb(orbTypeInternalId, tranDate)
+		Orb orb = orbManager.createOrb(orbTypeInternalId)
 
 		StopWatch stopWatch = new StopWatch()
  
@@ -188,7 +179,7 @@ class OrbManagerLocalCacheSpec extends Specification {
 		
 		def elapsedMillis = new BigDecimal(stopWatch.getNanoTime()).divide(1000000)
 		
-		logger.info("Time to get 2 * 2 * {} orbs/orb types: {}", numberOfReferences, elapsedMillis)
+		logger.debug("Time to get 2 * 2 * {} orbs/orb types: {}", numberOfReferences, elapsedMillis)
 		
 		stopWatch.reset()
 
@@ -209,7 +200,7 @@ class OrbManagerLocalCacheSpec extends Specification {
 		def elapsedMillisPerSetAction = new BigDecimal(stopWatch.getNanoTime()).divide(1000000).divide(numberSetActions)
 
 		when:
-		logger.info("Each set action averaged {} millis", elapsedMillisPerSetAction)
+		logger.debug("Each set action averaged {} millis", elapsedMillisPerSetAction)
 		def fetchedValue = orbManager.getAttribute(orb.orbInternalId, attributeName)
 
 		then:
@@ -257,8 +248,7 @@ class OrbManagerLocalCacheSpec extends Specification {
 			
 			def orbTypeInternalId = orbTypeManager.createOrbType(attributeName, fieldSet)
 			
-			def tranDate = tranDateGenerator.getTranDate()
-			Orb orb = orbManager.createOrb(orbTypeInternalId, tranDate)
+			Orb orb = orbManager.createOrb(orbTypeInternalId)
 			
 			def composedKey = referenceUtil.composeReference(orb.getOrbInternalId(), attributeName)
 			set.add(composedKey)

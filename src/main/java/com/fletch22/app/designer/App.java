@@ -1,5 +1,6 @@
 package com.fletch22.app.designer;
 
-public class App {
+public class App extends OrbBasedComponent {
 
+	
 }

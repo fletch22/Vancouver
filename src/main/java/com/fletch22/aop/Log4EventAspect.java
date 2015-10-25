@@ -21,7 +21,6 @@ import com.fletch22.Fletch22ApplicationContext;
 import com.fletch22.orb.InternalIdGenerator;
 import com.fletch22.orb.command.MethodCallCommand;
 import com.fletch22.orb.command.orbType.dto.MethodCallDto;
-import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory;
 import com.fletch22.orb.command.processor.OperationResult;
 import com.fletch22.orb.command.processor.OperationResult.OpResult;
 import com.fletch22.orb.command.processor.RedoAndUndoLogging;
@@ -62,10 +61,13 @@ public class Log4EventAspect {
 		
 		logger.debug("Is in restore mode: {}", isInRestoreMode);
 		logger.debug("hasInitialCommandActionBeenAdded: {}", packageHolder.hasInitialCommandActionBeenAdded());
-		
-		if (packageHolder.hasInitialCommandActionBeenAdded() || isInRestoreMode) {
-			retObject = proceedingJoinPoint.proceed();
-		} else {
+
+		// NOTE: 10-24-2015: This ensures that while in restore mode, calls are not logged again.
+		// Also this ensure that only entry point calls are logged and rolled back. Since calls can 
+		// be nested we accumulate a log before persisting.
+		// The first outer call enter the first if section. Nest logged calls are directed to 
+		// the second if section. When processing exists the first outer call, we log it.
+		if (!packageHolder.hasInitialCommandActionBeenAdded() && !isInRestoreMode) {
 			StringBuilder methodCallSerialized = convertCall(proceedingJoinPoint);
 			
 			logger.debug("redo log action: {}", methodCallSerialized);
@@ -99,6 +101,8 @@ public class Log4EventAspect {
 			if (operationResult.opResult == OpResult.FAILURE) {
 				throw new RuntimeException(operationResult.operationResultException);
 			}
+		} else {
+			retObject = proceedingJoinPoint.proceed();
 		}
 		return retObject;
 	}
@@ -130,11 +134,7 @@ public class Log4EventAspect {
 	private EventLogCommandProcessPackageHolder getPackageHolder() {
 		EventLogCommandProcessPackageHolder packageHolder = (EventLogCommandProcessPackageHolder) getBean(EventLogCommandProcessPackageHolder.class);
 		
-		// TODO convert to factory method
-		if (packageHolder.getCommandProcessActionPackage() == null) {
-			CommandProcessActionPackageFactory factory = (CommandProcessActionPackageFactory) getBean(CommandProcessActionPackageFactory.class);
-			packageHolder.setCommandProcessActionPackage(factory.getInstanceForDirectInvocation());
-		}
+		packageHolder.ensureInitialized();
 		
 		return packageHolder;
 	}

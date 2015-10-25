@@ -89,7 +89,7 @@ public class QueryManagerTest {
 		stopWatch.stop();
 		
 		BigDecimal millis = new BigDecimal(stopWatch.getNanoTime()).divide(new BigDecimal(1000000));
-		logger.info("Elapsed time: {} millis.", millis);
+		logger.debug("Elapsed time: {} millis.", millis);
 		
 		// Assert
 		assertFalse(orbInternalId == Orb.INTERNAL_ID_UNSET);
@@ -125,6 +125,8 @@ public class QueryManagerTest {
 	public void testRollbackQuery() throws Exception {
 		
 		// Arrange
+		assertEquals(0, cache.queryCollection.getSize());
+		
 		long orbTypeInternalId = testDataSimple.loadTestData();
 		
 		assertEquals(0, orbManager.countOrbsOfType(SystemType.QUERY.getId()));

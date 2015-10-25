@@ -42,7 +42,7 @@ class OrbTypeServiceIntegrationSpec extends Specification {
 		given:
 		String label = randomUtil.getRandomString();
 		
-		logger.info("Label: {}", label);
+		logger.debug("Label: {}", label);
 		
 		when:
 		long orbInternalId = orbTypeService.addOrbType(label);
@@ -58,12 +58,12 @@ class OrbTypeServiceIntegrationSpec extends Specification {
 		int max = 10
 		
 		when:
-		logger.info("Start create type.");
+		logger.debug("Start create type.");
 		for (int i = 0; i < max; i++) {
 			String labelToUse = label + String.valueOf(i)
 			long orbInternalId = orbTypeService.addOrbType(labelToUse)
 		}
-		logger.info("End create type.");
+		logger.debug("End create type.");
 		
 		then:
 		1 == 1

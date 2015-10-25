@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 
 import com.fletch22.orb.InternalIdGenerator;
 import com.fletch22.orb.OrbType;
-import com.fletch22.orb.OrbTypeConstants;
 import com.fletch22.orb.OrbTypeManager;
 import com.fletch22.orb.TranDateGenerator;
 import com.fletch22.orb.cache.local.Cache;

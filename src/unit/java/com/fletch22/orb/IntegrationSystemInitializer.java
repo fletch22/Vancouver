@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import com.fletch22.dao.LogActionService;
 import com.fletch22.orb.cache.local.Cache;
 import com.fletch22.orb.command.transaction.TransactionService;
+import com.fletch22.orb.logging.EventLogCommandProcessPackageHolder;
 
 @Component
 public class IntegrationSystemInitializer {
@@ -23,6 +24,9 @@ public class IntegrationSystemInitializer {
 	
 	@Autowired
 	OrbTypeManager orbTypeManager;
+	
+	@Autowired
+	EventLogCommandProcessPackageHolder eventLogCommandProcessPackageHolder;
 	
 	@PostConstruct
 	public void postConstruct() {
@@ -43,6 +47,18 @@ public class IntegrationSystemInitializer {
 	public void initializeSystem() {
 		transactionService.endTransaction();
 		cache.nukeAllItemsFromCache();
+		initializeSystemTypes();
 		logActionService.loadCacheFromDb();
+	}
+	
+	public void verifyClean() {
+		
+		if (transactionService.isTransactionInFlight()) {
+			throw new RuntimeException("Transaction is still in flight. Ensure cleanup.");
+		}
+
+		if (eventLogCommandProcessPackageHolder.hasInitialCommandActionBeenAdded() ) {
+			throw new RuntimeException("Unprocessed command in " + eventLogCommandProcessPackageHolder.getClass().getSimpleName() + ". Ensure cleanup.");
+		}
 	}
 }

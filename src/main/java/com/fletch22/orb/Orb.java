@@ -12,16 +12,14 @@ public class Orb implements GsonSerializable {
 	private LinkedHashMap<String, String> userDefinedProperties = new LinkedHashMap<String, String>();
 	private long orbInternalId = INTERNAL_ID_UNSET;
 	private long orbTypeInternalId = OrbTypeConstants.ORBTYPE_INTERNAL_ID_UNSET;
-	private BigDecimal tranDate;
 	
 	public Orb() {
 		// Do Nothing
 	}
 	
-	public Orb(long internalId, long orbTypeInternalId, BigDecimal tranDate, LinkedHashMap<String, String> userDefinedProperties) {
+	public Orb(long internalId, long orbTypeInternalId, LinkedHashMap<String, String> userDefinedProperties) {
 		this.orbInternalId = internalId;
 		this.setOrbTypeInternalId(orbTypeInternalId);
-		this.tranDate = tranDate;
 		this.userDefinedProperties = userDefinedProperties;
 	}
 
@@ -31,14 +29,6 @@ public class Orb implements GsonSerializable {
 
 	public void setOrbInternalId(long orbInteralId) {
 		this.orbInternalId = orbInteralId;
-	}
-
-	public BigDecimal getTranDate() {
-		return tranDate;
-	}
-
-	public void setTranDate(BigDecimal tranDate) {
-		this.tranDate = tranDate;
 	}
 
 	public LinkedHashMap<String, String> getUserDefinedProperties() {

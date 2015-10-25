@@ -71,7 +71,7 @@ public class TestDataWithReferences {
 		
 		String reference = referenceUtil.composeReference(orbTarget.getOrbInternalId(), ATTRIBUTE_COLOR);
 		
-		logger.info("Ref: {}", reference);
+		logger.debug("Ref: {}", reference);
 		
 		for (int i = 0; i < numberOfInstances; i++) {
 			Orb orb = orbManager.createOrb(orbTypeInternalId);

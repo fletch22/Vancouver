@@ -79,7 +79,7 @@ class CriteriaSpec extends Specification {
 		stopWatch.stop()
 		
 		def elapsed = new BigDecimal(stopWatch.nanoTime).divide(new BigDecimal(1000000))
-		logger.info("elapsed time: {}", elapsed)
+		logger.debug("elapsed time: {}", elapsed)
 		
 		then:
 		notThrown Exception
@@ -100,7 +100,7 @@ class CriteriaSpec extends Specification {
 		stopWatch.stop()
 		
 		def elapsed = new BigDecimal(stopWatch.nanoTime).divide(new BigDecimal(1000000))
-		logger.info("elapsed time: {}", elapsed)
+		logger.debug("elapsed time: {}", elapsed)
 		
 		then:
 		notThrown Exception
@@ -127,7 +127,7 @@ class CriteriaSpec extends Specification {
 		stopWatch.stop()
 		
 		def elapsed = new BigDecimal(stopWatch.nanoTime).divide(new BigDecimal(1000000))
-		logger.info("elapsed time: {}", elapsed)
+		logger.debug("elapsed time: {}", elapsed)
 		
 		then:
 		notThrown Exception
@@ -153,7 +153,7 @@ class CriteriaSpec extends Specification {
 		stopWatch.stop()
 		
 		def elapsed = new BigDecimal(stopWatch.nanoTime).divide(new BigDecimal(1000000))
-		logger.info("elapsed time: {}", elapsed)
+		logger.debug("elapsed time: {}", elapsed)
 		
 		then:
 		notThrown Exception

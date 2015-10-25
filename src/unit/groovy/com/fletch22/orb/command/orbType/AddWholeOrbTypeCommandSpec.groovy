@@ -22,7 +22,6 @@ class AddWholeOrbTypeCommandSpec extends Specification {
 		when:
 		Orb orbOriginal = new Orb();
 		orbOriginal.orbInternalId = 123.toLong()
-		orbOriginal.tranDate = new BigDecimal("2132134423142314123")
 		orbOriginal.userDefinedProperties = new HashMap<String, String>()
 		
 		orbOriginal.userDefinedProperties.put("foo1", "foo1Value")
@@ -33,7 +32,6 @@ class AddWholeOrbTypeCommandSpec extends Specification {
 		
 		then:
 		orbOriginal.orbInternalId == addWholeOrbTypeDto.orb.orbInternalId
-		orbOriginal.tranDate.toString() == addWholeOrbTypeDto.orb.tranDate.toString()
 		
 		Map<String, String> propertiesOriginal = orbOriginal.getUserDefinedProperties()
 		Map<String, String> propertiesActual = addWholeOrbTypeDto.orb.getUserDefinedProperties()

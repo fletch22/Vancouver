@@ -50,7 +50,7 @@ public class Log4EventAspectTest {
 		
 		BigDecimal millis = new BigDecimal(stopWatch.getNanoTime()).divide(new BigDecimal(1000000)).divide(new BigDecimal(String.valueOf(numRuns)));
 		
-		logger.info("millis per method call: {}", millis.toString());
+		logger.debug("millis per method call: {}", millis.toString());
 		
 		assertFalse("Execution prevent should have been reset to false.", Log4EventAspect.isPreventNextLineFromExecutingAndAddToUndoLog);
 	}
@@ -64,7 +64,7 @@ public class Log4EventAspectTest {
 	    try {
 	        org.aspectj.weaver.loadtime.Agent.getInstrumentation();
 	    } catch (NoClassDefFoundError | UnsupportedOperationException e) {
-	    	logger.info("Exception: ", e);
+	    	logger.debug("Exception: ", e);
 	        return false;
 	    }
 	    return true;
@@ -114,7 +114,7 @@ public class Log4EventAspectTest {
 		
 		@Loggable4Event
 		public void dancing(Map<String, String> thing) {
-			logger.info("In dancing.");
+			logger.debug("In dancing.");
 		}
 		
 		@Loggable4Event

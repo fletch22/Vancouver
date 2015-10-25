@@ -118,6 +118,7 @@ public class CommandProcessor {
 			operationResult = executeAction(commandProcessActionPackage);
 			operationResult.internalIdAfterOperation = this.internalIdGenerator.getCurrentId();
 			redoAndUndoLogging.logRedoAndUndo(commandProcessActionPackage, operationResult);
+			
 		} finally {
 			Log4EventAspect.isInvokeFromSerializedMethod = false;
 		}
@@ -213,6 +214,8 @@ public class CommandProcessor {
 		} catch (Exception e) {
 			operationResult.opResult = OpResult.FAILURE;
 			operationResult.operationResultException = e;
+		} finally {
+			eventLogCommandProcessPackageHolder.cleanup();
 		}
 
 		return operationResult;

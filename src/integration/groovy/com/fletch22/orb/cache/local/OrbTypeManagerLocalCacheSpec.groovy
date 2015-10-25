@@ -201,7 +201,7 @@ class OrbTypeManagerLocalCacheSpec extends Specification {
 	
 	def createOrbs(int numberOfOrbs, long orbTypeInternalId) {
 		numberOfOrbs.times {
-			Orb orb = orbManager.createOrb(orbTypeInternalId, tranDateGenerator.getTranDate())
+			Orb orb = orbManager.createOrb(orbTypeInternalId)
 			Assert.assertEquals(orb.userDefinedProperties.keySet().size(), 3, 0)
 		}
 	}

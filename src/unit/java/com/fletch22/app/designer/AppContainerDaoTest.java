@@ -15,10 +15,10 @@ import com.fletch22.util.StopWatch;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/springContext-test.xml")
-public class AppContainerFactoryTest {
+public class AppContainerDaoTest {
 	
 	@Autowired
-	AppContainerDao appContainerFactory;
+	AppContainerDao appContainerDao;
 	
 	@Autowired
 	AppDesignerInitialization appDesignerInitialization;
@@ -28,6 +28,7 @@ public class AppContainerFactoryTest {
 	
 	@Before
 	public void before() {
+		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems();
 		integrationSystemInitializer.initializeSystem();
 		appDesignerInitialization.initialize();
 	}
@@ -44,10 +45,10 @@ public class AppContainerFactoryTest {
 		// Act
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
-		AppContainer appContainer = appContainerFactory.create("foo");
+		AppContainer appContainer = appContainerDao.create("foo");
 		stopWatch.stop();
 		
-		stopWatch.logElapsed();
+//		stopWatch.logElapsed();
 		
 		// Assert
 		assertNotNull(appContainer);

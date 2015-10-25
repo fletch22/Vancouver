@@ -35,14 +35,14 @@ public class AddOrbTypeCommanderTest {
 	@Test
 	public void testSpeed() {
 		
-		logger.info("Start");
+		logger.debug("Start");
 		
 		String json = addOrbTypeCommand.toJson("foo").toString();
 		for (int i = 0; i < 100000; i++) {
 			@SuppressWarnings("unused")
 			AddOrbTypeDto dto = addOrbTypeCommand.fromJson(json);
 		}
-		logger.info("End");  
+		logger.debug("End");  
 	}
 	
 	@SuppressWarnings({ "unused" })
@@ -62,7 +62,7 @@ public class AddOrbTypeCommanderTest {
 		
 		String actionb = gson.toJson(commandWrapper);
 		
-		logger.info("Start Complex");
+		logger.debug("Start Complex");
 		
 		for (int i = 0; i < 100000; i++) {
 			JsonElement jsonElement = jsonParser.parse(actionb);
@@ -80,7 +80,7 @@ public class AddOrbTypeCommanderTest {
 			}
 		
 		}
-		logger.info("End");
+		logger.debug("End");
 		
 	}
 	
