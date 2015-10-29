@@ -90,7 +90,6 @@ public class ReferenceCollectionTest {
 		List<DecomposedKey> list1 = createRefList(66, 88);
 		referenceCollection.addReferences(123, targetAttributeName, list1);
 
-		long arrowOrbInternalId = 393;
 		String arrowAttribute = "bar";
 		
 		List<DecomposedKey> list2 = new ArrayList<DecomposedKey>();
@@ -136,17 +135,6 @@ public class ReferenceCollectionTest {
 		// Assert
 		count = referenceCollection.countArrowsPointingToTargetAttribute(targetOrbInternalId, targetAttributeName);
 		assertEquals("Should be zero arrows pointing to target.", 0, count);
-	}
-	
-	private List<DecomposedKey> createRefList(long orbInternalId, String attributeName, int numberOfAttrRefs, int numberOfOrbRefs) {
-
-		List<DecomposedKey> orbRefList = addOrbReferences(numberOfOrbRefs);
-		List<DecomposedKey> attrRefList = addAttrReferences(numberOfAttrRefs);
-		
-		List<DecomposedKey> list = new ArrayList<DecomposedKey>(orbRefList);
-		list.addAll(attrRefList);
-		
-		return list;
 	}
 	
 	private List<DecomposedKey> createRefList(int numberOfAttrRefs, int numberOfOrbRefs) {

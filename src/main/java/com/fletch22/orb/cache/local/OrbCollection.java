@@ -17,6 +17,7 @@ import com.fletch22.orb.Orb;
 import com.fletch22.orb.OrbType;
 import com.fletch22.orb.cache.reference.DecomposedKey;
 import com.fletch22.orb.cache.reference.OrbReference;
+import com.fletch22.orb.cache.reference.ReferenceUtil;
 import com.fletch22.orb.query.ConstraintGrinder;
 import com.fletch22.orb.query.CriteriaFactory.Criteria;
 import com.fletch22.orb.query.OrbResultSet;
@@ -29,6 +30,9 @@ public class OrbCollection {
 	
 	@Autowired
 	public OrbReference orbReference;
+	
+	@Autowired
+	public ReferenceUtil referenceUtil;
 	
 	Map<Long, OrbSingleTypesInstanceCollection> allInstances = new HashMap<Long, OrbSingleTypesInstanceCollection>();
 	private Map<Long, OrbSteamerTrunk> quickLookup = new HashMap<Long, OrbSteamerTrunk>();
@@ -159,7 +163,7 @@ public class OrbCollection {
 			
 			String attributeValue = properties.get(attributeName);
 			
-			if (orbReference.isValueAReference(attributeValue)) {
+			if (referenceUtil.isValueAReference(attributeValue)) {
 				orbReference.removeArrowsFromIndex(orb.getOrbInternalId(), attributeName, attributeValue);
 			}
 			
@@ -182,7 +186,7 @@ public class OrbCollection {
 			LinkedHashMap<String, String> properties = orbSteamerTrunk.orb.getUserDefinedProperties();
 			properties.put(attributeName, value);
 			
-			if (orbReference.isValueAReference(value)) {
+			if (referenceUtil.isValueAReference(value)) {
 				orbReference.addReferences(orbInternalId, attributeName, value);
 			}
 			
@@ -197,14 +201,14 @@ public class OrbCollection {
 		String oldValue = orb.getUserDefinedProperties().get(attributeName);
 
 		if (!areEqualAttributes(oldValue, value)) {
-			boolean isNewValueAReference = orbReference.isValueAReference(value);
+			boolean isNewValueAReference = referenceUtil.isValueAReference(value);
 			if (isNewValueAReference) {
 				if (isTargetAttributeValueAlreadyAReference(value)) {
 					throw new RuntimeException("A reference can't point to another reference. I don't know why but that's not allowed. Figure it out later.");
 				}
 			}
 			
-			if (orbReference.isValueAReference(oldValue)) {
+			if (referenceUtil.isValueAReference(oldValue)) {
 				
 				logger.debug("setAttribute oldValue: {}", oldValue);
 				
@@ -242,7 +246,7 @@ public class OrbCollection {
 	private boolean isTargetAttributeValueAlreadyAReference(String referenceValue) {
 		boolean isReference = false;
 		
-		DecomposedKey decomposedKey = orbReference.decomposeKey(referenceValue);
+		DecomposedKey decomposedKey = referenceUtil.decomposeKey(referenceValue);
 		
 		if (decomposedKey.isKeyPointingToAttribute()) {
 			
@@ -250,7 +254,7 @@ public class OrbCollection {
 			
 			String targetValue = orb.getUserDefinedProperties().get(decomposedKey.getAttributeName());
 			
-			if (orbReference.isValueAReference(targetValue)) {
+			if (referenceUtil.isValueAReference(targetValue)) {
 				isReference = true;
 			}
 		}

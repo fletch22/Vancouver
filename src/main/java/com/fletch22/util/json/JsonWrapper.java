@@ -3,17 +3,13 @@ package com.fletch22.util.json;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fletch22.orb.query.Constraint;
 import com.fletch22.orb.serialization.GsonSerializable;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
 
 public class JsonWrapper {
@@ -48,30 +44,6 @@ public class JsonWrapper {
 
 		this.objectValueAsJson = gson.toJson(this.object);
 	}
-
-
-	private Object wrapInGenericWrapper(Object object) {
-		String clazz = object.getClass().getName();
-		
-		if (clazz.equals(HashMap.class.getName()) ) {
-			HashMap hashMap = (HashMap) object;
-			if (!hashMap.isEmpty()) {
-				Object firstKey = hashMap.keySet().iterator().next();
-				Object entry = hashMap.get(firstKey);
-				
-				if (firstKey.getClass().getName().equals(Long.class.getName())) {
-					HashMapLongStringWrapper wrapper = new HashMapLongStringWrapper();
-					wrapper.map = (HashMap<Long, String>) object;
-					object = wrapper;
-				}
-			} 
-		} else {
-			throw new RuntimeException("Special type not set up yet with special special wrapper.");
-		}
-		
-		return object;
-	}
-
 
 	private void ensureCanBeSerialized(Object object) {
 		if (object != null && !(object instanceof GsonSerializable) && !(isEasyToSerialize(object.getClass()))) {

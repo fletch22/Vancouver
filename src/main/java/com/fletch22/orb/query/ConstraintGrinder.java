@@ -172,6 +172,7 @@ public class ConstraintGrinder {
 		return simpleNullableAttribute;
 	}
 	
+	
 	private Class<? extends SimpleNullableAttribute<CacheEntry, String>> getClazzFactory(String attributeName) {
 		
 		Class<? extends SimpleNullableAttribute<CacheEntry, String>> clazz = null;

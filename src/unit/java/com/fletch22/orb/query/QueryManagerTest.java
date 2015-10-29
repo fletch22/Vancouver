@@ -135,10 +135,6 @@ public class QueryManagerTest {
 		
 		OrbType orbType = orbTypeManager.getOrbType(orbTypeInternalId);
 		
-		Criteria criteria = criteriaFactory.createInstance(orbType, "foo");
-		
-		long orbInternalId = queryManager.create(criteria);
-
 		// Act
 		rollbackTransactionService.rollbackToSpecificTransaction(tranId);
 		

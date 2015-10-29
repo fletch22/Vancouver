@@ -49,9 +49,9 @@ public class OrbReference {
 		Set<String> propertyKeySet = userDefinedProperties.keySet();
 		for (String property: propertyKeySet) {
 			List<DecomposedKey> keys = new ArrayList<DecomposedKey>();
-			Set<String> referenceValues = getComposedKeys(userDefinedProperties.get(property));
+			Set<String> referenceValues = referenceUtil.getComposedKeys(userDefinedProperties.get(property));
 			for (String referenceValue: referenceValues) {
-				keys.add(decomposeKey(referenceValue));
+				keys.add(referenceUtil.decomposeKey(referenceValue));
 			}
 			nameValuesMap.put(property, keys);
 		}
@@ -71,7 +71,7 @@ public class OrbReference {
 //	}
 	
 	public StringBuffer addReference(long orbInternalIdArrow, String attributeNameArrow, StringBuffer oldValue, long orbInternalIdTarget, String attributeNameTarget) {
-		Set<String> references = getComposedKeys(oldValue.toString());
+		Set<String> references = referenceUtil.getComposedKeys(oldValue.toString());
 		
 		String composedReference = referenceUtil.composeReference(orbInternalIdTarget, attributeNameTarget);
 		
@@ -89,7 +89,7 @@ public class OrbReference {
 	}
 	
 	public StringBuffer addReference(long orbInternalIdArrow, String attributeNameArrow, StringBuffer oldValue, long orbInternalIdTarget) {
-		Set<String> references = getComposedKeys(oldValue.toString());
+		Set<String> references = referenceUtil.getComposedKeys(oldValue.toString());
 		
 		String composedReference = referenceUtil.composeReference(orbInternalIdTarget);
 		
@@ -107,7 +107,7 @@ public class OrbReference {
 	}
 	
 	public StringBuffer removeReference(long arrowOrbInternalId, String arrowAttributeName, StringBuffer oldValue, long targetOrbInternalId) {
-		Set<String> references = getComposedKeys(oldValue.toString());
+		Set<String> references = referenceUtil.getComposedKeys(oldValue.toString());
 		
 		String composedReference = referenceUtil.composeReference(targetOrbInternalId);
 		
@@ -123,7 +123,7 @@ public class OrbReference {
 	}
 	
 	public StringBuffer removeReference(long arrowOrbInternalId, String arrowAttributeName, StringBuffer oldValue, long targetOrbInternalId, String targetAttributeName) {
-		Set<String> references = getComposedKeys(oldValue.toString());
+		Set<String> references = referenceUtil.getComposedKeys(oldValue.toString());
 		
 		String composedReference = referenceUtil.composeReference(targetOrbInternalId, targetAttributeName);
 		
@@ -138,39 +138,6 @@ public class OrbReference {
 		return newValue;
 	}
 	
-	public boolean isValueAReference(String attributeValue) {
-		return (attributeValue == null ? false: attributeValue.startsWith(ReferenceCollection.REFERENCE_KEY_PREFIX));
-	}
-	
-	private Set<String> getComposedKeys(String attributeReferenceValue) {
-		
-		Set<String> set = new HashSet<String>();
-		StringTokenizer st = new StringTokenizer(attributeReferenceValue, ",");
-		while(st.hasMoreTokens()) {
-			set.add(st.nextToken());
-		}
-		
-		return set;
-	}
-	
-	public DecomposedKey decomposeKey(String composedKey) {
-		
-		composedKey = composedKey.substring(ReferenceCollection.REFERENCE_KEY_PREFIX.length());
-		
-		int index = composedKey.indexOf(ReferenceCollection.ID_ATTRIBUTE_NAME_SEPARATOR);
-		
-		logger.debug("Composed Key: {}", composedKey);
-		
-		DecomposedKey key = null;
-		if (index < 0) {
-			key = new DecomposedKey(Long.parseLong(composedKey.substring(0)));
-		} else {
-			key = new DecomposedKey(Long.parseLong(composedKey.substring(0, index)), composedKey.substring(index + 1));
-		}
-		
-		return key;
-	}
-
 	public void removeArrowsFromIndex(long orbInternalId, String attributeName, String value) {
 		
 		logger.debug("rafi: {}", value);
@@ -189,9 +156,9 @@ public class OrbReference {
 		
 		logger.debug("CTDK: {}", value);	
 		
-		Set<String> referenceValues = getComposedKeys(value);
+		Set<String> referenceValues = referenceUtil.getComposedKeys(value);
 		for (String referenceValue: referenceValues) {
-			keys.add(decomposeKey(referenceValue));
+			keys.add(referenceUtil.decomposeKey(referenceValue));
 		}
 		return keys;
 	}
@@ -204,7 +171,7 @@ public class OrbReference {
 		Set<String> attributeKeys = orb.getUserDefinedProperties().keySet();
 		for (String attributeName: attributeKeys) {
 			String value = orb.getUserDefinedProperties().get(attributeName);
-			if (isValueAReference(value)) {
+			if (referenceUtil.isValueAReference(value)) {
 				removeArrowsFromIndex(orb.getOrbInternalId(), attributeName, value);
 			}
 		}

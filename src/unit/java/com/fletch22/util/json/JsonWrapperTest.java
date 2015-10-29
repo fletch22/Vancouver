@@ -150,7 +150,6 @@ public class JsonWrapperTest {
 		
 		JsonWrapper jsonWrapper2 = JsonWrapper.fromJson(new Gson(), jsonWrapper.toJson());
 		
-		@SuppressWarnings("unchecked")
 		LinkedHashSetString reconstituted = (LinkedHashSetString) jsonWrapper2.object;
 		
 		logger.debug("jsonWrapper: {}", jsonWrapper.toJson());
@@ -171,7 +170,6 @@ public class JsonWrapperTest {
 		
 		JsonWrapper jsonWrapper2 = JsonWrapper.fromJson(new Gson(), jsonWrapper.toJson());
 		
-		@SuppressWarnings("unchecked")
 		LinkedHashMapStringString reconstituted = (LinkedHashMapStringString) jsonWrapper2.object;
 		
 		logger.debug("jsonWrapper: {}", jsonWrapper.toJson());
@@ -216,7 +214,6 @@ public class JsonWrapperTest {
 		}
 		stopWatch.stop();
 		
-		@SuppressWarnings("unused")
 		long millis = stopWatch.getNanoTime() / 100000000;
 		
 		logger.debug("Elapsed millis per unit: " + millis);
@@ -236,7 +233,6 @@ public class JsonWrapperTest {
 		
 		JsonWrapper jsonWrapper2 = JsonWrapper.fromJson(new Gson(), jsonWrapper.toJson());
 		
-		@SuppressWarnings("unchecked")
 		Criteria reconstituted = (Criteria) jsonWrapper2.object;
 		
 		logger.debug("jsonWrapper: {}", jsonWrapper.toJson());
@@ -262,8 +258,6 @@ public class JsonWrapperTest {
 		Gson gson = gsonFactory.getInstance();
 		
 		JsonWrapper jsonWrapper2 = JsonWrapper.fromJson(gson, jsonWrapper.toJson());
-		
-		@SuppressWarnings("unchecked")
 		Criteria reconstituted = (Criteria) jsonWrapper2.object;
 		
 		logger.debug("jsonWrapper: {}", jsonWrapper.toJson());

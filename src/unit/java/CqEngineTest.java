@@ -74,7 +74,7 @@ public class CqEngineTest {
 		
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
-		ResultSet<Car> resultSet = cars.retrieve(query1);
+		cars.retrieve(query1);
 		stopWatch.stop();
 		
 		BigDecimal millis = new BigDecimal(stopWatch.getNanoTime()).divide(new BigDecimal(1000000));

@@ -10,6 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.fletch22.app.designer.appContainer.AppContainer;
+import com.fletch22.app.designer.appContainer.AppContainerDao;
+import com.fletch22.app.designer.appContainer.AppContainerService;
 import com.fletch22.orb.IntegrationSystemInitializer;
 import com.fletch22.util.StopWatch;
 
@@ -21,20 +24,26 @@ public class AppContainerDaoTest {
 	AppContainerDao appContainerDao;
 	
 	@Autowired
-	AppDesignerInitialization appDesignerInitialization;
+	AppDesignerModule appDesignerInitialization;
 	
 	@Autowired
 	IntegrationSystemInitializer integrationSystemInitializer;
 	
+	@Autowired
+	AppDesignerModule appDesignerModule;
+	
+	@Autowired
+	AppContainerService appContainerService;
+	
 	@Before
 	public void before() {
+		integrationSystemInitializer.addOrbSystemModule(appDesignerModule);
 		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems();
-		integrationSystemInitializer.initializeSystem();
-		appDesignerInitialization.initialize();
 	}
-	
+
 	@After
 	public void after() {
+		integrationSystemInitializer.clearOrbSystemModules();
 		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems();
 	}
 
@@ -45,13 +54,13 @@ public class AppContainerDaoTest {
 		// Act
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
-		AppContainer appContainer = appContainerDao.create("foo");
+		
+		AppContainer appContainer = appContainerService.createInstance("foo");
 		stopWatch.stop();
 		
-//		stopWatch.logElapsed();
+		stopWatch.logElapsed();
 		
 		// Assert
 		assertNotNull(appContainer);
 	}
-
 }

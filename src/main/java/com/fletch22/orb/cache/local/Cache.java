@@ -1,7 +1,5 @@
 package com.fletch22.orb.cache.local;
 
-import javax.annotation.PostConstruct;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

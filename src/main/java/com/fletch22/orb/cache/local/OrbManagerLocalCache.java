@@ -24,6 +24,7 @@ import com.fletch22.orb.OrbManager;
 import com.fletch22.orb.OrbType;
 import com.fletch22.orb.OrbTypeManager;
 import com.fletch22.orb.TranDateGenerator;
+import com.fletch22.orb.cache.reference.ReferenceUtil;
 import com.fletch22.orb.command.orb.DeleteOrbCommand;
 import com.fletch22.orb.command.orbType.dto.AddOrbDto;
 import com.fletch22.orb.dependency.DependencyHandler;
@@ -61,6 +62,9 @@ public class OrbManagerLocalCache implements OrbManager {
 	
 	@Autowired
 	DependencyHandlerFactory dependencyHandlerFactory;
+	
+	@Autowired
+	ReferenceUtil referenceUtil;
 
 	@Override
 	@Loggable4Event
@@ -326,7 +330,7 @@ public class OrbManagerLocalCache implements OrbManager {
 
 		String oldValue = orb.getUserDefinedProperties().get(attributeNameArrow);
 
-		if (StringUtils.isEmpty(oldValue) || cache.orbCollection.orbReference.isValueAReference(oldValue)) {
+		if (StringUtils.isEmpty(oldValue) || referenceUtil.isValueAReference(oldValue)) {
 			StringBuffer sb = new StringBuffer((StringUtils.isBlank(oldValue) ? "": oldValue));
 			
 			StringBuffer newValue = cache.orbCollection.orbReference.addReference(orbInternalIdArrow, attributeNameArrow, sb, orbInternalIdTarget, attributeNameTarget);
@@ -350,7 +354,7 @@ public class OrbManagerLocalCache implements OrbManager {
 
 		String oldValue = orb.getUserDefinedProperties().get(arrowAttributeName);
 
-		if (StringUtils.isEmpty(oldValue) || cache.orbCollection.orbReference.isValueAReference(oldValue)) {
+		if (StringUtils.isEmpty(oldValue) || referenceUtil.isValueAReference(oldValue)) {
 			
 			StringBuffer sb = new StringBuffer((StringUtils.isBlank(oldValue) ? "": oldValue));
 			
@@ -374,7 +378,7 @@ public class OrbManagerLocalCache implements OrbManager {
 
 		String oldValue = orb.getUserDefinedProperties().get(arrowAttributeName);
 		
-		if (StringUtils.isEmpty(oldValue) || cache.orbCollection.orbReference.isValueAReference(oldValue)) {
+		if (StringUtils.isEmpty(oldValue) || referenceUtil.isValueAReference(oldValue)) {
 			StringBuffer sb = new StringBuffer((StringUtils.isBlank(oldValue) ? "": oldValue));
 			
 			StringBuffer newValue = cache.orbCollection.orbReference.removeReference(arrowOrbInternalId, arrowAttributeName, sb, targetOrbInternalId);
@@ -397,9 +401,9 @@ public class OrbManagerLocalCache implements OrbManager {
 
 		String oldValue = orb.getUserDefinedProperties().get(arrowAttributeName);
 		
-		logger.info("Removing ref: {}", oldValue);
+		logger.debug("Removing ref: {}", oldValue);
 
-		if (StringUtils.isEmpty(oldValue) || cache.orbCollection.orbReference.isValueAReference(oldValue)) {
+		if (StringUtils.isEmpty(oldValue) || referenceUtil.isValueAReference(oldValue)) {
 			StringBuffer sb = new StringBuffer((StringUtils.isBlank(oldValue) ? "": oldValue));
 			
 			StringBuffer newValue = cache.orbCollection.orbReference.removeReference(arrowOrbInternalId, arrowAttributeName, sb, targetOrbInternalId, targetAttributeName);
@@ -416,6 +420,7 @@ public class OrbManagerLocalCache implements OrbManager {
 	}
 
 	@Override
+	@Loggable4Event
 	public void updateOrb(Orb orb) {
 		
 		Orb orbToUpdate = cache.orbCollection.get(orb.getOrbInternalId());

@@ -1,5 +1,7 @@
 package com.fletch22.orb;
 
+import java.util.ArrayList;
+
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,7 @@ import com.fletch22.dao.LogActionService;
 import com.fletch22.orb.cache.local.Cache;
 import com.fletch22.orb.command.transaction.TransactionService;
 import com.fletch22.orb.logging.EventLogCommandProcessPackageHolder;
+import com.fletch22.orb.modules.system.OrbSystemModule;
 
 @Component
 public class IntegrationSystemInitializer {
@@ -28,9 +31,19 @@ public class IntegrationSystemInitializer {
 	@Autowired
 	EventLogCommandProcessPackageHolder eventLogCommandProcessPackageHolder;
 	
+	private ArrayList<OrbSystemModule> orbSystemModuleList = new ArrayList<OrbSystemModule>();
+	
 	@PostConstruct
 	public void postConstruct() {
 		initializeSystemTypes();
+	}
+	
+	public void addOrbSystemModule(OrbSystemModule orbSystemModule) {
+		this.orbSystemModuleList.add(orbSystemModule);
+	}
+	
+	public void clearOrbSystemModules() {
+		this.orbSystemModuleList.clear();
 	}
 	
 	private void initializeSystemTypes() {
@@ -41,14 +54,14 @@ public class IntegrationSystemInitializer {
 		transactionService.endTransaction();
 		cache.nukeAllItemsFromCache();
 		logActionService.clearOutDatabase();
-		initializeSystemTypes();
+		initializeSystem();
 	}
 	
 	public void initializeSystem() {
-		transactionService.endTransaction();
-		cache.nukeAllItemsFromCache();
 		initializeSystemTypes();
-		logActionService.loadCacheFromDb();
+		for (OrbSystemModule orbSystemModule : orbSystemModuleList) {
+			orbSystemModule.initialize();
+		}
 	}
 	
 	public void verifyClean() {
