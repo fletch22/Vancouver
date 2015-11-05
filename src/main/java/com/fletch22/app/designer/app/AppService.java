@@ -3,23 +3,24 @@ package com.fletch22.app.designer.app;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.fletch22.app.designer.DomainService;
 import com.fletch22.app.designer.OrbBasedComponent;
-import com.fletch22.app.designer.Website;
+import com.fletch22.app.designer.website.Website;
 
 @Component
-public class AppService {
+public class AppService extends DomainService {
 	
 	@Autowired
 	AppDao appDao;
 
-	public void addApp(App app, Website webSite) {
-		app.getChildren().add(webSite);
-		appDao.update(app);
+	public void addToParent(App app, Website website) {
+		connectParentAndChild(app, website);
+		update(app);
 	}
-
+	
 	public App createInstance(String label) {
 		App app = new App();
-		app.setLabel(label);
+		app.label = label;
 		return appDao.create(app);
 	}
 	

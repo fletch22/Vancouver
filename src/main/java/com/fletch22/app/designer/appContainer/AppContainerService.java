@@ -1,19 +1,24 @@
 package com.fletch22.app.designer.appContainer;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fletch22.app.designer.DomainService;
 import com.fletch22.app.designer.app.App;
+import com.fletch22.app.designer.app.AppDao;
 
 @Component
 public class AppContainerService extends DomainService {
 	
 	@Autowired
 	AppContainerDao appContainerDao;
+	
+	@Autowired
+	AppDao appDao;
 
-	public void addApp(AppContainer appContainer, App app) {
-		appContainer.getChildren().add(app);
+	public void addToParent(AppContainer appContainer, App app) {
+		connectParentAndChild(appContainer, app);
 		update(appContainer);
 	}
 

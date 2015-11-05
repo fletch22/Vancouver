@@ -18,7 +18,7 @@ Tasks:
 	Create Rollback Actions for AddOrbType. - Done
 	Add delete instances when deleting type - Done
 	Add/Delete attribute - Done 
-	Add/Delete/Update Query -
+	Add/Delete/Update Query - Update remains to be finished.
 	Add/Delete/Update Constraint -
 
 
@@ -32,10 +32,10 @@ Given a called command in execution
 When command 1 calls command 2
 And command 2 throws an exception
 Then 1 *and* 2 should roll back.
-Status:
+Status: Done.
 
 Restore mode should be handled at the system level, not the action command level.
-Status: 
+Status: Done.
 
 Add spock class paths to integration command line gradle test.
 Status: Done.
@@ -66,7 +66,7 @@ Fix rollback of deleteAttribute;
 Status: Done
 
 Determine impact of DirectInvocation operations not having same tranDate as transaction/log operations.
-Status: Not done.
+Status: Done. Prop removed from orb. Might add back in future if useful.
 
 Fix 'test delete instance with references'
 Status: Done.
@@ -109,7 +109,7 @@ Status: Done.
 Add column list to Criteria
 Status: Not done.
 
-Add cacheing to CriteriaGrinder. Cache queries based on last update of flag based on orbType.
+Add cacheing to CriteriaGrinder. Cache queries based on last update of flag based on orbType. Would need to update tran date for all particular orbType's instances updates 
 Status: Not done.
 
 Create tests for QueryAttributeRenameHandler
@@ -153,3 +153,20 @@ Status: Not done.
 
 When resetting reference to orb, do not set to null - remove from list if ref value is multi-ref list.
 Status: Not done.
+
+Add logic to update or insert depending on id being present in orbComponent. Updates would then update OR insert
+Status: Not done.
+
+Create request lifecycle transaction (use @Transaction type annotation to begin wrap?)
+Status: Not done.
+
+Add constraint code
+Status: Not done.
+
+Add constraint code that limits multi-hop ref chain length.
+Status: Not done.
+
+Add constraint code that limits multi-hop circular references.
+Status: Not done.
+
+Add kind of removeFromChildren that enforces full orb delete when zero references remain.

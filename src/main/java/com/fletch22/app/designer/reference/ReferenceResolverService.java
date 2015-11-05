@@ -21,7 +21,7 @@ import com.fletch22.orb.cache.reference.DecomposedKey;
 import com.fletch22.orb.cache.reference.ReferenceUtil;
 
 @Component
-public class ReferenceResolver {
+public class ReferenceResolverService {
 	@Autowired
 	OrbTypeManager orbTypeManager;
 	
@@ -49,7 +49,7 @@ public class ReferenceResolver {
 		return orbType;
 	}
 	
-	public void resolve(OrbBasedComponent orbBasedComponent, String references, boolean isResolveAllChildren) {
+	private void resolveAllDescendents(OrbBasedComponent orbBasedComponent, String references) {
 
 		Set<DecomposedKey> decomposedKeySet = referenceUtil.convertToKeySet(references);
 		
@@ -60,39 +60,43 @@ public class ReferenceResolver {
 				throw new RuntimeException("Encountered a problem resolving a child that was not an object reference; it was an orb attribute reference."); 
 			}
 			
-			Orb orb = orbManager.getOrb(decomposedKey.getOrbInternalId());
-			OrbType orbType = getAndCacheOrbType(cachedOrbTypes, orb);
+			Orb orbChild = orbManager.getOrb(decomposedKey.getOrbInternalId());
+			OrbType orbType = getAndCacheOrbType(cachedOrbTypes, orbChild);
 			
-			addChildren(orbBasedComponent, isResolveAllChildren, orb, orbType);
+			OrbBasedComponent orbBaseComponentChild = addChild(orbBasedComponent, orbChild, orbType);
+			resolveAllDescendents(orbBaseComponentChild);
+		}
+		
+		orbBasedComponent.getChildren().setHaveChildrenBeenResolved(true);
+	}
+	
+	public void resolveAllDescendents(OrbBasedComponent orbBasedComponent) {
+		
+		orbBasedComponent.getChildren().clear();
+		String childReferences = orbBasedComponent.getOrbOriginal().getUserDefinedProperties().get(OrbBasedComponent.ATTR_CHILDREN);
+		if (childReferences != null) {
+			resolveAllDescendents(orbBasedComponent, childReferences);
 		}
 	}
 
-	private void addChildren(OrbBasedComponent orbBasedComponent, boolean isResolveAllChildren, Orb orb, OrbType orbType) {
-		ArrayList<OrbBasedComponent> children = orbBasedComponent.getChildren();
-		long childId = orb.getOrbInternalId();
+	private OrbBasedComponent addChild(OrbBasedComponent orbBasedComponentParent, Orb orbChild, OrbType orbType) {
+		ArrayList<OrbBasedComponent> children = orbBasedComponentParent.getChildren().list();
+		long childId = orbChild.getOrbInternalId();
 		
 		OrbBasedComponent orbBaseComponentChild = null;
-		String attributeWithChildReferences = null;
 		switch (orbType.label) {
 			case AppContainer.TYPE_LABEL:
 				orbBaseComponentChild = appContainerService.get(childId);
-				attributeWithChildReferences = AppContainer.ATTR_APPS;
 				break;
 			case App.TYPE_LABEL:
 				orbBaseComponentChild = appService.get(childId);
-				attributeWithChildReferences = App.ATTR_WEBSITES;
 				break;
 			default:
 				throw new RuntimeException("Encountered problem trying to determine type while resolving children.");
 		}
 		
-		if (isResolveAllChildren) {
-			String references = orb.getUserDefinedProperties().get(AppContainer.ATTR_APPS);
-			if (references != null) {
-				resolve(orbBaseComponentChild, orb.getUserDefinedProperties().get(attributeWithChildReferences), isResolveAllChildren);
-			}
-		}
-		
 		children.add(orbBaseComponentChild);
+		
+		return orbBaseComponentChild;
 	}
 }

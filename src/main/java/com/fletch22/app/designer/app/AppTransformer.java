@@ -13,7 +13,7 @@ public class AppTransformer extends DomainTransformer {
 		App app = new App();
 		
 		this.setBaseAttributes(orb, app);
-		app.setLabel(orb.getUserDefinedProperties().get(App.ATTR_LABEL));
+		app.label = orb.getUserDefinedProperties().get(App.ATTR_LABEL);
 		
 		return app;
 	}

@@ -7,11 +7,13 @@ import com.fletch22.app.designer.app.App;
 import com.fletch22.app.designer.app.AppService;
 import com.fletch22.app.designer.appContainer.AppContainer;
 import com.fletch22.app.designer.appContainer.AppContainerService;
-import com.fletch22.app.designer.page.Body;
-import com.fletch22.app.designer.page.Div;
-import com.fletch22.app.designer.page.Form;
-import com.fletch22.app.designer.page.Head;
 import com.fletch22.app.designer.page.Page;
+import com.fletch22.app.designer.page.body.Body;
+import com.fletch22.app.designer.page.div.Div;
+import com.fletch22.app.designer.page.form.Form;
+import com.fletch22.app.designer.page.head.Head;
+import com.fletch22.app.designer.webFolder.WebFolder;
+import com.fletch22.app.designer.website.Website;
 import com.fletch22.orb.Orb;
 import com.fletch22.orb.OrbManager;
 import com.fletch22.orb.OrbTypeManager;
@@ -43,17 +45,14 @@ public class AppDesignerModule implements OrbSystemModule {
 	public void initialize() {
 		
 		createTypes();
-		
 		createInstances();
 	}
 
 	private void createInstances() {
-		
 		AppContainer appContainer = appContainerService.createInstance("HelloWorldAppContainer");
 		
 		App app = appService.createInstance("HelloWorldApp");
-		appContainerService.addApp(appContainer, app);
-		
+		appContainerService.addToParent(appContainer, app);
 	}
 
 	private void createTypes() {
@@ -66,11 +65,11 @@ public class AppDesignerModule implements OrbSystemModule {
 		orbTypeInternalId = orbTypeManager.createOrbType(Website.TYPE_LABEL, Website.ATTRIBUTE_LIST);
 		primeQueryIndex(orbTypeInternalId, Website.ATTR_LABEL);
 		
-		orbTypeInternalId = orbTypeManager.createOrbType(WebSection.TYPE_LABEL, WebSection.ATTRIBUTE_LIST);
-		primeQueryIndex(orbTypeInternalId, WebSection.ATTR_LABEL);
+		orbTypeInternalId = orbTypeManager.createOrbType(WebFolder.TYPE_LABEL, WebFolder.ATTRIBUTE_LIST);
+		primeQueryIndex(orbTypeInternalId, WebFolder.ATTR_LABEL);
 		
 		orbTypeInternalId = orbTypeManager.createOrbType(Page.TYPE_LABEL, Page.ATTRIBUTE_LIST);
-		primeQueryIndex(orbTypeInternalId, Page.ATTR_LABEL);
+		primeQueryIndex(orbTypeInternalId, Page.ATTR_PAGE_NAME);
 		
 		orbTypeInternalId = orbTypeManager.createOrbType(Head.TYPE_LABEL, Head.ATTRIBUTE_LIST);
 		primeQueryIndex(orbTypeInternalId, Head.ATTR_LABEL);

@@ -2,15 +2,20 @@ package com.fletch22.app.designer;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.fletch22.app.designer.reference.ReferenceResolver;
+import com.fletch22.app.designer.reference.ReferenceResolverService;
 
 
 public abstract class DomainService {
 	
 	@Autowired
-	ReferenceResolver referenceResolver;
+	ReferenceResolverService referenceResolver;
 	
-	public void resolveChildren(OrbBasedComponent orbBasedComponent, String references) {
-		referenceResolver.resolve(orbBasedComponent, references);
+	public void resolveAllDescendents(OrbBasedComponent orbBasedComponent) {
+		referenceResolver.resolveAllDescendents(orbBasedComponent);
+	}
+
+	protected void connectParentAndChild(Parent parent, Child child) {
+		child.setParentId(parent.getId());
+		parent.getChildren().addChild(child);
 	}
 }

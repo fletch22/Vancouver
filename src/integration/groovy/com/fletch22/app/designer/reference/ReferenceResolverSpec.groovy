@@ -9,8 +9,8 @@ import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 
 import com.fletch22.app.designer.AppDesignerModule
+import com.fletch22.app.designer.DomainService;
 import com.fletch22.app.designer.app.App
-import com.fletch22.app.designer.app.AppService
 import com.fletch22.app.designer.appContainer.AppContainer
 import com.fletch22.app.designer.appContainer.AppContainerService
 import com.fletch22.orb.IntegrationSystemInitializer
@@ -21,13 +21,13 @@ import com.fletch22.orb.IntegrationTests
 class ReferenceResolverSpec extends Specification {
 	
 	@Autowired
-	ReferenceResolver referenceResolver
+	ReferenceResolverService referenceResolver
 	
 	@Autowired
 	AppContainerService appContainerService
 	
 	@Autowired
-	AppService appService
+	DomainService appService
 	
 	@Autowired
 	IntegrationSystemInitializer initializer
@@ -51,7 +51,7 @@ class ReferenceResolverSpec extends Specification {
 		AppContainer appContainer = appContainerService.createInstance("foo")
 		
 		App app = appService.createInstance("fooAppChild")
-		appContainerService.addApp(app);
+		appContainerService.addAppToParent(app);
 		
 		then:
 		throw new NotImplementedException("Need to add raw references to orbBasedComponent");
