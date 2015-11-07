@@ -66,14 +66,11 @@ public class AppContainerDaoTest {
 		
 		App app = appService.createInstance("funnyBusiness");
 		
-		logger.info("ID: {}", app.getId());
-		logger.info("AppContainer ID: {}", appContainer.getId());
-		
 		appContainerService.addToParent(appContainer, app);
 		
 		stopWatch.start();
 		appContainer = appContainerService.get(appContainer.getId());
-		appContainerService.resolveAllDescendents(appContainer);
+		appContainerService.clearAndResolveAllDescendents(appContainer);
 		stopWatch.stop();
 		
 		stopWatch.logElapsed();

@@ -4,10 +4,10 @@ import java.util.ArrayList;
 
 public class ComponentChildren {
 
-	private ArrayList<OrbBasedComponent> children = new ArrayList<OrbBasedComponent>();
+	private ArrayList<Child> children = new ArrayList<Child>();
 	private boolean haveChildrenBeenResolved = false;
 
-	public ArrayList<OrbBasedComponent> list() {
+	public ArrayList<Child> list() {
 		return children;
 	}
 
@@ -19,8 +19,8 @@ public class ComponentChildren {
 		this.haveChildrenBeenResolved = haveChildrenBeenResolved;
 	}
 
-	public void addChild(Child orbBasedComponent) {
-		this.children.add((OrbBasedComponent) orbBasedComponent);
+	public void addChild(Child child) {
+		this.children.add(child);
 	}	
 	
 	public void clear() {

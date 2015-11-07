@@ -7,7 +7,7 @@ import com.fletch22.app.designer.DomainService;
 import com.fletch22.app.designer.webFolder.WebFolderChild;
 
 @Component
-public class WebsiteService extends DomainService {
+public class WebsiteService extends DomainService<Website, WebFolderChild> {
 	
 	@Autowired
 	WebsiteDao websiteDao;
@@ -20,11 +20,12 @@ public class WebsiteService extends DomainService {
 	public Website createInstance(String label) {
 		Website website = new Website();
 		website.label = label;
-		return save(website);
+		save(website);
+		return website;
 	}
 	
-	public Website save(Website website) {
-		return websiteDao.save(website);
+	public void save(Website website) {
+		websiteDao.save(website);
 	}
 
 	public Website get(long orbInternalId) {

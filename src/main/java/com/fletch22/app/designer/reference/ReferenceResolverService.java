@@ -8,7 +8,9 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.fletch22.app.designer.Child;
 import com.fletch22.app.designer.OrbBasedComponent;
+import com.fletch22.app.designer.Parent;
 import com.fletch22.app.designer.app.App;
 import com.fletch22.app.designer.app.AppService;
 import com.fletch22.app.designer.appContainer.AppContainer;
@@ -49,38 +51,60 @@ public class ReferenceResolverService {
 		return orbType;
 	}
 	
-	private void resolveAllDescendents(OrbBasedComponent orbBasedComponent, String references) {
+	private void clearAndResolveAllDescendents(Parent orbBasedComponentParent, String references) {
 
-		Set<DecomposedKey> decomposedKeySet = referenceUtil.convertToKeySet(references);
+		clearAndResolveNextGeneration(orbBasedComponentParent, references);
 		
+		for (Child child : orbBasedComponentParent.getChildren().list()) {
+			if (child instanceof Parent) {
+				clearAndResolveNextGeneration((Parent) child);
+			}
+		}
+	}
+	
+	private void clearAndResolveNextGeneration(Parent orbBasedComponentParent, String childReferences) {
+
+		Set<DecomposedKey> decomposedKeySet = referenceUtil.convertToKeySet(childReferences);
 		Map<Long, OrbType> cachedOrbTypes = new HashMap<Long, OrbType>();
 		
 		for (DecomposedKey decomposedKey : decomposedKeySet) {
-			if (decomposedKey.isKeyPointingToAttribute()) {
-				throw new RuntimeException("Encountered a problem resolving a child that was not an object reference; it was an orb attribute reference."); 
-			}
+			validateChildKey(decomposedKey);
 			
 			Orb orbChild = orbManager.getOrb(decomposedKey.getOrbInternalId());
 			OrbType orbType = getAndCacheOrbType(cachedOrbTypes, orbChild);
 			
-			OrbBasedComponent orbBaseComponentChild = addChild(orbBasedComponent, orbChild, orbType);
-			resolveAllDescendents(orbBaseComponentChild);
+			addChild(orbBasedComponentParent, orbChild, orbType);
 		}
 		
-		orbBasedComponent.getChildren().setHaveChildrenBeenResolved(true);
+		orbBasedComponentParent.getChildren().setHaveChildrenBeenResolved(true);
+	}
+
+	private void validateChildKey(DecomposedKey decomposedKey) {
+		if (decomposedKey.isKeyPointingToAttribute()) {
+			throw new RuntimeException("Encountered a problem resolving a child that was not an object reference; it was an orb attribute reference."); 
+		}
 	}
 	
-	public void resolveAllDescendents(OrbBasedComponent orbBasedComponent) {
+	public void clearAResolveAllDescendents(Parent orbBasedComponentParent) {
 		
-		orbBasedComponent.getChildren().clear();
-		String childReferences = orbBasedComponent.getOrbOriginal().getUserDefinedProperties().get(OrbBasedComponent.ATTR_CHILDREN);
+		orbBasedComponentParent.getChildren().clear();
+		String childReferences = orbBasedComponentParent.getOrbOriginal().getUserDefinedProperties().get(Parent.ATTR_CHILDREN);
 		if (childReferences != null) {
-			resolveAllDescendents(orbBasedComponent, childReferences);
+			clearAndResolveAllDescendents(orbBasedComponentParent, childReferences);
+		}
+	}
+	
+	public void clearAndResolveNextGeneration(Parent orbBasedComponentParent) {
+		
+		orbBasedComponentParent.getChildren().clear();
+		String childReferences = orbBasedComponentParent.getOrbOriginal().getUserDefinedProperties().get(Parent.ATTR_CHILDREN);
+		if (childReferences != null) {
+			clearAndResolveNextGeneration(orbBasedComponentParent, childReferences);
 		}
 	}
 
-	private OrbBasedComponent addChild(OrbBasedComponent orbBasedComponentParent, Orb orbChild, OrbType orbType) {
-		ArrayList<OrbBasedComponent> children = orbBasedComponentParent.getChildren().list();
+	private OrbBasedComponent addChild(Parent parent, Orb orbChild, OrbType orbType) {
+		ArrayList<Child> children = parent.getChildren().list();
 		long childId = orbChild.getOrbInternalId();
 		
 		OrbBasedComponent orbBaseComponentChild = null;

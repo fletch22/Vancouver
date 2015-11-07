@@ -6,24 +6,20 @@ import org.springframework.stereotype.Component;
 import com.fletch22.app.designer.DomainService;
 
 @Component
-public class PageService extends DomainService {
+public class PageService extends DomainService<Page, PageChild> {
 	
 	@Autowired
 	PageDao pageDao;
 
-	public void addToParent(Page page, PageChild pageChild) {
-		connectParentAndChild(page, pageChild);
-		save(page);
-	}
-
 	public Page createInstance(String pageName) {
 		Page page = new Page();
 		page.pageName = pageName;
-		return save(page);
+		save(page);
+		return page;
 	}
 	
-	public Page save(Page page) {
-		return pageDao.save(page);
+	public void save(Page page) {
+		pageDao.save(page);
 	}
 
 	public Page get(long orbInternalId) {

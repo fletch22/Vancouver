@@ -1,7 +1,5 @@
 package com.fletch22.app.designer.page;
 
-import groovy.util.logging.Slf4j;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

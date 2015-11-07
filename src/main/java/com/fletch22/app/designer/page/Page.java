@@ -3,11 +3,10 @@ package com.fletch22.app.designer.page;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 
-import com.fletch22.app.designer.OrbBasedComponent;
 import com.fletch22.app.designer.Parent;
 import com.fletch22.app.designer.webFolder.WebFolderChild;
 
-public class Page extends OrbBasedComponent implements WebFolderChild, Parent {
+public class Page extends Parent implements WebFolderChild {
 	
 	public static final String TYPE_LABEL = "Page";
 	public static final String ATTR_PAGE_NAME = "pageName";

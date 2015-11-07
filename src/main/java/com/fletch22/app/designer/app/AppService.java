@@ -8,7 +8,7 @@ import com.fletch22.app.designer.OrbBasedComponent;
 import com.fletch22.app.designer.website.Website;
 
 @Component
-public class AppService extends DomainService {
+public class AppService extends DomainService<App, Website> {
 	
 	@Autowired
 	AppDao appDao;
@@ -21,11 +21,12 @@ public class AppService extends DomainService {
 	public App createInstance(String label) {
 		App app = new App();
 		app.label = label;
-		return save(app);
+		save(app);
+		return app;
 	}
 	
-	public App save(App app) {
-		return appDao.save(app);
+	public void save(App app) {
+		appDao.save(app);
 	}
 
 	public OrbBasedComponent get(long orbInternalId) {

@@ -3,10 +3,9 @@ package com.fletch22.app.designer.webFolder;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 
-import com.fletch22.app.designer.OrbBasedComponent;
 import com.fletch22.app.designer.Parent;
 
-public class WebFolder extends OrbBasedComponent implements WebFolderChild, Parent {
+public class WebFolder extends Parent implements WebFolderChild {
 	
 	public static final String TYPE_LABEL = "WebSection";
 	public static final String ATTR_LABEL = "label";

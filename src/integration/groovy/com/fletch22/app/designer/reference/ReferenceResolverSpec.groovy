@@ -55,7 +55,7 @@ class ReferenceResolverSpec extends Specification {
 		appContainerService.addToParent(appContainer, app)
 		
 		then:
-		!appContainer.getChildren().isHaveChildrenBeenResolved()
+		appContainer.getChildren().isHaveChildrenBeenResolved()
 //		appContainerService.resolveChildren(appContainer, "", false)
 	}
 

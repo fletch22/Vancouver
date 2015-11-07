@@ -8,9 +8,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.fletch22.app.designer.Child;
 import com.fletch22.app.designer.ComponentChildren;
 import com.fletch22.app.designer.DomainTransformer;
 import com.fletch22.app.designer.OrbBasedComponent;
+import com.fletch22.app.designer.Parent;
 import com.fletch22.app.designer.app.App;
 import com.fletch22.app.designer.appContainer.AppContainer;
 import com.fletch22.app.designer.website.Website;
@@ -49,11 +51,11 @@ public abstract class AppDesignerDao<T extends OrbBasedComponent, U extends Doma
 		
 		setNonChildrenAttributes(t, orbToCreate);
 		
-		this.setOrbChildrenAttribute(t, orbToCreate);
-
-		orbToCreate = orbManager.createOrb(orbToCreate);
+		if (t instanceof Parent) {
+			this.setOrbChildrenAttribute((Parent) t, orbToCreate);
+		}
 		
-		logger.debug("Orb to create for dao: {}", orbToCreate.getOrbInternalId());
+		orbToCreate = orbManager.createOrb(orbToCreate);
 		
 		t.setOrbOriginal(orbToCreate);
 		t.setId(orbToCreate.getOrbInternalId());
@@ -62,10 +64,10 @@ public abstract class AppDesignerDao<T extends OrbBasedComponent, U extends Doma
 	
 	public StringBuffer convertToChildReferences(ComponentChildren componentChildren) {
 		
-		ArrayList<OrbBasedComponent> list = componentChildren.list();
+		ArrayList<Child> list = componentChildren.list();
 		Set<String> refSet = new HashSet<String>();
-		for (OrbBasedComponent orbBasedComponent : list) {
-			refSet.add(referenceUtil.composeReference(orbBasedComponent.getId()));
+		for (Child child : list) {
+			refSet.add(referenceUtil.composeReference(child.getId()));
 		}
 		
 		return referenceUtil.composeReferences(refSet);
@@ -98,8 +100,11 @@ public abstract class AppDesignerDao<T extends OrbBasedComponent, U extends Doma
 		return orb;
 	}
 
-	protected void setOrbChildrenAttribute(OrbBasedComponent orbBasedComponent, Orb orbToUpdate) {
-		orbToUpdate.getUserDefinedProperties().put(OrbBasedComponent.ATTR_CHILDREN, convertToChildReferences(orbBasedComponent.getChildren()).toString());
+	protected void setOrbChildrenAttribute(Parent parent, Orb orbToUpdate) {
+		
+		logger.info("Children null? {}", parent.getChildren() == null);
+		
+		orbToUpdate.getUserDefinedProperties().put(Parent.ATTR_CHILDREN, convertToChildReferences(parent.getChildren()).toString());
 	}
 
 	protected Orb craftProtoOrb(OrbBasedComponent orbBasedComponent, OrbType orbType) {
@@ -111,22 +116,22 @@ public abstract class AppDesignerDao<T extends OrbBasedComponent, U extends Doma
 	
 	protected abstract U getTransformer();
 
-	protected void saveChildren(Orb orbToUpdate, OrbBasedComponent orbBasedComponent) {
+	protected void saveChildren(Orb orbToUpdate, Parent parent) {
 		
-		ComponentChildren componentChildren = orbBasedComponent.getChildren();
+		ComponentChildren componentChildren = parent.getChildren();
 		if (componentChildren.isHaveChildrenBeenResolved()) {
 			
-			for (OrbBasedComponent orbBasedComponentChild : componentChildren.list()) {
+			for (Child orbBasedComponentChild : componentChildren.list()) {
 
 				switch (orbBasedComponentChild.getTypeLabel()) {
 					case AppContainer.TYPE_LABEL:
-						daoJunction.appContainerDao.save( (AppContainer) orbBasedComponent);
+						daoJunction.appContainerDao.save( (AppContainer) orbBasedComponentChild);
 						break;
 					case App.TYPE_LABEL:
-						daoJunction.appDao.update( (App) orbBasedComponent);
+						daoJunction.appDao.update( (App) orbBasedComponentChild);
 						break;
 					case Website.TYPE_LABEL:
-						daoJunction.websiteDao.update( (Website) orbBasedComponent);
+						daoJunction.websiteDao.update( (Website) orbBasedComponentChild);
 						break;
 					default:
 						throw new RuntimeException("Encountered problem while processing children for update. Found an unrecognized type.");
@@ -144,9 +149,9 @@ public abstract class AppDesignerDao<T extends OrbBasedComponent, U extends Doma
 	public T save(T t) {
 		t = ensureSavedWithoutChildren(t);
 		
-		logger.debug("T saved: {}", t.getId());
-		
-		saveChildren(t.getOrbOriginal(), t);
+		if (t instanceof Parent) {
+			saveChildren(t.getOrbOriginal(), (Parent) t);
+		}
 		
 		return t;
 	}
@@ -162,17 +167,19 @@ public abstract class AppDesignerDao<T extends OrbBasedComponent, U extends Doma
 		return t;
 	}
 	
-	protected void update(T appContainer) {
+	protected void update(T t) {
 
-		Orb orbToUpdate = getOrbMustExist(appContainer.getId());
+		Orb orbToUpdate = getOrbMustExist(t.getId());
 
-		setNonChildrenAttributes(appContainer, orbToUpdate);
+		setNonChildrenAttributes(t, orbToUpdate);
 		
-		this.setOrbChildrenAttribute(appContainer, orbToUpdate);
+		if (t instanceof Parent) {
+			this.setOrbChildrenAttribute((Parent) t, orbToUpdate);
+		}
 		
 		orbManager.updateOrb(orbToUpdate);
 
-		appContainer.setOrbOriginal(orbToUpdate);
+		t.setOrbOriginal(orbToUpdate);
 	}
 	
 	protected abstract void setNonChildrenAttributes(T t, Orb orb);
