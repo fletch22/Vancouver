@@ -76,7 +76,7 @@ class OrbReferenceSpec extends Specification {
 		String composedKey = referenceUtil.composeReference(orbInternalId, attributeName)
 		
 		when:
-		def decomposedKey = orbReference.decomposeKey(composedKey);
+		def decomposedKey = referenceUtil.decomposeKey(composedKey);
 		
 		then:
 		decomposedKey.orbInternalId == orbInternalId

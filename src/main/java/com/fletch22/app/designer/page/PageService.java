@@ -13,18 +13,17 @@ public class PageService extends DomainService {
 
 	public void addToParent(Page page, PageChild pageChild) {
 		connectParentAndChild(page, pageChild);
-		update(page);
+		save(page);
 	}
 
 	public Page createInstance(String pageName) {
 		Page page = new Page();
 		page.pageName = pageName;
-		return pageDao.create(page);
+		return save(page);
 	}
 	
-	public Page update(Page page) {
-		pageDao.update(page);
-		return page;
+	public Page save(Page page) {
+		return pageDao.save(page);
 	}
 
 	public Page get(long orbInternalId) {

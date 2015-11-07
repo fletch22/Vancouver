@@ -127,13 +127,9 @@ public class QueryManagerTest {
 		// Arrange
 		assertEquals(0, cache.queryCollection.getSize());
 		
-		long orbTypeInternalId = testDataSimple.loadTestData();
-		
 		assertEquals(0, orbManager.countOrbsOfType(SystemType.QUERY.getId()));
 		
 		BigDecimal tranId = beginTransactionService.beginTransaction();
-		
-		OrbType orbType = orbTypeManager.getOrbType(orbTypeInternalId);
 		
 		// Act
 		rollbackTransactionService.rollbackToSpecificTransaction(tranId);

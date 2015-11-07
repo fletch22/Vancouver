@@ -38,9 +38,6 @@ public class AppDesignerModule implements OrbSystemModule {
 	@Autowired
 	AppService appService;
 	
-//	@Autowired
-//	WebsiteService websiteService;
-	
 	@Override
 	public void initialize() {
 		

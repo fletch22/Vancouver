@@ -156,24 +156,16 @@ class OrbCollectionSpec extends Specification {
 		given:
 		
 		long orbTypeInternalId = createOrbType()
-		
 		OrbType orbType = orbTypeManager.getOrbType(orbTypeInternalId)
-		
 		def attributeName = 'foo'
 		orbTypeManager.addAttribute(orbType.id, attributeName)
-		
 		Orb orbToTarget = orbManager.createOrb(orbTypeInternalId)
-		
 		def numberOrbs = 1
-		
 		OrbReference orbReference = cache.orbCollection.orbReference;
 		
 		numberOrbs.times {
-			
 			Orb orb = orbManager.createOrb(orbTypeInternalId)
-			
 			def referenceValue = referenceUtil.composeReference(orbToTarget.getOrbInternalId(), "foo");
-			
 			orbManager.setAttribute(orb.getOrbInternalId(), attributeName, referenceValue);
 		}
 		
@@ -183,9 +175,7 @@ class OrbCollectionSpec extends Specification {
 		assertOrbPropertySize(map, 1)
 		
 		def tranId = beginTransactionService.beginTransaction()
-		
 		orbTypeManager.deleteAttribute(orbTypeInternalId, attributeName, true)
-		
 		map.size() == numberOrbs
 		assertOrbPropertySize(map, 0)
 		

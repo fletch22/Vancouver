@@ -6,7 +6,7 @@ import com.fletch22.app.designer.DomainTransformer;
 import com.fletch22.orb.Orb;
 
 @Component
-public class WebFolderTransformer extends DomainTransformer {
+public class WebFolderTransformer extends DomainTransformer<WebFolder> {
 	
 	public WebFolder transform(Orb orb) {
 		

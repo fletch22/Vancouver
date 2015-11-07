@@ -6,7 +6,7 @@ import com.fletch22.app.designer.DomainTransformer;
 import com.fletch22.orb.Orb;
 
 @Component
-public class AppContainerTransformer extends DomainTransformer {
+public class AppContainerTransformer extends DomainTransformer<AppContainer> {
 	
 	public AppContainer transform(Orb orb) {
 		

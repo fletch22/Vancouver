@@ -2,13 +2,18 @@ package com.fletch22.orb;
 
 import java.util.LinkedHashSet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.fletch22.orb.cache.local.CacheDifferenceReasons;
 import com.fletch22.orb.cache.local.ComparisonResult;
+import com.google.gson.Gson;
 
 @Component
 public class OrbTypeComparator {
+	
+	static Logger logger = LoggerFactory.getLogger(OrbTypeComparator.class);
 
 	public ComparisonResult areSame(OrbType orbType1, OrbType orbType2) {
 		ComparisonResult comparisonResult = new ComparisonResult();
@@ -39,7 +44,7 @@ public class OrbTypeComparator {
 	private ComparisonResult compareCustomFields(LinkedHashSet<String> customFields1, LinkedHashSet<String> customFields2) {
 		ComparisonResult comparisonResult = new ComparisonResult();
 		comparisonResult.isSame = true;
-
+		
 		if (isOneObjectNull(customFields1, customFields2)) {
 			comparisonResult.isSame = false;
 			comparisonResult.cacheDifferenceReasons = CacheDifferenceReasons.ONE_TYPE_CUSTOM_FIELD_SET_IS_NULL_AND_THE_OTHER_NOT;

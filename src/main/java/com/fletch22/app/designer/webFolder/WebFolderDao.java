@@ -6,24 +6,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.fletch22.app.designer.OrbBasedComponent;
 import com.fletch22.app.designer.dao.AppDesignerDao;
 import com.fletch22.orb.Orb;
-import com.fletch22.orb.OrbType;
-import com.fletch22.orb.query.QueryManager;
 
 @Component
-public class WebFolderDao extends AppDesignerDao {
+public class WebFolderDao extends AppDesignerDao<WebFolder, WebFolderTransformer> {
 
 	Logger logger = LoggerFactory.getLogger(WebFolderDao.class);
 
 	@Autowired
-	QueryManager queryManager;
-
-	@Autowired
 	WebFolderTransformer webFolderTransformer;
 
-	public WebFolder create(WebFolder webFolder) {
+	public void create(WebFolder webFolder) {
 
 		throw new NotImplementedException("Ensure unique child in parent and handle children");
 //		OrbType orbType = ensureInstanceUnique(WebSection.TYPE_LABEL, WebSection.ATTR_LABEL, webFolder.label);
@@ -37,21 +31,14 @@ public class WebFolderDao extends AppDesignerDao {
 //		return webFolderTransformer.transform(orb);
 	}
 	
-	public WebFolder read(long orbInternalId) {
-		Orb orb = getOrbMustExist(orbInternalId);
-		
-		return webFolderTransformer.transform(orb);
+	@Override
+	protected WebFolderTransformer getTransformer() {
+		return webFolderTransformer;
 	}
-
-	public void update(WebFolder webFolder) {
-
-		Orb orbToUpdate = getOrbMustExist(webFolder.getId());
-
-		orbToUpdate.getUserDefinedProperties().put(WebFolder.ATTR_LABEL, webFolder.label);
-		
-		setOrbChildrenAttribute(webFolder, orbToUpdate);
-		
-		orbManager.updateOrb(orbToUpdate);
+	
+	@Override
+	protected void setNonChildrenAttributes(WebFolder webFolder, Orb orb) {
+		orb.getUserDefinedProperties().put(WebFolder.ATTR_LABEL, webFolder.label);
 	}
 }
 

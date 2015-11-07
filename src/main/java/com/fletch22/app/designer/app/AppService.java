@@ -15,21 +15,20 @@ public class AppService extends DomainService {
 
 	public void addToParent(App app, Website website) {
 		connectParentAndChild(app, website);
-		update(app);
+		save(app);
 	}
 	
 	public App createInstance(String label) {
 		App app = new App();
 		app.label = label;
-		return appDao.create(app);
+		return save(app);
 	}
 	
-	public App update(App app) {
-		appDao.update(app);
-		return app;
+	public App save(App app) {
+		return appDao.save(app);
 	}
 
 	public OrbBasedComponent get(long orbInternalId) {
-		return appDao.get(orbInternalId);
+		return appDao.read(orbInternalId);
 	}
 }

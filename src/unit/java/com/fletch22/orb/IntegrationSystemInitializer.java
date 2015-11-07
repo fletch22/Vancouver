@@ -42,7 +42,7 @@ public class IntegrationSystemInitializer {
 		this.orbSystemModuleList.add(orbSystemModule);
 	}
 	
-	public void clearOrbSystemModules() {
+	public void removeOrbSystemModules() {
 		this.orbSystemModuleList.clear();
 	}
 	

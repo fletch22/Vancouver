@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fletch22.app.designer.ComponentChildren;
+import com.fletch22.app.designer.DomainTransformer;
 import com.fletch22.app.designer.OrbBasedComponent;
 import com.fletch22.app.designer.app.App;
 import com.fletch22.app.designer.appContainer.AppContainer;
@@ -19,7 +22,9 @@ import com.fletch22.orb.cache.reference.ReferenceUtil;
 import com.fletch22.orb.query.OrbResultSet;
 import com.fletch22.orb.query.QueryManager;
 
-public abstract class AppDesignerDao {
+public abstract class AppDesignerDao<T extends OrbBasedComponent, U extends DomainTransformer<T>> {
+	
+	static Logger logger = LoggerFactory.getLogger(AppDesignerDao.class);
 	
 	@Autowired
 	public OrbManager orbManager;
@@ -35,6 +40,25 @@ public abstract class AppDesignerDao {
 	
 	@Autowired
 	DaoJunction daoJunction;
+	
+	protected abstract void create(T appContainer);
+	
+	protected void create(T t, OrbType orbType) {
+
+		Orb orbToCreate = craftProtoOrb(t, orbType);
+		
+		setNonChildrenAttributes(t, orbToCreate);
+		
+		this.setOrbChildrenAttribute(t, orbToCreate);
+
+		orbToCreate = orbManager.createOrb(orbToCreate);
+		
+		logger.debug("Orb to create for dao: {}", orbToCreate.getOrbInternalId());
+		
+		t.setOrbOriginal(orbToCreate);
+		t.setId(orbToCreate.getOrbInternalId());
+	}
+		
 	
 	public StringBuffer convertToChildReferences(ComponentChildren componentChildren) {
 		
@@ -84,28 +108,72 @@ public abstract class AppDesignerDao {
 		orb.getUserDefinedProperties().put(OrbBasedComponent.ATTR_PARENT, String.valueOf(orbBasedComponent.getParentId()));
 		return orb;
 	}
-
-	protected void updateChildren(Orb orbToUpdate, OrbBasedComponent orbBasedComponent) {
-		
-			ComponentChildren componentChildren = orbBasedComponent.getChildren();
-			if (componentChildren.isHaveChildrenBeenResolved()) {
-				
-				for (OrbBasedComponent orbBasedComponentChild : componentChildren.list()) {
 	
-					switch (orbBasedComponentChild.getTypeLabel()) {
-						case AppContainer.TYPE_LABEL:
-							daoJunction.appContainerDao.update( (AppContainer) orbBasedComponent);
-							break;
-						case App.TYPE_LABEL:
-							daoJunction.appDao.update( (App) orbBasedComponent);
-							break;
-						case Website.TYPE_LABEL:
-							daoJunction.websiteDao.update( (Website) orbBasedComponent);
-							break;
-						default:
-							throw new RuntimeException("Encountered problem while processing children for update. Found an unrecognized type.");
-					}
+	protected abstract U getTransformer();
+
+	protected void saveChildren(Orb orbToUpdate, OrbBasedComponent orbBasedComponent) {
+		
+		ComponentChildren componentChildren = orbBasedComponent.getChildren();
+		if (componentChildren.isHaveChildrenBeenResolved()) {
+			
+			for (OrbBasedComponent orbBasedComponentChild : componentChildren.list()) {
+
+				switch (orbBasedComponentChild.getTypeLabel()) {
+					case AppContainer.TYPE_LABEL:
+						daoJunction.appContainerDao.save( (AppContainer) orbBasedComponent);
+						break;
+					case App.TYPE_LABEL:
+						daoJunction.appDao.update( (App) orbBasedComponent);
+						break;
+					case Website.TYPE_LABEL:
+						daoJunction.websiteDao.update( (Website) orbBasedComponent);
+						break;
+					default:
+						throw new RuntimeException("Encountered problem while processing children for update. Found an unrecognized type.");
 				}
 			}
 		}
+	}
+	
+	public T read(long orbInternalId) {
+		Orb orb = getOrbMustExist(orbInternalId);
+		
+		return getTransformer().transform(orb);
+	}
+	
+	public T save(T t) {
+		t = ensureSavedWithoutChildren(t);
+		
+		logger.debug("T saved: {}", t.getId());
+		
+		saveChildren(t.getOrbOriginal(), t);
+		
+		return t;
+	}
+	
+	public T ensureSavedWithoutChildren(T t) {
+		
+		if (t.isNew()) {
+			create(t);
+		} else {
+			update(t);
+		}
+		
+		return t;
+	}
+	
+	protected void update(T appContainer) {
+
+		Orb orbToUpdate = getOrbMustExist(appContainer.getId());
+
+		setNonChildrenAttributes(appContainer, orbToUpdate);
+		
+		this.setOrbChildrenAttribute(appContainer, orbToUpdate);
+		
+		orbManager.updateOrb(orbToUpdate);
+
+		appContainer.setOrbOriginal(orbToUpdate);
+	}
+	
+	protected abstract void setNonChildrenAttributes(T t, Orb orb);
 }

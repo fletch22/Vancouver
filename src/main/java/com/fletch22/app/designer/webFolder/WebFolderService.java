@@ -13,18 +13,17 @@ public class WebFolderService extends DomainService {
 
 	public void addToParent(WebFolder webFolder, WebFolderChild webFolderChild) {
 		connectParentAndChild(webFolder, webFolderChild);
-		update(webFolder);
+		save(webFolder);
 	}
 
 	public WebFolder createInstance(String label) {
 		WebFolder webFolder = new WebFolder();
 		webFolder.label = label;
-		return webFolderDao.create(webFolder);
+		return save(webFolder);
 	}
 	
-	public WebFolder update(WebFolder webFolder) {
-		webFolderDao.update(webFolder);
-		return webFolder;
+	public WebFolder save(WebFolder webFolder) {
+		return webFolderDao.save(webFolder);
 	}
 
 	public WebFolder get(long orbInternalId) {

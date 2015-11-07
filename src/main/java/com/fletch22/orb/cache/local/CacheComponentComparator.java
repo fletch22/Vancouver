@@ -3,6 +3,8 @@ package com.fletch22.orb.cache.local;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +18,8 @@ import com.fletch22.orb.cache.reference.ReferenceCollectionComparator;
 
 @Component
 public class CacheComponentComparator {
+	
+	static Logger logger = LoggerFactory.getLogger(CacheComponentComparator.class);
 	
 	@Autowired
 	OrbTypeComparator orbTypeComparator;
@@ -77,16 +81,20 @@ public class CacheComponentComparator {
 		Map<Long, OrbType> orbTypeMap2 = orbTypeCollection2.getQuickLookup();
 		Set<Long> orbTypeIdSet1 = orbTypeMap1.keySet();
 		for (Long orbTypeInternalId : orbTypeIdSet1) {
+			logger.debug("Comparing pairs of orb types.");
 			OrbType orbType1 = orbTypeMap1.get(orbTypeInternalId);
 			OrbType orbType2 = orbTypeMap2.get(orbTypeInternalId);
 			
 			if (orbType2 == null) {
+				logger.debug("Orb type was found to be null during comparison.");
 				comparisonResult.isSame = false;
 				comparisonResult.cacheDifferenceReasons = CacheDifferenceReasons.ORB_TYPE_IN_CORRESPONDING_COLLECTION_IS_NULL;
 			} else {
 				comparisonResult = orbTypeComparator.areSame(orbType1, orbType2);
 			}
-			
+			if (!comparisonResult.isSame) {
+				break;
+			}
 		}
 		
 		return comparisonResult;
@@ -108,6 +116,9 @@ public class CacheComponentComparator {
 				comparisonResult.cacheDifferenceReasons = CacheDifferenceReasons.ORB_IN_CORRESPONDING_COLLECTION_IS_NULL;
 			} else {
 				comparisonResult = orbComparator.areSame(orbType1, orbType2);
+			}
+			if (!comparisonResult.isSame) {
+				break;
 			}
 		}
 		

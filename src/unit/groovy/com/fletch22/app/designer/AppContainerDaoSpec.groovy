@@ -3,12 +3,14 @@ package com.fletch22.app.designer;
 import static org.junit.Assert.*
 
 import org.junit.Test
+import org.mockito.Mockito
 
 import spock.lang.Specification
 
-import com.fletch22.app.designer.appContainer.AppContainer;
-import com.fletch22.app.designer.appContainer.AppContainerDao;
-import com.fletch22.app.designer.appContainer.AppContainerTransformer;
+import com.fletch22.app.designer.appContainer.AppContainer
+import com.fletch22.app.designer.appContainer.AppContainerDao
+import com.fletch22.app.designer.appContainer.AppContainerTransformer
+import com.fletch22.app.designer.website.WebsiteTransformer
 import com.fletch22.orb.Orb
 import com.fletch22.orb.OrbType
 import com.fletch22.orb.OrbTypeManager
@@ -22,6 +24,10 @@ class AppContainerDaoSpec extends Specification {
 		
 		given:
 		AppContainerDao appContainerDao = new AppContainerDao()
+		
+		def model = Mockito.mock(AppContainerTransformer.class)
+		
+		def foo = new AppContainerTransformer<AppContainer>()
 		
 		appContainerDao.appContainerTransformer = Mock(AppContainerTransformer)
 		appContainerDao.orbTypeManager = Mock(OrbTypeManager)

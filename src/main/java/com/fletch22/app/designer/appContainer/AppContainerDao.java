@@ -1,6 +1,5 @@
 package com.fletch22.app.designer.appContainer;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,30 +8,21 @@ import org.springframework.stereotype.Component;
 import com.fletch22.app.designer.dao.AppDesignerDao;
 import com.fletch22.orb.Orb;
 import com.fletch22.orb.OrbType;
-import com.fletch22.orb.query.QueryManager;
 
 @Component
-public class AppContainerDao extends AppDesignerDao {
+public class AppContainerDao extends AppDesignerDao<AppContainer, AppContainerTransformer> {
 
 	Logger logger = LoggerFactory.getLogger(AppContainerDao.class);
 
 	@Autowired
-	QueryManager queryManager;
-
-	@Autowired
 	AppContainerTransformer appContainerTransformer;
 
-	public AppContainer create(AppContainer appContainer) {
+	@Override
+	public void create(AppContainer appContainer) {
 
 		OrbType orbType = ensureInstanceUnique(AppContainer.TYPE_LABEL, AppContainer.ATTR_LABEL, appContainer.label);
 		
-		Orb orb = craftProtoOrb(appContainer, orbType);
-		
-		orb.getUserDefinedProperties().put(AppContainer.ATTR_LABEL, appContainer.label);
-
-		orb = orbManager.createOrb(orb);
-
-		return appContainerTransformer.transform(orb);
+		create(appContainer, orbType);
 	}
 
 	public AppContainer read(String appContainerLabel) {
@@ -48,23 +38,14 @@ public class AppContainerDao extends AppDesignerDao {
 		return appContainerTransformer.transform(orb);
 	}
 	
-	public AppContainer read(long orbInternalId) {
-		Orb orb = getOrbMustExist(orbInternalId);
-		
-		return appContainerTransformer.transform(orb);
+	@Override
+	protected void setNonChildrenAttributes(AppContainer appContainer, Orb orb) {
+		orb.getUserDefinedProperties().put(AppContainer.ATTR_LABEL, appContainer.label);
 	}
 
-	public void update(AppContainer appContainer) {
-
-		Orb orbToUpdate = getOrbMustExist(appContainer.getId());
-
-		orbToUpdate.getUserDefinedProperties().put(AppContainer.ATTR_LABEL, appContainer.label);
-		
-		updateChildren(orbToUpdate, appContainer);
-		
-		this.setOrbChildrenAttribute(appContainer, orbToUpdate);
-
-		orbManager.updateOrb(orbToUpdate);
+	@Override
+	protected AppContainerTransformer getTransformer() {
+		return this.appContainerTransformer;
 	}
 }
 

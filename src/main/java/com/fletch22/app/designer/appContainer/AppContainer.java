@@ -11,6 +11,7 @@ public class AppContainer extends OrbBasedComponent implements Parent {
 	public static final String TYPE_LABEL = "AppContainer";
 	
 	public static final String ATTR_LABEL = "label";
+
 	public static LinkedHashSet<String> ATTRIBUTE_LIST = new LinkedHashSet<String>(Arrays.asList(ATTR_PARENT, ATTR_CHILDREN, ATTR_LABEL)); 
 
 	public String label;

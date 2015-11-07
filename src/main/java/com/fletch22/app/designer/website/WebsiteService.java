@@ -14,18 +14,17 @@ public class WebsiteService extends DomainService {
 
 	public void addToParent(Website website, WebFolderChild webFolderChild) {
 		connectParentAndChild(website, webFolderChild);
-		update(website);
+		save(website);
 	}
 
 	public Website createInstance(String label) {
 		Website website = new Website();
 		website.label = label;
-		return websiteDao.create(website);
+		return save(website);
 	}
 	
-	public Website update(Website website) {
-		websiteDao.update(website);
-		return website;
+	public Website save(Website website) {
+		return websiteDao.save(website);
 	}
 
 	public Website get(long orbInternalId) {
