@@ -101,9 +101,6 @@ public abstract class AppDesignerDao<T extends OrbBasedComponent, U extends Doma
 	}
 
 	protected void setOrbChildrenAttribute(Parent parent, Orb orbToUpdate) {
-		
-		logger.info("Children null? {}", parent.getChildren() == null);
-		
 		orbToUpdate.getUserDefinedProperties().put(Parent.ATTR_CHILDREN, convertToChildReferences(parent.getChildren()).toString());
 	}
 
