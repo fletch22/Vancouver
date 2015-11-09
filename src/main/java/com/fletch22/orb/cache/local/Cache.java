@@ -5,8 +5,8 @@ import org.springframework.stereotype.Component;
 
 import com.fletch22.orb.OrbManager;
 import com.fletch22.orb.OrbTypeManager;
-import com.fletch22.orb.cache.query.QueryCollection;
-import com.fletch22.orb.query.QueryManager;
+import com.fletch22.orb.cache.query.CriteriaCollection;
+import com.fletch22.orb.query.CriteriaManager;
 
 @Component
 public class Cache {
@@ -18,7 +18,7 @@ public class Cache {
 	public OrbTypeCollection orbTypeCollection;
 	
 	@Autowired
-	public QueryCollection queryCollection;
+	public CriteriaCollection queryCollection;
 	
 	@Autowired
 	OrbTypeManager orbTypeManager;
@@ -27,7 +27,7 @@ public class Cache {
 	OrbManager orbManager;
 	
 	@Autowired 
-	QueryManager queryManager;
+	CriteriaManager queryManager;
 	
 	@Autowired
 	CacheComponentsFactory cacheComponentsFactory;

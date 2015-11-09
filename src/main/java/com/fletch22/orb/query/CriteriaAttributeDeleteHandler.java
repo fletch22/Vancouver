@@ -7,20 +7,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fletch22.orb.cache.local.Cache;
-import com.fletch22.orb.cache.query.QueryCollection;
+import com.fletch22.orb.cache.query.CriteriaCollection;
 import com.fletch22.orb.query.CriteriaFactory.Criteria;
 
 @Component
-public class QueryAttributeDeleteHandler {
+public class CriteriaAttributeDeleteHandler {
 
 	@Autowired
-	QueryManager queryManager;
+	CriteriaManager queryManager;
 
 	@Autowired
 	Cache cache;
 
 	public void handleAttributeDeletion(long orbTypeInternalId, String attributeName, boolean isDeleteDependencies) {
-		QueryCollection queryCollection = cache.queryCollection;
+		CriteriaCollection queryCollection = cache.queryCollection;
 
 		Set<Long> criteriaKey = queryCollection.getKeys();
 		for (long key : criteriaKey) {

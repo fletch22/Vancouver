@@ -193,7 +193,7 @@ public class ConstraintGrinder {
 		} catch (Exception e) {
 			StackTraceElement[] trace = e.getStackTrace();
 			for (StackTraceElement stackTraceElement: trace) {
-				logger.info("CN: {}", stackTraceElement.getClassName());
+				logger.debug("CN: {}", stackTraceElement.getClassName());
 			}
 			throw new RuntimeException(e);
 		}

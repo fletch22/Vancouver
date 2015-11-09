@@ -1,11 +1,11 @@
 package com.fletch22.orb.dependency;
 
 import com.fletch22.orb.Orb;
-import com.fletch22.orb.query.QueryManager;
+import com.fletch22.orb.query.CriteriaManager;
 
 public class DependencyHandlerOrbDeletionWithQuery implements DependencyHandler {
 	
-	QueryManager queryManager;
+	CriteriaManager queryManager;
 	Orb orb;
 	boolean isDeleteDependencies;
 	
@@ -28,7 +28,7 @@ public class DependencyHandlerOrbDeletionWithQuery implements DependencyHandler 
 		}
 	}
 	
-	public void setQueryManager(QueryManager queryManager) {
+	public void setQueryManager(CriteriaManager queryManager) {
 		this.queryManager = queryManager;
 	}
 }

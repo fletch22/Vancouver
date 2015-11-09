@@ -8,7 +8,7 @@ import com.fletch22.orb.OrbManager
 import com.fletch22.orb.OrbType
 import com.fletch22.orb.OrbTypeManager
 import com.fletch22.orb.cache.local.Cache
-import com.fletch22.orb.cache.query.QueryCollection
+import com.fletch22.orb.cache.query.CriteriaCollection
 import com.fletch22.orb.query.CriteriaFactory.Criteria
 import com.fletch22.orb.systemType.SystemType
 
@@ -19,7 +19,7 @@ class QueryManagerImplSpec extends Specification {
 		OrbTypeManager orbTypeManager = Mock(OrbTypeManager)
 		OrbManager orbManager = Mock(OrbManager)
 		
-		QueryManagerImpl queryManagerImpl = new QueryManagerImpl()
+		CriteriaManagerImpl queryManagerImpl = new CriteriaManagerImpl()
 		
 		queryManagerImpl.orbTypeManager = orbTypeManager
 		queryManagerImpl.orbManager = orbManager
@@ -36,7 +36,7 @@ class QueryManagerImplSpec extends Specification {
 		orbManager.getOrbsOfType(_) >> orbList
 		
 		Cache cache = Mock(Cache)
-		QueryCollection queryCollection = Mock(QueryCollection)
+		CriteriaCollection queryCollection = Mock(CriteriaCollection)
 		cache.queryCollection = queryCollection
 		queryManagerImpl.cache = cache
 		

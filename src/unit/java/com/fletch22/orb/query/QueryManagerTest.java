@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
 
-import org.apache.commons.lang3.time.StopWatch;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,6 +27,7 @@ import com.fletch22.orb.command.transaction.RollbackTransactionService;
 import com.fletch22.orb.query.CriteriaFactory.Criteria;
 import com.fletch22.orb.systemType.SystemType;
 import com.fletch22.orb.test.data.TestDataSimple;
+import com.fletch22.util.StopWatch;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/springContext-test.xml")
@@ -51,7 +51,7 @@ public class QueryManagerTest {
 	IntegrationSystemInitializer integrationSystemInitializer;
 	
 	@Autowired
-	QueryManagerImpl queryManager;
+	CriteriaManagerImpl queryManager;
 	
 	@Autowired
 	BeginTransactionService beginTransactionService;
@@ -88,8 +88,7 @@ public class QueryManagerTest {
 		long orbInternalId = queryManager.create(criteria);
 		stopWatch.stop();
 		
-		BigDecimal millis = new BigDecimal(stopWatch.getNanoTime()).divide(new BigDecimal(1000000));
-		logger.debug("Elapsed time: {} millis.", millis);
+		logger.info("Elapsed time: {} millis.", stopWatch.getElapsedMillis());
 		
 		// Assert
 		assertFalse(orbInternalId == Orb.INTERNAL_ID_UNSET);
@@ -125,11 +124,18 @@ public class QueryManagerTest {
 	public void testRollbackQuery() throws Exception {
 		
 		// Arrange
+		long orbTypeInternalId = testDataSimple.loadTestData();
+		OrbType orbType = orbTypeManager.getOrbType(orbTypeInternalId);
+		
 		assertEquals(0, cache.queryCollection.getSize());
 		
 		assertEquals(0, orbManager.countOrbsOfType(SystemType.QUERY.getId()));
 		
 		BigDecimal tranId = beginTransactionService.beginTransaction();
+		
+		Criteria criteria = criteriaFactory.createInstance(orbType, "foo");
+		
+		queryManager.create(criteria);
 		
 		// Act
 		rollbackTransactionService.rollbackToSpecificTransaction(tranId);

@@ -22,9 +22,9 @@ import com.fletch22.orb.OrbType;
 import com.fletch22.orb.query.Constraint;
 import com.fletch22.orb.query.ConstraintDetailsSingleValue;
 import com.fletch22.orb.query.CriteriaFactory;
-import com.fletch22.orb.query.CriteriaFactory.Criteria;
 import com.fletch22.orb.query.LogicalConstraint;
 import com.fletch22.orb.query.LogicalOperator;
+import com.fletch22.orb.query.CriteriaFactory.Criteria;
 import com.google.gson.Gson;
 
 @RunWith(SpringJUnit4ClassRunner.class)

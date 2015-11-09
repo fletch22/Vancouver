@@ -17,8 +17,7 @@ import com.fletch22.orb.Orb
 import com.fletch22.orb.OrbManager
 import com.fletch22.orb.OrbTypeManager
 import com.fletch22.orb.cache.local.Cache
-import com.fletch22.orb.cache.local.CacheEntry
-import com.fletch22.orb.cache.local.OrbSingleTypesInstanceCollection;
+import com.fletch22.orb.cache.local.OrbSingleTypesInstanceCollection
 import com.fletch22.orb.query.CriteriaFactory.Criteria
 
 @org.junit.experimental.categories.Category(IntegrationTests.class)

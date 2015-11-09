@@ -7,18 +7,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fletch22.orb.cache.local.Cache;
-import com.fletch22.orb.cache.query.QueryCollection;
+import com.fletch22.orb.cache.query.CriteriaCollection;
 import com.fletch22.orb.query.CriteriaFactory.Criteria;
 import com.fletch22.orb.query.sort.CriteriaSortInfo;
 
 @Component
-public class QueryAttributeRenameHandler {
+public class CriteriaAttributeRenameHandler {
 
 	@Autowired
 	Cache cache;
 
 	public void handleAttributeRename(long orbTypeInternalId, String attributeOldName, String attributeNewName) {
-		QueryCollection queryCollection = cache.queryCollection;
+		CriteriaCollection queryCollection = cache.queryCollection;
 
 		Set<Long> criteriaKey = queryCollection.getKeys();
 		for (long key : criteriaKey) {

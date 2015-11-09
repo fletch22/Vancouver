@@ -6,7 +6,6 @@ import spock.lang.Specification
 import com.fletch22.orb.OrbType
 import com.fletch22.orb.query.CriteriaFactory.Criteria
 import com.fletch22.orb.query.sort.CriteriaSortInfo
-import com.fletch22.orb.query.sort.SortInfo
 
 class QueryAttributeRenameHandlerSpec extends Specification {
 	
@@ -16,7 +15,7 @@ class QueryAttributeRenameHandlerSpec extends Specification {
 	def 'test attribute rename in constraint'() {
 		
 		given:
-		QueryAttributeRenameHandler queryAttributeRenameHandler = new QueryAttributeRenameHandler()
+		CriteriaAttributeRenameHandler queryAttributeRenameHandler = new CriteriaAttributeRenameHandler()
 		
 		OrbType orbType = Mock(OrbType)
 		
@@ -38,7 +37,7 @@ class QueryAttributeRenameHandlerSpec extends Specification {
 	def 'test attribute rename in sort info'() {
 		
 		given:
-		QueryAttributeRenameHandler queryAttributeRenameHandler = new QueryAttributeRenameHandler()
+		CriteriaAttributeRenameHandler queryAttributeRenameHandler = new CriteriaAttributeRenameHandler()
 		
 		OrbType orbType = Mock(OrbType)
 		

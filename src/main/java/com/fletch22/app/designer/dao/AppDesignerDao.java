@@ -22,7 +22,7 @@ import com.fletch22.orb.OrbType;
 import com.fletch22.orb.OrbTypeManager;
 import com.fletch22.orb.cache.reference.ReferenceUtil;
 import com.fletch22.orb.query.OrbResultSet;
-import com.fletch22.orb.query.QueryManager;
+import com.fletch22.orb.query.CriteriaManager;
 
 public abstract class AppDesignerDao<T extends OrbBasedComponent, U extends DomainTransformer<T>> {
 	
@@ -38,7 +38,7 @@ public abstract class AppDesignerDao<T extends OrbBasedComponent, U extends Doma
 	protected OrbTypeManager orbTypeManager;
 	
 	@Autowired
-	protected QueryManager queryManager;
+	protected CriteriaManager queryManager;
 	
 	@Autowired
 	DaoJunction daoJunction;

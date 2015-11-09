@@ -13,8 +13,8 @@ import com.fletch22.orb.OrbType;
 import com.fletch22.orb.OrbTypeManager;
 import com.fletch22.orb.query.Constraint;
 import com.fletch22.orb.query.CriteriaFactory;
+import com.fletch22.orb.query.CriteriaManager;
 import com.fletch22.orb.query.CriteriaFactory.Criteria;
-import com.fletch22.orb.query.QueryManager;
 
 @Component
 public class TestDataSimple {
@@ -31,7 +31,7 @@ public class TestDataSimple {
 	CriteriaFactory criteriaFactory;
 	
 	@Autowired
-	QueryManager queryManager;
+	CriteriaManager queryManager;
 	
 	public static final String ATTRIBUTE_COLOR = "color";
 	public static final String ATTRIBUTE_GREEN = "green";

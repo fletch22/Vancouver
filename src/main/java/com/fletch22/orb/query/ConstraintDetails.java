@@ -7,5 +7,4 @@ public abstract class ConstraintDetails extends Constraint {
 	public abstract String getAttributeName();
 	
 	public abstract RelationshipOperator getRelationshipOperator();
-	
 }

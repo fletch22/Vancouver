@@ -3,7 +3,8 @@ package com.fletch22.orb.query;
 import com.fletch22.orb.Orb;
 import com.fletch22.orb.query.CriteriaFactory.Criteria;
 
-public interface QueryManager {
+public interface CriteriaManager {
+	
 	public long create(Criteria criteria);
 	
 	public void create(Orb orb, Criteria criteria);

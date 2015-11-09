@@ -26,9 +26,9 @@ import com.fletch22.orb.cache.reference.ReferenceUtil
 import com.fletch22.orb.client.service.BeginTransactionService
 import com.fletch22.orb.command.orbType.dto.AddOrbDto
 import com.fletch22.orb.command.orbType.dto.AddOrbTypeDto
-import com.fletch22.orb.command.transaction.RollbackTransactionService;
+import com.fletch22.orb.command.transaction.RollbackTransactionService
+import com.fletch22.orb.query.CriteriaManager
 import com.fletch22.orb.query.OrbResultSet
-import com.fletch22.orb.query.QueryManager
 import com.fletch22.orb.query.CriteriaFactory.Criteria
 import com.fletch22.orb.query.sort.CriteriaSortInfo
 import com.fletch22.orb.query.sort.SortInfo.SortDirection
@@ -74,7 +74,7 @@ class OrbCollectionSpec extends Specification {
 	TestDataSimple testDataSimple
 	
 	@Autowired
-	QueryManager queryManager
+	CriteriaManager queryManager
 	
 	@Autowired
 	ReferenceUtil referenceUtil

@@ -15,8 +15,8 @@ import com.fletch22.orb.cache.local.Cache;
 import com.fletch22.orb.cache.reference.ReferenceUtil;
 import com.fletch22.orb.query.Constraint;
 import com.fletch22.orb.query.CriteriaFactory;
+import com.fletch22.orb.query.CriteriaManager;
 import com.fletch22.orb.query.CriteriaFactory.Criteria;
-import com.fletch22.orb.query.QueryManager;
 
 @Component
 public class TestDataWithReferences {
@@ -33,7 +33,7 @@ public class TestDataWithReferences {
 	CriteriaFactory criteriaFactory;
 	
 	@Autowired
-	QueryManager queryManager;
+	CriteriaManager queryManager;
 	
 	@Autowired
 	ReferenceUtil referenceUtil;

@@ -89,4 +89,82 @@ Given an orb saved to the Redis cache
 And properties with null values are removed in order to saved to redis.
 When the orb is retrieved, the missing properties should be reproduced with null values. 
 
- 
+Constraint Notes:
+
+Kinds
+
+	Constrain Uniqueness
+
+	Constrain number of arrows in a single attribute
+
+	Constrain Circular references.
+
+	Constrain delete if last one -- do not delete if last one.
+
+	Constrain single record
+
+	Constrain type's recordQM
+
+	Enforce delete if nothing references object.
+
+Two kinds of Constraint
+
+	Orb Level - is attribute value unique amongst all instances
+
+	Record Level - are attribute between 10 and 30
+
+Constraints per operation can be either
+
+	single, or multiple. Therefore we will pass in an array of constraints when constraints are considered.
+
+Constraints must be associated at the application level because a single orb type may have an application form presented to the user in several different contexts. Each context could have a different constraint list.
+
+System level constraints will be named "default" constraints and will be associated with the orbtype.
+
+Constraints must also exist at the system level because some system operations require constraints - e.g., queries at the orb level must have unique names (until I develop a folder system)
+
+Application Level constraints will be bundled with an operation: The bundle will be composed of the orb
+and a list of references to the constraint list.
+
+Problem:
+
+	If a set attribute calls tests data limitation for the whole orb on each set, the a single orb update that calls setAttribute for each attribute
+		would incorrectly test on each invocation of setAttribute -- inefficient and might not even work right.
+	
+	Solution:
+		A setAttribute will be given an additional parameter (DataLimitationContext). All calls will get passed this dataLimitation context. 
+		If the dataLimitation context property "hasBeenCalled" is false then all dataLimitations tests will be invoked. 
+		The dataLimitations will be lazy loaded this means that the dataLimitations will be looked up when getDataLimitations is called.
+		If the dataLimitation context property "hasBeenCalled" is true then no data limitation test will be performed.
+		
+		Or 
+		
+		When update orb is called, all the type's default data limitations will be tested before setAttribute is invoked. Subsequently when 
+		setAttribute is invoked, the old setAttribute method (without the DataLimitationContext (DLC) parameter) will be invoked. This will be a private method.
+		
+		The only setAttribute public method will have a DataLimitationContext DLC parameter. The DLC will carry references to the app level data 
+		limitation contexts; it will also contain a convenience method to retrieve the default dataLimitations.
+		
+		Rollback for both setAttribute methods will reference the old setAttribute (without DLC parameter).
+		
+		Q: Do we need a guard against running data limitation tests during data restore?
+				
+		With these techniques we can
+		
+			: Avoid the problem of clients calling setAttribute directly and not testing data against data limitation constraints.
+			: Avoid invoking data limitation tests during rollback.
+
+
+Tasks:
+
+	Modify Query Attr Rename Handler -- Done
+		Pass in Query Collection instead of reffing. (?)
+		Redefine handler to only work with Criteria instead of referencing queries. (?)
+	Rename all Query*.java to Criteria*.java -- Done.
+	Change query validation to enforce uniqueness constraint only if there is another query with the same label with the same type.
+	Change execute query by name to add a second parameter (orb type).
+	Check if we can use isRestoreMode inside setAttribute to avoid running data limitation tests during restore mode.
+	Create setAttribute method with DataLimitation context added as parameter.
+	Modify Update Orb to have additional DataLimitation context added (overload and keep original -- create DLC on the fly?) 
+
+

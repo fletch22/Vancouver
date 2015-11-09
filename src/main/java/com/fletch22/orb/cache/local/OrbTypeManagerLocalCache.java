@@ -19,7 +19,7 @@ import com.fletch22.orb.TranDateGenerator;
 import com.fletch22.orb.command.orbType.AddWholeOrbTypeCommand;
 import com.fletch22.orb.command.orbType.DeleteOrbTypeCommand;
 import com.fletch22.orb.command.orbType.dto.AddOrbTypeDto;
-import com.fletch22.orb.query.QueryManager;
+import com.fletch22.orb.query.CriteriaManager;
 import com.fletch22.orb.rollback.UndoActionBundle;
 import com.fletch22.orb.systemType.OrbTypeInitializer;
 import com.fletch22.util.json.LinkedHashSetString;
@@ -48,7 +48,7 @@ public class OrbTypeManagerLocalCache implements OrbTypeManager {
 	OrbManager orbManager;
 	
 	@Autowired
-	QueryManager queryManager;
+	CriteriaManager queryManager;
 	
 	@Autowired
 	OrbTypeInitializer orbTypeInitializer;

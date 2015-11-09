@@ -19,9 +19,9 @@ import com.fletch22.orb.query.CriteriaFactory.Criteria;
 import com.fletch22.orb.systemType.SystemType;
 
 @Component
-public class QueryManagerImpl implements QueryManager {
+public class CriteriaManagerImpl implements CriteriaManager {
 	
-	Logger logger = LoggerFactory.getLogger(QueryManagerImpl.class);
+	Logger logger = LoggerFactory.getLogger(CriteriaManagerImpl.class);
 	
 	@Autowired
 	Cache cache;
@@ -33,10 +33,10 @@ public class QueryManagerImpl implements QueryManager {
 	OrbTypeManager orbTypeManager;
 	
 	@Autowired
-	QueryAttributeRenameHandler queryAttributeRenameHandler;
+	CriteriaAttributeRenameHandler queryAttributeRenameHandler;
 	
 	@Autowired
-	QueryAttributeDeleteHandler queryAttributeDeleteHandler;
+	CriteriaAttributeDeleteHandler queryAttributeDeleteHandler;
 	
 	@Autowired
 	CriteriaFactory criteriaFactory;

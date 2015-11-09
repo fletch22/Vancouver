@@ -19,8 +19,8 @@ import com.fletch22.orb.cache.reference.DecomposedKey;
 import com.fletch22.orb.cache.reference.OrbReference;
 import com.fletch22.orb.cache.reference.ReferenceUtil;
 import com.fletch22.orb.query.ConstraintGrinder;
-import com.fletch22.orb.query.CriteriaFactory.Criteria;
 import com.fletch22.orb.query.OrbResultSet;
+import com.fletch22.orb.query.CriteriaFactory.Criteria;
 
 @Component
 @Scope("prototype")

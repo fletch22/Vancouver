@@ -1,14 +1,11 @@
 package com.fletch22.orb.query;
 
 import static org.junit.Assert.*
-
-import java.util.Set;
-
 import spock.lang.Specification
 
 import com.fletch22.orb.OrbType
 import com.fletch22.orb.cache.local.Cache
-import com.fletch22.orb.cache.query.QueryCollection
+import com.fletch22.orb.cache.query.CriteriaCollection
 import com.fletch22.orb.query.CriteriaFactory.Criteria
 
 class QueryAttributeDeleteHandlerSpec extends Specification {
@@ -19,7 +16,7 @@ class QueryAttributeDeleteHandlerSpec extends Specification {
 	def 'test attribute delete in constraint'() {
 		
 		given:
-		QueryAttributeDeleteHandler queryAttributeDeleteHandler = new QueryAttributeDeleteHandler()
+		CriteriaAttributeDeleteHandler queryAttributeDeleteHandler = new CriteriaAttributeDeleteHandler()
 		
 		OrbType orbType = Mock(OrbType)
 		orbType.id = 123
@@ -32,14 +29,14 @@ class QueryAttributeDeleteHandlerSpec extends Specification {
 		criteria.addAnd(constraintDetailSingleValue)
 		
 		Cache cache = Mock(Cache)
-		QueryCollection queryCollection = new QueryCollection()
+		CriteriaCollection queryCollection = new CriteriaCollection()
 		cache.queryCollection = queryCollection
 		
 		queryCollection.add(234, criteria)
 		
 		queryAttributeDeleteHandler.cache = cache
 		
-		QueryManager queryManager = Mock(QueryManager)
+		CriteriaManager queryManager = Mock(CriteriaManager)
 		queryAttributeDeleteHandler.queryManager = queryManager
 		
 		when:

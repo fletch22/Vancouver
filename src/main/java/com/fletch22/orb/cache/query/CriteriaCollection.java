@@ -11,7 +11,7 @@ import com.fletch22.orb.query.CriteriaFactory.Criteria;
 
 @Component
 @Scope("prototype")
-public class QueryCollection {
+public class CriteriaCollection {
 
 	private Map<Long, Criteria> queries = new HashMap<Long, Criteria>();
 	
@@ -45,6 +45,7 @@ public class QueryCollection {
 	}
 	
 	private void validateCriteria(long id, Criteria criteriaToValidate) {
+		
 		String message = null;
 		if (queries.containsKey(id))  {
 			message = String.format("Encountered a problem. Criteria with id '%s' already exists.", id);
@@ -61,7 +62,7 @@ public class QueryCollection {
 			for (Long key: keys) {
 				Criteria criteria = this.queries.get(key);
 				if (criteria.getLabel().equals(label)) {
-					message = String.format("Encountered a problem. Criteria with label '%s' already exists.", label);
+					message = String.format("Encountered a problem. Criteria with with type id '%s' and label '%s' already exists.", criteria.getOrbTypeInternalId(), label);
 					throw new RuntimeException(message);
 				}
 			}
@@ -69,6 +70,7 @@ public class QueryCollection {
 	}
 	
 	public boolean doesQueryWithLabelExist(String label) {
+		
 		boolean doesExist = false;
 		Set<Long> keys = getKeys();
 		for (Long key: keys) {
@@ -81,6 +83,7 @@ public class QueryCollection {
 	}
 	
 	public Criteria findByLabel(String label) {
+		
 		Criteria criteriaFound = null;
 		Set<Long> keys = getKeys();
 		for (Long key: keys) {

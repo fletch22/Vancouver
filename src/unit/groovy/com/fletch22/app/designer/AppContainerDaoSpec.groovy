@@ -15,7 +15,7 @@ import com.fletch22.orb.Orb
 import com.fletch22.orb.OrbType
 import com.fletch22.orb.OrbTypeManager
 import com.fletch22.orb.query.OrbResultSet
-import com.fletch22.orb.query.QueryManager
+import com.fletch22.orb.query.CriteriaManager
 
 class AppContainerDaoSpec extends Specification {
 
@@ -31,7 +31,7 @@ class AppContainerDaoSpec extends Specification {
 		
 		appContainerDao.appContainerTransformer = Mock(AppContainerTransformer)
 		appContainerDao.orbTypeManager = Mock(OrbTypeManager)
-		appContainerDao.queryManager = Mock(QueryManager)
+		appContainerDao.queryManager = Mock(CriteriaManager)
 		
 		OrbType orbType = Mock(OrbType)
 		orbType.id = 123
