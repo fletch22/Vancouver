@@ -29,7 +29,7 @@ public class OrbTypeInitializer {
 	}
 
 	private void createQuerySystemType() {
-		SystemType query = SystemType.QUERY;
+		SystemType query = SystemType.CRITERIA;
 		
 		createSystemOrbType(query.getLabel(), query.getId(), query.getAttributeHashSet());
 	}

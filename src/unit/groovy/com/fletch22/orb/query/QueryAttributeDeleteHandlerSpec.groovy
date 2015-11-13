@@ -5,7 +5,7 @@ import spock.lang.Specification
 
 import com.fletch22.orb.OrbType
 import com.fletch22.orb.cache.local.Cache
-import com.fletch22.orb.cache.query.CriteriaCollection
+import com.fletch22.orb.cache.query.QueryCollection
 import com.fletch22.orb.query.CriteriaFactory.Criteria
 
 class QueryAttributeDeleteHandlerSpec extends Specification {
@@ -29,14 +29,14 @@ class QueryAttributeDeleteHandlerSpec extends Specification {
 		criteria.addAnd(constraintDetailSingleValue)
 		
 		Cache cache = Mock(Cache)
-		CriteriaCollection queryCollection = new CriteriaCollection()
+		QueryCollection queryCollection = new QueryCollection()
 		cache.queryCollection = queryCollection
 		
 		queryCollection.add(234, criteria)
 		
 		queryAttributeDeleteHandler.cache = cache
 		
-		CriteriaManager queryManager = Mock(CriteriaManager)
+		QueryManager queryManager = Mock(QueryManager)
 		queryAttributeDeleteHandler.queryManager = queryManager
 		
 		when:

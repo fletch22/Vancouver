@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import com.fletch22.orb.Orb;
 import com.fletch22.orb.OrbManager;
 import com.fletch22.orb.cache.local.Cache;
-import com.fletch22.orb.query.CriteriaManager;
+import com.fletch22.orb.query.QueryManager;
 
 @Component
 public class DependencyHandlerFactory {
@@ -18,7 +18,7 @@ public class DependencyHandlerFactory {
 	OrbManager orbManager;
 	
 	@Autowired
-	CriteriaManager queryManager;
+	QueryManager queryManager;
 
 	public DependencyHandler getOrbDeletionForQueryInstance(Orb orb, boolean isDeleteDependencies) {
 		DependencyHandlerOrbDeletionWithQuery dep = new DependencyHandlerOrbDeletionWithQuery(orb, isDeleteDependencies);

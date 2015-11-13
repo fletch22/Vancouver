@@ -51,7 +51,7 @@ public class QueryManagerTest {
 	IntegrationSystemInitializer integrationSystemInitializer;
 	
 	@Autowired
-	CriteriaManagerImpl queryManager;
+	QueryManagerImpl queryManager;
 	
 	@Autowired
 	BeginTransactionService beginTransactionService;
@@ -129,7 +129,7 @@ public class QueryManagerTest {
 		
 		assertEquals(0, cache.queryCollection.getSize());
 		
-		assertEquals(0, orbManager.countOrbsOfType(SystemType.QUERY.getId()));
+		assertEquals(0, orbManager.countOrbsOfType(SystemType.CRITERIA.getId()));
 		
 		BigDecimal tranId = beginTransactionService.beginTransaction();
 		
@@ -144,7 +144,7 @@ public class QueryManagerTest {
 		assertEquals(0, cache.queryCollection.getSize());
 		
 		// There should be no orbs of type 'query'
-		assertEquals(0, orbManager.countOrbsOfType(SystemType.QUERY.getId()));
+		assertEquals(0, orbManager.countOrbsOfType(SystemType.CRITERIA.getId()));
 	}
 	
 	@Test
@@ -166,7 +166,7 @@ public class QueryManagerTest {
 		assertEquals(0, cache.queryCollection.getSize());
 		
 		// There should be no orbs of type 'query'
-		assertEquals(0, orbManager.countOrbsOfType(SystemType.QUERY.getId()));
+		assertEquals(0, orbManager.countOrbsOfType(SystemType.CRITERIA.getId()));
 	}
 
 }

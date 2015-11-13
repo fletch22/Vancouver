@@ -1,11 +1,11 @@
 package com.fletch22.orb.dependency;
 
 import com.fletch22.orb.Orb;
-import com.fletch22.orb.query.CriteriaManager;
+import com.fletch22.orb.query.QueryManager;
 
 public class DependencyHandlerOrbDeletionWithQuery implements DependencyHandler {
 	
-	CriteriaManager queryManager;
+	QueryManager queryManager;
 	Orb orb;
 	boolean isDeleteDependencies;
 	
@@ -18,7 +18,7 @@ public class DependencyHandlerOrbDeletionWithQuery implements DependencyHandler 
 	public void check() {
 		long orbInternalId = this.orb.getOrbInternalId();
 		if (isDeleteDependencies) {
-			queryManager.removeQueryFromCollection(orbInternalId);
+			queryManager.removeFromCollection(orbInternalId);
 		} else {
 			boolean doesExist = queryManager.doesQueryExist(orbInternalId);
 			if (doesExist) {
@@ -28,7 +28,7 @@ public class DependencyHandlerOrbDeletionWithQuery implements DependencyHandler 
 		}
 	}
 	
-	public void setQueryManager(CriteriaManager queryManager) {
+	public void setQueryManager(QueryManager queryManager) {
 		this.queryManager = queryManager;
 	}
 }

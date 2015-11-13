@@ -30,7 +30,7 @@ import com.fletch22.orb.command.orbType.dto.AddOrbDto;
 import com.fletch22.orb.dependency.DependencyHandler;
 import com.fletch22.orb.dependency.DependencyHandlerEngine;
 import com.fletch22.orb.dependency.DependencyHandlerFactory;
-import com.fletch22.orb.query.CriteriaManager;
+import com.fletch22.orb.query.QueryManager;
 import com.fletch22.orb.rollback.UndoActionBundle;
 import com.fletch22.util.json.MapLongString;
 
@@ -58,7 +58,7 @@ public class OrbManagerLocalCache implements OrbManager {
 	TranDateGenerator tranDateGenerator;
 	
 	@Autowired
-	CriteriaManager queryManager;
+	QueryManager queryManager;
 	
 	@Autowired
 	DependencyHandlerFactory dependencyHandlerFactory;
@@ -191,7 +191,7 @@ public class OrbManagerLocalCache implements OrbManager {
 	private void handleQueryDependenciesForOrbDeletion(Orb orb, boolean isDeleteDependencies) {
 		long orbInternalId = orb.getOrbInternalId();
 		if (isDeleteDependencies) {
-			queryManager.removeQueryFromCollection(orbInternalId);
+			queryManager.removeFromCollection(orbInternalId);
 		} else {
 			boolean doesExist = queryManager.doesQueryExist(orbInternalId);
 			if (doesExist) {

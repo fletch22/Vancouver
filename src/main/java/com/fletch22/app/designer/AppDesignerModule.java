@@ -18,7 +18,7 @@ import com.fletch22.orb.Orb;
 import com.fletch22.orb.OrbManager;
 import com.fletch22.orb.OrbTypeManager;
 import com.fletch22.orb.modules.system.OrbSystemModule;
-import com.fletch22.orb.query.CriteriaManager;
+import com.fletch22.orb.query.QueryManager;
 
 @Component
 public class AppDesignerModule implements OrbSystemModule {
@@ -30,7 +30,7 @@ public class AppDesignerModule implements OrbSystemModule {
 	OrbTypeManager orbTypeManager;
 	
 	@Autowired
-	CriteriaManager queryManager;
+	QueryManager queryManager;
 	
 	@Autowired
 	AppContainerService appContainerService;

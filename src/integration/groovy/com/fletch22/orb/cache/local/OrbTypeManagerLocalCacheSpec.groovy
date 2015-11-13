@@ -19,7 +19,7 @@ import com.fletch22.orb.OrbTypeManager
 import com.fletch22.orb.TranDateGenerator
 import com.fletch22.orb.cache.reference.OrbReference
 import com.fletch22.orb.query.ConstraintDetailsSingleValue
-import com.fletch22.orb.query.CriteriaManager
+import com.fletch22.orb.query.QueryManager
 import com.fletch22.orb.query.CriteriaFactory.Criteria
 import com.fletch22.orb.test.data.TestDataWithReferences
 
@@ -61,7 +61,7 @@ class OrbTypeManagerLocalCacheSpec extends Specification {
 	IntegrationSystemInitializer integrationSystemInitializer
 	
 	@Autowired
-	CriteriaManager queryManager
+	QueryManager queryManager
 	
 	def setup() {
 		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems();

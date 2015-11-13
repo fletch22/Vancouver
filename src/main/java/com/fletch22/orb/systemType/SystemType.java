@@ -1,13 +1,10 @@
 package com.fletch22.orb.systemType;
 
-import java.util.Arrays;
 import java.util.LinkedHashSet;
 
 public class SystemType {
 	
-	public static final String QUERY_INSTANCE_ATTRIBUTE_LABEL = "label";
-
-	public static final SystemType QUERY = new SystemType(1, "query", new LinkedHashSet<String>(Arrays.asList(QUERY_INSTANCE_ATTRIBUTE_LABEL)));
+	public static final SystemType CRITERIA = new SystemType(1, "criteria", new LinkedHashSet<String>());
 	
 	private long id;
 	private String label;

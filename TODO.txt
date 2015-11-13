@@ -170,3 +170,26 @@ Add constraint code that limits multi-hop circular references.
 Status: Not done.
 
 Add kind of removeFromChildren that enforces full orb delete when zero references remain.
+Status: Not done.
+
+Add interface to describe aware-of-orbType-delete-event. Then add interface to things like query manager.
+Status: Done.
+
+Modify OrbManager to have event handler for orb type delete attr, rename attr, and delete orb type.
+Status: Not done.
+
+Modify query Manager to event handling like LimitationManager.
+Status: Not done.
+
+Complete LimitationManager
+Status: Not done.
+
+Complete: 
+// FIXME: 11-12-2014: This is odd. Reconcile with "remove" method.
+@Loggable4Event
+@Override
+public void delete(long criteriaId, boolean isDeleteDependencies) {
+	orbManager.deleteOrbIgnoreQueryDependencies(criteriaId, isDeleteDependencies);
+	removeFromCollection(criteriaId);
+}
+Status: Not done.

@@ -161,8 +161,9 @@ Tasks:
 		Pass in Query Collection instead of reffing. (?)
 		Redefine handler to only work with Criteria instead of referencing queries. (?)
 	Rename all Query*.java to Criteria*.java -- Done.
-	Change query validation to enforce uniqueness constraint only if there is another query with the same label with the same type.
+	Change query validation to enforce uniqueness constraint only if there is another query with the same label with the same type. -- Done.
 	Change execute query by name to add a second parameter (orb type).
+	Add a new OrbManager Layer (AppOrbManager?); renamed old one to "Orb Manager"; new orb manager layer has only setAttribute that accepts dataLimitationContext. (?)
 	Check if we can use isRestoreMode inside setAttribute to avoid running data limitation tests during restore mode.
 	Create setAttribute method with DataLimitation context added as parameter.
 	Modify Update Orb to have additional DataLimitation context added (overload and keep original -- create DLC on the fly?) 

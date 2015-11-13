@@ -30,8 +30,12 @@ public class CriteriaFactory {
 		
 		transient Logger logger = LoggerFactory.getLogger(Criteria.class);
 		
+		transient public static final long UNSET_CRITERIA_ID = -1;
+		
+		private long criteriaId = UNSET_CRITERIA_ID;
 		private OrbType orbType;
 		private String label;
+		private boolean hasIdBeenSet = false;
 		private ArrayList<CriteriaSortInfo> sortInfoList = new ArrayList<CriteriaSortInfo>();
 		
 		transient Cache cache;
@@ -41,6 +45,21 @@ public class CriteriaFactory {
 		private Criteria(OrbType orbType, String label) {
 			this.orbType = orbType;
 			this.label = label;
+		}
+		
+		public void setId(long id) {
+			
+			if (hasIdBeenSet) {
+				throw new RuntimeException("Encountered a problem. Criteria Id may only be set once. The intent of this constraint is to avoid corruption in particular collections.");
+			}
+			
+			this.criteriaId = id;
+			
+			hasIdBeenSet = true;
+		}
+		
+		public long getCriteriaId() {
+			return this.criteriaId;
 		}
 		
 		public void setSortOrder(CriteriaSortInfo criteriaSortInfo) {

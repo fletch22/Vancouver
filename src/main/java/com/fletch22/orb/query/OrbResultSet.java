@@ -22,6 +22,15 @@ public class OrbResultSet {
 		return orbList.size() > 0 ? orbList.get(0): null;
 	}
 	
+	public Orb uniqueResultNotNull() {
+		if (orbList.size() > 1) {
+			throw new RuntimeException("Encountered a problem processing result set; there is more than one result. Only one result was expected.");
+		} else if (orbList.size() == 0) {
+			throw new RuntimeException("Encountered a problem processing result set; no result found. Exactly one result was expected.");
+		}
+		return orbList.get(0);
+	}
+	
 	public List<Orb> getOrbList() {
 		return orbList;
 	}

@@ -19,7 +19,8 @@ import com.fletch22.orb.TranDateGenerator;
 import com.fletch22.orb.command.orbType.AddWholeOrbTypeCommand;
 import com.fletch22.orb.command.orbType.DeleteOrbTypeCommand;
 import com.fletch22.orb.command.orbType.dto.AddOrbTypeDto;
-import com.fletch22.orb.query.CriteriaManager;
+import com.fletch22.orb.limitation.LimitationManager;
+import com.fletch22.orb.query.QueryManager;
 import com.fletch22.orb.rollback.UndoActionBundle;
 import com.fletch22.orb.systemType.OrbTypeInitializer;
 import com.fletch22.util.json.LinkedHashSetString;
@@ -48,10 +49,13 @@ public class OrbTypeManagerLocalCache implements OrbTypeManager {
 	OrbManager orbManager;
 	
 	@Autowired
-	CriteriaManager queryManager;
+	QueryManager queryManager;
 	
 	@Autowired
 	OrbTypeInitializer orbTypeInitializer;
+	
+	@Autowired
+	LimitationManager limitationManager;
 	
 	@Override
 	public void initializeOrbTypes() {
@@ -129,6 +133,7 @@ public class OrbTypeManagerLocalCache implements OrbTypeManager {
 				throw new RuntimeException(message);
 			}
 		}
+		limitationManager.handleTypeDeleteEvent(orbTypeInternalId, isDeleteDependencies);
 	}
 	
 	@Override
@@ -159,7 +164,8 @@ public class OrbTypeManagerLocalCache implements OrbTypeManager {
 		
 		ensureNotASystemOrbType(orbTypeInternalId);
 		
-		queryManager.handleAttributeDeletion(orbTypeInternalId, attributeName, isDeleteDependencies);
+		queryManager.handleAttributeDeleteEvent(orbTypeInternalId, attributeName, isDeleteDependencies);
+		limitationManager.handleAttributeDeleteEvent(orbTypeInternalId, attributeName, isDeleteDependencies);
 		
 		int attributeIndex = getIndexOfAttribute(orbTypeInternalId, attributeName);
 		orbManager.deleteOrbAttributeFromAllInstances(orbTypeInternalId, attributeName, attributeIndex);
@@ -196,12 +202,20 @@ public class OrbTypeManagerLocalCache implements OrbTypeManager {
 
 	@Override
 	public OrbType getOrbType(long orbTypeInternalId) {
-		return cache.orbTypeCollection.get(orbTypeInternalId);
+		OrbType orbType = cache.orbTypeCollection.get(orbTypeInternalId);
+		if (orbType == null) {
+			throw new RuntimeException(String.format("Encountered problem finding orb type with id '%s'.", orbTypeInternalId));
+		}
+		return orbType;
 	}
 	
 	@Override
 	public OrbType getOrbType(String label) {
-		return cache.orbTypeCollection.getFromLabel(label);
+		OrbType orbType = cache.orbTypeCollection.getFromLabel(label);
+		if (orbType == null) {
+			throw new RuntimeException(String.format("Encountered problem finding orb type label '%s'.", label));
+		}
+		return orbType;
 	}
 
 	@Override
@@ -215,7 +229,8 @@ public class OrbTypeManagerLocalCache implements OrbTypeManager {
 		
 		ensureNotASystemOrbType(orbTypeInternalId);
 		
-		queryManager.handleAttributeRename(orbTypeInternalId, attributeNameOld, attributeNameNew);
+		queryManager.handleAttributeRenameEvent(orbTypeInternalId, attributeNameOld, attributeNameNew);
+		limitationManager.handleAttributeRenameEvent(orbTypeInternalId, attributeNameOld, attributeNameNew);
 		
 		orbManager.renameAttribute(orbTypeInternalId, attributeNameOld, attributeNameNew);
 		
