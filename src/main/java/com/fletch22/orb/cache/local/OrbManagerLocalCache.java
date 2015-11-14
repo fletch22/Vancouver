@@ -173,7 +173,7 @@ public class OrbManagerLocalCache implements OrbManager {
 	}
 	
 	private void handleDependenciesForOrbDeletion(Orb orb, boolean isDeleteDependencies) {
-		handleQueryDependenciesForOrbDeletion(orb, isDeleteDependencies);
+		queryManager.handleInstanceDeleteEvent(orb.getOrbInternalId(), isDeleteDependencies);
 		handleOrbReferenceDependenciesForOrbDeletion(orb, isDeleteDependencies);
 	}
 	
@@ -188,19 +188,6 @@ public class OrbManagerLocalCache implements OrbManager {
 		dependencyHandlerEngine.check();
 	}
 
-	private void handleQueryDependenciesForOrbDeletion(Orb orb, boolean isDeleteDependencies) {
-		long orbInternalId = orb.getOrbInternalId();
-		if (isDeleteDependencies) {
-			queryManager.removeFromCollection(orbInternalId);
-		} else {
-			boolean doesExist = queryManager.doesQueryExist(orbInternalId);
-			if (doesExist) {
-				String message = String.format("Encountered problem deleting orb '%s'. Orb has at least one dependency. A query exists that depends on the orb.", orbInternalId);
-				throw new RuntimeException(message);
-			}
-		}
-	}
-	
 	public void handleOrbReferenceDependenciesForOrbDeletion(Orb orb, boolean isDeleteDependencies) {
 		
 		if (isDeleteDependencies) {

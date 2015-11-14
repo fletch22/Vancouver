@@ -75,4 +75,9 @@ public class LimitationManagerImpl implements LimitationManager {
 		throw new NotImplementedException("Not yet implemented.");
 	}
 
+	@Override
+	public void handleInstanceDeleteEvent(long orbTypeInternalId, boolean isDeleteDependencies) {
+		// TODO Auto-generated method stub
+		throw new NotImplementedException("Not yet implemented.");
+	}
 }

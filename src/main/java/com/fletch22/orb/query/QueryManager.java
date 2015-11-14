@@ -1,9 +1,9 @@
 package com.fletch22.orb.query;
 
-import com.fletch22.orb.attribute.OrbTypeEventAware;
+import com.fletch22.orb.attribute.OrbEventAware;
 import com.fletch22.orb.query.CriteriaFactory.Criteria;
 
-public interface QueryManager extends OrbTypeEventAware {
+public interface QueryManager extends OrbEventAware {
 	
 	public long create(Criteria criteria);
 	

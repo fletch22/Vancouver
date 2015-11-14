@@ -47,6 +47,7 @@ public class QueryCollection {
 	
 	public List<Criteria> removeByOrbTypeId(long id) {
 		List<Criteria> criteriaList = queriesByOrbType.remove(id);
+		criteriaList = (criteriaList == null) ? new ArrayList<Criteria>() : criteriaList;
 		for (Criteria criteria : criteriaList) {
 			queries.remove(criteria.getCriteriaId());
 		}

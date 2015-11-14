@@ -15,6 +15,7 @@ import com.fletch22.orb.systemType.SystemType
 class QueryManagerImplUnitSpec extends Specification {
 
 	def 'test find query'() {
+		
 		given:
 		OrbTypeManager orbTypeManager = Mock(OrbTypeManager)
 		OrbManager orbManager = Mock(OrbManager)
@@ -42,7 +43,8 @@ class QueryManagerImplUnitSpec extends Specification {
 
 		long idToFind = 123
 		Criteria criteria = Mock(Criteria)
-		criteria.getOrbTypeInternalId() << idToFind
+		criteria.getLabel() >> "foo"
+		criteria.getOrbTypeInternalId() >> idToFind
 		queryCollection.getByQueryId(_) >> criteria
 
 		when:
@@ -52,10 +54,10 @@ class QueryManagerImplUnitSpec extends Specification {
 		criteriaFound
 		criteriaFound.is(criteria)
 	}
-
+	
 	private addQueryOrb(List orbList, String label) {
 		Orb orb = new Orb()
-		orb.getUserDefinedProperties().put(SystemType.CRITERIA_ATTRIBUTE_LABEL, label);
+		orb.getUserDefinedProperties().put(SystemType.CRITERIA, label);
 		orbList.add(orb)
 	}
 }

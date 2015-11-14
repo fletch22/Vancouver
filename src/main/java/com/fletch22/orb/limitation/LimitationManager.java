@@ -1,10 +1,10 @@
 package com.fletch22.orb.limitation;
 
 import com.fletch22.orb.Orb;
-import com.fletch22.orb.attribute.OrbTypeEventAware;
+import com.fletch22.orb.attribute.OrbEventAware;
 import com.fletch22.orb.query.CriteriaFactory.Criteria;
 
-public interface LimitationManager extends OrbTypeEventAware {
+public interface LimitationManager extends OrbEventAware {
 	
 	public long create(Criteria criteria);
 	
