@@ -51,7 +51,7 @@ public class QueryManagerTest {
 	IntegrationSystemInitializer integrationSystemInitializer;
 	
 	@Autowired
-	QueryManagerImpl queryManager;
+	QueryManager queryManager;
 	
 	@Autowired
 	BeginTransactionService beginTransactionService;

@@ -18,7 +18,7 @@ public class QueryCollectionSpec extends Specification {
 	
 	@Shared CriteriaFactory criteriaFactory = new CriteriaFactory()
 	
-	@Shared QueryCollection queryCollection = new QueryCollection()
+	@Shared CriteriaCollection queryCollection = new QueryCollection()
 	
 	def cleanup() {
 		queryCollection.clear()
@@ -43,7 +43,7 @@ public class QueryCollectionSpec extends Specification {
 		
 		then:
 		notThrown(Exception)
-		queryCollection.queriesByOrbType.collection.get(orbTypeInternalId).size() == 1
+		queryCollection.criteriaByOrbTypeCollection.collection.get(orbTypeInternalId).size() == 1
 	}
 	
 	def "test criteria validation fail because dupe"() {
@@ -115,7 +115,7 @@ public class QueryCollectionSpec extends Specification {
 		
 		queryCollection.add(criteriaOriginal)
 		
-		Set<Long> keySet = queryCollection.queriesByOrbType.collection.keySet()
+		Set<Long> keySet = queryCollection.criteriaByOrbTypeCollection.collection.keySet()
 		assertEquals 1, keySet.size()
 		
 		when:
@@ -123,10 +123,10 @@ public class QueryCollectionSpec extends Specification {
 		
 		then:
 		criteria.is(criteriaOriginal)
-		queryCollection.queries.size() == 0
-		queryCollection.queriesByOrbType.collection.size() == 0
+		queryCollection.criteriaByIdMap.size() == 0
+		queryCollection.criteriaByOrbTypeCollection.collection.size() == 0
 		
-		Set<Long> keySet2 = queryCollection.queriesByOrbType.collection.keySet()
+		Set<Long> keySet2 = queryCollection.criteriaByOrbTypeCollection.collection.keySet()
 		assertEquals 0, keySet2.size()
 	}
 	
@@ -140,7 +140,7 @@ public class QueryCollectionSpec extends Specification {
 		Criteria criteriaOriginal = createSampleCriteria(orbType)
 		queryCollection.add(criteriaOriginal)
 		
-		Set<Long> keySet = queryCollection.queriesByOrbType.collection.keySet()
+		Set<Long> keySet = queryCollection.criteriaByOrbTypeCollection.collection.keySet()
 		assertEquals 1, keySet.size()
 		
 		when:
@@ -148,10 +148,10 @@ public class QueryCollectionSpec extends Specification {
 		
 		then:
 		criteriaList.get(0).is(criteriaOriginal)
-		queryCollection.queries.size() == 0
-		queryCollection.queriesByOrbType.collection.size() == 0
+		queryCollection.criteriaByIdMap.size() == 0
+		queryCollection.criteriaByOrbTypeCollection.collection.size() == 0
 		
-		Set<Long> keySet2 = queryCollection.queriesByOrbType.collection.keySet()
+		Set<Long> keySet2 = queryCollection.criteriaByOrbTypeCollection.collection.keySet()
 		assertEquals 0, keySet2.size()
 	}
 	
@@ -166,17 +166,17 @@ public class QueryCollectionSpec extends Specification {
 		
 		queryCollection.add(criteriaOriginal)
 		
-		Set<Long> keySet = queryCollection.queriesByOrbType.collection.keySet()
+		Set<Long> keySet = queryCollection.criteriaByOrbTypeCollection.collection.keySet()
 		assertEquals 1, keySet.size()
 		
 		when:
 		Criteria criteria = queryCollection.clear()
 		
 		then:
-		queryCollection.queries.size() == 0
-		queryCollection.queriesByOrbType.collection.size() == 0
+		queryCollection.criteriaByIdMap.size() == 0
+		queryCollection.criteriaByOrbTypeCollection.collection.size() == 0
 		
-		Set<Long> keySet2 = queryCollection.queriesByOrbType.collection.keySet()
+		Set<Long> keySet2 = queryCollection.criteriaByOrbTypeCollection.collection.keySet()
 		assertEquals 0, keySet2.size()
 	}
 	

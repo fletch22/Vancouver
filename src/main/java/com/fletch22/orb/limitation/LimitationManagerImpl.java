@@ -3,8 +3,8 @@ package com.fletch22.orb.limitation;
 import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.stereotype.Component;
 
-import com.fletch22.orb.Orb;
 import com.fletch22.orb.query.CriteriaFactory.Criteria;
+import com.fletch22.orb.query.OrbResultSet;
 
 @Component
 public class LimitationManagerImpl implements LimitationManager {
@@ -25,17 +25,7 @@ public class LimitationManagerImpl implements LimitationManager {
 	}
 
 	@Override
-	public void create(Orb orb, Criteria criteria) {
-		throw new NotImplementedException("Not yet implemented.");
-	}
-
-	@Override
 	public void delete(long orbInternalIdQuery, boolean isDeleteDependencies) {
-		throw new NotImplementedException("Not yet implemented.");
-	}
-
-	@Override
-	public void addToCollection(long criteriaOrbInternalId, Criteria criteria) {
 		throw new NotImplementedException("Not yet implemented.");
 	}
 
@@ -45,27 +35,7 @@ public class LimitationManagerImpl implements LimitationManager {
 	}
 
 	@Override
-	public void nukeAllDataLimitations() {
-		throw new NotImplementedException("Not yet implemented.");
-	}
-
-	@Override
-	public boolean doesDataLimitationExist(long orbInternalIdQuery) {
-		throw new NotImplementedException("Not yet implemented.");
-	}
-
-	@Override
 	public Criteria get(long orbInternalIdQuery) {
-		throw new NotImplementedException("Not yet implemented.");
-	}
-
-	@Override
-	public boolean executeDataLimitationTest(long orbTypeInternalId, String queryLabel) {
-		throw new NotImplementedException("Not yet implemented.");
-	}
-
-	@Override
-	public boolean executeDataLimitationTest(Criteria criteria) {
 		throw new NotImplementedException("Not yet implemented.");
 	}
 
@@ -78,6 +48,36 @@ public class LimitationManagerImpl implements LimitationManager {
 	@Override
 	public void handleInstanceDeleteEvent(long orbTypeInternalId, boolean isDeleteDependencies) {
 		// TODO Auto-generated method stub
+		throw new NotImplementedException("Not yet implemented.");
+	}
+
+	@Override
+	public void addToCollection(Criteria criteria) {
+		throw new NotImplementedException("Not yet implemented.");
+	}
+
+	@Override
+	public void nukeAllCriteria() {
+		throw new NotImplementedException("Not yet implemented.");
+	}
+
+	@Override
+	public boolean doesQueryExist(long orbInternalIdQuery) {
+		throw new NotImplementedException("Not yet implemented.");
+	}
+
+	@Override
+	public OrbResultSet executeQuery(long orbTypeInternalId, String queryLabel) {
+		throw new NotImplementedException("Not yet implemented.");
+	}
+
+	@Override
+	public OrbResultSet executeQuery(Criteria criteria) {
+		throw new NotImplementedException("Not yet implemented.");
+	}
+
+	@Override
+	public OrbResultSet findByAttribute(long orbTypeInternalId, String attributeName, String attributeValueToFind) {
 		throw new NotImplementedException("Not yet implemented.");
 	}
 }

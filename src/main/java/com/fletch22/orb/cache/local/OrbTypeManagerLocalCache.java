@@ -19,7 +19,7 @@ import com.fletch22.orb.TranDateGenerator;
 import com.fletch22.orb.command.orbType.AddWholeOrbTypeCommand;
 import com.fletch22.orb.command.orbType.DeleteOrbTypeCommand;
 import com.fletch22.orb.command.orbType.dto.AddOrbTypeDto;
-import com.fletch22.orb.limitation.LimitationManager;
+import com.fletch22.orb.limitation.LimitationManagerImpl;
 import com.fletch22.orb.query.QueryManager;
 import com.fletch22.orb.rollback.UndoActionBundle;
 import com.fletch22.orb.systemType.OrbTypeInitializer;
@@ -55,7 +55,7 @@ public class OrbTypeManagerLocalCache implements OrbTypeManager {
 	OrbTypeInitializer orbTypeInitializer;
 	
 	@Autowired
-	LimitationManager limitationManager;
+	LimitationManagerImpl limitationManager;
 	
 	@Override
 	public void initializeOrbTypes() {
@@ -133,7 +133,7 @@ public class OrbTypeManagerLocalCache implements OrbTypeManager {
 				throw new RuntimeException(message);
 			}
 		}
-		limitationManager.handleTypeDeleteEvent(orbTypeInternalId, isDeleteDependencies);
+//		limitationManager.handleTypeDeleteEvent(orbTypeInternalId, isDeleteDependencies);
 	}
 	
 	@Override
@@ -165,7 +165,7 @@ public class OrbTypeManagerLocalCache implements OrbTypeManager {
 		ensureNotASystemOrbType(orbTypeInternalId);
 		
 		queryManager.handleAttributeDeleteEvent(orbTypeInternalId, attributeName, isDeleteDependencies);
-		limitationManager.handleAttributeDeleteEvent(orbTypeInternalId, attributeName, isDeleteDependencies);
+//		limitationManager.handleAttributeDeleteEvent(orbTypeInternalId, attributeName, isDeleteDependencies);
 		
 		int attributeIndex = getIndexOfAttribute(orbTypeInternalId, attributeName);
 		orbManager.deleteOrbAttributeFromAllInstances(orbTypeInternalId, attributeName, attributeIndex);
@@ -230,7 +230,7 @@ public class OrbTypeManagerLocalCache implements OrbTypeManager {
 		ensureNotASystemOrbType(orbTypeInternalId);
 		
 		queryManager.handleAttributeRenameEvent(orbTypeInternalId, attributeNameOld, attributeNameNew);
-		limitationManager.handleAttributeRenameEvent(orbTypeInternalId, attributeNameOld, attributeNameNew);
+//		limitationManager.handleAttributeRenameEvent(orbTypeInternalId, attributeNameOld, attributeNameNew);
 		
 		orbManager.renameAttribute(orbTypeInternalId, attributeNameOld, attributeNameNew);
 		

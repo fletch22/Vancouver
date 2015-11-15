@@ -16,13 +16,14 @@ class QueryAttributeDeleteHandlerSpec extends Specification {
 	def 'test attribute delete in constraint'() {
 		
 		given:
-		CriteriaAttributeDeleteHandler queryAttributeDeleteHandler = new CriteriaAttributeDeleteHandler()
+		QueryAttributeDeleteHandler queryAttributeDeleteHandler = new QueryAttributeDeleteHandler()
 		
 		OrbType orbType = Mock(OrbType)
 		orbType.id = 123
 		
 		CriteriaFactory criteriaFactory = new CriteriaFactory()
 		Criteria criteria = criteriaFactory.createInstance(orbType, ORIGINAL_QUERY_NAME)
+		criteria.setId(234)
 		
 		ConstraintDetailsSingleValue constraintDetailSingleValue = (ConstraintDetailsSingleValue) Constraint.eq(ORIGINAL_ATTRIBUTE_NAME, "someValue")
 		
@@ -32,7 +33,7 @@ class QueryAttributeDeleteHandlerSpec extends Specification {
 		QueryCollection queryCollection = new QueryCollection()
 		cache.queryCollection = queryCollection
 		
-		queryCollection.add(234, criteria)
+		queryCollection.add(criteria)
 		
 		queryAttributeDeleteHandler.cache = cache
 		

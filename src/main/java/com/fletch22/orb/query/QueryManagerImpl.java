@@ -15,6 +15,7 @@ import com.fletch22.orb.OrbManager;
 import com.fletch22.orb.OrbType;
 import com.fletch22.orb.OrbTypeManager;
 import com.fletch22.orb.cache.local.Cache;
+import com.fletch22.orb.command.transaction.RollbackTransactionService;
 import com.fletch22.orb.query.CriteriaFactory.Criteria;
 import com.fletch22.orb.systemType.SystemType;
 
@@ -33,23 +34,27 @@ public class QueryManagerImpl implements QueryManager {
 	OrbTypeManager orbTypeManager;
 
 	@Autowired
-	CriteriaAttributeRenameHandler criteriaAttributeRenameHandler;
+	QueryAttributeRenameHandler criteriaAttributeRenameHandler;
 
 	@Autowired
-	CriteriaAttributeDeleteHandler criteriaAttributeDeleteHandler;
+	QueryAttributeDeleteHandler queryAttributeDeleteHandler;
 
 	@Autowired
 	CriteriaFactory criteriaFactory;
+	
+	@Autowired
+	RollbackTransactionService rollbackTransactionService;
 
 	@Override
 	public long create(Criteria criteria) {
-
+		
 		OrbType orbType = getQueryOrbType();
 
 		Orb orb = new Orb();
 		orb.setOrbTypeInternalId(orbType.id);
-
+		
 		orb = orbManager.createOrb(orb);
+		
 		criteria.setId(orb.getOrbInternalId());
 
 		addToCollection(criteria);
@@ -93,7 +98,7 @@ public class QueryManagerImpl implements QueryManager {
 	}
 
 	@Override
-	public void nukeAllQueries() {
+	public void nukeAllCriteria() {
 		cache.queryCollection.clear();
 	}
 
@@ -109,7 +114,7 @@ public class QueryManagerImpl implements QueryManager {
 
 	@Override
 	public void handleAttributeDeleteEvent(long orbTypeInternalId, String attributeName, boolean isDeleteDependencies) {
-		criteriaAttributeDeleteHandler.handleAttributeDeletion(orbTypeInternalId, attributeName, isDeleteDependencies);
+		queryAttributeDeleteHandler.handleAttributeDeletion(orbTypeInternalId, attributeName, isDeleteDependencies);
 	}
 
 	@Override
@@ -184,10 +189,12 @@ public class QueryManagerImpl implements QueryManager {
 
 	@Override
 	public void handleInstanceDeleteEvent(long orbInternalId, boolean isDeleteDependencies) {
+		boolean doesExist = doesQueryExist(orbInternalId);
 		if (isDeleteDependencies) {
-			removeFromCollection(orbInternalId);
+			if (doesExist) {
+				removeFromCollection(orbInternalId);
+			}
 		} else {
-			boolean doesExist = doesQueryExist(orbInternalId);
 			if (doesExist) {
 				String message = String.format("Encountered problem deleting orb '%s'. Orb has at least one dependency. A query exists that depends on the orb.", orbInternalId);
 				throw new RuntimeException(message);

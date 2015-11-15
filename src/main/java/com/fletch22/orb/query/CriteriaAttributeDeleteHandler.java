@@ -3,53 +3,38 @@ package com.fletch22.orb.query;
 import java.util.List;
 import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import com.fletch22.orb.cache.local.Cache;
-import com.fletch22.orb.cache.query.QueryCollection;
+import com.fletch22.orb.cache.query.CriteriaCollection;
 import com.fletch22.orb.query.CriteriaFactory.Criteria;
 
-@Component
-public class CriteriaAttributeDeleteHandler {
+public abstract class CriteriaAttributeDeleteHandler {
 
-	@Autowired
-	QueryManager queryManager;
-
-	@Autowired
-	Cache cache;
-
+	public abstract CriteriaCollection getCriteriaCollection();
+	
+	protected abstract QueryManager getCriteriaManager();
+	
 	public void handleAttributeDeletion(long orbTypeInternalId, String attributeName, boolean isDeleteDependencies) {
-		QueryCollection queryCollection = cache.queryCollection;
+		CriteriaCollection criteriaCollection = getCriteriaCollection();
 
-		Set<Long> criteriaKey = queryCollection.getKeys();
+		Set<Long> criteriaKey = criteriaCollection.getKeys();
 		for (long key : criteriaKey) {
 
-			Criteria criteria = queryCollection.getByQueryId(key);
+			Criteria criteria = criteriaCollection.getByQueryId(key);
 			if (criteria.getOrbType().id == orbTypeInternalId) {
 				handleAttributeDeletion(criteria.logicalConstraint, key, attributeName, isDeleteDependencies);
 			}
 		}
 	}
-
-	private boolean handleAttributeDeletion(LogicalConstraint logicalConstraint, long orbInternalIdQuery, String attributeName, boolean isDeleteDependencies) {
-		boolean hasBeenDeleted = false;
-
-		boolean hasAttribute = hasAttribute(logicalConstraint, attributeName);
-		if (hasAttribute) {
-			if (isDeleteDependencies) {
-				queryManager.delete(orbInternalIdQuery, isDeleteDependencies);
-
-				hasBeenDeleted = true;
-			} else {
-				throw new RuntimeException("The attribute has a dependent query. System will not allow deletion.");
-			}
+	
+	protected boolean hasAttribute(ConstraintDetails constraintDetails, String attributeName) {
+		boolean hasAttribute = false;
+		if (constraintDetails.attributeName.equals(attributeName)) {
+			hasAttribute = true;
 		}
 
-		return hasBeenDeleted;
+		return hasAttribute;
 	}
-
-	private boolean hasAttribute(LogicalConstraint logicalConstraint, String attributeName) {
+	
+	protected boolean hasAttribute(LogicalConstraint logicalConstraint, String attributeName) {
 		List<Constraint> constraintList = logicalConstraint.constraintList;
 		boolean hasAttribute = false;
 
@@ -70,13 +55,21 @@ public class CriteriaAttributeDeleteHandler {
 
 		return hasAttribute;
 	}
+	
+	protected boolean handleAttributeDeletion(LogicalConstraint logicalConstraint, long queryOrbInternalId, String attributeName, boolean isDeleteDependencies) {
+		boolean hasBeenDeleted = false;
 
-	private boolean hasAttribute(ConstraintDetails constraintDetails, String attributeName) {
-		boolean hasAttribute = false;
-		if (constraintDetails.attributeName.equals(attributeName)) {
-			hasAttribute = true;
+		boolean hasAttribute = hasAttribute(logicalConstraint, attributeName);
+		if (hasAttribute) {
+			if (isDeleteDependencies) {
+				getCriteriaManager().delete(queryOrbInternalId, isDeleteDependencies);
+
+				hasBeenDeleted = true;
+			} else {
+				throw new RuntimeException("The attribute has a dependent query. System will not allow deletion.");
+			}
 		}
 
-		return hasAttribute;
+		return hasBeenDeleted;
 	}
 }

@@ -12,7 +12,7 @@ import com.fletch22.orb.cache.query.QueryCollection
 import com.fletch22.orb.query.CriteriaFactory.Criteria
 import com.fletch22.orb.systemType.SystemType
 
-class QueryManagerImplUnitSpec extends Specification {
+class QueryManagerUnitSpec extends Specification {
 
 	def 'test find query'() {
 		
@@ -20,10 +20,10 @@ class QueryManagerImplUnitSpec extends Specification {
 		OrbTypeManager orbTypeManager = Mock(OrbTypeManager)
 		OrbManager orbManager = Mock(OrbManager)
 
-		QueryManagerImpl queryManagerImpl = new QueryManagerImpl()
+		QueryManager queryManager = new QueryManagerImpl()
 
-		queryManagerImpl.orbTypeManager = orbTypeManager
-		queryManagerImpl.orbManager = orbManager
+		queryManager.orbTypeManager = orbTypeManager
+		queryManager.orbManager = orbManager
 
 		OrbType queryOrbType = Mock(OrbType)
 		orbTypeManager.getOrbType(SystemType.CRITERIA.getLabel()) >> queryOrbType
@@ -39,7 +39,7 @@ class QueryManagerImplUnitSpec extends Specification {
 		Cache cache = Mock(Cache)
 		QueryCollection queryCollection = Mock(QueryCollection)
 		cache.queryCollection = queryCollection
-		queryManagerImpl.cache = cache
+		queryManager.cache = cache
 
 		long idToFind = 123
 		Criteria criteria = Mock(Criteria)
@@ -48,7 +48,7 @@ class QueryManagerImplUnitSpec extends Specification {
 		queryCollection.getByQueryId(_) >> criteria
 
 		when:
-		Criteria criteriaFound = queryManagerImpl.findQuery(idToFind, "foo")
+		Criteria criteriaFound = queryManager.findQuery(idToFind, "foo")
 
 		then:
 		criteriaFound

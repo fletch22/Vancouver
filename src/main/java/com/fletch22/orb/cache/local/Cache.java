@@ -39,6 +39,6 @@ public class Cache {
 	public void nukeAllItemsFromCache() {
 		 orbManager.nukeAllOrbs();
 		 orbTypeManager.nukeAllTypes();
-		 queryManager.nukeAllQueries();
+		 queryManager.nukeAllCriteria();
 	}
 }

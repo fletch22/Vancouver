@@ -4,6 +4,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import com.fletch22.Fletch22ApplicationContext;
+import com.fletch22.orb.cache.query.CriteriaCollection;
 import com.fletch22.orb.cache.query.QueryCollection;
 
 @Component
@@ -13,7 +14,7 @@ public class CacheComponentsFactory {
 		CacheComponentsDto cacheComponentsDto = new CacheComponentsDto();
 		cacheComponentsDto.orbTypeCollection = (OrbTypeCollection) getApplicationContext().getBean(OrbTypeCollection.class);
 		cacheComponentsDto.orbCollection = (OrbCollection) getApplicationContext().getBean(OrbCollection.class); 
-		cacheComponentsDto.queryCollection = (QueryCollection) getApplicationContext().getBean(QueryCollection.class);
+		cacheComponentsDto.queryCollection = (CriteriaCollection) getApplicationContext().getBean(QueryCollection.class);
 		
 		return cacheComponentsDto;
 	}

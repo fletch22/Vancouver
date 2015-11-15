@@ -12,7 +12,7 @@ import com.fletch22.orb.query.CriteriaFactory.Criteria;
 import com.fletch22.orb.query.sort.CriteriaSortInfo;
 
 @Component
-public class CriteriaAttributeRenameHandler {
+public class QueryAttributeRenameHandler {
 
 	@Autowired
 	Cache cache;
