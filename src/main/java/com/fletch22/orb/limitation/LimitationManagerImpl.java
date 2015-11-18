@@ -1,24 +1,21 @@
 package com.fletch22.orb.limitation;
 
 import org.apache.commons.lang3.NotImplementedException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.fletch22.orb.OrbType;
+import com.fletch22.orb.cache.query.CriteriaCollection;
+import com.fletch22.orb.query.AbstractCriteriaManager;
 import com.fletch22.orb.query.CriteriaFactory.Criteria;
 import com.fletch22.orb.query.OrbResultSet;
 
 @Component
-public class LimitationManagerImpl implements LimitationManager {
+public class LimitationManagerImpl extends AbstractCriteriaManager implements LimitationManager {
 
-	@Override
-	public void handleAttributeRenameEvent(long orbTypeInternalId, String oldAttributeName, String newAttributeName) {
-		throw new NotImplementedException("Not yet implemented.");
-	}
-
-	@Override
-	public void handleAttributeDeleteEvent(long orbTypeInternalId, String attributeName, boolean isDeleteDependencies) {
-		throw new NotImplementedException("Not yet implemented.");
-	}
-
+	@Autowired
+	LimitationCollection limitationCollection;
+	
 	@Override
 	public long create(Criteria criteria) {
 		throw new NotImplementedException("Not yet implemented.");
@@ -79,5 +76,26 @@ public class LimitationManagerImpl implements LimitationManager {
 	@Override
 	public OrbResultSet findByAttribute(long orbTypeInternalId, String attributeName, String attributeValueToFind) {
 		throw new NotImplementedException("Not yet implemented.");
+	}
+
+	@Override
+	public void handleAttributeRenameEvent(long orbTypeInternalId, String oldAttributeName, String newAttributeName) {
+		throw new NotImplementedException("Not yet implemented.");
+	}
+	
+	@Override
+	public void handleAttributeDeleteEvent(long orbTypeInternalId, String attributeName, boolean isDeleteDependencies) {
+		throw new NotImplementedException("Not yet implemented.");
+	}
+
+	@Override
+	public CriteriaCollection getCriteriaCollection() {
+		throw new NotImplementedException("Not yet implemented.");
+	}
+
+	@Override
+	protected OrbType getParentOrbType() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

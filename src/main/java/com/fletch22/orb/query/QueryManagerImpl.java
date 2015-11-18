@@ -15,12 +15,13 @@ import com.fletch22.orb.OrbManager;
 import com.fletch22.orb.OrbType;
 import com.fletch22.orb.OrbTypeManager;
 import com.fletch22.orb.cache.local.Cache;
+import com.fletch22.orb.cache.query.CriteriaCollection;
 import com.fletch22.orb.command.transaction.RollbackTransactionService;
 import com.fletch22.orb.query.CriteriaFactory.Criteria;
 import com.fletch22.orb.systemType.SystemType;
 
-@Component
-public class QueryManagerImpl implements QueryManager {
+@Component()
+public class QueryManagerImpl extends AbstractCriteriaManager implements QueryManager {
 
 	Logger logger = LoggerFactory.getLogger(QueryManagerImpl.class);
 
@@ -28,16 +29,7 @@ public class QueryManagerImpl implements QueryManager {
 	Cache cache;
 
 	@Autowired
-	OrbManager orbManager;
-
-	@Autowired
 	OrbTypeManager orbTypeManager;
-
-	@Autowired
-	QueryAttributeRenameHandler criteriaAttributeRenameHandler;
-
-	@Autowired
-	QueryAttributeDeleteHandler queryAttributeDeleteHandler;
 
 	@Autowired
 	CriteriaFactory criteriaFactory;
@@ -46,48 +38,17 @@ public class QueryManagerImpl implements QueryManager {
 	RollbackTransactionService rollbackTransactionService;
 
 	@Override
-	public long create(Criteria criteria) {
-		
-		OrbType orbType = getQueryOrbType();
-
-		Orb orb = new Orb();
-		orb.setOrbTypeInternalId(orbType.id);
-		
-		orb = orbManager.createOrb(orb);
-		
-		criteria.setId(orb.getOrbInternalId());
-
-		addToCollection(criteria);
-
-		return orb.getOrbInternalId();
-	}
-
-	private OrbType getQueryOrbType() {
+	protected OrbType getParentOrbType() {
 		return orbTypeManager.getOrbType(SystemType.CRITERIA.getLabel());
 	}
-
-	@Loggable4Event
+	
 	@Override
-	public void addToCollection(Criteria criteria) {
-		cache.queryCollection.add(criteria);
-
-		Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
-		removeFromCollection(criteria.getCriteriaId());
-	}
-
-	@Loggable4Event
-	@Override
-	public void removeFromCollection(long criteriaId) {
-		Criteria criteria = cache.queryCollection.removeByCriteriaId(criteriaId);
-
-		if (criteria != null) {
-			Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
-			addToCollection(criteria);
-		}
+	public CriteriaCollection getCriteriaCollection() {
+		return cache.queryCollection;
 	}
 
 	public boolean doesQueryExist(long criteriaId) {
-		return cache.queryCollection.doesQueryExist(criteriaId);
+		return getCriteriaCollection().doesQueryExist(criteriaId);
 	}
 
 	// FIXME: 11-12-2014: This is odd. Reconcile with "remove" method.
@@ -96,27 +57,7 @@ public class QueryManagerImpl implements QueryManager {
 		orbManager.deleteOrbIgnoreQueryDependencies(criteriaId, isDeleteDependencies);
 		removeFromCollection(criteriaId);
 	}
-
-	@Override
-	public void nukeAllCriteria() {
-		cache.queryCollection.clear();
-	}
-
-	@Override
-	public Criteria get(long criteriaId) {
-		return cache.queryCollection.getByQueryId(criteriaId);
-	}
-
-	@Override
-	public void handleAttributeRenameEvent(long orbTypeInternalId, String attributeOldName, String attributeNewName) {
-		criteriaAttributeRenameHandler.handleAttributeRename(orbTypeInternalId, attributeOldName, attributeNewName);
-	}
-
-	@Override
-	public void handleAttributeDeleteEvent(long orbTypeInternalId, String attributeName, boolean isDeleteDependencies) {
-		queryAttributeDeleteHandler.handleAttributeDeletion(orbTypeInternalId, attributeName, isDeleteDependencies);
-	}
-
+	
 	@Override
 	public OrbResultSet executeQuery(long orbTypeInternalId, String queryLabel) {
 
@@ -133,7 +74,7 @@ public class QueryManagerImpl implements QueryManager {
 
 		boolean isCriteriaFound = false;
 		Criteria criteriaFound = null;
-		OrbType orbType = getQueryOrbType();
+		OrbType orbType = getParentOrbType();
 		List<Orb> orbList = orbManager.getOrbsOfType(orbType.id);
 		for (Orb orb : orbList) {
 			criteriaFound = get(orb.getOrbInternalId());
@@ -164,7 +105,7 @@ public class QueryManagerImpl implements QueryManager {
 	@Override
 	public void handleTypeDeleteEvent(long orbTypeInternalId, boolean isDeleteDependencies) {
 
-		boolean doesCriteriaExist = cache.queryCollection.doesCriteriaExistWithOrbTypeInternalId(orbTypeInternalId);
+		boolean doesCriteriaExist = getCriteriaCollection().doesCriteriaExistWithOrbTypeInternalId(orbTypeInternalId);
 		if (doesCriteriaExist && isDeleteDependencies) {
 			deleteAllCriteriaBackedOrbsRelatedToType(orbTypeInternalId, isDeleteDependencies);
 		} else {
@@ -179,7 +120,7 @@ public class QueryManagerImpl implements QueryManager {
 	}
 
 	private List<Long> getCriteriaIdsByTypeIds(long orbTypeInternalId) {
-		List<Criteria> criteriaList = cache.queryCollection.getByOrbTypeInsideCriteria(orbTypeInternalId);
+		List<Criteria> criteriaList = getCriteriaCollection().getByOrbTypeInsideCriteria(orbTypeInternalId);
 		List<Long> idList = new ArrayList<Long>();
 		for (Criteria criteria : criteriaList) {
 			idList.add(criteria.getCriteriaId());

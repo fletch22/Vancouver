@@ -20,13 +20,18 @@ public class MethodCallService {
 		try {
 			Class<?> clazz = Class.forName(methodCallDto.className);
 			Object objectToExecute = Fletch22ApplicationContext.getApplicationContext().getBean(clazz);
+			
+			logger.debug("Verify correct interface is invoked here {}, {}", objectToExecute.getClass().getSimpleName(), methodCallDto.className);
 	
-			Method[] allMethods = clazz.getDeclaredMethods();
+			Method[] allMethods = clazz.getMethods();
 			for (Method method : allMethods) {
 				String methodName = method.getName();
+				
 				logger.debug("Found method: '{}' while looking for method '{}'", methodName, methodCallDto.methodName);
+				
 				if (methodName.equals(methodCallDto.methodName)) {
 					Type[] parameterTypeArray = method.getGenericParameterTypes();
+					
 					logger.debug("Found parameter type length: '{}' while looking for parameterTypes array length '{}'", parameterTypeArray.length, methodCallDto.parameterTypes.length);
 					
 					if (parameterTypeArray.length == methodCallDto.parameterTypes.length) {

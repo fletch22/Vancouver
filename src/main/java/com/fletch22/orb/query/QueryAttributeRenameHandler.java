@@ -3,26 +3,20 @@ package com.fletch22.orb.query;
 import java.util.List;
 import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.fletch22.orb.cache.local.Cache;
-import com.fletch22.orb.cache.query.QueryCollection;
+import com.fletch22.orb.cache.query.CriteriaCollection;
 import com.fletch22.orb.query.CriteriaFactory.Criteria;
 import com.fletch22.orb.query.sort.CriteriaSortInfo;
 
 @Component
 public class QueryAttributeRenameHandler {
 
-	@Autowired
-	Cache cache;
+	public void handleAttributeRename(CriteriaCollection criteriaCollection, long orbTypeInternalId, String attributeOldName, String attributeNewName) {
 
-	public void handleAttributeRename(long orbTypeInternalId, String attributeOldName, String attributeNewName) {
-		QueryCollection queryCollection = cache.queryCollection;
-
-		Set<Long> criteriaKey = queryCollection.getKeys();
+		Set<Long> criteriaKey = criteriaCollection.getKeys();
 		for (long id : criteriaKey) {
-			Criteria criteria = queryCollection.getByQueryId(id);
+			Criteria criteria = criteriaCollection.getByQueryId(id);
 
 			if (criteria.getOrbType().id == orbTypeInternalId) {
 				renameInConstraints(criteria, attributeOldName, attributeNewName);
@@ -66,5 +60,4 @@ public class QueryAttributeRenameHandler {
 			constraintDetails.attributeName = attributeNewName;
 		}
 	}
-
 }

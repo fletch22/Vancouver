@@ -65,7 +65,7 @@ public class Log4EventAspect {
 		// NOTE: 10-24-2015: This ensures that while in restore mode, calls are not logged again.
 		// Also this ensure that only entry point calls are logged and rolled back. Since calls can 
 		// be nested we accumulate a log before persisting.
-		// The first outer call enter the first if section. Nest logged calls are directed to 
+		// The first outer call enters the first 'if' section. Nest logged calls are directed to 
 		// the second if section. When processing exists the first outer call, we log it.
 		if (!packageHolder.hasInitialCommandActionBeenAdded() && !isInRestoreMode) {
 			StringBuilder methodCallSerialized = convertCall(proceedingJoinPoint);
@@ -75,7 +75,7 @@ public class Log4EventAspect {
 			packageHolder.getCommandProcessActionPackage().setAction(methodCallSerialized);
 
 			// NOTE: Since only "shouldBeLogged" methods will have the @Log4EventAspect annotation
-			// We can assuredly set the "shouldBeLogged" to true here.
+			// we can assuredly set the "shouldBeLogged" to true here.
 			// NOTE: Consider moving this to a factory method.
 			OperationResult operationResult = new OperationResult(OpResult.IN_THE_MIDDLE, true);
 			InternalIdGenerator internalIdGenerator = (InternalIdGenerator) getBean(InternalIdGenerator.class);
@@ -152,6 +152,7 @@ public class Log4EventAspect {
 		Method method = signature.getMethod();
 		String methodName = method.getName();
 		Type[] parametersTypes = method.getGenericParameterTypes();
+		
 		String clazzName = getIocUtil().getBeansSpringSingletonInterface(joinPoint.getTarget()).getName();
 		
 		StringBuilder sb = convertToJson(clazzName, methodName, parametersTypes, args);
