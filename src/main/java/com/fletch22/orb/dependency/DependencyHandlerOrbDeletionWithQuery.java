@@ -18,9 +18,9 @@ public class DependencyHandlerOrbDeletionWithQuery implements DependencyHandler 
 	public void check() {
 		long orbInternalId = this.orb.getOrbInternalId();
 		if (isDeleteDependencies) {
-			queryManager.removeFromCollection(orbInternalId);
+			queryManager.delete(orbInternalId, true);
 		} else {
-			boolean doesExist = queryManager.doesQueryExist(orbInternalId);
+			boolean doesExist = queryManager.doesCriteriaExist(orbInternalId);
 			if (doesExist) {
 				String message = String.format("Encountered problem deleting orb '%s'. Orb has at least one dependency. A query exists that depends on the orb.", orbInternalId);
 				throw new RuntimeException(message);

@@ -3,6 +3,7 @@ package com.fletch22.orb.query;
 import static org.junit.Assert.*
 import spock.lang.Specification
 
+import com.fletch22.orb.OrbManager
 import com.fletch22.orb.OrbType
 import com.fletch22.orb.cache.local.Cache
 import com.fletch22.orb.cache.query.QueryCollection
@@ -39,6 +40,8 @@ class QueryAttributeDeleteHandlerSpec extends Specification {
 		
 		QueryManager queryManager = Mock(QueryManager)
 		queryAttributeDeleteHandler.queryManager = queryManager
+		
+		queryManager.doesCriteriaExist(234) >> true
 		
 		when:
 		queryAttributeDeleteHandler.handleAttributeDeletion(orbType.id, ORIGINAL_ATTRIBUTE_NAME, true)

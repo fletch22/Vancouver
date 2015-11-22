@@ -1,7 +1,6 @@
 package com.fletch22.orb.limitation;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -37,7 +36,9 @@ public class LimitationCollection extends CriteriaCollection {
 	}
 	
 	public List<Criteria> getDefaultLimitations(long orbTypeInternalId) {
-		return defaultCriteria.get(orbTypeInternalId);
+		List<Criteria> list = defaultCriteria.get(orbTypeInternalId);
+		list = (list == null) ? new ArrayList<Criteria>() : list;
+		return list;
 	}
 	
 	@Override

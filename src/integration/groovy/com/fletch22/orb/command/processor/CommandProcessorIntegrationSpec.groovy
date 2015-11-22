@@ -133,13 +133,12 @@ class CommandProcessorIntegrationSpec extends Specification {
 		given:
 		setup()
 		
-		def orbTypeName1 = 'foo1'
-		
-		long orbTypeInternalId = orbTypeManager.createOrbType("foo", null)
-		
+		def orbTypeName = 'foo'
+				
 		CommandBundle commandBundle = new CommandBundle()
-		def jsonAddOrbCommand = this.addOrbCommand.toJson(orbTypeInternalId)
-		commandBundle.addCommand(jsonAddOrbCommand)
+		
+		def jsonAddOrbTypeCommand1 = this.addOrbTypeCommand.toJson(orbTypeName + "1");
+		commandBundle.addCommand(new StringBuilder('{"command":{"methodCall":{"className":"com.fletch22.orb.OrbManager"},"methodName":"createOrb","methodParameters":[{"parameterTypeName":"class com.fletch22.orb.Orb", "argument":{"clazzName":"com.fletch22.orb.Orb","objectValueAsJson":"{\"userDefinedProperties\":{},\"orbInternalId\":6175,\"orbTypeInternalId\":6071}"}}]}}'))
 		commandBundle.addCommand(new StringBuilder('{\"AllOfYourPieces\": \"Ridonculous command\"}'))
 		
 		def commandProcessActionPackage = this.commandProcessActionPackageFactory.getInstance(commandBundle.toJson())

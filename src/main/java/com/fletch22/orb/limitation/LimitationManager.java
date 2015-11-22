@@ -1,6 +1,15 @@
 package com.fletch22.orb.limitation;
 
+import java.util.List;
+
+import com.fletch22.orb.query.CriteriaFactory.Criteria;
 import com.fletch22.orb.query.CriteriaManager;
 
-// NOTE: 11-14-2015: Necessary for AOP to work.
-public interface LimitationManager extends CriteriaManager {}
+public interface LimitationManager extends CriteriaManager {
+	
+	public long addDefaultLimitation(Criteria criteria);
+	
+	public Criteria removeDefaultLimitation(long criteriaId);
+	
+	public List<Criteria> getOrbsDefaultLimitations(long orbTypeInternalId);
+}

@@ -192,4 +192,4 @@ public void delete(long criteriaId, boolean isDeleteDependencies) {
 	orbManager.deleteOrbIgnoreQueryDependencies(criteriaId, isDeleteDependencies);
 	removeFromCollection(criteriaId);
 }
-Status: Not done.
+Status: Partly done. LimitationManager.removeDefaultLimitation needs work -- default limitations need to be handled separately in separate collection.

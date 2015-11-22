@@ -91,7 +91,7 @@ public class TestDataWithReferences {
 		
 		criteria.addAnd(constraint);
 		
-		long orbInternalIdQuery = queryManager.create(criteria);
+		long orbInternalIdQuery = queryManager.addToCollection(criteria);
 		
 		return orbInternalIdQuery;
 	}

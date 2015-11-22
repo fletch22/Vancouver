@@ -36,7 +36,7 @@ public class MethodCallCommandTest {
 
 		String action = json.toString();
 
-		logger.info(action);
+		logger.debug(action);
 
 		// Act
 		MethodCallDto methodCallDtoActual = methodCallCommand.fromJson(new StringBuilder(action));

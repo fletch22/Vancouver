@@ -29,7 +29,26 @@ class LimitationCollectionSpec extends Specification {
 		
 		then:
 		list.size() == 0
+	}
+	
+	def 'test returning empty list'() {
+	
+		given:
+		StopWatch stopWatch = new StopWatch()
+		
+		Map<Long, List<Criteria>> list = new HashMap<Long, List<Criteria>>()
+		
+		when:
+		stopWatch.start()
+		List<Criteria> isNullList = list.get(123l)
+		isNullList = (isNullList == null) ? new ArrayList<Criteria>() : isNullList
+		stopWatch.stop()
+		println stopWatch.getElapsedMillis()
+		
+		def test = "test"
+		
+		then:
+		test == "test"
 		
 	}
-
 }

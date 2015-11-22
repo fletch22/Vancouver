@@ -1,7 +1,9 @@
 package com.fletch22.orb.cache.local;
 
 import java.util.ArrayList;
+import java.util.Set;
 
+import com.fletch22.orb.Orb;
 import com.googlecode.cqengine.attribute.SimpleAttribute;
 import com.googlecode.cqengine.query.option.QueryOptions;
 
@@ -13,6 +15,21 @@ public class CacheEntry {
 	ArrayList<String> attributes = new ArrayList<String>();
 
 	public CacheEntry(long id, long typeId, String label, ArrayList<String> list) {
+		init(id, typeId, label, list);
+	}
+	
+	public CacheEntry(Orb orb) {
+		
+		Set<String> propertyKeys = orb.getUserDefinedProperties().keySet();
+		ArrayList<String> propertyValues = new ArrayList<String>();
+		for (String key: propertyKeys) {
+			propertyValues.add(orb.getUserDefinedProperties().get(key));
+		}
+		
+		init(orb.getOrbInternalId(), orb.getOrbTypeInternalId(), null, propertyValues);
+	}
+	
+	private void init(long id, long typeId, String label, ArrayList<String> list) {
 		this.id = id;
 		this.label = label;
 		this.attributes = list;

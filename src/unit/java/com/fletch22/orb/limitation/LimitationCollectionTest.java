@@ -1,7 +1,10 @@
 package com.fletch22.orb.limitation;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
@@ -32,6 +35,20 @@ public class LimitationCollectionTest {
 		stopWatch.stop();
 
 		logger.info("Elapsed millis: " + stopWatch.getElapsedMillis());
+	}
+	
+	@Test
+	public void testNewingCriteriaList() {
+		
+		StopWatch stopWatch = new StopWatch();
+		
+		Map<Long, List<Criteria>> list = new HashMap<Long, List<Criteria>>();
+		
+		stopWatch.start();
+		List<Criteria> isNullList = list.get(123l);
+		isNullList = (isNullList == null) ? new ArrayList<Criteria>() : isNullList;
+		stopWatch.stop();
+		logger.info("Elapsed: {}", stopWatch.getElapsedMillis());
 	}
 
 	private void populateCriteriaList(List<Criteria> originalList) {

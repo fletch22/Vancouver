@@ -15,7 +15,7 @@ class QueryAttributeRenameHandlerSpec extends Specification {
 	def 'test attribute rename in constraint'() {
 		
 		given:
-		QueryAttributeRenameHandler queryAttributeRenameHandler = new QueryAttributeRenameHandler()
+		CriteriaAttributeRenameHandler queryAttributeRenameHandler = new CriteriaAttributeRenameHandler()
 		
 		OrbType orbType = Mock(OrbType)
 		
@@ -37,7 +37,7 @@ class QueryAttributeRenameHandlerSpec extends Specification {
 	def 'test attribute rename in sort info'() {
 		
 		given:
-		QueryAttributeRenameHandler queryAttributeRenameHandler = new QueryAttributeRenameHandler()
+		CriteriaAttributeRenameHandler queryAttributeRenameHandler = new CriteriaAttributeRenameHandler()
 		
 		OrbType orbType = Mock(OrbType)
 		

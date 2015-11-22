@@ -10,7 +10,7 @@ import com.fletch22.orb.query.CriteriaFactory.Criteria;
 import com.fletch22.orb.query.sort.CriteriaSortInfo;
 
 @Component
-public class QueryAttributeRenameHandler {
+public class CriteriaAttributeRenameHandler {
 
 	public void handleAttributeRename(CriteriaCollection criteriaCollection, long orbTypeInternalId, String attributeOldName, String attributeNewName) {
 

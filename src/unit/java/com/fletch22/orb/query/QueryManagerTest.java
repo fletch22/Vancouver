@@ -85,7 +85,7 @@ public class QueryManagerTest {
 		Criteria criteria = criteriaFactory.createInstance(orbType, "foo");
 		
 		// Act
-		long orbInternalId = queryManager.create(criteria);
+		long orbInternalId = queryManager.addToCollection(criteria);
 		stopWatch.stop();
 		
 		logger.info("Elapsed time: {} millis.", stopWatch.getElapsedMillis());
@@ -105,13 +105,13 @@ public class QueryManagerTest {
 		String dupeName = "bar";
 		
 		Criteria criteria1 = criteriaFactory.createInstance(orbType, dupeName);
-		queryManager.create(criteria1);
+		queryManager.addToCollection(criteria1);
 		
 		Criteria criteria2 = criteriaFactory.createInstance(orbType, dupeName);
 		
 		boolean wasExceptionThrown = false;
 		try {
-			queryManager.create(criteria2);
+			queryManager.addToCollection(criteria2);
 		} catch (Exception e) {
 			wasExceptionThrown = true;
 		}
@@ -135,7 +135,7 @@ public class QueryManagerTest {
 		
 		Criteria criteria = criteriaFactory.createInstance(orbType, "foo");
 		
-		queryManager.create(criteria);
+		queryManager.addToCollection(criteria);
 		
 		// Act
 		rollbackTransactionService.rollbackToSpecificTransaction(tranId);
@@ -157,7 +157,7 @@ public class QueryManagerTest {
 		
 		Criteria criteria = criteriaFactory.createInstance(orbType, "foo");
 		
-		long orbInternalId = queryManager.create(criteria);
+		long orbInternalId = queryManager.addToCollection(criteria);
 		
 		// Act
 		orbManager.deleteOrb(orbInternalId, true);

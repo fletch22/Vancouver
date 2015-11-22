@@ -63,7 +63,7 @@ class QueryManagerSpec extends Specification {
 		
 		String queryLabel = 'fuzzyThings'
 		Criteria criteria = new Criteria(orbType, queryLabel)
-		queryManager.create(criteria)
+		queryManager.addToCollection(criteria)
 		
 		when:
 		Criteria criteriaFound = queryManager.findQuery(orbTypeInternalId, queryLabel);
@@ -81,6 +81,9 @@ class QueryManagerSpec extends Specification {
 		assertNotNull queryOrb
 		assertNotNull cache.orbCollection
 		
+		def doesExist = ((QueryManagerImpl) queryManager).getCriteriaCollection().doesCriteriaExistWithOrbTypeInternalId(criteria.getOrbTypeInternalId())
+		assertTrue doesExist
+		
 		when:
 		queryManager.handleTypeDeleteEvent(criteria.getOrbTypeInternalId(), true)
 		
@@ -94,7 +97,8 @@ class QueryManagerSpec extends Specification {
 		
 		String queryLabel = 'fuzzyThings'
 		Criteria criteria = criteriaFactory.createInstance(orbType, queryLabel)
-		long queryId = queryManager.create(criteria)
+		long queryId = queryManager.addToCollection(criteria)
+		
 		return criteria
 	}
 	
@@ -109,7 +113,7 @@ class QueryManagerSpec extends Specification {
 		this.rollbackTransactionService.rollbackToSpecificTransaction(tranId)
 		
 		then:
-		!queryManager.doesQueryExist(criteria.getCriteriaId())
+		!queryManager.doesCriteriaExist(criteria.getCriteriaId())
 		!orbManager.doesOrbExist(criteria.getCriteriaId());
 	}
 	
@@ -119,16 +123,16 @@ class QueryManagerSpec extends Specification {
 		Criteria criteria = createSampleQuery()
 		def tranId = beginTransactionService.beginTransaction()
 		
-		def doesExist = queryManager.doesQueryExist(criteria.getCriteriaId())
+		def doesExist = queryManager.doesCriteriaExist(criteria.getCriteriaId())
 		assertTrue doesExist
 		
-		queryManager.removeFromCollection(criteria.getCriteriaId())
+		queryManager.delete(criteria.getCriteriaId(), true)
 		
 		when:
 		this.rollbackTransactionService.rollbackToSpecificTransaction(tranId)
 		
 		then:
-		queryManager.doesQueryExist(criteria.getCriteriaId())
+		queryManager.doesCriteriaExist(criteria.getCriteriaId())
 		orbManager.doesOrbExist(criteria.getCriteriaId());
 	}
 }

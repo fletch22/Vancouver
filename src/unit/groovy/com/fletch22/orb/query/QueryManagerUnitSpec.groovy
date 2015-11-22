@@ -20,10 +20,10 @@ class QueryManagerUnitSpec extends Specification {
 		OrbTypeManager orbTypeManager = Mock(OrbTypeManager)
 		OrbManager orbManager = Mock(OrbManager)
 
-		QueryManager queryManager = new QueryManagerImpl()
+		QueryManagerImpl queryManagerImpl = new QueryManagerImpl()
 
-		queryManager.orbTypeManager = orbTypeManager
-		queryManager.orbManager = orbManager
+		queryManagerImpl.orbTypeManager = orbTypeManager
+		queryManagerImpl.orbManager = orbManager
 
 		OrbType queryOrbType = Mock(OrbType)
 		orbTypeManager.getOrbType(SystemType.CRITERIA.getLabel()) >> queryOrbType
@@ -39,7 +39,7 @@ class QueryManagerUnitSpec extends Specification {
 		Cache cache = Mock(Cache)
 		QueryCollection queryCollection = Mock(QueryCollection)
 		cache.queryCollection = queryCollection
-		queryManager.cache = cache
+		queryManagerImpl.cache = cache
 
 		long idToFind = 123
 		Criteria criteria = Mock(Criteria)
@@ -48,7 +48,7 @@ class QueryManagerUnitSpec extends Specification {
 		queryCollection.getByQueryId(_) >> criteria
 
 		when:
-		Criteria criteriaFound = queryManager.findQuery(idToFind, "foo")
+		Criteria criteriaFound = queryManagerImpl.findQuery(idToFind, "foo")
 
 		then:
 		criteriaFound

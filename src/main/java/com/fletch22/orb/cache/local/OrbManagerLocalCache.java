@@ -1,15 +1,12 @@
 package com.fletch22.orb.cache.local;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
@@ -30,9 +27,12 @@ import com.fletch22.orb.TranDateGenerator;
 import com.fletch22.orb.cache.reference.ReferenceUtil;
 import com.fletch22.orb.command.orb.DeleteOrbCommand;
 import com.fletch22.orb.command.orbType.dto.AddOrbDto;
+import com.fletch22.orb.criteria.tester.ConstraintChecker;
 import com.fletch22.orb.dependency.DependencyHandler;
 import com.fletch22.orb.dependency.DependencyHandlerEngine;
 import com.fletch22.orb.dependency.DependencyHandlerFactory;
+import com.fletch22.orb.limitation.LimitationManager;
+import com.fletch22.orb.query.CriteriaFactory.Criteria;
 import com.fletch22.orb.query.QueryManager;
 import com.fletch22.orb.rollback.UndoActionBundle;
 import com.fletch22.util.json.MapLongString;
@@ -68,7 +68,13 @@ public class OrbManagerLocalCache implements OrbManager {
 	
 	@Autowired
 	ReferenceUtil referenceUtil;
-
+	
+	@Autowired
+	LimitationManager limitationManager;
+	
+	@Autowired
+	ConstraintChecker constraintChecker;
+	
 	@Override
 	@Loggable4Event
 	public Orb createOrb(Orb orb) {
@@ -80,13 +86,21 @@ public class OrbManagerLocalCache implements OrbManager {
 		OrbType orbType = orbTypeManager.getOrbType(orb.getOrbTypeInternalId());
 
 		populateOrbMap(orbType, orb);
-
+		
 		cache.orbCollection.add(orbType, orb);
 
 		Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
 		deleteOrb(orb.getOrbInternalId(), true);
 		
 		return orb;
+	}
+
+	private void checkDataLimitations(Orb orb) {
+		
+		List<Criteria> limitations = limitationManager.getOrbsDefaultLimitations(orb.getOrbTypeInternalId());
+		for (Criteria criteria : limitations) {
+			constraintChecker.checkConstraint(criteria, orb);
+		}
 	}
 
 	@Override
@@ -177,19 +191,20 @@ public class OrbManagerLocalCache implements OrbManager {
 	
 	private void handleDependenciesForOrbDeletion(Orb orb, boolean isDeleteDependencies) {
 		queryManager.handleInstanceDeleteEvent(orb.getOrbInternalId(), isDeleteDependencies);
+		limitationManager.handleInstanceDeleteEvent(orb.getOrbInternalId(), isDeleteDependencies);
 		handleOrbReferenceDependenciesForOrbDeletion(orb, isDeleteDependencies);
 	}
 	
-	private void handleDependenciesForOrbDeletion2(Orb orb, boolean isDeleteDependencies) {
-		DependencyHandler handler1 = dependencyHandlerFactory.getOrbDeletionForQueryInstance(orb, isDeleteDependencies);
-		DependencyHandler handler2 = dependencyHandlerFactory.getOrbDeltionForReferencesInstance(orb, isDeleteDependencies);
-		
-		DependencyHandlerEngine dependencyHandlerEngine = new DependencyHandlerEngine();
-		dependencyHandlerEngine.addHandler(handler1);
-		dependencyHandlerEngine.addHandler(handler2);
-		
-		dependencyHandlerEngine.check();
-	}
+//	private void handleDependenciesForOrbDeletion2(Orb orb, boolean isDeleteDependencies) {
+//		DependencyHandler handler1 = dependencyHandlerFactory.getOrbDeletionForQueryInstance(orb, isDeleteDependencies);
+//		DependencyHandler handler2 = dependencyHandlerFactory.getOrbDeltionForReferencesInstance(orb, isDeleteDependencies);
+//		
+//		DependencyHandlerEngine dependencyHandlerEngine = new DependencyHandlerEngine();
+//		dependencyHandlerEngine.addHandler(handler1);
+//		dependencyHandlerEngine.addHandler(handler2);
+//		
+//		dependencyHandlerEngine.check();
+//	}
 
 	public void handleOrbReferenceDependenciesForOrbDeletion(Orb orb, boolean isDeleteDependencies) {
 		

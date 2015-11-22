@@ -46,7 +46,7 @@ public class CqEngineTest {
 		SimpleNullableAttribute<Car, String> thirdValue = null;
 		try {
 			thirdValue = (SimpleNullableAttribute<Car, String>) clazz.newInstance();
-			logger.info("Type: {}", thirdValue.getClass().getName());
+			logger.debug("Type: {}", thirdValue.getClass().getName());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

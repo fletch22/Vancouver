@@ -1,101 +1,53 @@
 package com.fletch22.orb.limitation;
 
-import org.apache.commons.lang3.NotImplementedException;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.fletch22.orb.OrbType;
+import com.fletch22.aop.Log4EventAspect;
+import com.fletch22.aop.Loggable4Event;
 import com.fletch22.orb.cache.query.CriteriaCollection;
 import com.fletch22.orb.query.AbstractCriteriaManager;
 import com.fletch22.orb.query.CriteriaFactory.Criteria;
-import com.fletch22.orb.query.OrbResultSet;
 
 @Component
 public class LimitationManagerImpl extends AbstractCriteriaManager implements LimitationManager {
 
 	@Autowired
 	LimitationCollection limitationCollection;
-	
-	@Override
-	public long create(Criteria criteria) {
-		throw new NotImplementedException("Not yet implemented.");
-	}
-
-	@Override
-	public void delete(long orbInternalIdQuery, boolean isDeleteDependencies) {
-		throw new NotImplementedException("Not yet implemented.");
-	}
-
-	@Override
-	public void removeFromCollection(long key) {
-		throw new NotImplementedException("Not yet implemented.");
-	}
-
-	@Override
-	public Criteria get(long orbInternalIdQuery) {
-		throw new NotImplementedException("Not yet implemented.");
-	}
-
-	@Override
-	public void handleTypeDeleteEvent(long orbTypeInternalId, boolean isDeleteDependencies) {
-		// TODO Auto-generated method stub
-		throw new NotImplementedException("Not yet implemented.");
-	}
-
-	@Override
-	public void handleInstanceDeleteEvent(long orbTypeInternalId, boolean isDeleteDependencies) {
-		// TODO Auto-generated method stub
-		throw new NotImplementedException("Not yet implemented.");
-	}
-
-	@Override
-	public void addToCollection(Criteria criteria) {
-		throw new NotImplementedException("Not yet implemented.");
-	}
-
-	@Override
-	public void nukeAllCriteria() {
-		throw new NotImplementedException("Not yet implemented.");
-	}
-
-	@Override
-	public boolean doesQueryExist(long orbInternalIdQuery) {
-		throw new NotImplementedException("Not yet implemented.");
-	}
-
-	@Override
-	public OrbResultSet executeQuery(long orbTypeInternalId, String queryLabel) {
-		throw new NotImplementedException("Not yet implemented.");
-	}
-
-	@Override
-	public OrbResultSet executeQuery(Criteria criteria) {
-		throw new NotImplementedException("Not yet implemented.");
-	}
-
-	@Override
-	public OrbResultSet findByAttribute(long orbTypeInternalId, String attributeName, String attributeValueToFind) {
-		throw new NotImplementedException("Not yet implemented.");
-	}
-
-	@Override
-	public void handleAttributeRenameEvent(long orbTypeInternalId, String oldAttributeName, String newAttributeName) {
-		throw new NotImplementedException("Not yet implemented.");
-	}
-	
-	@Override
-	public void handleAttributeDeleteEvent(long orbTypeInternalId, String attributeName, boolean isDeleteDependencies) {
-		throw new NotImplementedException("Not yet implemented.");
-	}
 
 	@Override
 	public CriteriaCollection getCriteriaCollection() {
-		throw new NotImplementedException("Not yet implemented.");
+		return limitationCollection;
+	}
+
+	@Loggable4Event
+	@Override
+	public long addDefaultLimitation(Criteria criteria) {
+		initializeCriteria(criteria);
+
+		limitationCollection.addDefault(criteria);
+
+		Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
+		removeDefaultLimitation(criteria.getCriteriaId());
+		
+		return criteria.getCriteriaId();
+	}
+	
+	@Loggable4Event
+	@Override
+	public Criteria removeDefaultLimitation(long criteriaId) {
+		Criteria criteria = getCriteriaCollection().removeByCriteriaId(criteriaId);
+		
+		Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
+		addDefaultLimitation(criteria);
+		
+		return criteria;
 	}
 
 	@Override
-	protected OrbType getParentOrbType() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Criteria> getOrbsDefaultLimitations(long orbTypeInternalId) {
+		return limitationCollection.getDefaultLimitations(orbTypeInternalId);
 	}
 }

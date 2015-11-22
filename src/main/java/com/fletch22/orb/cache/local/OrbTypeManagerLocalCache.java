@@ -83,6 +83,8 @@ public class OrbTypeManagerLocalCache implements OrbTypeManager {
 	public long createOrbType(String label, LinkedHashSet<String> customFields) {
 		BigDecimal tranDate = tranDateGenerator.getTranDate();
 		
+		customFields = (customFields == null) ? new LinkedHashSet<String>() : customFields;
+		
 		return createOrbType(label, OrbTypeConstants.ORBTYPE_INTERNAL_ID_UNSET, tranDate, new LinkedHashSetString(customFields));
 	}
 	

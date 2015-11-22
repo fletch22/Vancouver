@@ -3,6 +3,8 @@ package com.fletch22.orb.query;
 import java.util.List;
 import java.util.Set;
 
+import org.mockito.internal.stubbing.answers.DoesNothing;
+
 import com.fletch22.orb.cache.query.CriteriaCollection;
 import com.fletch22.orb.query.CriteriaFactory.Criteria;
 
@@ -62,8 +64,9 @@ public abstract class CriteriaAttributeDeleteHandler {
 		boolean hasAttribute = hasAttribute(logicalConstraint, attributeName);
 		if (hasAttribute) {
 			if (isDeleteDependencies) {
-				getCriteriaManager().delete(queryOrbInternalId, isDeleteDependencies);
-
+				if (getCriteriaManager().doesCriteriaExist(queryOrbInternalId)) {
+					getCriteriaManager().delete(queryOrbInternalId, isDeleteDependencies);
+				}
 				hasBeenDeleted = true;
 			} else {
 				throw new RuntimeException("The attribute has a dependent query. System will not allow deletion.");
