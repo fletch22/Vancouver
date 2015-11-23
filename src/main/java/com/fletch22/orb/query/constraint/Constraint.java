@@ -43,5 +43,7 @@ public abstract class Constraint {
 		return constraintDetailsAggregate;
 	}
 	
-	
+	public void accept(ConstraintVisitor constraintVisitor) {
+		
+	}
 }
