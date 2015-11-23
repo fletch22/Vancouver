@@ -1,7 +1,6 @@
 package com.fletch22.orb.criteria;
 
 import java.util.LinkedHashSet;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -9,12 +8,12 @@ import org.springframework.stereotype.Component;
 import com.fletch22.orb.OrbManager;
 import com.fletch22.orb.OrbType;
 import com.fletch22.orb.OrbTypeManager;
-import com.fletch22.orb.limitation.LimitationManager;
+import com.fletch22.orb.limitation.DefLimitationManager;
 import com.fletch22.orb.query.CriteriaFactory;
 import com.fletch22.orb.query.CriteriaFactory.Criteria;
 
 @Component
-public class CriteriaMother {
+public class DefLimitationMother {
 
 	@Autowired
 	CriteriaFactory criteriaFactory;
@@ -26,7 +25,7 @@ public class CriteriaMother {
 	OrbManager orbManager;
 	
 	@Autowired
-	LimitationManager limitationManager;
+	DefLimitationManager defLimitationManager;
 	
 	public static final String ATTRIBUTE_BAR = "bar";
 
@@ -45,11 +44,11 @@ public class CriteriaMother {
 		return orbType;
 	}
 
-	public Criteria getCriteriaSample() {
+	public Criteria createAndAddCriteriaSimple() {
 		
 		Criteria criteria = criteriaFactory.createInstance(getOrbType(), "foo");
 		
-		limitationManager.addDefaultLimitation(criteria);
+		defLimitationManager.addToCollection(criteria);
 		
 		return criteria;
 	}

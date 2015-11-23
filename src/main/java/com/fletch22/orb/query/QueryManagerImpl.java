@@ -13,6 +13,7 @@ import com.fletch22.orb.cache.local.Cache;
 import com.fletch22.orb.cache.query.CriteriaCollection;
 import com.fletch22.orb.command.transaction.RollbackTransactionService;
 import com.fletch22.orb.query.CriteriaFactory.Criteria;
+import com.fletch22.orb.query.constraint.Constraint;
 
 @Component()
 public class QueryManagerImpl extends AbstractCriteriaManager implements QueryManager {

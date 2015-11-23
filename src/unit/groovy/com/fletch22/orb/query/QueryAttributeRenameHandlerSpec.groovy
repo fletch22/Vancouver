@@ -5,6 +5,8 @@ import spock.lang.Specification
 
 import com.fletch22.orb.OrbType
 import com.fletch22.orb.query.CriteriaFactory.Criteria
+import com.fletch22.orb.query.constraint.Constraint
+import com.fletch22.orb.query.constraint.ConstraintDetailsSingleValue
 import com.fletch22.orb.query.sort.CriteriaSortInfo
 
 class QueryAttributeRenameHandlerSpec extends Specification {

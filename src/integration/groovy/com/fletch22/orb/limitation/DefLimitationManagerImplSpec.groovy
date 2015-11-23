@@ -18,10 +18,10 @@ import com.fletch22.orb.query.CriteriaFactory.Criteria
 
 @org.junit.experimental.categories.Category(IntegrationTests.class)
 @ContextConfiguration(locations = "classpath:/springContext-test.xml")
-class LimitationManagerImplSpec extends Specification {
+class DefLimitationManagerImplSpec extends Specification {
 
 	@Autowired
-	LimitationManager limitationManager
+	DefLimitationManager defLimitationManager
 
 	@Autowired
 	CriteriaFactory criteriaFactory
@@ -56,10 +56,10 @@ class LimitationManagerImplSpec extends Specification {
 		Criteria criteria = criteriaFactory.createInstance(orbType, "howdy")
 
 		when:
-		limitationManager.addDefaultLimitation(criteria)
+		defLimitationManager.addToCollection(criteria)
 
 		then:
-		limitationManager.doesCriteriaExist(criteria.getCriteriaId())
+		defLimitationManager.doesCriteriaExist(criteria.getCriteriaId())
 	}
 
 	def 'test  and rollback'() {
@@ -72,12 +72,12 @@ class LimitationManagerImplSpec extends Specification {
 
 		Criteria criteria = criteriaFactory.createInstance(orbType, "howdy")
 
-		limitationManager.addDefaultLimitation(criteria)
+		defLimitationManager.addToCollection(criteria)
 
 		when:
 		rollbackTransactionService.rollbackToSpecificTransaction(tranId)
 
 		then:
-		!limitationManager.doesCriteriaExist(criteria.getCriteriaId())
+		!defLimitationManager.doesCriteriaExist(criteria.getCriteriaId())
 	}
 }

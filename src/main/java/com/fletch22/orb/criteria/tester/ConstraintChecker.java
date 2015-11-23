@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component;
 import com.fletch22.orb.Orb;
 import com.fletch22.orb.cache.indexcollection.IndexedCollectionFactory;
 import com.fletch22.orb.cache.local.CacheEntry;
-import com.fletch22.orb.query.ConstraintGrinder;
 import com.fletch22.orb.query.CriteriaFactory.Criteria;
+import com.fletch22.orb.query.constraint.ConstraintGrinder;
 import com.googlecode.cqengine.IndexedCollection;
 
 @Component

@@ -27,8 +27,6 @@ public interface OrbManager {
 	
 	void deleteOrbAttributeFromAllInstances(long orbTypeInternalId, String attributeName, int attributeIndex);
 	
-	public Orb deleteOrbIgnoreQueryDependencies(long orbInternalId, boolean isDeleteDependencies);
-	
 	public void deleteOrbsWithType(long orbTypeInternalId, boolean isDeleteDependencies);
 	
 	public boolean doesOrbExist(long orbInternalId);

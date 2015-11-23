@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import com.fletch22.orb.OrbType;
 import com.fletch22.orb.cache.local.Cache;
+import com.fletch22.orb.query.constraint.Constraint;
 import com.fletch22.orb.query.sort.CriteriaSortInfo;
 import com.fletch22.orb.serialization.GsonSerializable;
 
@@ -21,7 +22,6 @@ public class CriteriaFactory {
 	
 	public Criteria createInstance(OrbType orbType, String label) {
 		Criteria criteria = new Criteria(orbType, label);
-		criteria.cache = cache;
 		
 		return criteria;
 	}
@@ -37,8 +37,6 @@ public class CriteriaFactory {
 		private String label;
 		private boolean hasIdBeenSet = false;
 		private ArrayList<CriteriaSortInfo> sortInfoList = new ArrayList<CriteriaSortInfo>();
-		
-		transient Cache cache;
 		
 		public LogicalConstraint logicalConstraint = null;
 		

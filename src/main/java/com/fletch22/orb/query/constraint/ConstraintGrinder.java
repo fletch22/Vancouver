@@ -1,4 +1,4 @@
-package com.fletch22.orb.query;
+package com.fletch22.orb.query.constraint;
 
 import static com.googlecode.cqengine.query.QueryFactory.and;
 import static com.googlecode.cqengine.query.QueryFactory.equal;
@@ -7,9 +7,14 @@ import static com.googlecode.cqengine.query.QueryFactory.or;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +25,11 @@ import com.fletch22.orb.OrbTypeManager;
 import com.fletch22.orb.cache.local.Cache;
 import com.fletch22.orb.cache.local.CacheEntry;
 import com.fletch22.orb.cache.local.OrbCollection;
+import com.fletch22.orb.query.CriteriaFactory;
+import com.fletch22.orb.query.LogicalConstraint;
+import com.fletch22.orb.query.LogicalOperator;
+import com.fletch22.orb.query.OrbResultSet;
+import com.fletch22.orb.query.RelationshipOperator;
 import com.fletch22.orb.query.CriteriaFactory.Criteria;
 import com.fletch22.orb.query.sort.CriteriaSortInfo;
 import com.fletch22.orb.query.sort.GrinderSortInfo;
@@ -28,6 +38,7 @@ import com.fletch22.orb.search.GeneratedCacheEntryClassFactory;
 import com.googlecode.cqengine.IndexedCollection;
 import com.googlecode.cqengine.attribute.SimpleNullableAttribute;
 import com.googlecode.cqengine.query.Query;
+import com.googlecode.cqengine.query.QueryFactory;
 import com.googlecode.cqengine.resultset.ResultSet;
 
 public class ConstraintGrinder {
@@ -53,7 +64,11 @@ public class ConstraintGrinder {
 		this.orbTypeManager = (OrbTypeManager) Fletch22ApplicationContext.getApplicationContext().getBean(OrbTypeManager.class);
 		this.orbCollection = (OrbCollection) Fletch22ApplicationContext.getApplicationContext().getBean(Cache.class).orbCollection;
 		
-		this.query = processConstraint(criteria.logicalConstraint);
+		if (criteria.logicalConstraint == null)  {
+			this.query = QueryFactory.all(CacheEntry.class);
+		} else {
+			this.query = processConstraint(criteria.logicalConstraint);
+		}
 	}
 	
 	public List<CacheEntry> listCacheEntries() {
@@ -110,8 +125,12 @@ public class ConstraintGrinder {
 				queryLocal = processConstraintDetailsSingleValue((ConstraintDetailsSingleValue) constraintInner);
 			} else if (constraintInner instanceof ConstraintDetailsList) {
 				queryLocal = processConstraintDetailsList((ConstraintDetailsList) constraintInner);
+			} else if (constraintInner instanceof ConstraintDetailsAggregate) {
+				queryLocal = processConstraintAggregate((ConstraintDetailsAggregate) constraintInner);
 			} else if (constraintInner instanceof LogicalConstraint) {
 				queryLocal = processConstraint((LogicalConstraint) constraintInner);
+			} else {
+				throw new RuntimeException("Did not recognize constraint");
 			}
 			queries.add(queryLocal);
 		}
@@ -131,6 +150,54 @@ public class ConstraintGrinder {
 		return query;
 	}
 	
+	private Query<CacheEntry> processConstraintAggregate(ConstraintDetailsAggregate constraintDetailsAggregate) {
+		Query<CacheEntry> queryLocal = null;	
+		
+		SimpleNullableAttribute<CacheEntry, String> simpleNullableAttribute = createSimpleNullableAtttribute(constraintDetailsAggregate);
+
+		if (constraintDetailsAggregate.getRelationshipOperator() == RelationshipOperator.IS) {
+			
+			OrbResultSet orbResultSet = orbCollection.executeQuery(constraintDetailsAggregate.criteriaForAggregation);
+			Set<String> aggregateColumnValues = getAttributeValuesByFrequency(constraintDetailsAggregate, orbResultSet, 1);
+			
+			if (aggregateColumnValues.size() == 1) {
+				Iterator<String> iter = aggregateColumnValues.iterator();
+				queryLocal = equal(simpleNullableAttribute, iter.next());	
+			} else {
+				queryLocal = in(simpleNullableAttribute, aggregateColumnValues);
+			}
+		} else {
+			throw new NotImplementedException("Encountered problem processing aggregate constrinat. Relationship '" + constraintDetailsAggregate.getRelationshipOperator() + "' not recognized.");
+		}
+		
+		return queryLocal;
+	}
+
+	private Set<String> getAttributeValuesByFrequency(ConstraintDetailsAggregate constraintDetailsAggregate, OrbResultSet orbResultSet, int frequencyRequired) {
+		Map<String, Integer> aggregateColumnValues = new HashMap<String, Integer>();
+		for (Orb orb : orbResultSet.orbList) {
+			String value = orb.getUserDefinedProperties().get(constraintDetailsAggregate.aggregationAttributeName);
+			
+			Integer frequency = aggregateColumnValues.get(value);
+			if (frequency == null) {
+				aggregateColumnValues.put(value, 1);	
+			} else {
+				aggregateColumnValues.put(value, frequency + 1);
+			}
+		}
+
+		Set<String> unique = new HashSet<String>();
+		Set<String> keys = aggregateColumnValues.keySet();
+		for (String key: keys) {
+			Integer frequency = aggregateColumnValues.get(key);
+			if (frequency == frequencyRequired) {
+				unique.add(key);
+			}
+		}
+		
+		return unique;
+	}
+
 	private Query<CacheEntry> processConstraintDetailsList(ConstraintDetailsList constraintDetailsList) {
 		Query<CacheEntry> queryLocal = null;	
 		
@@ -138,6 +205,8 @@ public class ConstraintGrinder {
 
 		if (constraintDetailsList.getRelationshipOperator() == RelationshipOperator.IN) {
 			queryLocal = in(simpleNullableAttribute, constraintDetailsList.operativeValueList.toArray(new String[constraintDetailsList.operativeValueList.size()]));
+		} else {
+			throw new NotImplementedException("Encountered problem processing aggregate constrinat. Relationship '" + constraintDetailsList.getRelationshipOperator() + "' not recognized.");
 		}
 		
 		return queryLocal;
@@ -155,6 +224,8 @@ public class ConstraintGrinder {
 
 		if (constraintDetailsSingleValue.getRelationshipOperator() == RelationshipOperator.EQUALS) {
 			queryLocal = equal(simpleNullableAttribute, constraintDetailsSingleValue.operativeValue);
+		} else {
+			throw new NotImplementedException("Encountered problem processing aggregate constrinat. Relationship '" + constraintDetailsSingleValue.getRelationshipOperator() + "' not recognized.");
 		}
 		
 		return queryLocal;

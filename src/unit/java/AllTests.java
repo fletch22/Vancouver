@@ -10,4 +10,3 @@ import com.googlecode.junittoolbox.WildcardPatternSuite;
 public class AllTests {
 
 }
-

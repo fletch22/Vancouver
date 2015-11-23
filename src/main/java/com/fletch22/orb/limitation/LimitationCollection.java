@@ -17,11 +17,9 @@ import com.fletch22.orb.query.CriteriaFactory.Criteria;
 @Scope("prototype")
 public class LimitationCollection extends CriteriaCollection {
 	
-	public List<Criteria> criteriaList = new ArrayList<Criteria>();
-	
-	private CriteriaByOrbTypeCollection defaultCriteria = new CriteriaByOrbTypeCollection();
-	
 	static Logger logger = LoggerFactory.getLogger(QueryCollection.class);
+	
+	public List<Criteria> criteriaList = new ArrayList<Criteria>();
 	
 	@Override
 	public void add(Criteria criteria) {
@@ -32,27 +30,18 @@ public class LimitationCollection extends CriteriaCollection {
 	
 	public void addDefault(Criteria criteria) {
 		add(criteria);
-		defaultCriteria.add(criteria);
-	}
-	
-	public List<Criteria> getDefaultLimitations(long orbTypeInternalId) {
-		List<Criteria> list = defaultCriteria.get(orbTypeInternalId);
-		list = (list == null) ? new ArrayList<Criteria>() : list;
-		return list;
 	}
 	
 	@Override
 	public Criteria removeByCriteriaId(long id) {
 		Criteria criteria = criteriaByIdMap.remove(id);
 		criteriaByOrbTypeCollection.removeByCriteriaId(criteria);
-		defaultCriteria.removeByCriteriaId(criteria);
 		
 		return criteria;
 	}
 	
 	@Override
 	public List<Criteria> removeByOrbTypeId(long id) {
-		this.defaultCriteria.remove(id);
 		List<Criteria> criteriaList = criteriaByOrbTypeCollection.remove(id);
 		criteriaList = (criteriaList == null) ? new ArrayList<Criteria>() : criteriaList;
 		for (Criteria criteria : criteriaList) {
@@ -65,7 +54,6 @@ public class LimitationCollection extends CriteriaCollection {
 	public void clear() {
 		this.criteriaByIdMap.clear();
 		this.criteriaByOrbTypeCollection.clear();
-		this.defaultCriteria.clear();
 	}
 }
 

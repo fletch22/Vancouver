@@ -28,9 +28,7 @@ import com.fletch22.orb.cache.reference.ReferenceUtil;
 import com.fletch22.orb.command.orb.DeleteOrbCommand;
 import com.fletch22.orb.command.orbType.dto.AddOrbDto;
 import com.fletch22.orb.criteria.tester.ConstraintChecker;
-import com.fletch22.orb.dependency.DependencyHandler;
-import com.fletch22.orb.dependency.DependencyHandlerEngine;
-import com.fletch22.orb.dependency.DependencyHandlerFactory;
+import com.fletch22.orb.limitation.DefLimitationManager;
 import com.fletch22.orb.limitation.LimitationManager;
 import com.fletch22.orb.query.CriteriaFactory.Criteria;
 import com.fletch22.orb.query.QueryManager;
@@ -64,10 +62,10 @@ public class OrbManagerLocalCache implements OrbManager {
 	QueryManager queryManager;
 	
 	@Autowired
-	DependencyHandlerFactory dependencyHandlerFactory;
+	ReferenceUtil referenceUtil;
 	
 	@Autowired
-	ReferenceUtil referenceUtil;
+	DefLimitationManager defLimitationManager;
 	
 	@Autowired
 	LimitationManager limitationManager;
@@ -87,6 +85,8 @@ public class OrbManagerLocalCache implements OrbManager {
 
 		populateOrbMap(orbType, orb);
 		
+		checkDefaultDataLimitations(orb);
+		
 		cache.orbCollection.add(orbType, orb);
 
 		Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
@@ -95,9 +95,10 @@ public class OrbManagerLocalCache implements OrbManager {
 		return orb;
 	}
 
-	private void checkDataLimitations(Orb orb) {
+	private void checkDefaultDataLimitations(Orb orb) {
 		
-		List<Criteria> limitations = limitationManager.getOrbsDefaultLimitations(orb.getOrbTypeInternalId());
+		List<Criteria> limitations = defLimitationManager.getOrbsTypeCriteria(orb.getOrbTypeInternalId());
+		
 		for (Criteria criteria : limitations) {
 			constraintChecker.checkConstraint(criteria, orb);
 		}
@@ -109,9 +110,7 @@ public class OrbManagerLocalCache implements OrbManager {
 		long orbInternalId = this.internalIdGenerator.getNewId();
 		Orb orb = new Orb(orbInternalId, orbTypeInternalId, new LinkedHashMap<String, String>());
 
-		createOrb(orb);
-
-		return orb;
+		return createOrb(orb);
 	}
 
 	@Override
@@ -166,46 +165,13 @@ public class OrbManagerLocalCache implements OrbManager {
 		return orbCopy;
 	}
 	
-	@Override
-	@Loggable4Event
-	public Orb deleteOrbIgnoreQueryDependencies(long orbInternalId, boolean isDeleteDependencies) {
-		
-		OrbCollection orbCollection = cache.orbCollection;
-		
-		Orb orb = orbCollection.get(orbInternalId);
-		
-		Orb orbCopy = orbCloner.cloneOrb(orb);
-		
-		OrbType orbType = orbTypeManager.getOrbType(orb.getOrbTypeInternalId());
-		
-		handleOrbReferenceDependenciesForOrbDeletion(orb, isDeleteDependencies);
-		
-		// Process references inside of orb here.
-		cache.orbCollection.delete(orbType, orbInternalId);
-
-		Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
-		createOrb(orbCopy);
-		
-		return orbCopy;
-	}
-	
 	private void handleDependenciesForOrbDeletion(Orb orb, boolean isDeleteDependencies) {
 		queryManager.handleInstanceDeleteEvent(orb.getOrbInternalId(), isDeleteDependencies);
+		defLimitationManager.handleInstanceDeleteEvent(orb.getOrbInternalId(), isDeleteDependencies);
 		limitationManager.handleInstanceDeleteEvent(orb.getOrbInternalId(), isDeleteDependencies);
 		handleOrbReferenceDependenciesForOrbDeletion(orb, isDeleteDependencies);
 	}
 	
-//	private void handleDependenciesForOrbDeletion2(Orb orb, boolean isDeleteDependencies) {
-//		DependencyHandler handler1 = dependencyHandlerFactory.getOrbDeletionForQueryInstance(orb, isDeleteDependencies);
-//		DependencyHandler handler2 = dependencyHandlerFactory.getOrbDeltionForReferencesInstance(orb, isDeleteDependencies);
-//		
-//		DependencyHandlerEngine dependencyHandlerEngine = new DependencyHandlerEngine();
-//		dependencyHandlerEngine.addHandler(handler1);
-//		dependencyHandlerEngine.addHandler(handler2);
-//		
-//		dependencyHandlerEngine.check();
-//	}
-
 	public void handleOrbReferenceDependenciesForOrbDeletion(Orb orb, boolean isDeleteDependencies) {
 		
 		if (isDeleteDependencies) {

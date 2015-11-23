@@ -1,9 +1,11 @@
-package com.fletch22.orb.query;
+package com.fletch22.orb.query.constraint;
+
+import com.fletch22.orb.query.RelationshipOperator;
 
 public class ConstraintDetailsSingleValue extends ConstraintDetails {
 	
-	RelationshipOperator relationshipOperator;
-	String operativeValue;
+	public RelationshipOperator relationshipOperator;
+	public String operativeValue;
 	
 	@Override
 	public Constraint[] getConstraints() {

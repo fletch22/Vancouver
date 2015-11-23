@@ -1,4 +1,4 @@
-package com.fletch22.orb.query;
+package com.fletch22.orb.query.constraint;
 
 import java.util.HashMap;
 import java.util.Map;

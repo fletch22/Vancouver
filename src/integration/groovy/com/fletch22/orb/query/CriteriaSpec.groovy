@@ -2,7 +2,6 @@ package com.fletch22.orb.query;
 
 import static org.junit.Assert.*
 
-import org.apache.commons.lang3.time.StopWatch
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -19,6 +18,10 @@ import com.fletch22.orb.OrbTypeManager
 import com.fletch22.orb.cache.local.Cache
 import com.fletch22.orb.cache.local.OrbSingleTypesInstanceCollectionFactory.OrbSingleTypesInstanceCollection
 import com.fletch22.orb.query.CriteriaFactory.Criteria
+import com.fletch22.orb.query.constraint.Constraint
+import com.fletch22.orb.query.constraint.ConstraintGrinder;
+import com.fletch22.orb.query.constraint.aggregate.Aggregate
+import com.fletch22.util.StopWatch
 
 @org.junit.experimental.categories.Category(IntegrationTests.class)
 @ContextConfiguration(locations = "classpath:/springContext-test.xml")
@@ -77,8 +80,7 @@ class CriteriaSpec extends Specification {
 		OrbResultSet orbResultSet = criteriaGrinder.list();
 		stopWatch.stop()
 		
-		def elapsed = new BigDecimal(stopWatch.nanoTime).divide(new BigDecimal(1000000))
-		logger.debug("elapsed time: {}", elapsed)
+		logger.debug("elapsed time: {}", stopWatch.elapsedMillis)
 		
 		then:
 		notThrown Exception
@@ -98,8 +100,7 @@ class CriteriaSpec extends Specification {
 		OrbResultSet orbResultSet = cache.orbCollection.executeQuery(criteria);
 		stopWatch.stop()
 		
-		def elapsed = new BigDecimal(stopWatch.nanoTime).divide(new BigDecimal(1000000))
-		logger.debug("elapsed time: {}", elapsed)
+		logger.debug("elapsed time: {}", stopWatch.elapsedMillis)
 		
 		then:
 		notThrown Exception
@@ -125,8 +126,7 @@ class CriteriaSpec extends Specification {
 		OrbResultSet orbResultSet = cache.orbCollection.executeQuery(criteria);
 		stopWatch.stop()
 		
-		def elapsed = new BigDecimal(stopWatch.nanoTime).divide(new BigDecimal(1000000))
-		logger.debug("elapsed time: {}", elapsed)
+		logger.debug("elapsed time: {}", stopWatch.elapsedMillis)
 		
 		then:
 		notThrown Exception
@@ -151,13 +151,34 @@ class CriteriaSpec extends Specification {
 		OrbResultSet orbResultSet = cache.orbCollection.executeQuery(criteria);
 		stopWatch.stop()
 		
-		def elapsed = new BigDecimal(stopWatch.nanoTime).divide(new BigDecimal(1000000))
-		logger.debug("elapsed time: {}", elapsed)
+		logger.debug("elapsed time: {}", stopWatch.elapsedMillis)
 		
 		then:
 		notThrown Exception
 		orbResultSet.orbList
 		orbResultSet.orbList.size == 70
+	}
+	
+	def 'test criteria search collection using is unique'() {
+		
+		given:
+		Criteria criteria = criteriaFactory.createInstance(orbType, "foo")
+		
+		Criteria criteriaForAggregation = criteriaFactory.createInstance(orbType, "foo")
+		criteria.addAnd(Constraint.is(ATTRIBUTE_COLOR, Aggregate.UNIQUE, criteriaForAggregation, ATTRIBUTE_COLOR))
+		
+		when:
+		StopWatch stopWatch = new StopWatch()
+		stopWatch.start()
+		OrbResultSet orbResultSet = cache.orbCollection.executeQuery(criteria);
+		stopWatch.stop()
+		
+		logger.info("elapsed time: {}", stopWatch.elapsedMillis)
+		
+		then:
+		notThrown Exception
+		orbResultSet.orbList
+		orbResultSet.orbList.size == 1
 	}
 
 	public long loadTestData() {
@@ -175,6 +196,7 @@ class CriteriaSpec extends Specification {
 		def numInstances = 60
 		setNumberInstancesToColor(60, orbTypeInternalId, "red")
 		setNumberInstancesToColor(10, orbTypeInternalId, "orange")
+		setNumberInstancesToColor(1, orbTypeInternalId, "puce")
 		setNumberInstancesToColor(40, orbTypeInternalId, COLOR_TO_FIND)
 		
 		return orbTypeInternalId

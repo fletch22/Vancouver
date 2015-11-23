@@ -19,6 +19,7 @@ import com.fletch22.orb.TranDateGenerator;
 import com.fletch22.orb.command.orbType.AddWholeOrbTypeCommand;
 import com.fletch22.orb.command.orbType.DeleteOrbTypeCommand;
 import com.fletch22.orb.command.orbType.dto.AddOrbTypeDto;
+import com.fletch22.orb.limitation.DefLimitationManagerImpl;
 import com.fletch22.orb.limitation.LimitationManagerImpl;
 import com.fletch22.orb.query.QueryManager;
 import com.fletch22.orb.rollback.UndoActionBundle;
@@ -27,41 +28,44 @@ import com.fletch22.util.json.LinkedHashSetString;
 
 @Component(value = "OrbTypeManagerLocalCache")
 public class OrbTypeManagerLocalCache implements OrbTypeManager {
-	
+
 	Logger logger = LoggerFactory.getLogger(OrbTypeManagerLocalCache.class);
 
 	@Autowired
 	Cache cache;
-	
+
 	@Autowired
 	InternalIdGenerator internalIdGenerator;
-	
+
 	@Autowired
-	TranDateGenerator tranDateGenerator;	
-	
+	TranDateGenerator tranDateGenerator;
+
 	@Autowired
 	DeleteOrbTypeCommand deleteOrbTypeCommand;
-	
+
 	@Autowired
 	AddWholeOrbTypeCommand addWholeOrbTypeCommand;
-	
+
 	@Autowired
 	OrbManager orbManager;
-	
+
 	@Autowired
 	QueryManager queryManager;
-	
+
 	@Autowired
 	OrbTypeInitializer orbTypeInitializer;
-	
+
 	@Autowired
 	LimitationManagerImpl limitationManager;
-	
+
+	@Autowired
+	DefLimitationManagerImpl defLimitationManager;
+
 	@Override
 	public void initializeOrbTypes() {
 		orbTypeInitializer.init();
 	}
-	
+
 	@Override
 	public long createOrbType(AddOrbTypeDto addOrbTypeDto, BigDecimal tranDate, UndoActionBundle undoActionBundle) {
 
@@ -69,38 +73,38 @@ public class OrbTypeManagerLocalCache implements OrbTypeManager {
 		if (orbInternalTypeId == OrbTypeConstants.ORBTYPE_INTERNAL_ID_UNSET) {
 			orbInternalTypeId = this.internalIdGenerator.getNewId();
 		}
-		
+
 		OrbType orbType = new OrbType(orbInternalTypeId, addOrbTypeDto.label, tranDate, new LinkedHashSet<>());
 		cache.orbTypeCollection.add(orbType);
-		
+
 		// Add delete to rollback action
 		undoActionBundle.addUndoAction(this.deleteOrbTypeCommand.toJson(orbInternalTypeId, false), tranDate);
-		
+
 		return orbInternalTypeId;
 	}
-	
+
 	@Override
 	public long createOrbType(String label, LinkedHashSet<String> customFields) {
 		BigDecimal tranDate = tranDateGenerator.getTranDate();
-		
+
 		customFields = (customFields == null) ? new LinkedHashSet<String>() : customFields;
-		
+
 		return createOrbType(label, OrbTypeConstants.ORBTYPE_INTERNAL_ID_UNSET, tranDate, new LinkedHashSetString(customFields));
 	}
-	
+
 	@Override
 	@Loggable4Event
 	public long createOrbType(String label, long orbTypeInternalId, BigDecimal tranDate, LinkedHashSetString customFields) {
 		if (orbTypeInternalId == OrbTypeConstants.ORBTYPE_INTERNAL_ID_UNSET) {
 			orbTypeInternalId = this.internalIdGenerator.getNewId();
 		}
-		
+
 		OrbType orbType = new OrbType(orbTypeInternalId, label, tranDate, customFields.linkedHashSet);
 		cache.orbTypeCollection.add(orbType);
-		
+
 		Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
 		deleteOrbType(orbTypeInternalId, true);
-		
+
 		return orbTypeInternalId;
 	}
 
@@ -110,17 +114,17 @@ public class OrbTypeManagerLocalCache implements OrbTypeManager {
 			throw new RuntimeException(message);
 		}
 	}
-	
+
 	@Override
 	@Loggable4Event
 	public void deleteOrbType(long orbTypeInternalId, boolean isDeleteDependencies) {
-		
+
 		ensureNotASystemOrbType(orbTypeInternalId);
-		
+
 		handleOrbTypeDeletionDependencies(orbTypeInternalId, isDeleteDependencies);
-		
+
 		OrbType orbType = cache.orbTypeCollection.remove(orbTypeInternalId);
-		
+
 		Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
 		createOrbType(orbType.label, orbType.id, orbType.tranDate, new LinkedHashSetString(orbType.customFields));
 	}
@@ -131,13 +135,17 @@ public class OrbTypeManagerLocalCache implements OrbTypeManager {
 		} else {
 			boolean doesExist = orbManager.doesOrbWithTypeExist(orbTypeInternalId);
 			if (doesExist) {
-				String message = String.format("Encountered problem trying to delete orb type '%s'. The orb type has orb instances. These instances are (of course) dependent on the type '%s'. Pass 'true' to delete these depenendencies along with the type.", orbTypeInternalId, orbTypeInternalId);
+				String message = String
+						.format("Encountered problem trying to delete orb type '%s'. The orb type has orb instances. These instances are (of course) dependent on the type '%s'. Pass 'true' to delete these depenendencies along with the type.",
+								orbTypeInternalId, orbTypeInternalId);
 				throw new RuntimeException(message);
 			}
 		}
-//		limitationManager.handleTypeDeleteEvent(orbTypeInternalId, isDeleteDependencies);
+		queryManager.handleTypeDeleteEvent(orbTypeInternalId, isDeleteDependencies);
+		defLimitationManager.handleTypeDeleteEvent(orbTypeInternalId, isDeleteDependencies);
+		limitationManager.handleTypeDeleteEvent(orbTypeInternalId, isDeleteDependencies);
 	}
-	
+
 	@Override
 	public void nukeAllTypes() {
 		cache.orbTypeCollection.deleteAll();
@@ -146,16 +154,16 @@ public class OrbTypeManagerLocalCache implements OrbTypeManager {
 	@Override
 	@Loggable4Event
 	public void addAttribute(long orbTypeInternalId, String attributeName) {
-		
+
 		ensureNotASystemOrbType(orbTypeInternalId);
-		
+
 		// NOTE: Add it to the type.
 		OrbType orbType = cache.orbTypeCollection.get(orbTypeInternalId);
 		orbType.addField(attributeName);
-		
+
 		// NOTE: Add it to the instances.
 		cache.orbCollection.addAttribute(orbTypeInternalId, attributeName);
-		
+
 		Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
 		deleteAttribute(orbTypeInternalId, attributeName, true);
 	}
@@ -163,42 +171,47 @@ public class OrbTypeManagerLocalCache implements OrbTypeManager {
 	@Override
 	@Loggable4Event
 	public void deleteAttribute(long orbTypeInternalId, String attributeName, boolean isDeleteDependencies) {
-		
+
 		ensureNotASystemOrbType(orbTypeInternalId);
-		
-		queryManager.handleAttributeDeleteEvent(orbTypeInternalId, attributeName, isDeleteDependencies);
-//		limitationManager.handleAttributeDeleteEvent(orbTypeInternalId, attributeName, isDeleteDependencies);
-		
+
+		handleAttributeDeletionDependencies(orbTypeInternalId, attributeName, isDeleteDependencies);
+
 		int attributeIndex = getIndexOfAttribute(orbTypeInternalId, attributeName);
 		orbManager.deleteOrbAttributeFromAllInstances(orbTypeInternalId, attributeName, attributeIndex);
-		
+
 		OrbType orbType = cache.orbTypeCollection.get(orbTypeInternalId);
 		orbType.customFields.remove(attributeName);
-		
+
 		Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
 		addAttribute(orbTypeInternalId, attributeName);
 	}
-	
+
+	private void handleAttributeDeletionDependencies(long orbTypeInternalId, String attributeName, boolean isDeleteDependencies) {
+		queryManager.handleAttributeDeleteEvent(orbTypeInternalId, attributeName, isDeleteDependencies);
+		defLimitationManager.handleAttributeDeleteEvent(orbTypeInternalId, attributeName, isDeleteDependencies);
+		limitationManager.handleAttributeDeleteEvent(orbTypeInternalId, attributeName, isDeleteDependencies);
+	}
+
 	@Override
 	public int getIndexOfAttribute(long orbTypeInternalId, String attributeName) {
 		OrbType orbType = cache.orbTypeCollection.get(orbTypeInternalId);
-		return  getIndexOfAttribute(orbType, attributeName);
+		return getIndexOfAttribute(orbType, attributeName);
 	}
-	
+
 	@Override
 	public int getIndexOfAttribute(OrbType orbType, String attributeName) {
 		if (!orbType.customFields.contains(attributeName)) {
 			throw new RuntimeException("Attribute '" + attributeName + "' not found on type " + orbType.id + ".");
 		}
-		
+
 		int index = 0;
-		for (String key: orbType.customFields) {
+		for (String key : orbType.customFields) {
 			if (key.equals(attributeName)) {
 				break;
 			}
 			index++;
 		}
-		
+
 		return index;
 	}
 
@@ -210,7 +223,7 @@ public class OrbTypeManagerLocalCache implements OrbTypeManager {
 		}
 		return orbType;
 	}
-	
+
 	@Override
 	public OrbType getOrbType(String label) {
 		OrbType orbType = cache.orbTypeCollection.getFromLabel(label);
@@ -228,18 +241,23 @@ public class OrbTypeManagerLocalCache implements OrbTypeManager {
 	@Override
 	@Loggable4Event
 	public void renameAttribute(long orbTypeInternalId, String attributeNameOld, String attributeNameNew) {
-		
+
 		ensureNotASystemOrbType(orbTypeInternalId);
-		
-		queryManager.handleAttributeRenameEvent(orbTypeInternalId, attributeNameOld, attributeNameNew);
-//		limitationManager.handleAttributeRenameEvent(orbTypeInternalId, attributeNameOld, attributeNameNew);
-		
+
+		handleAttributeDeletionDependencies(orbTypeInternalId, attributeNameOld, attributeNameNew);
+
 		orbManager.renameAttribute(orbTypeInternalId, attributeNameOld, attributeNameNew);
-		
+
 		cache.orbTypeCollection.renameAttribute(orbTypeInternalId, attributeNameOld, attributeNameNew);
-		
+
 		Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
 		renameAttribute(orbTypeInternalId, attributeNameNew, attributeNameOld);
+	}
+
+	private void handleAttributeDeletionDependencies(long orbTypeInternalId, String attributeNameOld, String attributeNameNew) {
+		queryManager.handleAttributeRenameEvent(orbTypeInternalId, attributeNameOld, attributeNameNew);
+		defLimitationManager.handleAttributeRenameEvent(orbTypeInternalId, attributeNameOld, attributeNameNew);
+		limitationManager.handleAttributeRenameEvent(orbTypeInternalId, attributeNameOld, attributeNameNew);
 	}
 
 	@Override

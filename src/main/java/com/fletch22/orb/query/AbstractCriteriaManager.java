@@ -78,17 +78,6 @@ public abstract class AbstractCriteriaManager implements CriteriaManager {
 		Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
 		detach(criteria.getCriteriaId());
 	}
-	
-//	@Loggable4Event
-//	@Override
-//	public void removeFromCollection(long criteriaId) {
-//		Criteria criteria = getCriteriaCollection().removeByCriteriaId(criteriaId);
-//		
-//		if (criteria != null) {
-//			Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
-//			addToCollectionInternal(criteria);
-//		}
-//	}
 
 	@Override
 	public void nukeAllCriteria() {
@@ -135,10 +124,12 @@ public abstract class AbstractCriteriaManager implements CriteriaManager {
 	}
 
 	public void handleTypeDeleteEvent(long orbTypeInternalId, boolean isDeleteDependencies) {
-
-		boolean doesCriteriaExist = getCriteriaCollection().doesCriteriaExistWithOrbTypeInternalId(orbTypeInternalId);
-		if (doesCriteriaExist && isDeleteDependencies) {
-			deleteAllCriteriaBackedOrbsRelatedToType(orbTypeInternalId, isDeleteDependencies);
+		
+		if (isDeleteDependencies) {
+			boolean doesCriteriaExist = getCriteriaCollection().doesCriteriaExistWithOrbTypeInternalId(orbTypeInternalId);
+			if (doesCriteriaExist) {
+				deleteAllCriteriaBackedOrbsRelatedToType(orbTypeInternalId, isDeleteDependencies);
+			}
 		} else {
 			throw new RuntimeException("Encountered problem handling orb type delete in query manager. Orb type has a dependency in the query collection. There is a criteria whose internal orb type internal ID references the orb type you are trying to delete.");
 		}
@@ -162,5 +153,9 @@ public abstract class AbstractCriteriaManager implements CriteriaManager {
 	@Override
 	public void delete(long criteriaId, boolean isDeleteDependencies) {
 		orbManager.deleteOrb(criteriaId, isDeleteDependencies);
+	}
+	
+	public List<Criteria> getOrbsTypeCriteria(long orbTypeInternalId) {
+		return getCriteriaCollection().getByOrbTypeInsideCriteria(orbTypeInternalId);
 	}
 }

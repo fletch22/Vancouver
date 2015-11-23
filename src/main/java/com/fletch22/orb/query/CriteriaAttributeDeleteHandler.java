@@ -7,6 +7,10 @@ import org.mockito.internal.stubbing.answers.DoesNothing;
 
 import com.fletch22.orb.cache.query.CriteriaCollection;
 import com.fletch22.orb.query.CriteriaFactory.Criteria;
+import com.fletch22.orb.query.constraint.Constraint;
+import com.fletch22.orb.query.constraint.ConstraintDetails;
+import com.fletch22.orb.query.constraint.ConstraintDetailsList;
+import com.fletch22.orb.query.constraint.ConstraintDetailsSingleValue;
 
 public abstract class CriteriaAttributeDeleteHandler {
 

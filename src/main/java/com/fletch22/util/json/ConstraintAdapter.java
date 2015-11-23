@@ -2,7 +2,7 @@ package com.fletch22.util.json;
 
 import java.lang.reflect.Type;
 
-import com.fletch22.orb.query.Constraint;
+import com.fletch22.orb.query.constraint.Constraint;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;

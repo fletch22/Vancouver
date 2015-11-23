@@ -11,10 +11,10 @@ import com.fletch22.orb.Orb;
 import com.fletch22.orb.OrbManager;
 import com.fletch22.orb.OrbType;
 import com.fletch22.orb.OrbTypeManager;
-import com.fletch22.orb.query.Constraint;
 import com.fletch22.orb.query.CriteriaFactory;
 import com.fletch22.orb.query.QueryManager;
 import com.fletch22.orb.query.CriteriaFactory.Criteria;
+import com.fletch22.orb.query.constraint.Constraint;
 
 @Component
 public class TestDataSimple {

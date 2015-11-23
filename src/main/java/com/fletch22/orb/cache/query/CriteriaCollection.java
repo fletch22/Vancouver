@@ -1,5 +1,6 @@
 package com.fletch22.orb.cache.query;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +30,9 @@ public abstract class CriteriaCollection {
 	}
 	
 	public List<Criteria> getByOrbTypeInsideCriteria(long orbInternalId) {
-		return this.criteriaByOrbTypeCollection.get(orbInternalId);
+		
+		List<Criteria> criteria = this.criteriaByOrbTypeCollection.get(orbInternalId);
+		return (criteria == null) ? new ArrayList<Criteria>() : criteria;
 	}
 	
 	public Set<Long> getKeys() {

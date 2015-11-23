@@ -1,7 +1,7 @@
 package com.fletch22.util.json;
 import org.springframework.stereotype.Component;
 
-import com.fletch22.orb.query.Constraint;
+import com.fletch22.orb.query.constraint.Constraint;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 

@@ -3,6 +3,8 @@ package com.fletch22.orb.query;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import com.fletch22.orb.query.constraint.Constraint;
+
 public class LogicalConstraint extends Constraint {
 	public LogicalOperator logicalOperator;
 	public ArrayList<Constraint> constraintList = new ArrayList<Constraint>();

@@ -1,11 +1,13 @@
-package com.fletch22.orb.query;
+package com.fletch22.orb.query.constraint;
 
 import java.util.List;
 
+import com.fletch22.orb.query.RelationshipOperator;
+
 public class ConstraintDetailsList extends ConstraintDetails {
 	
-	RelationshipOperator relationshipOperator;
-	List<String> operativeValueList;
+	public RelationshipOperator relationshipOperator;
+	public List<String> operativeValueList;
 	
 	@Override
 	public Constraint[] getConstraints() {

@@ -15,10 +15,11 @@ import com.fletch22.orb.OrbType
 import com.fletch22.orb.OrbTypeManager
 import com.fletch22.orb.cache.indexcollection.IndexedCollectionFactory
 import com.fletch22.orb.cache.local.Cache
-import com.fletch22.orb.criteria.CriteriaMother
-import com.fletch22.orb.query.Constraint
+import com.fletch22.orb.criteria.DefLimitationMother
+import com.fletch22.orb.limitation.DefLimitationManager;
 import com.fletch22.orb.query.LogicalOperator
 import com.fletch22.orb.query.CriteriaFactory.Criteria
+import com.fletch22.orb.query.constraint.Constraint;
 import com.fletch22.util.StopWatch
 
 @org.junit.experimental.categories.Category(IntegrationTests.class)
@@ -29,7 +30,7 @@ class ConstraintCheckerSpec extends Specification {
 	ConstraintChecker constraintChecker
 
 	@Autowired
-	CriteriaMother criteriaMother
+	DefLimitationMother defCriteriaMother
 
 	@Autowired
 	OrbManager orbManager
@@ -42,27 +43,33 @@ class ConstraintCheckerSpec extends Specification {
 	
 	@Autowired
 	OrbTypeManager orbTypeManager
+	
+	@Autowired
+	DefLimitationManager defLimitationManager
 
 	def testCriteriaSuccess() {
 
 		given:
-		Criteria criteria = criteriaMother.getCriteriaSample();
+		
+		Criteria criteria = defCriteriaMother.createAndAddCriteriaSimple();
 		
 		String expectedBarValue = "cat";
-
-		criteria.add(LogicalOperator.AND, Constraint.eq(CriteriaMother.ATTRIBUTE_BAR, expectedBarValue))
 
 		long orbTypeInternalId = criteria.getOrbTypeInternalId();
 
 		Orb orb = orbManager.createOrb(orbTypeInternalId);
-		orb.getUserDefinedProperties().put(CriteriaMother.ATTRIBUTE_BAR, expectedBarValue);
+		orb.getUserDefinedProperties().put(DefLimitationMother.ATTRIBUTE_BAR, expectedBarValue);
 		
 		LinkedHashSet<String> set = new LinkedHashSet<String>()
 		set.add("banana");
 		long orbTypeInternalId2 = orbTypeManager.createOrbType("fruitBowl", set)
 		Orb orb2 = orbManager.createOrb(orbTypeInternalId2);
 		orb2.getUserDefinedProperties().put("banana", "ripe");
-
+		
+		// NOTE: We're adding this later to avoid constraint violation on initial insert with empty attributes.
+		// This would not be done in production. Done here for testing only.
+		criteria.add(LogicalOperator.AND, Constraint.eq(DefLimitationMother.ATTRIBUTE_BAR, expectedBarValue))
+		
 		when:
 		StopWatch stopWatch = new StopWatch()
 		

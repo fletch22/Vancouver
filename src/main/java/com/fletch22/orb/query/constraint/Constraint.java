@@ -1,6 +1,10 @@
-package com.fletch22.orb.query;
+package com.fletch22.orb.query.constraint;
 
 import java.util.List;
+
+import com.fletch22.orb.query.CriteriaFactory.Criteria;
+import com.fletch22.orb.query.RelationshipOperator;
+import com.fletch22.orb.query.constraint.aggregate.Aggregate;
 
 public abstract class Constraint {
 	public abstract Constraint[] getConstraints();
@@ -26,4 +30,18 @@ public abstract class Constraint {
 		
 		return constraintDetailsList;
 	}
+	
+	public static Constraint is(String attributeName, Aggregate aggregate, Criteria criteriaForAggregation, String aggregateAttributeName) {
+		ConstraintDetailsAggregate constraintDetailsAggregate = new ConstraintDetailsAggregate();
+		
+		constraintDetailsAggregate.relationshipOperator = RelationshipOperator.IS;
+		constraintDetailsAggregate.attributeName = attributeName;
+		constraintDetailsAggregate.aggregate = aggregate;
+		constraintDetailsAggregate.aggregationAttributeName = aggregateAttributeName;
+		constraintDetailsAggregate.criteriaForAggregation = criteriaForAggregation;
+		
+		return constraintDetailsAggregate;
+	}
+	
+	
 }
