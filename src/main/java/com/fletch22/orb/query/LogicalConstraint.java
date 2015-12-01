@@ -6,6 +6,8 @@ import java.util.Arrays;
 import com.fletch22.orb.cache.local.CacheEntry;
 import com.fletch22.orb.query.constraint.Constraint;
 import com.fletch22.orb.query.constraint.ConstraintProcessVisitor;
+import com.fletch22.orb.query.constraint.ConstraintRegistrationVisitor;
+import com.fletch22.orb.query.constraint.ConstraintSetParentVisitor;
 import com.googlecode.cqengine.query.Query;
 
 public class LogicalConstraint extends Constraint {
@@ -33,12 +35,21 @@ public class LogicalConstraint extends Constraint {
 
 	@Override
 	public Constraint[] getConstraints() {
-		
 		return constraintList.toArray(new Constraint[constraintList.size()]);
 	}
 
 	@Override
 	public Query<CacheEntry> acceptConstraintProcessorVisitor(ConstraintProcessVisitor constraintVisitor, long orbTypeInternalId) {
 		return constraintVisitor.visit(this, orbTypeInternalId);
+	}
+
+	@Override
+	public void acceptConstraintRegistrationVisitor(ConstraintRegistrationVisitor constraintRegistrationVisitor) {
+		constraintRegistrationVisitor.visit(this);
+	}
+	
+	@Override
+	public void acceptConstraintSetParent(ConstraintSetParentVisitor constraintSetParentVisitor) {
+		constraintSetParentVisitor.visit(this);
 	}
 }

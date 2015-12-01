@@ -46,4 +46,9 @@ public abstract class Constraint {
 	}
 	
 	public abstract Query<CacheEntry> acceptConstraintProcessorVisitor(ConstraintProcessVisitor visitor, long orbTypeInternalId);
+	
+	public abstract void acceptConstraintRegistrationVisitor(ConstraintRegistrationVisitor constraintVisitor);
+	
+	public abstract void acceptConstraintSetParent(ConstraintSetParentVisitor constraintSetParentVisitor); 
 }
+

@@ -15,6 +15,7 @@ import com.fletch22.orb.OrbType;
 import com.fletch22.orb.OrbTypeManager;
 import com.fletch22.orb.cache.query.CriteriaCollection;
 import com.fletch22.orb.query.CriteriaFactory.Criteria;
+import com.fletch22.orb.query.constraint.ConstraintRegistrationVisitor;
 import com.fletch22.orb.systemType.SystemType;
 
 public abstract class AbstractCriteriaManager implements CriteriaManager {
@@ -34,6 +35,8 @@ public abstract class AbstractCriteriaManager implements CriteriaManager {
 	
 	@Autowired
 	protected OrbTypeManager orbTypeManager;
+	
+	ConstraintRegistrationVisitor constraintRegistrationVisitor;
 	
 	@Override
 	public long addToCollection(Criteria criteria) {

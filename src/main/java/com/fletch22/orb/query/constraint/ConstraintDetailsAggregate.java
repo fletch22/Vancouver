@@ -38,4 +38,13 @@ public class ConstraintDetailsAggregate extends ConstraintDetails {
 		return constraintVisitor.visit(this, orbTypeInternalId);
 	}
 	
+	@Override
+	public void acceptConstraintRegistrationVisitor(ConstraintRegistrationVisitor constraintRegistrationVisitor) {
+		constraintRegistrationVisitor.visit(this);
+	}
+
+	@Override
+	public void acceptConstraintSetParent(ConstraintSetParentVisitor constraintSetParentVisitor) {
+		constraintSetParentVisitor.visit(this);
+	}
 }

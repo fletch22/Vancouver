@@ -3,6 +3,7 @@ package com.fletch22.orb.query.constraint;
 import java.util.List;
 
 import com.fletch22.orb.cache.local.CacheEntry;
+import com.fletch22.orb.query.CriteriaFactory.Criteria;
 import com.fletch22.orb.query.RelationshipOperator;
 import com.googlecode.cqengine.query.Query;
 
@@ -34,5 +35,15 @@ public class ConstraintDetailsList extends ConstraintDetails {
 	@Override
 	public Query<CacheEntry> acceptConstraintProcessorVisitor(ConstraintProcessVisitor constraintVisitor, long orbTypeInternalId) {
 		return constraintVisitor.visit(this, orbTypeInternalId);
+	}
+	
+	@Override
+	public void acceptConstraintRegistrationVisitor(ConstraintRegistrationVisitor constraintRegistrationVisitor) {
+		constraintRegistrationVisitor.visit(this);
+	}
+	
+	@Override
+	public void acceptConstraintSetParent(ConstraintSetParentVisitor constraintSetParentVisitor) {
+		constraintSetParentVisitor.visit(this);
 	}
 }
