@@ -15,7 +15,7 @@ import com.fletch22.orb.command.transaction.RollbackTransactionService;
 import com.fletch22.orb.query.CriteriaFactory.Criteria;
 import com.fletch22.orb.query.constraint.Constraint;
 
-@Component()
+@Component
 public class QueryManagerImpl extends AbstractCriteriaManager implements QueryManager {
 
 	Logger logger = LoggerFactory.getLogger(QueryManagerImpl.class);
@@ -28,7 +28,7 @@ public class QueryManagerImpl extends AbstractCriteriaManager implements QueryMa
 	
 	@Autowired
 	RollbackTransactionService rollbackTransactionService;
-
+	
 	@Override
 	public CriteriaCollection getCriteriaCollection() {
 		return cache.queryCollection;
@@ -77,5 +77,4 @@ public class QueryManagerImpl extends AbstractCriteriaManager implements QueryMa
 
 		return executeQuery(criteria);
 	}
-	
 }

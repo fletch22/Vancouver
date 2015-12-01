@@ -3,8 +3,6 @@ package com.fletch22.orb.query;
 import java.util.List;
 import java.util.Set;
 
-import org.mockito.internal.stubbing.answers.DoesNothing;
-
 import com.fletch22.orb.cache.query.CriteriaCollection;
 import com.fletch22.orb.query.CriteriaFactory.Criteria;
 import com.fletch22.orb.query.constraint.Constraint;

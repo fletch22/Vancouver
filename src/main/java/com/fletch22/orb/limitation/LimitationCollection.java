@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import com.fletch22.orb.cache.query.CriteriaByOrbTypeCollection;
 import com.fletch22.orb.cache.query.CriteriaCollection;
 import com.fletch22.orb.cache.query.QueryCollection;
 import com.fletch22.orb.query.CriteriaFactory.Criteria;

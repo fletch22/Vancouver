@@ -20,12 +20,7 @@ public class QueryCollection extends CriteriaCollection {
 	public void add(Criteria criteria) {
 		validateCriteria(criteria);
 		criteriaByIdMap.put(criteria.getCriteriaId(), criteria);
-		
-		logger.info("Adding criteria to QueryCollection. Not null? {}", criteria != null);
-		
 		criteriaByOrbTypeCollection.add(criteria);
-		
-		logger.info("Does criteria exist: {}", this.doesCriteriaExistWithOrbTypeInternalId(criteria.getOrbTypeInternalId()));
 	}
 	
 	@Override

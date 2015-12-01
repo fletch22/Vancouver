@@ -37,6 +37,7 @@ public class CriteriaFactory {
 		private String label;
 		private boolean hasIdBeenSet = false;
 		private ArrayList<CriteriaSortInfo> sortInfoList = new ArrayList<CriteriaSortInfo>();
+		public Criteria parent;
 		
 		public LogicalConstraint logicalConstraint = null;
 		
@@ -115,6 +116,18 @@ public class CriteriaFactory {
 		
 		public boolean hasSortCriteria() {
 			return this.sortInfoList.size() > 0;
+		}
+
+		public Criteria getParent() {
+			return parent;
+		}
+
+		public void setParent(Criteria parent) {
+			this.parent = parent;
+		}
+
+		public boolean isParent() {
+			return (this.parent != null);
 		}
 	}
 }
