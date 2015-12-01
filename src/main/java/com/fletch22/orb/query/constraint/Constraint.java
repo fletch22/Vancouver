@@ -2,9 +2,11 @@ package com.fletch22.orb.query.constraint;
 
 import java.util.List;
 
+import com.fletch22.orb.cache.local.CacheEntry;
 import com.fletch22.orb.query.CriteriaFactory.Criteria;
 import com.fletch22.orb.query.RelationshipOperator;
 import com.fletch22.orb.query.constraint.aggregate.Aggregate;
+import com.googlecode.cqengine.query.Query;
 
 public abstract class Constraint {
 	public abstract Constraint[] getConstraints();
@@ -43,7 +45,5 @@ public abstract class Constraint {
 		return constraintDetailsAggregate;
 	}
 	
-	public void accept(ConstraintVisitor constraintVisitor) {
-		
-	}
+	public abstract Query<CacheEntry> acceptConstraintProcessorVisitor(ConstraintProcessVisitor visitor, long orbTypeInternalId);
 }
