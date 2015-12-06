@@ -1,10 +1,13 @@
-package com.fletch22.orb.query;
+package com.fletch22.orb.query.event;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fletch22.orb.cache.local.Cache;
 import com.fletch22.orb.cache.query.CriteriaCollection;
+import com.fletch22.orb.query.CriteriaAttributeDeleteHandler;
+import com.fletch22.orb.query.CriteriaManager;
+import com.fletch22.orb.query.QueryManager;
 
 @Component
 public class QueryAttributeDeleteHandler extends CriteriaAttributeDeleteHandler {
@@ -17,10 +20,11 @@ public class QueryAttributeDeleteHandler extends CriteriaAttributeDeleteHandler 
 
 	@Override
 	public CriteriaCollection getCriteriaCollection() {
-		return cache.queryCollection;
+		return queryManager.getCriteriaCollection();
 	}
 	
-	protected QueryManager getCriteriaManager() {
+	@Override
+	protected CriteriaManager getCriteriaManager() {
 		return queryManager;
 	}
 }

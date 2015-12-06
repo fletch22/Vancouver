@@ -201,3 +201,12 @@ Status: Not done.
 Add code that registers sub queries (known as criteria) so that sub queries can natively respond to Orb action events. When that type of criteria is deleted, 
 it's parent must be deleted as well. Find Criteria, for 'add' method, add visitor pattern to handle agg constraint additions and set the parent on the child criteria.
 Status: Not done.
+
+Allow empty/blank criteria labels in validation
+Status: Not done.
+
+Finish attr rename, attr delete, orb delete, and type delete handling 
+Status: Not done.
+
+Springify Visitors by adding Criteria to parameter list.
+Status: Not done.

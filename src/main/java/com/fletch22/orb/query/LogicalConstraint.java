@@ -11,7 +11,7 @@ import com.fletch22.orb.query.constraint.ConstraintSetParentVisitor;
 import com.googlecode.cqengine.query.Query;
 
 public class LogicalConstraint extends Constraint {
-	public LogicalOperator logicalOperator;
+	public LogicalOperator logicalOperator = null;
 	public ArrayList<Constraint> constraintList = new ArrayList<Constraint>();
 	
 	public LogicalConstraint(LogicalOperator logicalOperator, Constraint ...constraintArray) {
@@ -28,9 +28,7 @@ public class LogicalConstraint extends Constraint {
 	}
 	
 	private static LogicalConstraint createLogicalConstraint(LogicalOperator logicalOperator, Constraint[] constraintArray) {
-		LogicalConstraint logicalConstraint = new LogicalConstraint(logicalOperator, constraintArray);
-		
-		return logicalConstraint;
+		return new LogicalConstraint(logicalOperator, constraintArray);
 	}
 
 	@Override

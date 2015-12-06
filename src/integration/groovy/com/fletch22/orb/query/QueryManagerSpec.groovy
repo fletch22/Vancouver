@@ -17,6 +17,8 @@ import com.fletch22.orb.cache.local.Cache
 import com.fletch22.orb.client.service.BeginTransactionService
 import com.fletch22.orb.command.transaction.RollbackTransactionService
 import com.fletch22.orb.query.CriteriaFactory.Criteria
+import com.fletch22.orb.query.constraint.Constraint
+import com.fletch22.orb.query.constraint.ConstraintDetailsAggregate
 
 @org.junit.experimental.categories.Category(IntegrationTests.class)
 @ContextConfiguration(locations = "classpath:/springContext-test.xml")
@@ -45,6 +47,9 @@ class QueryManagerSpec extends Specification {
 	
 	@Autowired
 	RollbackTransactionService rollbackTransactionService
+	
+	@Autowired
+	QueryMother queryMother
 	
 	def setup() {
 		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems();
@@ -134,5 +139,31 @@ class QueryManagerSpec extends Specification {
 		then:
 		queryManager.doesCriteriaExist(criteria.getCriteriaId())
 		orbManager.doesOrbExist(criteria.getCriteriaId());
+	}
+	
+	def 'test query add to collection'() {
+		
+		given:
+		when:
+		Criteria criteria = queryMother.getAggregateQuery()
+		
+		OrbType orbType = orbTypeManager.getOrbType(criteria.getOrbTypeInternalId())
+		
+		Constraint constraintAgg = criteria.logicalConstraint.constraintList.get(0)
+		
+		assertNotNull(constraintAgg)
+		assertTrue(constraintAgg instanceof ConstraintDetailsAggregate)
+		
+		Criteria criteriaAgg = ((ConstraintDetailsAggregate) constraintAgg).criteriaForAggregation
+		
+		then:
+		queryManager.doesCriteriaExist(criteria.getCriteriaId())
+		orbManager.doesOrbExist(criteria.getCriteriaId());
+		
+		queryManager.doesCriteriaExist(criteriaAgg.getCriteriaId())
+		orbManager.doesOrbExist(criteriaAgg.getCriteriaId());
+
+		criteria
+		criteriaAgg.getParentId() != Criteria.UNSET_CRITERIA_ID
 	}
 }

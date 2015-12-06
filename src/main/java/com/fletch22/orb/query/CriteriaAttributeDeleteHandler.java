@@ -14,7 +14,7 @@ public abstract class CriteriaAttributeDeleteHandler {
 
 	public abstract CriteriaCollection getCriteriaCollection();
 	
-	protected abstract QueryManager getCriteriaManager();
+	protected abstract CriteriaManager getCriteriaManager();
 	
 	public void handleAttributeDeletion(long orbTypeInternalId, String attributeName, boolean isDeleteDependencies) {
 		CriteriaCollection criteriaCollection = getCriteriaCollection();

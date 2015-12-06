@@ -16,6 +16,7 @@ import com.fletch22.orb.OrbTypeManager;
 import com.fletch22.orb.cache.query.CriteriaCollection;
 import com.fletch22.orb.query.CriteriaFactory.Criteria;
 import com.fletch22.orb.query.constraint.ConstraintRegistrationVisitor;
+import com.fletch22.orb.query.constraint.ConstraintSetParentVisitor;
 import com.fletch22.orb.systemType.SystemType;
 
 public abstract class AbstractCriteriaManager implements CriteriaManager {
@@ -28,15 +29,12 @@ public abstract class AbstractCriteriaManager implements CriteriaManager {
 	CriteriaAttributeRenameHandler criteriaAttributeRenameHandler;
 
 	@Autowired
-	QueryAttributeDeleteHandler criteriaAttributeDeleteHandler;
-	
-	@Autowired
 	protected OrbManager orbManager;
 	
 	@Autowired
 	protected OrbTypeManager orbTypeManager;
 	
-	ConstraintRegistrationVisitor constraintRegistrationVisitor;
+	public abstract CriteriaAttributeDeleteHandler getCriteriaAttributeDeleteHandler();
 	
 	@Override
 	public long addToCollection(Criteria criteria) {
@@ -44,6 +42,11 @@ public abstract class AbstractCriteriaManager implements CriteriaManager {
 		initializeCriteria(criteria);
 
 		attach(criteria);
+		
+		if (criteria.hasConstraints()) {
+			ConstraintRegistrationVisitor constraintRegistrationVisitor = new ConstraintRegistrationVisitor(this);
+			criteria.logicalConstraint.acceptConstraintRegistrationVisitor(constraintRegistrationVisitor);
+		}
 
 		return criteria.getCriteriaId();
 	}
@@ -59,6 +62,11 @@ public abstract class AbstractCriteriaManager implements CriteriaManager {
 		logger.info("Type: {}, ID: {}", orbType.id, orb.getOrbInternalId());
 		
 		criteria.setId(orb.getOrbInternalId());
+		
+		if (criteria.hasConstraints()) {
+			ConstraintSetParentVisitor constraintSetParentVisitor = new ConstraintSetParentVisitor(criteria);
+			criteria.logicalConstraint.acceptConstraintSetParent(constraintSetParentVisitor);
+		}
 	}
 	
 	protected OrbType getParentOrbType() {
@@ -72,11 +80,7 @@ public abstract class AbstractCriteriaManager implements CriteriaManager {
 	@Loggable4Event
 	@Override
 	public void attach(Criteria criteria) {
-		logger.info("Attaching to collection.");
-
 		getCriteriaCollection().add(criteria);
-		
-		logger.info("Does criteria exist: {}", getCriteriaCollection().doesCriteriaExistWithOrbTypeInternalId(criteria.getOrbTypeInternalId()));
 		
 		Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
 		detach(criteria.getCriteriaId());
@@ -99,7 +103,7 @@ public abstract class AbstractCriteriaManager implements CriteriaManager {
 
 	@Override
 	public void handleAttributeDeleteEvent(long orbTypeInternalId, String attributeName, boolean isDeleteDependencies) {
-		criteriaAttributeDeleteHandler.handleAttributeDeletion(orbTypeInternalId, attributeName, isDeleteDependencies);
+		getCriteriaAttributeDeleteHandler().handleAttributeDeletion(orbTypeInternalId, attributeName, isDeleteDependencies);
 	}
 	
 	@Override

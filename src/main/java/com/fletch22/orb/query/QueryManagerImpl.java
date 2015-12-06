@@ -14,6 +14,7 @@ import com.fletch22.orb.cache.query.CriteriaCollection;
 import com.fletch22.orb.command.transaction.RollbackTransactionService;
 import com.fletch22.orb.query.CriteriaFactory.Criteria;
 import com.fletch22.orb.query.constraint.Constraint;
+import com.fletch22.orb.query.event.QueryAttributeDeleteHandler;
 
 @Component
 public class QueryManagerImpl extends AbstractCriteriaManager implements QueryManager {
@@ -28,6 +29,9 @@ public class QueryManagerImpl extends AbstractCriteriaManager implements QueryMa
 	
 	@Autowired
 	RollbackTransactionService rollbackTransactionService;
+	
+	@Autowired
+	QueryAttributeDeleteHandler queryAttributeDeleteHandler;
 	
 	@Override
 	public CriteriaCollection getCriteriaCollection() {
@@ -76,5 +80,10 @@ public class QueryManagerImpl extends AbstractCriteriaManager implements QueryMa
 		criteria.addAnd(Constraint.eq(attributeName, attributeValueToFind));
 
 		return executeQuery(criteria);
+	}
+
+	@Override
+	public CriteriaAttributeDeleteHandler getCriteriaAttributeDeleteHandler() {
+		return this.queryAttributeDeleteHandler;
 	}
 }

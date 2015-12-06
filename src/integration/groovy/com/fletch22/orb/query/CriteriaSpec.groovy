@@ -17,9 +17,10 @@ import com.fletch22.orb.OrbManager
 import com.fletch22.orb.OrbTypeManager
 import com.fletch22.orb.cache.local.Cache
 import com.fletch22.orb.cache.local.OrbSingleTypesInstanceCollectionFactory.OrbSingleTypesInstanceCollection
+import com.fletch22.orb.cache.query.QueryCollection
 import com.fletch22.orb.query.CriteriaFactory.Criteria
 import com.fletch22.orb.query.constraint.Constraint
-import com.fletch22.orb.query.constraint.ConstraintGrinder;
+import com.fletch22.orb.query.constraint.ConstraintGrinder
 import com.fletch22.orb.query.constraint.aggregate.Aggregate
 import com.fletch22.util.StopWatch
 
@@ -159,7 +160,7 @@ class CriteriaSpec extends Specification {
 		orbResultSet.orbList.size == 70
 	}
 	
-	def 'test criteria search collection using is unique'() {
+	def 'test criteria search collection using is unique and parent set'() {
 		
 		given:
 		Criteria criteria = criteriaFactory.createInstance(orbType, "foo")
@@ -172,8 +173,6 @@ class CriteriaSpec extends Specification {
 		stopWatch.start()
 		OrbResultSet orbResultSet = cache.orbCollection.executeQuery(criteria);
 		stopWatch.stop()
-		
-		logger.info("elapsed time: {}", stopWatch.elapsedMillis)
 		
 		then:
 		notThrown Exception

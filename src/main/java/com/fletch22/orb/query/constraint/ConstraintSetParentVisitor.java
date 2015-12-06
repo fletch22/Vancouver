@@ -2,10 +2,15 @@ package com.fletch22.orb.query.constraint;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.fletch22.orb.query.CriteriaFactory.Criteria;
 import com.fletch22.orb.query.LogicalConstraint;
 
 public class ConstraintSetParentVisitor {
+	
+	Logger logger = LoggerFactory.getLogger(ConstraintSetParentVisitor.class);
 	
 	Criteria criteria;
 	
@@ -22,9 +27,7 @@ public class ConstraintSetParentVisitor {
 	
 	public void visit(ConstraintDetailsAggregate constraintDetailsAggregate) {
 		Criteria child = constraintDetailsAggregate.criteriaForAggregation;
-		child.setParent(this.criteria);
-		ConstraintSetParentVisitor constraintSetParentVisitor = new ConstraintSetParentVisitor(child);
-		child.logicalConstraint.acceptConstraintSetParent(constraintSetParentVisitor);
+		child.setParentId(this.criteria.getCriteriaId());
 	}
 	
 	public void visit(ConstraintDetailsSingleValue constraintDetailsSingleValue) {

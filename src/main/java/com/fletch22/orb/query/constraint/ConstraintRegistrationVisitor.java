@@ -1,7 +1,5 @@
 package com.fletch22.orb.query.constraint;
 
-import java.util.Set;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +18,7 @@ public class ConstraintRegistrationVisitor {
 	}
 	
 	public void visit(LogicalConstraint logicalConstraint) {
+		logger.info("In visit logical constraint.");
 		for (Constraint constraintChild : logicalConstraint.getConstraints()) {
 			constraintChild.acceptConstraintRegistrationVisitor(this);
 		}
@@ -36,11 +35,12 @@ public class ConstraintRegistrationVisitor {
 	public void visit(ConstraintDetailsAggregate constraintDetailsAggregate) {
 		
 		Criteria child = constraintDetailsAggregate.criteriaForAggregation;
-//		this.criteriaManager.addToCollection(child);
+		this.criteriaManager.addToCollection(child);
 		
 		LogicalConstraint logicalConstraint = child.logicalConstraint;
 		if (logicalConstraint != null) {
-//			visit(logicalConstraint);
+			logger.info("Visiting aggy.");
+			visit(logicalConstraint);
 		}
 	}
 }
