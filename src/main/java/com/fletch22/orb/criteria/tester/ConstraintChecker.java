@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import com.fletch22.orb.Orb;
 import com.fletch22.orb.cache.indexcollection.IndexedCollectionFactory;
 import com.fletch22.orb.cache.local.CacheEntry;
-import com.fletch22.orb.query.CriteriaImpl;
+import com.fletch22.orb.query.Criteria;
 import com.fletch22.orb.query.constraint.ConstraintGrinder;
 import com.googlecode.cqengine.IndexedCollection;
 
@@ -31,7 +31,7 @@ public class ConstraintChecker {
 		return indexedCollection;
 	}
 
-	public void checkConstraint(CriteriaImpl criteria, Orb orb) {
+	public void checkConstraint(Criteria criteria, Orb orb) {
 		CacheEntry cacheEntry = new CacheEntry(orb);
 		getIndexedCollection().add(cacheEntry);
 		

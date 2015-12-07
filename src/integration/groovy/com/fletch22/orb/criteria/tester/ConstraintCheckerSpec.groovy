@@ -16,7 +16,7 @@ import com.fletch22.orb.cache.indexcollection.IndexedCollectionFactory
 import com.fletch22.orb.cache.local.Cache
 import com.fletch22.orb.criteria.DefLimitationMother
 import com.fletch22.orb.limitation.DefLimitationManager
-import com.fletch22.orb.query.CriteriaImpl
+import com.fletch22.orb.query.Criteria
 import com.fletch22.orb.query.LogicalOperator
 import com.fletch22.orb.query.constraint.Constraint
 import com.fletch22.util.StopWatch
@@ -50,7 +50,7 @@ class ConstraintCheckerSpec extends Specification {
 
 		given:
 		
-		CriteriaImpl criteria = defCriteriaMother.createAndAddCriteriaSimple();
+		Criteria criteria = defCriteriaMother.createAndAddCriteriaSimple();
 		
 		String expectedBarValue = "cat";
 

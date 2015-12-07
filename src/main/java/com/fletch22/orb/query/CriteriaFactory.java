@@ -12,8 +12,8 @@ public class CriteriaFactory {
 	@Autowired
 	Cache cache;
 	
-	public CriteriaImpl createInstance(OrbType orbType, String label) {
-		CriteriaImpl criteria = new CriteriaImpl(orbType, label);
+	public Criteria createInstance(OrbType orbType, String label) {
+		Criteria criteria = new CriteriaImpl(orbType, label);
 		
 		return criteria;
 	}

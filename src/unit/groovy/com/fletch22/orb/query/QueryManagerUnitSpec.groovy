@@ -9,7 +9,7 @@ import com.fletch22.orb.OrbType
 import com.fletch22.orb.OrbTypeManager
 import com.fletch22.orb.cache.local.Cache
 import com.fletch22.orb.cache.query.QueryCollection
-import com.fletch22.orb.query.CriteriaImpl
+import com.fletch22.orb.query.Criteria
 import com.fletch22.orb.systemType.SystemType
 
 class QueryManagerUnitSpec extends Specification {
@@ -42,13 +42,13 @@ class QueryManagerUnitSpec extends Specification {
 		queryManagerImpl.cache = cache
 
 		long idToFind = 123
-		CriteriaImpl criteria = Mock(CriteriaImpl)
+		Criteria criteria = Mock(Criteria)
 		criteria.getLabel() >> "foo"
 		criteria.getOrbTypeInternalId() >> idToFind
 		queryCollection.getByQueryId(_) >> criteria
 
 		when:
-		CriteriaImpl criteriaFound = queryManagerImpl.findQuery(idToFind, "foo")
+		Criteria criteriaFound = queryManagerImpl.findQuery(idToFind, "foo")
 
 		then:
 		criteriaFound

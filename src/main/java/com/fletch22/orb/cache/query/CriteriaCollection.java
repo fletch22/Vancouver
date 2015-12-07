@@ -6,33 +6,33 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.fletch22.orb.query.CriteriaImpl;
+import com.fletch22.orb.query.Criteria;
 
 public abstract class CriteriaCollection {
 	
-	protected Map<Long, CriteriaImpl> criteriaByIdMap = new HashMap<Long, CriteriaImpl>();
+	protected Map<Long, Criteria> criteriaByIdMap = new HashMap<Long, Criteria>();
 	protected CriteriaByOrbTypeCollection criteriaByOrbTypeCollection = new CriteriaByOrbTypeCollection();
 	
 	public boolean doesQueryExist(long queryInternalId) {
 		return criteriaByIdMap.containsKey(queryInternalId);
 	}
 
-	public abstract void add(CriteriaImpl criteria);
+	public abstract void add(Criteria criteria);
 
-	public abstract CriteriaImpl removeByCriteriaId(long id);
+	public abstract Criteria removeByCriteriaId(long id);
 
-	public abstract List<CriteriaImpl> removeByOrbTypeId(long id);
+	public abstract List<Criteria> removeByOrbTypeId(long id);
 
 	public abstract void clear();
 
-	public CriteriaImpl getByQueryId(long orbInternalIdQuery) {
+	public Criteria getByQueryId(long orbInternalIdQuery) {
 		return this.criteriaByIdMap.get(orbInternalIdQuery);
 	}
 	
-	public List<CriteriaImpl> getByOrbTypeInsideCriteria(long orbInternalId) {
+	public List<Criteria> getByOrbTypeInsideCriteria(long orbInternalId) {
 		
-		List<CriteriaImpl> criteria = this.criteriaByOrbTypeCollection.get(orbInternalId);
-		return (criteria == null) ? new ArrayList<CriteriaImpl>() : criteria;
+		List<Criteria> criteria = this.criteriaByOrbTypeCollection.get(orbInternalId);
+		return (criteria == null) ? new ArrayList<Criteria>() : criteria;
 	}
 	
 	public Set<Long> getKeys() {
@@ -48,7 +48,7 @@ public abstract class CriteriaCollection {
 		boolean doesExist = false;
 		Set<Long> keys = getKeys();
 		for (Long key: keys) {
-			CriteriaImpl criteriaFound = getByQueryId(key);
+			Criteria criteriaFound = getByQueryId(key);
 			if (criteriaFound.getLabel().equals(label)) {
 				doesExist = true;
 			}
@@ -56,12 +56,12 @@ public abstract class CriteriaCollection {
 		return doesExist;
 	}
 	
-	public CriteriaImpl findByLabel(String label) {
+	public Criteria findByLabel(String label) {
 		
-		CriteriaImpl criteriaFound = null;
+		Criteria criteriaFound = null;
 		Set<Long> keys = getKeys();
 		for (Long key: keys) {
-			CriteriaImpl criteria = getByQueryId(key);
+			Criteria criteria = getByQueryId(key);
 			if (criteria.getLabel().equals(label)) {
 				criteriaFound = criteria;
 				break;
@@ -74,12 +74,12 @@ public abstract class CriteriaCollection {
 		return this.criteriaByOrbTypeCollection.doesExist(orbTypeInternalId);
 	}
 	
-	public void validateCriteria(CriteriaImpl criteriaToValidate) {
+	public void validateCriteria(Criteria criteriaToValidate) {
 
 		String message = null;
 		long id = criteriaToValidate.getCriteriaId();
 
-		if (id == CriteriaImpl.UNSET_ID) {
+		if (id == Criteria.UNSET_ID) {
 			message = String.format("Encountered a problem. Criteria has id %s. This means criteria ID is unset.", id);
 			throw new RuntimeException(message);
 		}
@@ -97,7 +97,7 @@ public abstract class CriteriaCollection {
 
 			Set<Long> keys = this.criteriaByIdMap.keySet();
 			for (Long key : keys) {
-				CriteriaImpl criteria = this.criteriaByIdMap.get(key);
+				Criteria criteria = this.criteriaByIdMap.get(key);
 				if (criteriaToValidate.getOrbTypeInternalId() == criteria.getOrbTypeInternalId() && criteria.getLabel().equals(label)) {
 					message = String.format("Encountered a problem. Criteria with with type id '%s' and label '%s' already exists.", criteria.getOrbTypeInternalId(), label);
 					throw new RuntimeException(message);

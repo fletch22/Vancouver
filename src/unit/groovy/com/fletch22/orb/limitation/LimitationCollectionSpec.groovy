@@ -7,7 +7,7 @@ import java.util.stream.Collectors
 
 import spock.lang.Specification
 
-import com.fletch22.orb.query.CriteriaImpl
+import com.fletch22.orb.query.Criteria
 import com.fletch22.util.StopWatch
 
 class LimitationCollectionSpec extends Specification {
@@ -20,8 +20,8 @@ class LimitationCollectionSpec extends Specification {
 		StopWatch stopWatch = new StopWatch()
 		when:
 		stopWatch.start()
-		List<CriteriaImpl> list = limitationCollection.criteriaList.stream()
-			.filter({CriteriaImpl criteria -> criteria.getOrbTypeInternalId() == 123} as Predicate<CriteriaImpl>)
+		List<Criteria> list = limitationCollection.criteriaList.stream()
+			.filter({Criteria criteria -> criteria.getOrbTypeInternalId() == 123} as Predicate<Criteria>)
 			.collect(Collectors.toList())
 		stopWatch.stop()
 		
@@ -36,12 +36,12 @@ class LimitationCollectionSpec extends Specification {
 		given:
 		StopWatch stopWatch = new StopWatch()
 		
-		Map<Long, List<CriteriaImpl>> list = new HashMap<Long, List<CriteriaImpl>>()
+		Map<Long, List<Criteria>> list = new HashMap<Long, List<Criteria>>()
 		
 		when:
 		stopWatch.start()
-		List<CriteriaImpl> isNullList = list.get(123l)
-		isNullList = (isNullList == null) ? new ArrayList<CriteriaImpl>() : isNullList
+		List<Criteria> isNullList = list.get(123l)
+		isNullList = (isNullList == null) ? new ArrayList<Criteria>() : isNullList
 		stopWatch.stop()
 		println stopWatch.getElapsedMillis()
 		

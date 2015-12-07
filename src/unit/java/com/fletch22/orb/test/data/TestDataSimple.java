@@ -13,7 +13,7 @@ import com.fletch22.orb.OrbType;
 import com.fletch22.orb.OrbTypeManager;
 import com.fletch22.orb.query.CriteriaFactory;
 import com.fletch22.orb.query.QueryManager;
-import com.fletch22.orb.query.CriteriaImpl;
+import com.fletch22.orb.query.Criteria;
 import com.fletch22.orb.query.constraint.Constraint;
 
 @Component
@@ -68,7 +68,7 @@ public class TestDataSimple {
 		
 		OrbType orbType = orbTypeManager.getOrbType(orbTypeInternalId);
 		
-		CriteriaImpl criteria = criteriaFactory.createInstance(orbType, "foo");
+		Criteria criteria = criteriaFactory.createInstance(orbType, "foo");
 		criteria.addAnd(Constraint.eq(ATTRIBUTE_COLOR, ATTRIBUTE_GREEN));
 		
 		long orbInternalIdQuery = queryManager.addToCollection(criteria);

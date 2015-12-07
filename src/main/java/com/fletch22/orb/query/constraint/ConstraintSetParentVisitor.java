@@ -5,16 +5,16 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fletch22.orb.query.CriteriaImpl;
+import com.fletch22.orb.query.Criteria;
 import com.fletch22.orb.query.LogicalConstraint;
 
 public class ConstraintSetParentVisitor {
 	
 	Logger logger = LoggerFactory.getLogger(ConstraintSetParentVisitor.class);
 	
-	CriteriaImpl criteria;
+	Criteria criteria;
 	
-	public ConstraintSetParentVisitor(CriteriaImpl criteria) {
+	public ConstraintSetParentVisitor(Criteria criteria) {
 		this.criteria = criteria;
 	}
 
@@ -26,7 +26,7 @@ public class ConstraintSetParentVisitor {
 	}
 	
 	public void visit(ConstraintDetailsAggregate constraintDetailsAggregate) {
-		CriteriaImpl child = constraintDetailsAggregate.criteriaForAggregation;
+		Criteria child = constraintDetailsAggregate.criteriaForAggregation;
 		child.setParentId(this.criteria.getCriteriaId());
 	}
 	

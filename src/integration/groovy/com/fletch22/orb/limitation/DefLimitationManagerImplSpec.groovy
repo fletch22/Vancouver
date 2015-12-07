@@ -14,7 +14,7 @@ import com.fletch22.orb.OrbTypeManager
 import com.fletch22.orb.client.service.BeginTransactionService;
 import com.fletch22.orb.command.transaction.RollbackTransactionService;
 import com.fletch22.orb.query.CriteriaFactory
-import com.fletch22.orb.query.CriteriaImpl
+import com.fletch22.orb.query.Criteria
 
 @org.junit.experimental.categories.Category(IntegrationTests.class)
 @ContextConfiguration(locations = "classpath:/springContext-test.xml")
@@ -53,7 +53,7 @@ class DefLimitationManagerImplSpec extends Specification {
 
 		OrbType orbType = orbTypeManager.getOrbType(orbTypeInternalId)
 
-		CriteriaImpl criteria = criteriaFactory.createInstance(orbType, "howdy")
+		Criteria criteria = criteriaFactory.createInstance(orbType, "howdy")
 
 		when:
 		defLimitationManager.addToCollection(criteria)
@@ -70,7 +70,7 @@ class DefLimitationManagerImplSpec extends Specification {
 
 		OrbType orbType = orbTypeManager.getOrbType(orbTypeInternalId)
 
-		CriteriaImpl criteria = criteriaFactory.createInstance(orbType, "howdy")
+		Criteria criteria = criteriaFactory.createInstance(orbType, "howdy")
 
 		defLimitationManager.addToCollection(criteria)
 

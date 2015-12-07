@@ -24,7 +24,7 @@ import com.fletch22.orb.OrbTypeManager;
 import com.fletch22.orb.cache.local.Cache;
 import com.fletch22.orb.client.service.BeginTransactionService;
 import com.fletch22.orb.command.transaction.RollbackTransactionService;
-import com.fletch22.orb.query.CriteriaImpl;
+import com.fletch22.orb.query.Criteria;
 import com.fletch22.orb.systemType.SystemType;
 import com.fletch22.orb.test.data.TestDataSimple;
 import com.fletch22.util.StopWatch;
@@ -82,7 +82,7 @@ public class QueryManagerTest {
 		stopWatch.start();
 		OrbType orbType = orbTypeManager.getOrbType(orbTypeInternalId);
 		
-		CriteriaImpl criteria = criteriaFactory.createInstance(orbType, "foo");
+		Criteria criteria = criteriaFactory.createInstance(orbType, "foo");
 		
 		// Act
 		long orbInternalId = queryManager.addToCollection(criteria);
@@ -104,10 +104,10 @@ public class QueryManagerTest {
 		
 		String dupeName = "bar";
 		
-		CriteriaImpl criteria1 = criteriaFactory.createInstance(orbType, dupeName);
+		Criteria criteria1 = criteriaFactory.createInstance(orbType, dupeName);
 		queryManager.addToCollection(criteria1);
 		
-		CriteriaImpl criteria2 = criteriaFactory.createInstance(orbType, dupeName);
+		Criteria criteria2 = criteriaFactory.createInstance(orbType, dupeName);
 		
 		boolean wasExceptionThrown = false;
 		try {
@@ -133,7 +133,7 @@ public class QueryManagerTest {
 		
 		BigDecimal tranId = beginTransactionService.beginTransaction();
 		
-		CriteriaImpl criteria = criteriaFactory.createInstance(orbType, "foo");
+		Criteria criteria = criteriaFactory.createInstance(orbType, "foo");
 		
 		queryManager.addToCollection(criteria);
 		
@@ -155,7 +155,7 @@ public class QueryManagerTest {
 		
 		OrbType orbType = orbTypeManager.getOrbType(orbTypeInternalId);
 		
-		CriteriaImpl criteria = criteriaFactory.createInstance(orbType, "foo");
+		Criteria criteria = criteriaFactory.createInstance(orbType, "foo");
 		
 		long orbInternalId = queryManager.addToCollection(criteria);
 		

@@ -3,7 +3,7 @@ package com.fletch22.orb.query.constraint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fletch22.orb.query.CriteriaImpl;
+import com.fletch22.orb.query.Criteria;
 import com.fletch22.orb.query.CriteriaManager;
 import com.fletch22.orb.query.LogicalConstraint;
 
@@ -34,7 +34,7 @@ public class ConstraintRegistrationVisitor {
 	
 	public void visit(ConstraintDetailsAggregate constraintDetailsAggregate) {
 		
-		CriteriaImpl child = constraintDetailsAggregate.criteriaForAggregation;
+		Criteria child = constraintDetailsAggregate.criteriaForAggregation;
 		this.criteriaManager.addToCollection(child);
 		
 		LogicalConstraint logicalConstraint = child.logicalConstraint;

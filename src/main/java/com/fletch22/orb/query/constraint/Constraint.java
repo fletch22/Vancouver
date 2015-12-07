@@ -3,7 +3,7 @@ package com.fletch22.orb.query.constraint;
 import java.util.List;
 
 import com.fletch22.orb.cache.local.CacheEntry;
-import com.fletch22.orb.query.CriteriaImpl;
+import com.fletch22.orb.query.Criteria;
 import com.fletch22.orb.query.RelationshipOperator;
 import com.fletch22.orb.query.constraint.aggregate.Aggregate;
 import com.googlecode.cqengine.query.Query;
@@ -33,7 +33,7 @@ public abstract class Constraint {
 		return constraintDetailsList;
 	}
 	
-	public static Constraint is(String attributeName, Aggregate aggregate, CriteriaImpl criteriaForAggregation, String aggregateAttributeName) {
+	public static Constraint is(String attributeName, Aggregate aggregate, Criteria criteriaForAggregation, String aggregateAttributeName) {
 		ConstraintDetailsAggregate constraintDetailsAggregate = new ConstraintDetailsAggregate();
 		
 		constraintDetailsAggregate.relationshipOperator = RelationshipOperator.IS;

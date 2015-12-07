@@ -4,7 +4,7 @@ import static org.junit.Assert.*
 import spock.lang.Specification
 
 import com.fletch22.orb.OrbType
-import com.fletch22.orb.query.CriteriaImpl
+import com.fletch22.orb.query.Criteria
 import com.fletch22.orb.query.constraint.Constraint
 import com.fletch22.orb.query.constraint.ConstraintDetailsSingleValue
 import com.fletch22.orb.query.sort.CriteriaSortInfo
@@ -22,7 +22,7 @@ class QueryAttributeRenameHandlerSpec extends Specification {
 		OrbType orbType = Mock(OrbType)
 		
 		CriteriaFactory criteriaFactory = new CriteriaFactory()
-		CriteriaImpl criteria = criteriaFactory.createInstance(orbType, ORIGINAL_QUERY_NAME)
+		Criteria criteria = criteriaFactory.createInstance(orbType, ORIGINAL_QUERY_NAME)
 		
 		ConstraintDetailsSingleValue constraintDetailSingleValue = (ConstraintDetailsSingleValue) Constraint.eq(ORIGINAL_ATTRIBUTE_NAME, "someValue")
 		
@@ -44,7 +44,7 @@ class QueryAttributeRenameHandlerSpec extends Specification {
 		OrbType orbType = Mock(OrbType)
 		
 		CriteriaFactory criteriaFactory = new CriteriaFactory()
-		CriteriaImpl criteria = criteriaFactory.createInstance(orbType, ORIGINAL_QUERY_NAME)
+		Criteria criteria = criteriaFactory.createInstance(orbType, ORIGINAL_QUERY_NAME)
 		
 		ConstraintDetailsSingleValue constraintDetailSingleValue = (ConstraintDetailsSingleValue) Constraint.eq(ORIGINAL_ATTRIBUTE_NAME, "someValue")
 		

@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.fletch22.orb.cache.query.CriteriaCollection;
-import com.fletch22.orb.query.CriteriaImpl;
+import com.fletch22.orb.query.Criteria;
 import com.fletch22.orb.query.constraint.Constraint;
 import com.fletch22.orb.query.constraint.ConstraintDetails;
 import com.fletch22.orb.query.constraint.ConstraintDetailsList;
@@ -22,7 +22,7 @@ public abstract class CriteriaAttributeDeleteHandler {
 		Set<Long> criteriaKey = criteriaCollection.getKeys();
 		for (long key : criteriaKey) {
 
-			CriteriaImpl criteria = criteriaCollection.getByQueryId(key);
+			Criteria criteria = criteriaCollection.getByQueryId(key);
 			if (criteria.getOrbType().id == orbTypeInternalId) {
 				handleAttributeDeletion(criteria.logicalConstraint, key, attributeName, isDeleteDependencies);
 			}

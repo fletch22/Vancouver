@@ -14,7 +14,7 @@ import com.fletch22.orb.OrbManager;
 import com.fletch22.orb.OrbType;
 import com.fletch22.orb.OrbTypeManager;
 import com.fletch22.orb.cache.query.CriteriaCollection;
-import com.fletch22.orb.query.CriteriaImpl;
+import com.fletch22.orb.query.Criteria;
 import com.fletch22.orb.query.constraint.ConstraintDeleteChildCriteriaVisitor;
 import com.fletch22.orb.query.constraint.ConstraintRegistrationVisitor;
 import com.fletch22.orb.query.constraint.ConstraintSetParentVisitor;
@@ -38,7 +38,7 @@ public abstract class AbstractCriteriaManager implements CriteriaManager {
 	public abstract CriteriaAttributeDeleteHandler getCriteriaAttributeDeleteHandler();
 	
 	@Override
-	public long addToCollection(CriteriaImpl criteria) {
+	public long addToCollection(Criteria criteria) {
 		
 		initializeCriteria(criteria);
 
@@ -52,7 +52,7 @@ public abstract class AbstractCriteriaManager implements CriteriaManager {
 		return criteria.getCriteriaId();
 	}
 	
-	protected void initializeCriteria(CriteriaImpl criteria) {
+	protected void initializeCriteria(Criteria criteria) {
 		OrbType orbType = getParentOrbType();
 
 		Orb orb = new Orb();
@@ -80,7 +80,7 @@ public abstract class AbstractCriteriaManager implements CriteriaManager {
 	
 	@Loggable4Event
 	@Override
-	public void attach(CriteriaImpl criteria) {
+	public void attach(Criteria criteria) {
 		getCriteriaCollection().add(criteria);
 		
 		Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
@@ -93,7 +93,7 @@ public abstract class AbstractCriteriaManager implements CriteriaManager {
 	}
 
 	@Override
-	public CriteriaImpl get(long criteriaId) {
+	public Criteria get(long criteriaId) {
 		return getCriteriaCollection().getByQueryId(criteriaId);
 	}
 	
@@ -125,7 +125,7 @@ public abstract class AbstractCriteriaManager implements CriteriaManager {
 	}
 
 	private void deleteCriteriaChildren(long criteriaId, boolean isDeleteDependencies) {
-		CriteriaImpl criteria = get(criteriaId);
+		Criteria criteria = get(criteriaId);
 		if (criteria.hasConstraints()) {
 			ConstraintDeleteChildCriteriaVisitor constraintDeleteChildCriteriaVisitor = new ConstraintDeleteChildCriteriaVisitor(this, isDeleteDependencies);
 			criteria.logicalConstraint.acceptConstraintDeleteChildCriteriaVisitor(constraintDeleteChildCriteriaVisitor);
@@ -135,7 +135,7 @@ public abstract class AbstractCriteriaManager implements CriteriaManager {
 	@Loggable4Event
 	@Override
 	public void detach(long criteriaId) {
-		CriteriaImpl criteria = this.getCriteriaCollection().removeByCriteriaId(criteriaId);
+		Criteria criteria = this.getCriteriaCollection().removeByCriteriaId(criteriaId);
 		
 		Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
 		attach(criteria);
@@ -160,9 +160,9 @@ public abstract class AbstractCriteriaManager implements CriteriaManager {
 	}
 	
 	private List<Long> getCriteriaIdsByTypeIds(long orbTypeInternalId) {
-		List<CriteriaImpl> criteriaList = getCriteriaCollection().getByOrbTypeInsideCriteria(orbTypeInternalId);
+		List<Criteria> criteriaList = getCriteriaCollection().getByOrbTypeInsideCriteria(orbTypeInternalId);
 		List<Long> idList = new ArrayList<Long>();
-		for (CriteriaImpl criteria : criteriaList) {
+		for (Criteria criteria : criteriaList) {
 			idList.add(criteria.getCriteriaId());
 		}
 		return idList;
@@ -173,7 +173,7 @@ public abstract class AbstractCriteriaManager implements CriteriaManager {
 		orbManager.deleteOrb(criteriaId, isDeleteDependencies);
 	}
 	
-	public List<CriteriaImpl> getOrbsTypeCriteria(long orbTypeInternalId) {
+	public List<Criteria> getOrbsTypeCriteria(long orbTypeInternalId) {
 		return getCriteriaCollection().getByOrbTypeInsideCriteria(orbTypeInternalId);
 	}
 }

@@ -22,7 +22,7 @@ import com.fletch22.orb.OrbType;
 import com.fletch22.orb.query.CriteriaFactory;
 import com.fletch22.orb.query.LogicalConstraint;
 import com.fletch22.orb.query.LogicalOperator;
-import com.fletch22.orb.query.CriteriaImpl;
+import com.fletch22.orb.query.Criteria;
 import com.fletch22.orb.query.constraint.Constraint;
 import com.fletch22.orb.query.constraint.ConstraintDetailsSingleValue;
 import com.google.gson.Gson;
@@ -227,13 +227,13 @@ public class JsonWrapperTest {
 		OrbType orbType = new OrbType(123, "foo", new BigDecimal("3456"), set);
 		long orbTypeInternalIdOriginal = orbType.id;
 		
-		CriteriaImpl criteria = criteriaFactory.createInstance(orbType, "foo");
+		Criteria criteria = criteriaFactory.createInstance(orbType, "foo");
 		
 		JsonWrapper jsonWrapper = new JsonWrapper(criteria, gsonFactory);
 		
 		JsonWrapper jsonWrapper2 = JsonWrapper.fromJson(new Gson(), jsonWrapper.toJson());
 		
-		CriteriaImpl reconstituted = (CriteriaImpl) jsonWrapper2.object;
+		Criteria reconstituted = (Criteria) jsonWrapper2.object;
 		
 		logger.debug("jsonWrapper: {}", jsonWrapper.toJson());
 		
@@ -248,7 +248,7 @@ public class JsonWrapperTest {
 		OrbType orbType = new OrbType(123, "foo", new BigDecimal("3456"), set);
 		long orbTypeInternalIdOriginal = orbType.id;
 		
-		CriteriaImpl criteria = criteriaFactory.createInstance(orbType, "foo"); 
+		Criteria criteria = criteriaFactory.createInstance(orbType, "foo"); 
 		
 		Constraint constraint = Constraint.eq("bar", "somevalue");
 		criteria.addAnd(constraint);
@@ -258,7 +258,7 @@ public class JsonWrapperTest {
 		Gson gson = gsonFactory.getInstance();
 		
 		JsonWrapper jsonWrapper2 = JsonWrapper.fromJson(gson, jsonWrapper.toJson());
-		CriteriaImpl reconstituted = (CriteriaImpl) jsonWrapper2.object;
+		Criteria reconstituted = (Criteria) jsonWrapper2.object;
 		
 		logger.debug("jsonWrapper: {}", jsonWrapper.toJson());
 		

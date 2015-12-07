@@ -13,7 +13,7 @@ import com.fletch22.orb.serialization.GsonSerializable;
 
 public abstract class Criteria implements GsonSerializable {
 
-	transient Logger logger = LoggerFactory.getLogger(CriteriaImpl.class);
+	transient Logger logger = LoggerFactory.getLogger(Criteria.class);
 	
 	transient public static final long UNSET_ID = -1;
 	

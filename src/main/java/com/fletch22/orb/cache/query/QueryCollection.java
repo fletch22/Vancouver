@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import com.fletch22.orb.query.CriteriaImpl;
+import com.fletch22.orb.query.Criteria;
 
 @Component
 @Scope("prototype")
@@ -17,24 +17,24 @@ public class QueryCollection extends CriteriaCollection {
 	static Logger logger = LoggerFactory.getLogger(QueryCollection.class);
 	
 	@Override
-	public void add(CriteriaImpl criteria) {
+	public void add(Criteria criteria) {
 		validateCriteria(criteria);
 		criteriaByIdMap.put(criteria.getCriteriaId(), criteria);
 		criteriaByOrbTypeCollection.add(criteria);
 	}
 	
 	@Override
-	public CriteriaImpl removeByCriteriaId(long id) {
-		CriteriaImpl criteria = criteriaByIdMap.remove(id);
+	public Criteria removeByCriteriaId(long id) {
+		Criteria criteria = criteriaByIdMap.remove(id);
 		criteriaByOrbTypeCollection.removeByCriteriaId(criteria);
 		return criteria;
 	}
 	
 	@Override
-	public List<CriteriaImpl> removeByOrbTypeId(long id) {
-		List<CriteriaImpl> criteriaList = criteriaByOrbTypeCollection.remove(id);
-		criteriaList = (criteriaList == null) ? new ArrayList<CriteriaImpl>() : criteriaList;
-		for (CriteriaImpl criteria : criteriaList) {
+	public List<Criteria> removeByOrbTypeId(long id) {
+		List<Criteria> criteriaList = criteriaByOrbTypeCollection.remove(id);
+		criteriaList = (criteriaList == null) ? new ArrayList<Criteria>() : criteriaList;
+		for (Criteria criteria : criteriaList) {
 			criteriaByIdMap.remove(criteria.getCriteriaId());
 		}
 		return criteriaList;

@@ -19,7 +19,7 @@ import com.fletch22.orb.OrbTypeManager
 import com.fletch22.orb.TranDateGenerator
 import com.fletch22.orb.cache.reference.OrbReference
 import com.fletch22.orb.query.QueryManager
-import com.fletch22.orb.query.CriteriaImpl
+import com.fletch22.orb.query.Criteria
 import com.fletch22.orb.query.constraint.ConstraintDetailsSingleValue;
 import com.fletch22.orb.test.data.TestDataWithReferences
 
@@ -133,7 +133,7 @@ class OrbTypeManagerLocalCacheSpec extends Specification {
 		
 		then:
 		notThrown Exception
-		CriteriaImpl criteria = queryManager.get(orbInternalIdQuery);
+		Criteria criteria = queryManager.get(orbInternalIdQuery);
 		criteria == null
 	}
 	
@@ -170,7 +170,7 @@ class OrbTypeManagerLocalCacheSpec extends Specification {
 		assert countArrowsOld == 0
 		assert countArrowsNew == numInstances
 		
-		CriteriaImpl criteria = queryManager.get(orbInternalIdQuery)
+		Criteria criteria = queryManager.get(orbInternalIdQuery)
 		criteria
 		ConstraintDetailsSingleValue constraintDetailSingleValue = (ConstraintDetailsSingleValue) criteria.logicalConstraint.constraintList.get(0)
 		constraintDetailSingleValue

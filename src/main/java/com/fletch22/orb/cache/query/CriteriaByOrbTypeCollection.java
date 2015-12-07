@@ -6,32 +6,32 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.fletch22.orb.query.CriteriaImpl;
+import com.fletch22.orb.query.Criteria;
 
 public class CriteriaByOrbTypeCollection {
 	
-	Map<Long, List<CriteriaImpl>> collection = new HashMap<Long, List<CriteriaImpl>>();
+	Map<Long, List<Criteria>> collection = new HashMap<Long, List<Criteria>>();
 	
-	public void add(CriteriaImpl criteria) {
+	public void add(Criteria criteria) {
 		long id = criteria.getOrbTypeInternalId();
 					
-		List<CriteriaImpl> list = collection.get(id);
+		List<Criteria> list = collection.get(id);
 		
 		if (list != null) {
 			list.add(criteria);
 		} else {
-			list = new ArrayList<CriteriaImpl>();
+			list = new ArrayList<Criteria>();
 			list.add(criteria);
 			collection.put(id, list);
 		}
 	}
 	
-	public List<CriteriaImpl> remove(long orbTypeInternalId) {
+	public List<Criteria> remove(long orbTypeInternalId) {
 		return collection.remove(orbTypeInternalId);
 	}
 	
-	public void removeByCriteriaId(CriteriaImpl criteria) {
-		Collection<CriteriaImpl> collection = this.get(criteria.getOrbTypeInternalId());
+	public void removeByCriteriaId(Criteria criteria) {
+		Collection<Criteria> collection = this.get(criteria.getOrbTypeInternalId());
 		
 		collection.remove(criteria);
 		if (collection.size() == 0) {
@@ -43,7 +43,7 @@ public class CriteriaByOrbTypeCollection {
 		this.collection.clear();
 	}
 	
-	public List<CriteriaImpl> get(long orbTypeInternalId) {
+	public List<Criteria> get(long orbTypeInternalId) {
 		return collection.get(orbTypeInternalId);
 	}
 	

@@ -14,7 +14,7 @@ import com.fletch22.orb.OrbTypeManager;
 import com.fletch22.orb.cache.local.Cache;
 import com.fletch22.orb.cache.local.CacheEntry;
 import com.fletch22.orb.cache.local.OrbCollection;
-import com.fletch22.orb.query.CriteriaImpl;
+import com.fletch22.orb.query.Criteria;
 import com.fletch22.orb.query.LogicalConstraint;
 import com.fletch22.orb.query.OrbResultSet;
 import com.fletch22.orb.query.sort.CriteriaSortInfo;
@@ -29,7 +29,7 @@ public class ConstraintGrinder {
 	
 	Logger logger = LoggerFactory.getLogger(ConstraintGrinder.class);
 	
-	CriteriaImpl criteria;
+	Criteria criteria;
 	IndexedCollection<CacheEntry> indexedCollection;
 	long orbTypeInternalId;
 		
@@ -42,7 +42,7 @@ public class ConstraintGrinder {
 	
 	private ConstraintProcessor contstraintProcessor;
 	
-	public ConstraintGrinder(CriteriaImpl criteria, IndexedCollection<CacheEntry> indexedCollection) {
+	public ConstraintGrinder(Criteria criteria, IndexedCollection<CacheEntry> indexedCollection) {
 		this.criteria = criteria;
 		this.indexedCollection = indexedCollection;
 		this.orbTypeInternalId = criteria.getOrbTypeInternalId();
