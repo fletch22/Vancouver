@@ -209,9 +209,13 @@ Finish attr rename, attr delete, orb delete, and type delete handling
 Status: Not done.
 
 Springify Visitors by adding Criteria to parameter list.
-Status: Not done.
+Status: Not done. Cancelled. Better to make it a non-Spring managed instance class -- needs state.
 
 Replace all StoredProcs with SQL files.
 Status: Not done.
 
 Rename Criteria to CriteriaImpl then create abstract parent.
+Status: Done.
+
+Create CriteriaAggregation and rename CriteriaImpl to CriteriaStandard
+Status: Not done.
