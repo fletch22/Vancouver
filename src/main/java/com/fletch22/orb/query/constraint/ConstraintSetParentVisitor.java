@@ -21,7 +21,7 @@ public class ConstraintSetParentVisitor {
 	public void visit(LogicalConstraint logicalConstraint) {
 		List<Constraint> list = logicalConstraint.constraintList;
 		for (Constraint constraint : list) {
-			constraint.acceptConstraintSetParent(this);
+			constraint.acceptConstraintSetParentVisitor(this);
 		}
 	}
 	

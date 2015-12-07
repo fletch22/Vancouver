@@ -210,3 +210,8 @@ Status: Not done.
 
 Springify Visitors by adding Criteria to parameter list.
 Status: Not done.
+
+Replace all StoredProcs with SQL files.
+Status: Not done.
+
+Rename Criteria to CriteriaImpl then create abstract parent.

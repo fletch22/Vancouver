@@ -5,8 +5,10 @@ import java.util.Arrays;
 
 import com.fletch22.orb.cache.local.CacheEntry;
 import com.fletch22.orb.query.constraint.Constraint;
+import com.fletch22.orb.query.constraint.ConstraintDeleteChildCriteriaVisitor;
 import com.fletch22.orb.query.constraint.ConstraintProcessVisitor;
 import com.fletch22.orb.query.constraint.ConstraintRegistrationVisitor;
+import com.fletch22.orb.query.constraint.ConstraintRenameChildCriteriaAttributeVisitor;
 import com.fletch22.orb.query.constraint.ConstraintSetParentVisitor;
 import com.googlecode.cqengine.query.Query;
 
@@ -47,7 +49,17 @@ public class LogicalConstraint extends Constraint {
 	}
 	
 	@Override
-	public void acceptConstraintSetParent(ConstraintSetParentVisitor constraintSetParentVisitor) {
+	public void acceptConstraintSetParentVisitor(ConstraintSetParentVisitor constraintSetParentVisitor) {
 		constraintSetParentVisitor.visit(this);
+	}
+
+	@Override
+	public void acceptConstraintDeleteChildCriteriaVisitor(ConstraintDeleteChildCriteriaVisitor visitor) {
+		visitor.visit(this);
+	}
+	
+	@Override
+	public void acceptConstraintRenameChildCriteriaAttributeVisitor(ConstraintRenameChildCriteriaAttributeVisitor visitor) {
+		visitor.visit(this);
 	}
 }

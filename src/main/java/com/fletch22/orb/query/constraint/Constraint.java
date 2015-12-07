@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.fletch22.orb.cache.local.CacheEntry;
 import com.fletch22.orb.query.CriteriaFactory.Criteria;
+import com.fletch22.orb.query.CriteriaManager;
 import com.fletch22.orb.query.RelationshipOperator;
 import com.fletch22.orb.query.constraint.aggregate.Aggregate;
 import com.googlecode.cqengine.query.Query;
@@ -49,6 +50,10 @@ public abstract class Constraint {
 	
 	public abstract void acceptConstraintRegistrationVisitor(ConstraintRegistrationVisitor constraintVisitor);
 	
-	public abstract void acceptConstraintSetParent(ConstraintSetParentVisitor constraintSetParentVisitor); 
+	public abstract void acceptConstraintSetParentVisitor(ConstraintSetParentVisitor constraintSetParentVisitor); 
+	
+	public abstract void acceptConstraintDeleteChildCriteriaVisitor(ConstraintDeleteChildCriteriaVisitor constraintDeleteChildCriteriaVisitor);
+	
+	public abstract void acceptConstraintRenameChildCriteriaAttributeVisitor(ConstraintRenameChildCriteriaAttributeVisitor visitor);
 }
 

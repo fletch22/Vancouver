@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 import com.fletch22.orb.OrbType;
 import com.fletch22.orb.cache.local.Cache;
 import com.fletch22.orb.query.constraint.Constraint;
-import com.fletch22.orb.query.constraint.ConstraintSetParentVisitor;
 import com.fletch22.orb.query.sort.CriteriaSortInfo;
 import com.fletch22.orb.serialization.GsonSerializable;
 
@@ -31,14 +30,14 @@ public class CriteriaFactory {
 		
 		transient Logger logger = LoggerFactory.getLogger(Criteria.class);
 		
-		transient public static final long UNSET_CRITERIA_ID = -1;
+		transient public static final long UNSET_ID = -1;
 		
-		private long criteriaId = UNSET_CRITERIA_ID;
+		private long criteriaId = UNSET_ID;
 		private OrbType orbType;
 		private String label;
 		private boolean hasIdBeenSet = false;
 		private ArrayList<CriteriaSortInfo> sortInfoList = new ArrayList<CriteriaSortInfo>();
-		public long criteriaIdParent = UNSET_CRITERIA_ID;
+		public long criteriaIdParent = UNSET_ID;
 		
 		public LogicalConstraint logicalConstraint = null;
 		
@@ -128,7 +127,7 @@ public class CriteriaFactory {
 		}
 
 		public boolean isParent() {
-			return (this.criteriaIdParent != UNSET_CRITERIA_ID);
+			return (this.criteriaIdParent != UNSET_ID);
 		}
 		
 		public boolean hasConstraints() {

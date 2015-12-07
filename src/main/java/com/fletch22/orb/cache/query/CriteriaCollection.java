@@ -79,7 +79,7 @@ public abstract class CriteriaCollection {
 		String message = null;
 		long id = criteriaToValidate.getCriteriaId();
 
-		if (id == Criteria.UNSET_CRITERIA_ID) {
+		if (id == Criteria.UNSET_ID) {
 			message = String.format("Encountered a problem. Criteria has id %s. This means criteria ID is unset.", id);
 			throw new RuntimeException(message);
 		}

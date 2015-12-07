@@ -9,7 +9,7 @@ public interface CriteriaManager extends OrbEventAware {
 
 	public long addToCollection(Criteria criteria);
 	
-	public void delete(long orbInternalIdQuery, boolean isDeleteDependencies);
+	public void delete(long criteriaId, boolean isDeleteDependencies);
 	
 	public void attach(Criteria criteria);
 	

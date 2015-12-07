@@ -186,11 +186,9 @@ public class ConstraintProcessor implements ConstraintProcessVisitor {
 			String value = orb.getUserDefinedProperties().get(constraintDetailsAggregate.aggregationAttributeName);
 			
 			Integer frequency = aggregateColumnValues.get(value);
-			if (frequency == null) {
-				aggregateColumnValues.put(value, 1);	
-			} else {
-				aggregateColumnValues.put(value, frequency + 1);
-			}
+			frequency = (frequency == null) ? 1: frequency + 1;
+			
+			aggregateColumnValues.put(value, frequency);
 		}
 
 		Set<String> unique = new HashSet<String>();

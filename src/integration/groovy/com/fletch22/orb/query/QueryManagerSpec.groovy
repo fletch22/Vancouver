@@ -2,9 +2,12 @@ package com.fletch22.orb.query;
 
 import static org.junit.Assert.*
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
 
+import spock.lang.Shared
 import spock.lang.Specification
 
 import com.fletch22.orb.IntegrationSystemInitializer
@@ -23,9 +26,12 @@ import com.fletch22.orb.query.constraint.ConstraintDetailsAggregate
 @org.junit.experimental.categories.Category(IntegrationTests.class)
 @ContextConfiguration(locations = "classpath:/springContext-test.xml")
 class QueryManagerSpec extends Specification {
+	
+	@Shared
+	Logger logger = LoggerFactory.getLogger(QueryManagerSpec.class)
 
 	@Autowired
-	IntegrationSystemInitializer integrationSystemInitializer;
+	IntegrationSystemInitializer integrationSystemInitializer
 	
 	@Autowired
 	QueryManager queryManager
@@ -99,6 +105,7 @@ class QueryManagerSpec extends Specification {
 	private Criteria createSampleQuery() {
 		long orbTypeInternalId = orbTypeManager.createOrbType("foo", new LinkedHashSet<String>())
 		OrbType orbType = orbTypeManager.getOrbType(orbTypeInternalId)
+		orbTypeManager.addAttribute(orbTypeInternalId, "orangeFuzz")
 		
 		String queryLabel = 'fuzzyThings'
 		Criteria criteria = criteriaFactory.createInstance(orbType, queryLabel)
@@ -112,7 +119,8 @@ class QueryManagerSpec extends Specification {
 		given:
 		def tranId = beginTransactionService.beginTransaction()
 		
-		Criteria criteria = createSampleQuery()
+		Criteria criteria = queryMother.getAggregateQuery()
+		Criteria criteriaAgg = extractAggregateCriteria(criteria)
 		
 		when:
 		this.rollbackTransactionService.rollbackToSpecificTransaction(tranId)
@@ -120,6 +128,9 @@ class QueryManagerSpec extends Specification {
 		then:
 		!queryManager.doesCriteriaExist(criteria.getCriteriaId())
 		!orbManager.doesOrbExist(criteria.getCriteriaId());
+		
+		!queryManager.doesCriteriaExist(criteriaAgg.getCriteriaId())
+		!orbManager.doesOrbExist(criteriaAgg.getCriteriaId());
 	}
 	
 	def 'test query remove rollback'() {
@@ -149,12 +160,7 @@ class QueryManagerSpec extends Specification {
 		
 		OrbType orbType = orbTypeManager.getOrbType(criteria.getOrbTypeInternalId())
 		
-		Constraint constraintAgg = criteria.logicalConstraint.constraintList.get(0)
-		
-		assertNotNull(constraintAgg)
-		assertTrue(constraintAgg instanceof ConstraintDetailsAggregate)
-		
-		Criteria criteriaAgg = ((ConstraintDetailsAggregate) constraintAgg).criteriaForAggregation
+		Criteria criteriaAgg = extractAggregateCriteria(criteria)
 		
 		then:
 		queryManager.doesCriteriaExist(criteria.getCriteriaId())
@@ -164,6 +170,51 @@ class QueryManagerSpec extends Specification {
 		orbManager.doesOrbExist(criteriaAgg.getCriteriaId());
 
 		criteria
-		criteriaAgg.getParentId() != Criteria.UNSET_CRITERIA_ID
+		criteriaAgg.getParentId() != Criteria.UNSET_ID
+	}
+	
+	def 'test query delete delete dependencies'() {
+		
+		given:
+		def tranId = beginTransactionService.beginTransaction()
+		
+		Criteria criteria = queryMother.getAggregateQuery()
+		Criteria criteriaAgg = extractAggregateCriteria(criteria)
+		
+		when:
+		queryManager.delete(criteria.criteriaId, true)
+		
+		then:
+		!queryManager.doesCriteriaExist(criteria.getCriteriaId())
+		!orbManager.doesOrbExist(criteria.getCriteriaId());
+		
+		!queryManager.doesCriteriaExist(criteriaAgg.getCriteriaId())
+		!orbManager.doesOrbExist(criteriaAgg.getCriteriaId());
+	}
+	
+	def 'test query delete fail when dependencies'() {
+		
+		given:
+		def tranId = beginTransactionService.beginTransaction()
+		
+		Criteria criteria = queryMother.getAggregateQuery()
+		Criteria criteriaAgg = extractAggregateCriteria(criteria)
+		
+		when:
+		queryManager.delete(criteria.criteriaId, false)
+		
+		then:
+		def exception = thrown(Exception)
+		exception
+		exception.getMessage().contains("Orb has at least one dependency.")
+	}
+	
+	Criteria extractAggregateCriteria(Criteria criteria) {
+		Constraint constraintAgg = criteria.logicalConstraint.constraintList.get(0)
+		
+		assertNotNull(constraintAgg)
+		assertTrue(constraintAgg instanceof ConstraintDetailsAggregate)
+		
+		return ((ConstraintDetailsAggregate) constraintAgg).criteriaForAggregation
 	}
 }

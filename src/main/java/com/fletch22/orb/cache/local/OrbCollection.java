@@ -159,6 +159,15 @@ public class OrbCollection {
 
 		OrbSingleTypesInstanceCollection orbSingleTypesInstanceCollection = allInstances.get(orbTypeInternalId);
 
+		if (orbSingleTypesInstanceCollection != null 
+		&& orbSingleTypesInstanceCollection.instances.size() > 0) {
+			removeAttributeWhenInstanceExists(orbTypeInternalId, indexOfAttribute, attributeName, mapRemoved, orbSingleTypesInstanceCollection);
+		}
+
+		return mapRemoved;
+	}
+
+	private void removeAttributeWhenInstanceExists(long orbTypeInternalId, int indexOfAttribute, String attributeName, Map<Long, String> mapRemoved, OrbSingleTypesInstanceCollection orbSingleTypesInstanceCollection) {
 		orbReference.removeTargetAttribute(orbTypeInternalId, attributeName);
 
 		for (CacheEntry cacheEntry : orbSingleTypesInstanceCollection.instances) {
@@ -177,8 +186,6 @@ public class OrbCollection {
 			properties.remove(attributeName);
 			cacheEntry.attributes.remove(indexOfAttribute);
 		}
-
-		return mapRemoved;
 	}
 
 	public void addAttributeValues(Map<Long, String> map, long orbTypeInternalId, int indexAttribute, String attributeName) {

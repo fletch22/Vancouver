@@ -1,6 +1,7 @@
 package com.fletch22.orb.query.constraint;
 
 import com.fletch22.orb.cache.local.CacheEntry;
+import com.fletch22.orb.query.CriteriaManager;
 import com.fletch22.orb.query.RelationshipOperator;
 import com.googlecode.cqengine.query.Query;
 
@@ -44,7 +45,17 @@ public class ConstraintDetailsSingleValue extends ConstraintDetails {
 	}
 	
 	@Override
-	public void acceptConstraintSetParent(ConstraintSetParentVisitor constraintSetParentVisitor) {
+	public void acceptConstraintSetParentVisitor(ConstraintSetParentVisitor constraintSetParentVisitor) {
 		constraintSetParentVisitor.visit(this);
+	}
+	
+	@Override
+	public void acceptConstraintDeleteChildCriteriaVisitor(ConstraintDeleteChildCriteriaVisitor visitor) {
+		visitor.visit(this);
+	}
+	
+	@Override
+	public void acceptConstraintRenameChildCriteriaAttributeVisitor(ConstraintRenameChildCriteriaAttributeVisitor visitor) {
+		visitor.visit(this);
 	}
 }

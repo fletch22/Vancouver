@@ -237,6 +237,21 @@ class OrbManagerLocalCacheSpec extends Specification {
 		countTotalArrows == 2
 	}
 	
+	def 'test add attribute and rollback'() {
+		
+		given:
+		def tranId = beginTransactionService.beginTransaction()
+		
+		long orbTypeInternalId = orbTypeManager.createOrbType("foo", null)
+		orbTypeManager.addAttribute(orbTypeInternalId, "pinkCrush")
+		
+		when:
+		rollbackTransactionService.rollbackToSpecificTransaction(tranId)
+		
+		then:
+		notThrown(Exception)
+	}
+	
 	private String getSet(int numberOfReferences) {
 		Set<String> set = new HashSet<String>()
 		numberOfReferences.times {

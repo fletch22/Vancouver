@@ -15,6 +15,7 @@ import com.fletch22.orb.OrbType;
 import com.fletch22.orb.OrbTypeManager;
 import com.fletch22.orb.cache.query.CriteriaCollection;
 import com.fletch22.orb.query.CriteriaFactory.Criteria;
+import com.fletch22.orb.query.constraint.ConstraintDeleteChildCriteriaVisitor;
 import com.fletch22.orb.query.constraint.ConstraintRegistrationVisitor;
 import com.fletch22.orb.query.constraint.ConstraintSetParentVisitor;
 import com.fletch22.orb.systemType.SystemType;
@@ -65,7 +66,7 @@ public abstract class AbstractCriteriaManager implements CriteriaManager {
 		
 		if (criteria.hasConstraints()) {
 			ConstraintSetParentVisitor constraintSetParentVisitor = new ConstraintSetParentVisitor(criteria);
-			criteria.logicalConstraint.acceptConstraintSetParent(constraintSetParentVisitor);
+			criteria.logicalConstraint.acceptConstraintSetParentVisitor(constraintSetParentVisitor);
 		}
 	}
 	
@@ -107,17 +108,27 @@ public abstract class AbstractCriteriaManager implements CriteriaManager {
 	}
 	
 	@Override
-	public void handleInstanceDeleteEvent(long orbInternalId, boolean isDeleteDependencies) {
-		boolean doesExist = doesCriteriaExist(orbInternalId);
+	public void handleInstanceDeleteEvent(long criteriaId, boolean isDeleteDependencies) {
+		boolean doesExist = doesCriteriaExist(criteriaId);
 		if (isDeleteDependencies) {
 			if (doesExist) {
-				detach(orbInternalId);
+				deleteCriteriaChildren(criteriaId, isDeleteDependencies);
+				
+				detach(criteriaId);
 			}
 		} else {
 			if (doesExist) {
-				String message = String.format("Encountered problem deleting orb '%s'. Orb has at least one dependency. A query exists that depends on the orb.", orbInternalId);
+				String message = String.format("Encountered problem deleting orb '%s'. Orb has at least one dependency. A query exists that depends on the orb.", criteriaId);
 				throw new RuntimeException(message);
 			}
+		}
+	}
+
+	private void deleteCriteriaChildren(long criteriaId, boolean isDeleteDependencies) {
+		Criteria criteria = get(criteriaId);
+		if (criteria.hasConstraints()) {
+			ConstraintDeleteChildCriteriaVisitor constraintDeleteChildCriteriaVisitor = new ConstraintDeleteChildCriteriaVisitor(this, isDeleteDependencies);
+			criteria.logicalConstraint.acceptConstraintDeleteChildCriteriaVisitor(constraintDeleteChildCriteriaVisitor);
 		}
 	}
 	

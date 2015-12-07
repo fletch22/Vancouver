@@ -7,10 +7,8 @@ import org.springframework.stereotype.Component;
 
 import com.fletch22.orb.cache.query.CriteriaCollection;
 import com.fletch22.orb.query.CriteriaFactory.Criteria;
-import com.fletch22.orb.query.constraint.Constraint;
 import com.fletch22.orb.query.constraint.ConstraintDetails;
-import com.fletch22.orb.query.constraint.ConstraintDetailsList;
-import com.fletch22.orb.query.constraint.ConstraintDetailsSingleValue;
+import com.fletch22.orb.query.constraint.ConstraintRenameChildCriteriaAttributeVisitor;
 import com.fletch22.orb.query.sort.CriteriaSortInfo;
 
 @Component
@@ -41,27 +39,10 @@ public class CriteriaAttributeRenameHandler {
 	}
 
 	private void renameInConstraints(Criteria criteria, String attributeOldName, String attributeNewName) {
-		handleAttributeRename(criteria.logicalConstraint, attributeOldName, attributeNewName);
-	}
-
-	private void handleAttributeRename(LogicalConstraint logicalConstraint, String attributeOldName, String attributeNewName) {
-		List<Constraint> constraintList = logicalConstraint.constraintList;
-
-		for (Constraint constraintInner : constraintList) {
-
-			if (constraintInner instanceof ConstraintDetailsSingleValue) {
-				handleAttributeRename((ConstraintDetails) constraintInner, attributeOldName, attributeNewName);
-			} else if (constraintInner instanceof ConstraintDetailsList) {
-				handleAttributeRename((ConstraintDetails) constraintInner, attributeOldName, attributeNewName);
-			} else if (constraintInner instanceof LogicalConstraint) {
-				handleAttributeRename((LogicalConstraint) constraintInner, attributeOldName, attributeNewName);
-			}
-		}
-	}
-
-	private void handleAttributeRename(ConstraintDetails constraintDetails, String attributeOldName, String attributeNewName) {
-		if (constraintDetails.attributeName.equals(attributeOldName)) {
-			constraintDetails.attributeName = attributeNewName;
+		if (criteria.hasConstraints()) {
+			
+			ConstraintRenameChildCriteriaAttributeVisitor visitor = new ConstraintRenameChildCriteriaAttributeVisitor(attributeOldName, attributeNewName);
+			criteria.logicalConstraint.acceptConstraintRenameChildCriteriaAttributeVisitor(visitor);
 		}
 	}
 }
