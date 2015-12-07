@@ -1,7 +1,7 @@
 package com.fletch22.orb.query.constraint;
 
 import com.fletch22.orb.cache.local.CacheEntry;
-import com.fletch22.orb.query.CriteriaFactory.Criteria;
+import com.fletch22.orb.query.CriteriaImpl;
 import com.fletch22.orb.query.CriteriaManager;
 import com.fletch22.orb.query.RelationshipOperator;
 import com.fletch22.orb.query.constraint.aggregate.Aggregate;
@@ -11,7 +11,7 @@ public class ConstraintDetailsAggregate extends ConstraintDetails {
 	
 	public RelationshipOperator relationshipOperator;
 	public Aggregate aggregate;
-	public Criteria criteriaForAggregation;
+	public CriteriaImpl criteriaForAggregation;
 	public String aggregationAttributeName;
 	
 	@Override

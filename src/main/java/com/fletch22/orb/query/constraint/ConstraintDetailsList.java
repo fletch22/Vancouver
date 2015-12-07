@@ -3,7 +3,7 @@ package com.fletch22.orb.query.constraint;
 import java.util.List;
 
 import com.fletch22.orb.cache.local.CacheEntry;
-import com.fletch22.orb.query.CriteriaFactory.Criteria;
+import com.fletch22.orb.query.CriteriaImpl;
 import com.fletch22.orb.query.CriteriaManager;
 import com.fletch22.orb.query.RelationshipOperator;
 import com.googlecode.cqengine.query.Query;

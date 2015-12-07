@@ -29,7 +29,7 @@ import com.fletch22.orb.command.orbType.dto.AddOrbTypeDto
 import com.fletch22.orb.command.transaction.RollbackTransactionService
 import com.fletch22.orb.query.QueryManager
 import com.fletch22.orb.query.OrbResultSet
-import com.fletch22.orb.query.CriteriaFactory.Criteria
+import com.fletch22.orb.query.CriteriaImpl
 import com.fletch22.orb.query.sort.CriteriaSortInfo
 import com.fletch22.orb.query.sort.SortInfo.SortDirection
 import com.fletch22.orb.rollback.UndoActionBundle
@@ -95,7 +95,7 @@ class OrbCollectionSpec extends Specification {
 		testDataSimple.loadTestData()
 		long orbInternalIdQuery = testDataSimple.addSimpleCriteria()
 		
-		Criteria criteria = queryManager.get(orbInternalIdQuery)
+		CriteriaImpl criteria = queryManager.get(orbInternalIdQuery)
 		List<CriteriaSortInfo> criteriaSortInfoList = criteria.getSortInfoList()
 		
 		CriteriaSortInfo criteriaSortInfo = new CriteriaSortInfo()

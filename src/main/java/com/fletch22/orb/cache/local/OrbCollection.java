@@ -19,7 +19,7 @@ import com.fletch22.orb.cache.local.OrbSingleTypesInstanceCollectionFactory.OrbS
 import com.fletch22.orb.cache.reference.DecomposedKey;
 import com.fletch22.orb.cache.reference.OrbReference;
 import com.fletch22.orb.cache.reference.ReferenceUtil;
-import com.fletch22.orb.query.CriteriaFactory.Criteria;
+import com.fletch22.orb.query.CriteriaImpl;
 import com.fletch22.orb.query.constraint.ConstraintGrinder;
 import com.fletch22.orb.query.OrbResultSet;
 
@@ -64,7 +64,7 @@ public class OrbCollection {
 		}
 	}
 
-	public OrbResultSet executeQuery(Criteria criteria) {
+	public OrbResultSet executeQuery(CriteriaImpl criteria) {
 
 		OrbSingleTypesInstanceCollection orbSingleTypesInstanceCollection = allInstances.get(criteria.getOrbTypeInternalId());
 

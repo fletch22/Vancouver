@@ -18,7 +18,7 @@ import com.fletch22.orb.OrbTypeManager
 import com.fletch22.orb.cache.local.Cache
 import com.fletch22.orb.cache.local.OrbSingleTypesInstanceCollectionFactory.OrbSingleTypesInstanceCollection
 import com.fletch22.orb.cache.query.QueryCollection
-import com.fletch22.orb.query.CriteriaFactory.Criteria
+import com.fletch22.orb.query.CriteriaImpl
 import com.fletch22.orb.query.constraint.Constraint
 import com.fletch22.orb.query.constraint.ConstraintGrinder
 import com.fletch22.orb.query.constraint.aggregate.Aggregate
@@ -67,7 +67,7 @@ class CriteriaSpec extends Specification {
 	def 'test criteria search for green'() {
 
 		given:
-		Criteria criteria = criteriaFactory.createInstance(orbType, "foo")
+		CriteriaImpl criteria = criteriaFactory.createInstance(orbType, "foo")
 
 		criteria.addAnd(Constraint.eq(ATTRIBUTE_COLOR, COLOR_TO_FIND))
 
@@ -91,7 +91,7 @@ class CriteriaSpec extends Specification {
 	def 'test criteria search or'() {
 		
 		given:
-		Criteria criteria = criteriaFactory.createInstance(orbType, "foo")
+		CriteriaImpl criteria = criteriaFactory.createInstance(orbType, "foo")
 
 		criteria.addOr(Constraint.eq(ATTRIBUTE_COLOR, "red"), Constraint.eq(ATTRIBUTE_COLOR, COLOR_TO_FIND), Constraint.eq(ATTRIBUTE_COLOR, "orange"))
 
@@ -112,7 +112,7 @@ class CriteriaSpec extends Specification {
 	def 'test criteria search collection'() {
 		
 		given:
-		Criteria criteria = criteriaFactory.createInstance(orbType, "foo")
+		CriteriaImpl criteria = criteriaFactory.createInstance(orbType, "foo")
 		
 		Constraint[] constraintArray = new Constraint[3]
 		constraintArray[0] = Constraint.eq(ATTRIBUTE_COLOR, "red")
@@ -138,7 +138,7 @@ class CriteriaSpec extends Specification {
 	def 'test criteria search collection using in'() {
 		
 		given:
-		Criteria criteria = criteriaFactory.createInstance(orbType, "foo")
+		CriteriaImpl criteria = criteriaFactory.createInstance(orbType, "foo")
 		
 		List<String> list = new ArrayList<String>();
 		list.add("red")
@@ -163,9 +163,9 @@ class CriteriaSpec extends Specification {
 	def 'test criteria search collection using is unique and parent set'() {
 		
 		given:
-		Criteria criteria = criteriaFactory.createInstance(orbType, "foo")
+		CriteriaImpl criteria = criteriaFactory.createInstance(orbType, "foo")
 		
-		Criteria criteriaForAggregation = criteriaFactory.createInstance(orbType, "foo")
+		CriteriaImpl criteriaForAggregation = criteriaFactory.createInstance(orbType, "foo")
 		criteria.addAnd(Constraint.is(ATTRIBUTE_COLOR, Aggregate.UNIQUE, criteriaForAggregation, ATTRIBUTE_COLOR))
 		
 		when:

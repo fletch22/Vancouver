@@ -12,7 +12,7 @@ import com.fletch22.orb.OrbType;
 import com.fletch22.orb.cache.local.Cache;
 import com.fletch22.orb.cache.query.CriteriaCollection;
 import com.fletch22.orb.command.transaction.RollbackTransactionService;
-import com.fletch22.orb.query.CriteriaFactory.Criteria;
+import com.fletch22.orb.query.CriteriaImpl;
 import com.fletch22.orb.query.constraint.Constraint;
 import com.fletch22.orb.query.event.QueryAttributeDeleteHandler;
 
@@ -41,19 +41,19 @@ public class QueryManagerImpl extends AbstractCriteriaManager implements QueryMa
 	@Override
 	public OrbResultSet executeQuery(long orbTypeInternalId, String queryLabel) {
 
-		Criteria criteria = findQuery(orbTypeInternalId, queryLabel);
+		CriteriaImpl criteria = findQuery(orbTypeInternalId, queryLabel);
 		return cache.orbCollection.executeQuery(criteria);
 	}
 
 	@Override
-	public OrbResultSet executeQuery(Criteria criteria) {
+	public OrbResultSet executeQuery(CriteriaImpl criteria) {
 		return cache.orbCollection.executeQuery(criteria);
 	}
 
-	protected Criteria findQuery(long criteriaOrbTypeInternalId, String queryLabel) {
+	protected CriteriaImpl findQuery(long criteriaOrbTypeInternalId, String queryLabel) {
 
 		boolean isCriteriaFound = false;
-		Criteria criteriaFound = null;
+		CriteriaImpl criteriaFound = null;
 		OrbType orbType = getParentOrbType();
 		List<Orb> orbList = orbManager.getOrbsOfType(orbType.id);
 		for (Orb orb : orbList) {
@@ -76,7 +76,7 @@ public class QueryManagerImpl extends AbstractCriteriaManager implements QueryMa
 	public OrbResultSet findByAttribute(long orbTypeInternalId, String attributeName, String attributeValueToFind) {
 
 		OrbType orbType = orbTypeManager.getOrbType(orbTypeInternalId);
-		Criteria criteria = criteriaFactory.createInstance(orbType, "findByAttribute");
+		CriteriaImpl criteria = criteriaFactory.createInstance(orbType, "findByAttribute");
 		criteria.addAnd(Constraint.eq(attributeName, attributeValueToFind));
 
 		return executeQuery(criteria);

@@ -19,7 +19,7 @@ import com.fletch22.orb.OrbTypeManager
 import com.fletch22.orb.cache.local.Cache
 import com.fletch22.orb.client.service.BeginTransactionService
 import com.fletch22.orb.command.transaction.RollbackTransactionService
-import com.fletch22.orb.query.CriteriaFactory.Criteria
+import com.fletch22.orb.query.CriteriaImpl
 import com.fletch22.orb.query.constraint.Constraint
 import com.fletch22.orb.query.constraint.ConstraintDetailsAggregate
 
@@ -73,11 +73,11 @@ class QueryManagerSpec extends Specification {
 		OrbType orbType = orbTypeManager.getOrbType(orbTypeInternalId)
 		
 		String queryLabel = 'fuzzyThings'
-		Criteria criteria = new Criteria(orbType, queryLabel)
+		CriteriaImpl criteria = new CriteriaImpl(orbType, queryLabel)
 		queryManager.addToCollection(criteria)
 		
 		when:
-		Criteria criteriaFound = queryManager.findQuery(orbTypeInternalId, queryLabel);
+		CriteriaImpl criteriaFound = queryManager.findQuery(orbTypeInternalId, queryLabel);
 		
 		then:
 		criteriaFound
@@ -86,7 +86,7 @@ class QueryManagerSpec extends Specification {
 	def 'test handle type delete event'() {
 		
 		given:
-		Criteria criteria = createSampleQuery()
+		CriteriaImpl criteria = createSampleQuery()
 		
 		Orb queryOrb = orbManager.getOrb(criteria.getCriteriaId())
 		assertNotNull queryOrb
@@ -102,13 +102,13 @@ class QueryManagerSpec extends Specification {
 		!orbManager.doesOrbExist(criteria.getCriteriaId())
 	}
 
-	private Criteria createSampleQuery() {
+	private CriteriaImpl createSampleQuery() {
 		long orbTypeInternalId = orbTypeManager.createOrbType("foo", new LinkedHashSet<String>())
 		OrbType orbType = orbTypeManager.getOrbType(orbTypeInternalId)
 		orbTypeManager.addAttribute(orbTypeInternalId, "orangeFuzz")
 		
 		String queryLabel = 'fuzzyThings'
-		Criteria criteria = criteriaFactory.createInstance(orbType, queryLabel)
+		CriteriaImpl criteria = criteriaFactory.createInstance(orbType, queryLabel)
 		long queryId = queryManager.addToCollection(criteria)
 		
 		return criteria
@@ -119,8 +119,8 @@ class QueryManagerSpec extends Specification {
 		given:
 		def tranId = beginTransactionService.beginTransaction()
 		
-		Criteria criteria = queryMother.getAggregateQuery()
-		Criteria criteriaAgg = extractAggregateCriteria(criteria)
+		CriteriaImpl criteria = queryMother.getAggregateQuery()
+		CriteriaImpl criteriaAgg = extractAggregateCriteria(criteria)
 		
 		when:
 		this.rollbackTransactionService.rollbackToSpecificTransaction(tranId)
@@ -136,7 +136,7 @@ class QueryManagerSpec extends Specification {
 	def 'test query remove rollback'() {
 		
 		given:
-		Criteria criteria = createSampleQuery()
+		CriteriaImpl criteria = createSampleQuery()
 		def tranId = beginTransactionService.beginTransaction()
 		
 		def doesExist = queryManager.doesCriteriaExist(criteria.getCriteriaId())
@@ -156,11 +156,11 @@ class QueryManagerSpec extends Specification {
 		
 		given:
 		when:
-		Criteria criteria = queryMother.getAggregateQuery()
+		CriteriaImpl criteria = queryMother.getAggregateQuery()
 		
 		OrbType orbType = orbTypeManager.getOrbType(criteria.getOrbTypeInternalId())
 		
-		Criteria criteriaAgg = extractAggregateCriteria(criteria)
+		CriteriaImpl criteriaAgg = extractAggregateCriteria(criteria)
 		
 		then:
 		queryManager.doesCriteriaExist(criteria.getCriteriaId())
@@ -170,7 +170,7 @@ class QueryManagerSpec extends Specification {
 		orbManager.doesOrbExist(criteriaAgg.getCriteriaId());
 
 		criteria
-		criteriaAgg.getParentId() != Criteria.UNSET_ID
+		criteriaAgg.getParentId() != CriteriaImpl.UNSET_ID
 	}
 	
 	def 'test query delete delete dependencies'() {
@@ -178,8 +178,8 @@ class QueryManagerSpec extends Specification {
 		given:
 		def tranId = beginTransactionService.beginTransaction()
 		
-		Criteria criteria = queryMother.getAggregateQuery()
-		Criteria criteriaAgg = extractAggregateCriteria(criteria)
+		CriteriaImpl criteria = queryMother.getAggregateQuery()
+		CriteriaImpl criteriaAgg = extractAggregateCriteria(criteria)
 		
 		when:
 		queryManager.delete(criteria.criteriaId, true)
@@ -197,8 +197,8 @@ class QueryManagerSpec extends Specification {
 		given:
 		def tranId = beginTransactionService.beginTransaction()
 		
-		Criteria criteria = queryMother.getAggregateQuery()
-		Criteria criteriaAgg = extractAggregateCriteria(criteria)
+		CriteriaImpl criteria = queryMother.getAggregateQuery()
+		CriteriaImpl criteriaAgg = extractAggregateCriteria(criteria)
 		
 		when:
 		queryManager.delete(criteria.criteriaId, false)
@@ -209,7 +209,7 @@ class QueryManagerSpec extends Specification {
 		exception.getMessage().contains("Orb has at least one dependency.")
 	}
 	
-	Criteria extractAggregateCriteria(Criteria criteria) {
+	CriteriaImpl extractAggregateCriteria(CriteriaImpl criteria) {
 		Constraint constraintAgg = criteria.logicalConstraint.constraintList.get(0)
 		
 		assertNotNull(constraintAgg)

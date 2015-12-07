@@ -15,7 +15,7 @@ import com.fletch22.orb.cache.local.Cache;
 import com.fletch22.orb.cache.reference.ReferenceUtil;
 import com.fletch22.orb.query.CriteriaFactory;
 import com.fletch22.orb.query.QueryManager;
-import com.fletch22.orb.query.CriteriaFactory.Criteria;
+import com.fletch22.orb.query.CriteriaImpl;
 import com.fletch22.orb.query.constraint.Constraint;
 
 @Component
@@ -85,7 +85,7 @@ public class TestDataWithReferences {
 		
 		OrbType orbType = orbTypeManager.getOrbType(orbTypeInternalId);
 		
-		Criteria criteria = criteriaFactory.createInstance(orbType, "foo");
+		CriteriaImpl criteria = criteriaFactory.createInstance(orbType, "foo");
 		
 		Constraint constraint = Constraint.eq(ATTRIBUTE_COLOR, "green");
 		

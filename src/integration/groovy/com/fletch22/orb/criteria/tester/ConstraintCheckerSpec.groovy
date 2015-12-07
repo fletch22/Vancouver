@@ -11,15 +11,14 @@ import spock.lang.Specification
 import com.fletch22.orb.IntegrationTests
 import com.fletch22.orb.Orb
 import com.fletch22.orb.OrbManager
-import com.fletch22.orb.OrbType
 import com.fletch22.orb.OrbTypeManager
 import com.fletch22.orb.cache.indexcollection.IndexedCollectionFactory
 import com.fletch22.orb.cache.local.Cache
 import com.fletch22.orb.criteria.DefLimitationMother
-import com.fletch22.orb.limitation.DefLimitationManager;
+import com.fletch22.orb.limitation.DefLimitationManager
+import com.fletch22.orb.query.CriteriaImpl
 import com.fletch22.orb.query.LogicalOperator
-import com.fletch22.orb.query.CriteriaFactory.Criteria
-import com.fletch22.orb.query.constraint.Constraint;
+import com.fletch22.orb.query.constraint.Constraint
 import com.fletch22.util.StopWatch
 
 @org.junit.experimental.categories.Category(IntegrationTests.class)
@@ -51,7 +50,7 @@ class ConstraintCheckerSpec extends Specification {
 
 		given:
 		
-		Criteria criteria = defCriteriaMother.createAndAddCriteriaSimple();
+		CriteriaImpl criteria = defCriteriaMother.createAndAddCriteriaSimple();
 		
 		String expectedBarValue = "cat";
 

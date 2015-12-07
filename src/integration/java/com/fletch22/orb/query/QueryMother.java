@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 import com.fletch22.orb.OrbType;
 import com.fletch22.orb.OrbTypeManager;
-import com.fletch22.orb.query.CriteriaFactory.Criteria;
+import com.fletch22.orb.query.CriteriaImpl;
 import com.fletch22.orb.query.constraint.Constraint;
 import com.fletch22.orb.query.constraint.ConstraintDetailsAggregate;
 import com.fletch22.orb.query.constraint.aggregate.Aggregate;
@@ -23,7 +23,7 @@ public class QueryMother {
 	
 	@Autowired
 	QueryManager queryManager;
-	public Criteria getAggregateQuery() {
+	public CriteriaImpl getAggregateQuery() {
 	
 		String attributeName = "bar";
 		
@@ -32,9 +32,9 @@ public class QueryMother {
 		orbTypeManager.addAttribute(orbTypeInternalId, attributeName);
 		
 		String queryLabel = "fuzzyThings";
-		Criteria criteria = criteriaFactory.createInstance(orbType, queryLabel);
+		CriteriaImpl criteria = criteriaFactory.createInstance(orbType, queryLabel);
 		
-		Criteria criteriaAgg = criteriaFactory.createInstance(orbType, "agg");
+		CriteriaImpl criteriaAgg = criteriaFactory.createInstance(orbType, "agg");
 		
 		criteria.addAnd(Constraint.is(attributeName, Aggregate.UNIQUE, criteriaAgg, attributeName));
 		

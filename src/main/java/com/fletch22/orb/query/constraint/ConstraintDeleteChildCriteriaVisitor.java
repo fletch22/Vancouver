@@ -1,6 +1,6 @@
 package com.fletch22.orb.query.constraint;
 
-import com.fletch22.orb.query.CriteriaFactory.Criteria;
+import com.fletch22.orb.query.CriteriaImpl;
 import com.fletch22.orb.query.CriteriaManager;
 import com.fletch22.orb.query.LogicalConstraint;
 
@@ -22,7 +22,7 @@ public class ConstraintDeleteChildCriteriaVisitor {
 
 	public void visit(ConstraintDetailsAggregate constraintDetailsAggregate) {
 		
-		Criteria criteriaAgg = constraintDetailsAggregate.criteriaForAggregation;
+		CriteriaImpl criteriaAgg = constraintDetailsAggregate.criteriaForAggregation;
 		
 		criteriaManager.delete(criteriaAgg.getCriteriaId(), isDeleteDependencies);
 	}

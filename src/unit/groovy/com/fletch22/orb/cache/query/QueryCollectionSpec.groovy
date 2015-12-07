@@ -10,7 +10,7 @@ import spock.lang.Specification
 
 import com.fletch22.orb.OrbType
 import com.fletch22.orb.query.CriteriaFactory
-import com.fletch22.orb.query.CriteriaFactory.Criteria
+import com.fletch22.orb.query.CriteriaImpl
 
 public class QueryCollectionSpec extends Specification {
 	
@@ -32,10 +32,10 @@ public class QueryCollectionSpec extends Specification {
 		long orbTypeInternalId = 123555
 		OrbType orbType = new OrbType(orbTypeInternalId, "foo", 123, null);
 
-		Criteria criteriaOriginal = createSampleCriteria(orbType)
+		CriteriaImpl criteriaOriginal = createSampleCriteria(orbType)
 		queryCollection.add(criteriaOriginal)
 		
-		Criteria criteriaToValidate = criteriaFactory.createInstance(orbType, "shanks!")
+		CriteriaImpl criteriaToValidate = criteriaFactory.createInstance(orbType, "shanks!")
 		criteriaToValidate.setId(444)
 		
 		when:
@@ -53,10 +53,10 @@ public class QueryCollectionSpec extends Specification {
 		
 		OrbType orbType = new OrbType(123, "foo", 123, null);
 
-		Criteria criteriaOriginal = createSampleCriteria(orbType)
+		CriteriaImpl criteriaOriginal = createSampleCriteria(orbType)
 		queryCollection.add(criteriaOriginal)
 		
-		Criteria criteriaToValidate = criteriaFactory.createInstance(orbType, "first")
+		CriteriaImpl criteriaToValidate = criteriaFactory.createInstance(orbType, "first")
 		criteriaToValidate.setId(444)
 		
 		when:
@@ -73,11 +73,11 @@ public class QueryCollectionSpec extends Specification {
 		
 		OrbType orbType = new OrbType(123, "foo", 123, null);
 
-		Criteria criteriaOriginal = createSampleCriteria(orbType)
+		CriteriaImpl criteriaOriginal = createSampleCriteria(orbType)
 		queryCollection.add(criteriaOriginal)
 		
 		OrbType orbType2 = new OrbType(234, "fooManChu", 345, null)
-		Criteria criteriaToValidate = criteriaFactory.createInstance(orbType2, "first")
+		CriteriaImpl criteriaToValidate = criteriaFactory.createInstance(orbType2, "first")
 		criteriaToValidate.setId(444)
 		
 		when:
@@ -94,7 +94,7 @@ public class QueryCollectionSpec extends Specification {
 		
 		OrbType orbType = new OrbType(123, "foo", 123, null);
 
-		Criteria criteriaOriginal = createSampleCriteria(orbType)
+		CriteriaImpl criteriaOriginal = createSampleCriteria(orbType)
 		
 		when:
 		queryCollection.add(criteriaOriginal)
@@ -111,7 +111,7 @@ public class QueryCollectionSpec extends Specification {
 		
 		OrbType orbType = new OrbType(123, "foo", 123, null);
 
-		Criteria criteriaOriginal = createSampleCriteria(orbType)
+		CriteriaImpl criteriaOriginal = createSampleCriteria(orbType)
 		
 		queryCollection.add(criteriaOriginal)
 		
@@ -119,7 +119,7 @@ public class QueryCollectionSpec extends Specification {
 		assertEquals 1, keySet.size()
 		
 		when:
-		Criteria criteria = queryCollection.removeByCriteriaId(criteriaOriginal.getCriteriaId())
+		CriteriaImpl criteria = queryCollection.removeByCriteriaId(criteriaOriginal.getCriteriaId())
 		
 		then:
 		criteria.is(criteriaOriginal)
@@ -137,14 +137,14 @@ public class QueryCollectionSpec extends Specification {
 		
 		OrbType orbType = new OrbType(123, "foo", 123, null);
 
-		Criteria criteriaOriginal = createSampleCriteria(orbType)
+		CriteriaImpl criteriaOriginal = createSampleCriteria(orbType)
 		queryCollection.add(criteriaOriginal)
 		
 		Set<Long> keySet = queryCollection.criteriaByOrbTypeCollection.collection.keySet()
 		assertEquals 1, keySet.size()
 		
 		when:
-		List<Criteria> criteriaList = queryCollection.removeByOrbTypeId(criteriaOriginal.getOrbTypeInternalId())
+		List<CriteriaImpl> criteriaList = queryCollection.removeByOrbTypeId(criteriaOriginal.getOrbTypeInternalId())
 		
 		then:
 		criteriaList.get(0).is(criteriaOriginal)
@@ -162,7 +162,7 @@ public class QueryCollectionSpec extends Specification {
 		
 		OrbType orbType = new OrbType(123, "foo", 123, null);
 
-		Criteria criteriaOriginal = createSampleCriteria(orbType)
+		CriteriaImpl criteriaOriginal = createSampleCriteria(orbType)
 		
 		queryCollection.add(criteriaOriginal)
 		
@@ -170,7 +170,7 @@ public class QueryCollectionSpec extends Specification {
 		assertEquals 1, keySet.size()
 		
 		when:
-		Criteria criteria = queryCollection.clear()
+		CriteriaImpl criteria = queryCollection.clear()
 		
 		then:
 		queryCollection.criteriaByIdMap.size() == 0
@@ -187,7 +187,7 @@ public class QueryCollectionSpec extends Specification {
 		
 		OrbType orbType = new OrbType(123, "foo", 123, null);
 
-		Criteria criteriaOriginal = createSampleCriteria(orbType)
+		CriteriaImpl criteriaOriginal = createSampleCriteria(orbType)
 		
 		queryCollection.add(criteriaOriginal)
 		
@@ -201,8 +201,8 @@ public class QueryCollectionSpec extends Specification {
 		!doesExistNow
 	}
 	
-	private Criteria createSampleCriteria(OrbType orbType) {
-		Criteria criteriaOriginal = criteriaFactory.createInstance(orbType, 'first')
+	private CriteriaImpl createSampleCriteria(OrbType orbType) {
+		CriteriaImpl criteriaOriginal = criteriaFactory.createInstance(orbType, 'first')
 		criteriaOriginal.setId(234)
 		return criteriaOriginal
 	}

@@ -6,7 +6,7 @@ import java.util.Set;
 import org.springframework.stereotype.Component;
 
 import com.fletch22.orb.cache.query.CriteriaCollection;
-import com.fletch22.orb.query.CriteriaFactory.Criteria;
+import com.fletch22.orb.query.CriteriaImpl;
 import com.fletch22.orb.query.constraint.ConstraintDetails;
 import com.fletch22.orb.query.constraint.ConstraintRenameChildCriteriaAttributeVisitor;
 import com.fletch22.orb.query.sort.CriteriaSortInfo;
@@ -18,7 +18,7 @@ public class CriteriaAttributeRenameHandler {
 
 		Set<Long> criteriaKey = criteriaCollection.getKeys();
 		for (long id : criteriaKey) {
-			Criteria criteria = criteriaCollection.getByQueryId(id);
+			CriteriaImpl criteria = criteriaCollection.getByQueryId(id);
 
 			if (criteria.getOrbType().id == orbTypeInternalId) {
 				renameInConstraints(criteria, attributeOldName, attributeNewName);
@@ -27,7 +27,7 @@ public class CriteriaAttributeRenameHandler {
 		}
 	}
 
-	private void renameInSortInfo(Criteria criteria, String attributeOldName, String attributeNewName) {
+	private void renameInSortInfo(CriteriaImpl criteria, String attributeOldName, String attributeNewName) {
 
 		List<CriteriaSortInfo> criteriaSortInfoList = criteria.getSortInfoList();
 		for (CriteriaSortInfo criteriaSortInfo : criteriaSortInfoList) {
@@ -38,7 +38,7 @@ public class CriteriaAttributeRenameHandler {
 		}
 	}
 
-	private void renameInConstraints(Criteria criteria, String attributeOldName, String attributeNewName) {
+	private void renameInConstraints(CriteriaImpl criteria, String attributeOldName, String attributeNewName) {
 		if (criteria.hasConstraints()) {
 			
 			ConstraintRenameChildCriteriaAttributeVisitor visitor = new ConstraintRenameChildCriteriaAttributeVisitor(attributeOldName, attributeNewName);
