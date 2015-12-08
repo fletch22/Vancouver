@@ -43,9 +43,6 @@ class QueryManagerSpec extends Specification {
 	OrbManager orbManager
 	
 	@Autowired
-	CriteriaFactory criteriaFactory
-	
-	@Autowired
 	Cache cache
 	
 	@Autowired
@@ -73,7 +70,7 @@ class QueryManagerSpec extends Specification {
 		OrbType orbType = orbTypeManager.getOrbType(orbTypeInternalId)
 		
 		String queryLabel = 'fuzzyThings'
-		Criteria criteria = criteriaFactory.createInstance(orbType, queryLabel)
+		Criteria criteria = new CriteriaStandard(orbType, queryLabel)
 		queryManager.addToCollection(criteria)
 		
 		when:
@@ -108,7 +105,7 @@ class QueryManagerSpec extends Specification {
 		orbTypeManager.addAttribute(orbTypeInternalId, "orangeFuzz")
 		
 		String queryLabel = 'fuzzyThings'
-		Criteria criteria = criteriaFactory.createInstance(orbType, queryLabel)
+		Criteria criteria = new CriteriaStandard(orbType, queryLabel)
 		long queryId = queryManager.addToCollection(criteria)
 		
 		return criteria

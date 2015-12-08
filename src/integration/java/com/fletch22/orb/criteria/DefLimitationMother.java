@@ -9,14 +9,11 @@ import com.fletch22.orb.OrbManager;
 import com.fletch22.orb.OrbType;
 import com.fletch22.orb.OrbTypeManager;
 import com.fletch22.orb.limitation.DefLimitationManager;
-import com.fletch22.orb.query.CriteriaFactory;
 import com.fletch22.orb.query.Criteria;
+import com.fletch22.orb.query.CriteriaStandard;
 
 @Component
 public class DefLimitationMother {
-
-	@Autowired
-	CriteriaFactory criteriaFactory;
 
 	@Autowired
 	OrbTypeManager orbTypeManager;
@@ -46,7 +43,7 @@ public class DefLimitationMother {
 
 	public Criteria createAndAddCriteriaSimple() {
 		
-		Criteria criteria = criteriaFactory.createInstance(getOrbType(), "foo");
+		Criteria criteria = new CriteriaStandard(getOrbType(), "foo");
 		
 		defLimitationManager.addToCollection(criteria);
 		

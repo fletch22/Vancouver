@@ -12,8 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fletch22.orb.OrbType;
-import com.fletch22.orb.query.CriteriaFactory;
 import com.fletch22.orb.query.Criteria;
+import com.fletch22.orb.query.CriteriaStandard;
 import com.fletch22.util.RandomUtil;
 import com.fletch22.util.StopWatch;
 
@@ -53,15 +53,13 @@ public class LimitationCollectionTest {
 
 	private void populateCriteriaList(List<Criteria> originalList) {
 
-		CriteriaFactory criteriaFactory = new CriteriaFactory();
-
 		RandomUtil randomUtil = new RandomUtil();
 
 		int count = 1000;
 		for (int i = 0; i < count; i++) {
 
 			OrbType orbType = new OrbType(i, randomUtil.getRandomString(10), new BigDecimal("12345678"), null);
-			Criteria criteria = criteriaFactory.createInstance(orbType, "foo");
+			Criteria criteria = new CriteriaStandard(orbType, "foo");
 			originalList.add(criteria);
 		}
 	}

@@ -9,14 +9,12 @@ import spock.lang.Shared
 import spock.lang.Specification
 
 import com.fletch22.orb.OrbType
-import com.fletch22.orb.query.CriteriaFactory
 import com.fletch22.orb.query.Criteria
+import com.fletch22.orb.query.CriteriaStandard
 
 public class QueryCollectionSpec extends Specification {
 	
 	Logger logger = LoggerFactory.getLogger(QueryCollectionSpec)
-	
-	@Shared CriteriaFactory criteriaFactory = new CriteriaFactory()
 	
 	@Shared CriteriaCollection queryCollection = new QueryCollection()
 	
@@ -35,7 +33,7 @@ public class QueryCollectionSpec extends Specification {
 		Criteria criteriaOriginal = createSampleCriteria(orbType)
 		queryCollection.add(criteriaOriginal)
 		
-		Criteria criteriaToValidate = criteriaFactory.createInstance(orbType, "shanks!")
+		Criteria criteriaToValidate = new CriteriaStandard(orbType, "shanks!")
 		criteriaToValidate.setId(444)
 		
 		when:
@@ -56,7 +54,7 @@ public class QueryCollectionSpec extends Specification {
 		Criteria criteriaOriginal = createSampleCriteria(orbType)
 		queryCollection.add(criteriaOriginal)
 		
-		Criteria criteriaToValidate = criteriaFactory.createInstance(orbType, "first")
+		Criteria criteriaToValidate = new CriteriaStandard(orbType, "first")
 		criteriaToValidate.setId(444)
 		
 		when:
@@ -77,7 +75,7 @@ public class QueryCollectionSpec extends Specification {
 		queryCollection.add(criteriaOriginal)
 		
 		OrbType orbType2 = new OrbType(234, "fooManChu", 345, null)
-		Criteria criteriaToValidate = criteriaFactory.createInstance(orbType2, "first")
+		Criteria criteriaToValidate = new CriteriaStandard(orbType2, "first")
 		criteriaToValidate.setId(444)
 		
 		when:
@@ -202,7 +200,7 @@ public class QueryCollectionSpec extends Specification {
 	}
 	
 	private Criteria createSampleCriteria(OrbType orbType) {
-		Criteria criteriaOriginal = criteriaFactory.createInstance(orbType, 'first')
+		Criteria criteriaOriginal = new CriteriaStandard(orbType, 'first')
 		criteriaOriginal.setId(234)
 		return criteriaOriginal
 	}

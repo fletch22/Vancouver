@@ -19,10 +19,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.fletch22.aop.QueryThing;
 import com.fletch22.orb.OrbType;
-import com.fletch22.orb.query.CriteriaFactory;
+import com.fletch22.orb.query.Criteria;
+import com.fletch22.orb.query.CriteriaStandard;
 import com.fletch22.orb.query.LogicalConstraint;
 import com.fletch22.orb.query.LogicalOperator;
-import com.fletch22.orb.query.Criteria;
 import com.fletch22.orb.query.constraint.Constraint;
 import com.fletch22.orb.query.constraint.ConstraintDetailsSingleValue;
 import com.google.gson.Gson;
@@ -32,9 +32,6 @@ import com.google.gson.Gson;
 public class JsonWrapperTest {
 	
 	Logger logger = LoggerFactory.getLogger(JsonWrapperTest.class);
-	
-	@Autowired
-	CriteriaFactory criteriaFactory;
 	
 	@Autowired
 	GsonFactory gsonFactory;
@@ -227,7 +224,7 @@ public class JsonWrapperTest {
 		OrbType orbType = new OrbType(123, "foo", new BigDecimal("3456"), set);
 		long orbTypeInternalIdOriginal = orbType.id;
 		
-		Criteria criteria = criteriaFactory.createInstance(orbType, "foo");
+		Criteria criteria = new CriteriaStandard(orbType, "foo");
 		
 		JsonWrapper jsonWrapper = new JsonWrapper(criteria, gsonFactory);
 		
@@ -248,7 +245,7 @@ public class JsonWrapperTest {
 		OrbType orbType = new OrbType(123, "foo", new BigDecimal("3456"), set);
 		long orbTypeInternalIdOriginal = orbType.id;
 		
-		Criteria criteria = criteriaFactory.createInstance(orbType, "foo"); 
+		Criteria criteria = new CriteriaStandard(orbType, "foo"); 
 		
 		Constraint constraint = Constraint.eq("bar", "somevalue");
 		criteria.addAnd(constraint);

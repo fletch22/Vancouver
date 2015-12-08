@@ -183,7 +183,7 @@ public class ConstraintProcessor implements ConstraintProcessVisitor {
 	private Set<String> getAttributeValuesByFrequency(ConstraintDetailsAggregate constraintDetailsAggregate, OrbResultSet orbResultSet, int frequencyRequired) {
 		Map<String, Integer> aggregateColumnValues = new HashMap<String, Integer>();
 		for (Orb orb : orbResultSet.orbList) {
-			String value = orb.getUserDefinedProperties().get(constraintDetailsAggregate.aggregationAttributeName);
+			String value = orb.getUserDefinedProperties().get(constraintDetailsAggregate.criteriaForAggregation.fieldOfInterest);
 			
 			Integer frequency = aggregateColumnValues.get(value);
 			frequency = (frequency == null) ? 1: frequency + 1;

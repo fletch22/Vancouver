@@ -25,9 +25,6 @@ public class QueryManagerImpl extends AbstractCriteriaManager implements QueryMa
 	Cache cache;
 
 	@Autowired
-	CriteriaFactory criteriaFactory;
-	
-	@Autowired
 	RollbackTransactionService rollbackTransactionService;
 	
 	@Autowired
@@ -76,7 +73,7 @@ public class QueryManagerImpl extends AbstractCriteriaManager implements QueryMa
 	public OrbResultSet findByAttribute(long orbTypeInternalId, String attributeName, String attributeValueToFind) {
 
 		OrbType orbType = orbTypeManager.getOrbType(orbTypeInternalId);
-		Criteria criteria = criteriaFactory.createInstance(orbType, "findByAttribute");
+		Criteria criteria = new CriteriaStandard(orbType, "findByAttribute");
 		criteria.addAnd(Constraint.eq(attributeName, attributeValueToFind));
 
 		return executeQuery(criteria);

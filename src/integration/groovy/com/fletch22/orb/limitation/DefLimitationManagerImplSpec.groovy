@@ -7,14 +7,14 @@ import org.springframework.test.context.ContextConfiguration
 
 import spock.lang.Specification
 
-import com.fletch22.orb.IntegrationSystemInitializer;
+import com.fletch22.orb.IntegrationSystemInitializer
 import com.fletch22.orb.IntegrationTests
 import com.fletch22.orb.OrbType
 import com.fletch22.orb.OrbTypeManager
-import com.fletch22.orb.client.service.BeginTransactionService;
-import com.fletch22.orb.command.transaction.RollbackTransactionService;
-import com.fletch22.orb.query.CriteriaFactory
+import com.fletch22.orb.client.service.BeginTransactionService
+import com.fletch22.orb.command.transaction.RollbackTransactionService
 import com.fletch22.orb.query.Criteria
+import com.fletch22.orb.query.CriteriaStandard
 
 @org.junit.experimental.categories.Category(IntegrationTests.class)
 @ContextConfiguration(locations = "classpath:/springContext-test.xml")
@@ -22,9 +22,6 @@ class DefLimitationManagerImplSpec extends Specification {
 
 	@Autowired
 	DefLimitationManager defLimitationManager
-
-	@Autowired
-	CriteriaFactory criteriaFactory
 
 	@Autowired
 	OrbTypeManager orbTypeManager
@@ -53,7 +50,7 @@ class DefLimitationManagerImplSpec extends Specification {
 
 		OrbType orbType = orbTypeManager.getOrbType(orbTypeInternalId)
 
-		Criteria criteria = criteriaFactory.createInstance(orbType, "howdy")
+		Criteria criteria = new CriteriaStandard(orbType, "howdy")
 
 		when:
 		defLimitationManager.addToCollection(criteria)
@@ -70,7 +67,7 @@ class DefLimitationManagerImplSpec extends Specification {
 
 		OrbType orbType = orbTypeManager.getOrbType(orbTypeInternalId)
 
-		Criteria criteria = criteriaFactory.createInstance(orbType, "howdy")
+		Criteria criteria = new CriteriaStandard(orbType, "howdy")
 
 		defLimitationManager.addToCollection(criteria)
 

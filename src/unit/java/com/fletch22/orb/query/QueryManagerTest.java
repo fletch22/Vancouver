@@ -36,9 +36,6 @@ public class QueryManagerTest {
 	Logger logger = LoggerFactory.getLogger(QueryManagerTest.class);
 	
 	@Autowired
-	CriteriaFactory criteriaFactory;
-	
-	@Autowired
 	OrbTypeManager orbTypeManager;
 	
 	@Autowired
@@ -82,7 +79,7 @@ public class QueryManagerTest {
 		stopWatch.start();
 		OrbType orbType = orbTypeManager.getOrbType(orbTypeInternalId);
 		
-		Criteria criteria = criteriaFactory.createInstance(orbType, "foo");
+		Criteria criteria = new CriteriaStandard(orbType, "foo");
 		
 		// Act
 		long orbInternalId = queryManager.addToCollection(criteria);
@@ -104,10 +101,10 @@ public class QueryManagerTest {
 		
 		String dupeName = "bar";
 		
-		Criteria criteria1 = criteriaFactory.createInstance(orbType, dupeName);
+		Criteria criteria1 = new CriteriaStandard(orbType, dupeName);
 		queryManager.addToCollection(criteria1);
 		
-		Criteria criteria2 = criteriaFactory.createInstance(orbType, dupeName);
+		Criteria criteria2 = new CriteriaStandard(orbType, dupeName);
 		
 		boolean wasExceptionThrown = false;
 		try {
@@ -133,7 +130,7 @@ public class QueryManagerTest {
 		
 		BigDecimal tranId = beginTransactionService.beginTransaction();
 		
-		Criteria criteria = criteriaFactory.createInstance(orbType, "foo");
+		Criteria criteria = new CriteriaStandard(orbType, "foo");
 		
 		queryManager.addToCollection(criteria);
 		
@@ -155,7 +152,7 @@ public class QueryManagerTest {
 		
 		OrbType orbType = orbTypeManager.getOrbType(orbTypeInternalId);
 		
-		Criteria criteria = criteriaFactory.createInstance(orbType, "foo");
+		Criteria criteria = new CriteriaStandard(orbType, "foo");
 		
 		long orbInternalId = queryManager.addToCollection(criteria);
 		

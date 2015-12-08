@@ -1,8 +1,7 @@
 package com.fletch22.orb.query.constraint;
 
 import com.fletch22.orb.cache.local.CacheEntry;
-import com.fletch22.orb.query.Criteria;
-import com.fletch22.orb.query.CriteriaManager;
+import com.fletch22.orb.query.CriteriaAggregate;
 import com.fletch22.orb.query.RelationshipOperator;
 import com.fletch22.orb.query.constraint.aggregate.Aggregate;
 import com.googlecode.cqengine.query.Query;
@@ -11,8 +10,7 @@ public class ConstraintDetailsAggregate extends ConstraintDetails {
 	
 	public RelationshipOperator relationshipOperator;
 	public Aggregate aggregate;
-	public Criteria criteriaForAggregation;
-	public String aggregationAttributeName;
+	public CriteriaAggregate criteriaForAggregation;
 	
 	@Override
 	public Constraint[] getConstraints() {
