@@ -21,6 +21,7 @@ public class RedoAndUndoLogging {
 		try {
 			log(commandProcessActionPackage, operationResult);
 		} catch (Exception e) {
+			e.printStackTrace();
 			Exception explained = new Exception("Orb DB and SQL DB are now out of sync. Restart is recommended.", e);
 			throw new RuntimeException(explained);
 		}

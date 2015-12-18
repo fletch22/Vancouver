@@ -12,6 +12,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.fletch22.orb.OrbTypeConstants;
 import com.fletch22.orb.command.orbType.dto.AddOrbTypeDto;
+import com.fletch22.util.json.GsonFactory;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -25,6 +26,9 @@ public class AddOrbTypeCommanderTest {
 	
 	@Autowired
 	AddOrbTypeCommand addOrbTypeCommand;
+	
+	@Autowired
+	GsonFactory gsonFactory;
 	
 	@Test
 	public void testSpring() {
@@ -53,7 +57,7 @@ public class AddOrbTypeCommanderTest {
 		addOrbTypePackage.label = "foo";
 		addOrbTypePackage.orbInternalId = OrbTypeConstants.ORBTYPE_INTERNAL_ID_UNSET;
 		
-		Gson gson = new Gson();
+		Gson gson = gsonFactory.getInstance();
 		JsonParser jsonParser = new JsonParser();
 		
 		CommandWrapper commandWrapper = new CommandWrapper();
@@ -88,7 +92,7 @@ public class AddOrbTypeCommanderTest {
 		
 		@SuppressWarnings("unchecked")
 		public T getObject(JsonElement jsonCommand, Class<?> type) {
-			Gson gson = new Gson();
+			Gson gson = gsonFactory.getInstance();
 			
 			Object object;
 			try {

@@ -6,13 +6,15 @@ import java.util.Stack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fletch22.Fletch22ApplicationContext;
+import com.fletch22.util.json.GsonFactory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 
 public class UndoActionBundle {
 	
-	Logger logger = LoggerFactory.getLogger(UndoActionBundle.class);
+	transient Logger logger = LoggerFactory.getLogger(UndoActionBundle.class);
 	
 	@Expose
 	private Stack<UndoAction> actions = new Stack<UndoAction>();
@@ -26,13 +28,11 @@ public class UndoActionBundle {
 	}
 	
 	public StringBuilder toJson() {
-		Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-		return new StringBuilder(gson.toJson(this));
+		return new StringBuilder(getGson().toJson(this));
 	}
 	
 	public static UndoActionBundle fromJson(StringBuilder value) {
-		Gson gson = new Gson();
-		return gson.fromJson(value.toString(), UndoActionBundle.class);
+		return getGson().fromJson(value.toString(), UndoActionBundle.class);
 	}
 
 	public void addAction(Stack<UndoAction> actions) {
@@ -41,5 +41,9 @@ public class UndoActionBundle {
 
 	public void clearUndoActions() {
 		this.actions.clear();
+	}
+	
+	public static Gson getGson() {
+		return Fletch22ApplicationContext.getApplicationContext().getBean(GsonFactory.class).getInstance();
 	}
 }

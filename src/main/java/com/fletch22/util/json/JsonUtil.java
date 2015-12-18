@@ -1,21 +1,21 @@
 package com.fletch22.util.json;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import com.google.gson.Gson;
 
 @Component
 public class JsonUtil {
 	
-	Gson gson = new Gson();
+	@Autowired
+	GsonFactory gsonFactory;
 
 	public String escapeJsonIllegals(String value) {
-		value = gson.toJson(value);
+		value = gsonFactory.getInstance().toJson(value);
 		return value.substring(1, value.length() - 1);
 	}
 	
 	public String unescapeJsonIllegals(String value) 
 	{
-        return gson.fromJson(value, String.class);
+        return gsonFactory.getInstance().fromJson(value, String.class);
 	}
 }

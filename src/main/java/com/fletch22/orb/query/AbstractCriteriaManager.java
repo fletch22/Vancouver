@@ -14,7 +14,6 @@ import com.fletch22.orb.OrbManager;
 import com.fletch22.orb.OrbType;
 import com.fletch22.orb.OrbTypeManager;
 import com.fletch22.orb.cache.query.CriteriaCollection;
-import com.fletch22.orb.query.Criteria;
 import com.fletch22.orb.query.constraint.ConstraintDeleteChildCriteriaVisitor;
 import com.fletch22.orb.query.constraint.ConstraintRegistrationVisitor;
 import com.fletch22.orb.query.constraint.ConstraintSetParentVisitor;
@@ -112,9 +111,22 @@ public abstract class AbstractCriteriaManager implements CriteriaManager {
 		boolean doesExist = doesCriteriaExist(criteriaId);
 		if (isDeleteDependencies) {
 			if (doesExist) {
-				deleteCriteriaChildren(criteriaId, isDeleteDependencies);
 				
-				detach(criteriaId);
+//				deleteCriteriaChildren(criteriaId, isDeleteDependencies);
+//				detach(criteriaId);
+				
+				Criteria criteriaRoot = getRootParentCriteria(criteriaId);
+				logger.info("Got root parent.");
+				if (criteriaRoot != null) {
+					logger.info("Handling root: {}", criteriaRoot.getCriteriaId());
+					detach(criteriaRoot.getCriteriaId());
+					deleteCriteriaChildren(criteriaRoot, isDeleteDependencies);
+				} else {
+					logger.info("Root was removed. Deleting {}", criteriaId);
+					Criteria criteria = this.get(criteriaId);
+					detach(criteria.getCriteriaId());
+					deleteCriteriaChildren(criteria, isDeleteDependencies);
+				}
 			}
 		} else {
 			if (doesExist) {
@@ -124,6 +136,23 @@ public abstract class AbstractCriteriaManager implements CriteriaManager {
 		}
 	}
 
+	private void deleteCriteriaChildren(Criteria criteria, boolean isDeleteDependencies) {
+		if (criteria.hasConstraints()) {
+			ConstraintDeleteChildCriteriaVisitor constraintDeleteChildCriteriaVisitor = new ConstraintDeleteChildCriteriaVisitor(this, isDeleteDependencies);
+			criteria.logicalConstraint.acceptConstraintDeleteChildCriteriaVisitor(constraintDeleteChildCriteriaVisitor);
+		}
+	}
+
+	private Criteria getRootParentCriteria(long criteriaId) {
+				
+		Criteria criteria = this.get(criteriaId);
+		if (criteria != null && criteria.hasParent()) {
+			criteria = getRootParentCriteria(criteria.getParentId());
+		}
+		
+		return criteria;
+	}
+	
 	private void deleteCriteriaChildren(long criteriaId, boolean isDeleteDependencies) {
 		Criteria criteria = get(criteriaId);
 		if (criteria.hasConstraints()) {
@@ -155,7 +184,9 @@ public abstract class AbstractCriteriaManager implements CriteriaManager {
 	
 	private void deleteAllCriteriaBackedOrbsRelatedToType(long orbTypeInternalId, boolean isDeleteDependencies) {
 		for (long id: getCriteriaIdsByTypeIds(orbTypeInternalId)) {
-			orbManager.deleteOrb(id, isDeleteDependencies);
+			if (orbManager.doesOrbExist(id)) {
+				orbManager.deleteOrb(id, isDeleteDependencies);
+			}
 		}
 	}
 	

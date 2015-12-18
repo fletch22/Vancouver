@@ -59,6 +59,8 @@ public class MethodCallCommandTest {
 		
 		MethodCallCommand methodCallCommand = new MethodCallCommand();
 		
+		methodCallCommand.gsonFactory = new GsonFactory();
+		
 		// Act
 		MethodCallDto methodCallDtoActual = methodCallCommand.fromJson(sb);
 		

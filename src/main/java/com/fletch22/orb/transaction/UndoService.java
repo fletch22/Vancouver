@@ -29,7 +29,7 @@ public class UndoService {
 		while (!undoActionBundle.getActions().empty()) {
 			UndoAction undoAction = undoActionBundle.getActions().pop();
 			
-			logger.debug("Action: {}", undoAction.action);
+			logger.info("Action: {}", undoAction.action);
 			
 			CommandProcessActionPackage commandProcessActionPackage = commandProcessActionPackageFactory.getInstanceForRestoreMode(undoAction.action, undoAction.tranDate);
 			

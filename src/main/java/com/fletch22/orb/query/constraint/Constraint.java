@@ -9,9 +9,12 @@ import com.fletch22.orb.query.constraint.aggregate.Aggregate;
 import com.googlecode.cqengine.query.Query;
 
 public abstract class Constraint {
+	
 	public abstract Constraint[] getConstraints();
 	
-	public Constraint() {}
+	public Constraint() {
+		super();
+	}
 	
 	public static Constraint eq(String attributeName, String operativeValue) {
 		ConstraintDetailsSingleValue constraintDetails = new ConstraintDetailsSingleValue();

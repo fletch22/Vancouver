@@ -23,7 +23,6 @@ public class ConstraintDeleteChildCriteriaVisitor {
 	public void visit(ConstraintDetailsAggregate constraintDetailsAggregate) {
 		
 		Criteria criteriaAgg = constraintDetailsAggregate.criteriaForAggregation;
-		
 		criteriaManager.delete(criteriaAgg.getCriteriaId(), isDeleteDependencies);
 	}
 

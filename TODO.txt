@@ -218,4 +218,7 @@ Rename Criteria to CriteriaImpl then create abstract parent.
 Status: Done.
 
 Create CriteriaAggregation and rename CriteriaImpl to CriteriaStandard
+Status: Done.
+
+Test can roll back delete inner criteriaAgg.
 Status: Not done.

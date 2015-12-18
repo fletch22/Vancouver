@@ -34,9 +34,9 @@ public class CommandProcessActionPackageFactory {
 		BigDecimal tranDate = tranDateGenerator.getTranDate();
 		
 		commandProcessActionPackage.setAction(action)
-		.setTranDate(tranDate)
-		.setTranId(tranDate)
-		.setUndoActionBundle(new UndoActionBundle());
+			.setTranDate(tranDate)
+			.setTranId(tranDate)
+			.setUndoActionBundle(new UndoActionBundle());
 		
 		return commandProcessActionPackage;
 	}

@@ -12,6 +12,10 @@ public class ConstraintDetailsAggregate extends ConstraintDetails {
 	public Aggregate aggregate;
 	public CriteriaAggregate criteriaForAggregation;
 	
+	public ConstraintDetailsAggregate() {
+		super();
+	}
+	
 	@Override
 	public Constraint[] getConstraints() {
 		

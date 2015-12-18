@@ -41,6 +41,7 @@ import com.fletch22.orb.rollback.UndoAction;
 import com.fletch22.orb.rollback.UndoActionBundle;
 import com.fletch22.orb.service.MethodCallService;
 import com.fletch22.orb.transaction.UndoService;
+import com.fletch22.util.json.GsonFactory;
 
 @Component
 public class CommandProcessor {
@@ -109,6 +110,9 @@ public class CommandProcessor {
 	
 	@Autowired
 	RedoAndUndoLogging redoAndUndoLogging;
+	
+	@Autowired
+	GsonFactory gsonFactory;
 
 	public OperationResult processAction(CommandProcessActionPackage commandProcessActionPackage) {
 
@@ -163,7 +167,7 @@ public class CommandProcessor {
 				operationResult = execute(deleteOrbTypeDto, commandProcessActionPackage);
 				break;
 			case CommandExpressor.COMMAND_BUNDLE:
-				CommandBundle commandBundle = CommandBundle.fromJson(action);
+				CommandBundle commandBundle = CommandBundle.fromJson(gsonFactory.getInstance(), action);
 				operationResult = execute(commandBundle, commandProcessActionPackage);
 				break;
 			case CommandExpressor.UNDO_BUNDLE:

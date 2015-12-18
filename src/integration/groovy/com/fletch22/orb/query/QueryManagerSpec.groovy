@@ -80,7 +80,7 @@ class QueryManagerSpec extends Specification {
 		criteriaFound
 	}
 
-	def 'test handle type delete event'() {
+	def 'test handle type simple delete event'() {
 		
 		given:
 		Criteria criteria = createSampleQuery()
@@ -97,6 +97,52 @@ class QueryManagerSpec extends Specification {
 		
 		then:
 		!orbManager.doesOrbExist(criteria.getCriteriaId())
+	}
+	
+	def 'test handle type complex delete event'() {
+		
+		given:
+		Criteria criteria = queryMother.getAggregateQuery()
+		Criteria criteriaAgg = extractAggregateCriteria(criteria)
+		
+		Orb queryOrb = orbManager.getOrb(criteria.getCriteriaId())
+		assertNotNull queryOrb
+		assertNotNull cache.orbCollection
+		
+		def doesExist = ((QueryManagerImpl) queryManager).getCriteriaCollection().doesCriteriaExistWithOrbTypeInternalId(criteria.getOrbTypeInternalId())
+		assertTrue doesExist
+		
+		when:
+		queryManager.handleTypeDeleteEvent(criteria.getOrbTypeInternalId(), true)
+		
+		then:
+		!orbManager.doesOrbExist(criteria.getCriteriaId())
+		
+		!queryManager.doesCriteriaExist(criteriaAgg.getCriteriaId())
+		!orbManager.doesOrbExist(criteriaAgg.getCriteriaId());
+	}
+	
+	def 'test handle type child orb deleted event'() {
+		
+		given:
+		Criteria criteria = queryMother.getAggregateQuery()
+		Criteria criteriaAgg = extractAggregateCriteria(criteria)
+		
+		Orb queryOrb = orbManager.getOrb(criteria.getCriteriaId())
+		assertNotNull queryOrb
+		assertNotNull cache.orbCollection
+		
+		def doesExist = ((QueryManagerImpl) queryManager).getCriteriaCollection().doesCriteriaExistWithOrbTypeInternalId(criteria.getOrbTypeInternalId())
+		assertTrue doesExist
+		
+		when:
+		orbManager.deleteOrb(criteriaAgg.criteriaId, true)
+		
+		then:
+		!orbManager.doesOrbExist(criteria.getCriteriaId())
+		
+		!queryManager.doesCriteriaExist(criteriaAgg.getCriteriaId())
+		!orbManager.doesOrbExist(criteriaAgg.getCriteriaId());
 	}
 
 	private Criteria createSampleQuery() {

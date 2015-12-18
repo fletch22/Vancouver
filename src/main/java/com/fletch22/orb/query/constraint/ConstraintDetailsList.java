@@ -3,8 +3,6 @@ package com.fletch22.orb.query.constraint;
 import java.util.List;
 
 import com.fletch22.orb.cache.local.CacheEntry;
-import com.fletch22.orb.query.Criteria;
-import com.fletch22.orb.query.CriteriaManager;
 import com.fletch22.orb.query.RelationshipOperator;
 import com.googlecode.cqengine.query.Query;
 
@@ -12,6 +10,10 @@ public class ConstraintDetailsList extends ConstraintDetails {
 	
 	public RelationshipOperator relationshipOperator;
 	public List<String> operativeValueList;
+	
+	public ConstraintDetailsList() {
+		super();
+	}
 	
 	@Override
 	public Constraint[] getConstraints() {

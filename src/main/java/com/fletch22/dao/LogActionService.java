@@ -15,7 +15,6 @@ import com.fletch22.orb.command.processor.CommandProcessor;
 import com.fletch22.orb.command.processor.OperationResult;
 import com.fletch22.orb.command.processor.OperationResult.OpResult;
 import com.fletch22.orb.rollback.UndoActionBundle;
-import com.google.gson.Gson;
 
 @Component
 public class LogActionService {
@@ -37,11 +36,11 @@ public class LogActionService {
 	@Autowired
 	LogBundler logBundler;
 
-	Gson gson = new Gson();
-
 	public void logAction(OperationResult operationResult, CommandProcessActionPackage commandProcessActionPackage) {
 
 		StringBuilder undoAction = commandProcessActionPackage.getUndoActionBundle().toJson();
+		
+		logger.debug("Undoing action: {}", undoAction);
 
 		StringBuilder action = operationResult.action;
 		if (operationResult.isIncludeInternalIdInLog()) {

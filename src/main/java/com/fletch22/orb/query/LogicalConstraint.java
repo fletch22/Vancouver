@@ -13,6 +13,11 @@ import com.fletch22.orb.query.constraint.ConstraintSetParentVisitor;
 import com.googlecode.cqengine.query.Query;
 
 public class LogicalConstraint extends Constraint {
+	
+	public LogicalConstraint() {
+		super();
+	}
+	
 	public LogicalOperator logicalOperator = null;
 	public ArrayList<Constraint> constraintList = new ArrayList<Constraint>();
 	

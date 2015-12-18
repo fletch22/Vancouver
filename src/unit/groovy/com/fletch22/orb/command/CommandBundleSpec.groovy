@@ -2,17 +2,15 @@ package com.fletch22.orb.command;
 
 import static org.junit.Assert.*
 
-import org.junit.Test
-import org.junit.runner.RunWith
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
 
-import spock.lang.Shared
 import spock.lang.Specification
 
 import com.fletch22.orb.command.orbType.AddOrbTypeCommand
+import com.fletch22.util.json.GsonFactory
 
 @ContextConfiguration(locations = ['classpath:/springContext-test.xml'])
 class CommandBundleSpec extends Specification {
@@ -21,6 +19,9 @@ class CommandBundleSpec extends Specification {
 	
 	@Autowired
 	AddOrbTypeCommand addOrbTypeCommand
+	
+	@Autowired
+	GsonFactory gsonFactory
 	
 	def 'test serialization and deserialization'() {
 		
@@ -34,7 +35,7 @@ class CommandBundleSpec extends Specification {
 		
 		assertNotNull(jsonExpected)
 		
-		def commandBundleActual = CommandBundle.fromJson(jsonExpected)
+		def commandBundleActual = CommandBundle.fromJson(gsonFactory.getInstance(), jsonExpected)
 		
 		when:
 		def jsonActual = commandBundleActual.toJson()

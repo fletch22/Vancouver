@@ -45,9 +45,7 @@ public class CommandBundle {
 		return translation;
 	}
 	
-	public static CommandBundle fromJson(StringBuilder action) {
-		
-		Gson gson = new Gson();
+	public static CommandBundle fromJson(Gson gson, StringBuilder action) {
 		
 		CommandBundle commandBundle = new CommandBundle();
 		

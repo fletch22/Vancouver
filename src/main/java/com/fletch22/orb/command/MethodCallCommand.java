@@ -100,7 +100,7 @@ public class MethodCallCommand {
 		
 		String[] parameterTypeArray = new String[jsonArray.size()];
 		
-		Gson gson = new Gson();
+		Gson gson = gsonFactory.getInstance();
 		List<Object> argList = new ArrayList<Object>();
 		for (int i = 0; i < jsonArray.size(); i++) {
 			JsonElement jsonElement = jsonArray.get(i);
@@ -118,5 +118,9 @@ public class MethodCallCommand {
 		}
 		
 		return new MethodCallDto(className, methodName, parameterTypeArray, argList.toArray());
+	}
+
+	public void setGsonFactory(GsonFactory gsonFactory) {
+		this.gsonFactory = gsonFactory;	
 	}
 }
