@@ -1,6 +1,7 @@
 package com.fletch22.util.json;
 import org.springframework.stereotype.Component;
 
+import com.fletch22.orb.query.Criteria;
 import com.fletch22.orb.query.constraint.Constraint;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -16,6 +17,7 @@ public class GsonFactory {
 		if (instance == null)  {
 			GsonBuilder gsonBilder = new GsonBuilder();
 			gsonBilder.registerTypeAdapter(Constraint.class, new ConstraintAdapter());
+			gsonBilder.registerTypeAdapter(Criteria.class, new CriteriaAdapter());
 			this.instance = gsonBilder.create();
 		}
 		

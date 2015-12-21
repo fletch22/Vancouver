@@ -31,9 +31,9 @@ public class QueryCollectionSpec extends Specification {
 		OrbType orbType = new OrbType(orbTypeInternalId, "foo", 123, null);
 
 		Criteria criteriaOriginal = createSampleCriteria(orbType)
-		queryCollection.add(criteriaOriginal)
+		queryCollection.put(criteriaOriginal)
 		
-		Criteria criteriaToValidate = new CriteriaStandard(orbType, "shanks!")
+		Criteria criteriaToValidate = new CriteriaStandard(orbType.id, "shanks!")
 		criteriaToValidate.setId(444)
 		
 		when:
@@ -52,9 +52,9 @@ public class QueryCollectionSpec extends Specification {
 		OrbType orbType = new OrbType(123, "foo", 123, null);
 
 		Criteria criteriaOriginal = createSampleCriteria(orbType)
-		queryCollection.add(criteriaOriginal)
+		queryCollection.put(criteriaOriginal)
 		
-		Criteria criteriaToValidate = new CriteriaStandard(orbType, "first")
+		Criteria criteriaToValidate = new CriteriaStandard(orbType.id, "first")
 		criteriaToValidate.setId(444)
 		
 		when:
@@ -72,10 +72,10 @@ public class QueryCollectionSpec extends Specification {
 		OrbType orbType = new OrbType(123, "foo", 123, null);
 
 		Criteria criteriaOriginal = createSampleCriteria(orbType)
-		queryCollection.add(criteriaOriginal)
+		queryCollection.put(criteriaOriginal)
 		
 		OrbType orbType2 = new OrbType(234, "fooManChu", 345, null)
-		Criteria criteriaToValidate = new CriteriaStandard(orbType2, "first")
+		Criteria criteriaToValidate = new CriteriaStandard(orbType2.id, "first")
 		criteriaToValidate.setId(444)
 		
 		when:
@@ -95,7 +95,7 @@ public class QueryCollectionSpec extends Specification {
 		Criteria criteriaOriginal = createSampleCriteria(orbType)
 		
 		when:
-		queryCollection.add(criteriaOriginal)
+		queryCollection.put(criteriaOriginal)
 				
 		then:
 		queryCollection.getByOrbTypeInsideCriteria(123) != null
@@ -111,7 +111,7 @@ public class QueryCollectionSpec extends Specification {
 
 		Criteria criteriaOriginal = createSampleCriteria(orbType)
 		
-		queryCollection.add(criteriaOriginal)
+		queryCollection.put(criteriaOriginal)
 		
 		Set<Long> keySet = queryCollection.criteriaByOrbTypeCollection.collection.keySet()
 		assertEquals 1, keySet.size()
@@ -136,16 +136,16 @@ public class QueryCollectionSpec extends Specification {
 		OrbType orbType = new OrbType(123, "foo", 123, null);
 
 		Criteria criteriaOriginal = createSampleCriteria(orbType)
-		queryCollection.add(criteriaOriginal)
+		queryCollection.put(criteriaOriginal)
 		
 		Set<Long> keySet = queryCollection.criteriaByOrbTypeCollection.collection.keySet()
 		assertEquals 1, keySet.size()
 		
 		when:
-		List<Criteria> criteriaList = queryCollection.removeByOrbTypeId(criteriaOriginal.getOrbTypeInternalId())
+		HashMap<Long, Criteria> criteriaMap = queryCollection.removeByOrbTypeId(criteriaOriginal.getOrbTypeInternalId())
 		
 		then:
-		criteriaList.get(0).is(criteriaOriginal)
+		criteriaMap.get(criteriaOriginal.getCriteriaId()).is(criteriaOriginal)
 		queryCollection.criteriaByIdMap.size() == 0
 		queryCollection.criteriaByOrbTypeCollection.collection.size() == 0
 		
@@ -162,7 +162,7 @@ public class QueryCollectionSpec extends Specification {
 
 		Criteria criteriaOriginal = createSampleCriteria(orbType)
 		
-		queryCollection.add(criteriaOriginal)
+		queryCollection.put(criteriaOriginal)
 		
 		Set<Long> keySet = queryCollection.criteriaByOrbTypeCollection.collection.keySet()
 		assertEquals 1, keySet.size()
@@ -187,7 +187,7 @@ public class QueryCollectionSpec extends Specification {
 
 		Criteria criteriaOriginal = createSampleCriteria(orbType)
 		
-		queryCollection.add(criteriaOriginal)
+		queryCollection.put(criteriaOriginal)
 		
 		when:
 		boolean doesExist = queryCollection.doesCriteriaExistWithOrbTypeInternalId(orbType.id);
@@ -200,7 +200,7 @@ public class QueryCollectionSpec extends Specification {
 	}
 	
 	private Criteria createSampleCriteria(OrbType orbType) {
-		Criteria criteriaOriginal = new CriteriaStandard(orbType, 'first')
+		Criteria criteriaOriginal = new CriteriaStandard(orbType.id, 'first')
 		criteriaOriginal.setId(234)
 		return criteriaOriginal
 	}

@@ -70,7 +70,7 @@ class QueryManagerSpec extends Specification {
 		OrbType orbType = orbTypeManager.getOrbType(orbTypeInternalId)
 		
 		String queryLabel = 'fuzzyThings'
-		Criteria criteria = new CriteriaStandard(orbType, queryLabel)
+		Criteria criteria = new CriteriaStandard(orbType.id, queryLabel)
 		queryManager.addToCollection(criteria)
 		
 		when:
@@ -102,7 +102,7 @@ class QueryManagerSpec extends Specification {
 	def 'test handle type complex delete event'() {
 		
 		given:
-		Criteria criteria = queryMother.getAggregateQuery()
+		Criteria criteria = queryMother.getSimpleAggregateQuery()
 		Criteria criteriaAgg = extractAggregateCriteria(criteria)
 		
 		Orb queryOrb = orbManager.getOrb(criteria.getCriteriaId())
@@ -125,7 +125,7 @@ class QueryManagerSpec extends Specification {
 	def 'test handle type child orb deleted event'() {
 		
 		given:
-		Criteria criteria = queryMother.getAggregateQuery()
+		Criteria criteria = queryMother.getSimpleAggregateQuery()
 		Criteria criteriaAgg = extractAggregateCriteria(criteria)
 		
 		Orb queryOrb = orbManager.getOrb(criteria.getCriteriaId())
@@ -144,6 +144,55 @@ class QueryManagerSpec extends Specification {
 		!queryManager.doesCriteriaExist(criteriaAgg.getCriteriaId())
 		!orbManager.doesOrbExist(criteriaAgg.getCriteriaId());
 	}
+	
+	def 'test handle delete attribute child orb attribute event'() {
+		
+		given:
+		Criteria criteria = queryMother.getComplexAggregateQuery1()
+		CriteriaAggregate criteriaAgg = extractAggregateCriteria(criteria)
+		
+		Orb queryOrb = orbManager.getOrb(criteria.getCriteriaId())
+		assertNotNull queryOrb
+		assertNotNull cache.orbCollection
+		
+		assertTrue(queryManager.doesCriteriaExist(criteria.getCriteriaId()))
+		assertTrue(orbManager.doesOrbExist(criteria.getCriteriaId()))
+		
+		assertTrue(queryManager.doesCriteriaExist(criteriaAgg.getCriteriaId()))
+		assertTrue(orbManager.doesOrbExist(criteriaAgg.getCriteriaId()))
+		
+		when:
+		orbTypeManager.deleteAttribute(criteriaAgg.getOrbTypeInternalId(), "banana", true)
+		
+		then:
+		!queryManager.doesCriteriaExist(criteria.getCriteriaId())
+		!orbManager.doesOrbExist(criteria.getCriteriaId())
+		
+		!queryManager.doesCriteriaExist(criteriaAgg.getCriteriaId())
+		!orbManager.doesOrbExist(criteriaAgg.getCriteriaId());
+	}
+	
+	def 'test handle rename child orb attribute event'() {
+		
+		given:
+		Criteria criteria = queryMother.getSimpleAggregateQuery()
+		CriteriaAggregate criteriaAgg = extractAggregateCriteria(criteria)
+		
+		Orb queryOrb = orbManager.getOrb(criteria.getCriteriaId())
+		assertNotNull queryOrb
+		assertNotNull cache.orbCollection
+		
+		def doesExist = ((QueryManagerImpl) queryManager).getCriteriaCollection().doesCriteriaExistWithOrbTypeInternalId(criteria.getOrbTypeInternalId())
+		assertTrue doesExist
+		
+		when:
+		orbTypeManager.renameAttribute(criteriaAgg.getOrbTypeInternalId(), "bar", "foo")
+		
+		criteriaAgg = queryManager.get(criteriaAgg.getCriteriaId());
+		
+		then:
+		criteriaAgg.fieldOfInterest == "foo"
+	}
 
 	private Criteria createSampleQuery() {
 		long orbTypeInternalId = orbTypeManager.createOrbType("foo", new LinkedHashSet<String>())
@@ -151,7 +200,7 @@ class QueryManagerSpec extends Specification {
 		orbTypeManager.addAttribute(orbTypeInternalId, "orangeFuzz")
 		
 		String queryLabel = 'fuzzyThings'
-		Criteria criteria = new CriteriaStandard(orbType, queryLabel)
+		Criteria criteria = new CriteriaStandard(orbType.id, queryLabel)
 		long queryId = queryManager.addToCollection(criteria)
 		
 		return criteria
@@ -162,7 +211,7 @@ class QueryManagerSpec extends Specification {
 		given:
 		def tranId = beginTransactionService.beginTransaction()
 		
-		Criteria criteria = queryMother.getAggregateQuery()
+		Criteria criteria = queryMother.getSimpleAggregateQuery()
 		Criteria criteriaAgg = extractAggregateCriteria(criteria)
 		
 		when:
@@ -199,7 +248,7 @@ class QueryManagerSpec extends Specification {
 		
 		given:
 		when:
-		Criteria criteria = queryMother.getAggregateQuery()
+		Criteria criteria = queryMother.getSimpleAggregateQuery()
 		
 		OrbType orbType = orbTypeManager.getOrbType(criteria.getOrbTypeInternalId())
 		
@@ -221,7 +270,7 @@ class QueryManagerSpec extends Specification {
 		given:
 		def tranId = beginTransactionService.beginTransaction()
 		
-		Criteria criteria = queryMother.getAggregateQuery()
+		Criteria criteria = queryMother.getSimpleAggregateQuery()
 		Criteria criteriaAgg = extractAggregateCriteria(criteria)
 		
 		when:
@@ -240,7 +289,7 @@ class QueryManagerSpec extends Specification {
 		given:
 		def tranId = beginTransactionService.beginTransaction()
 		
-		Criteria criteria = queryMother.getAggregateQuery()
+		Criteria criteria = queryMother.getSimpleAggregateQuery()
 		Criteria criteriaAgg = extractAggregateCriteria(criteria)
 		
 		when:

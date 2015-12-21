@@ -50,7 +50,7 @@ class DefLimitationManagerImplSpec extends Specification {
 
 		OrbType orbType = orbTypeManager.getOrbType(orbTypeInternalId)
 
-		Criteria criteria = new CriteriaStandard(orbType, "howdy")
+		Criteria criteria = new CriteriaStandard(orbType.id, "howdy")
 
 		when:
 		defLimitationManager.addToCollection(criteria)
@@ -67,7 +67,7 @@ class DefLimitationManagerImplSpec extends Specification {
 
 		OrbType orbType = orbTypeManager.getOrbType(orbTypeInternalId)
 
-		Criteria criteria = new CriteriaStandard(orbType, "howdy")
+		Criteria criteria = new CriteriaStandard(orbType.id, "howdy")
 
 		defLimitationManager.addToCollection(criteria)
 

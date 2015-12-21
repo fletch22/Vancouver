@@ -224,7 +224,7 @@ class OrbCollectionSpec extends Specification {
 			def orbSteamerTrunk = map.get(orbInternalId)
 			assertTrue orbSteamerTrunk.orb.userDefinedProperties.size() == propertySize
 			
-			logger.info("id {}; cacheEntry attribute size: {}", orbInternalId, orbSteamerTrunk.cacheEntry.attributes.size())
+			logger.debug("id {}; cacheEntry attribute size: {}", orbInternalId, orbSteamerTrunk.cacheEntry.attributes.size())
 			
 			Assert.assertEquals propertySize, orbSteamerTrunk.cacheEntry.attributes.size()
 		}

@@ -34,7 +34,7 @@ public class LimitationCollectionTest {
 		List<Criteria> list = originalList.stream().filter(criteria -> criteria.getOrbTypeInternalId() == 123).collect(Collectors.toList());
 		stopWatch.stop();
 
-		logger.info("Elapsed millis: " + stopWatch.getElapsedMillis());
+		logger.debug("Elapsed millis: " + stopWatch.getElapsedMillis());
 	}
 	
 	@Test
@@ -48,7 +48,7 @@ public class LimitationCollectionTest {
 		List<Criteria> isNullList = list.get(123l);
 		isNullList = (isNullList == null) ? new ArrayList<Criteria>() : isNullList;
 		stopWatch.stop();
-		logger.info("Elapsed: {}", stopWatch.getElapsedMillis());
+		logger.debug("Elapsed: {}", stopWatch.getElapsedMillis());
 	}
 
 	private void populateCriteriaList(List<Criteria> originalList) {
@@ -59,7 +59,7 @@ public class LimitationCollectionTest {
 		for (int i = 0; i < count; i++) {
 
 			OrbType orbType = new OrbType(i, randomUtil.getRandomString(10), new BigDecimal("12345678"), null);
-			Criteria criteria = new CriteriaStandard(orbType, "foo");
+			Criteria criteria = new CriteriaStandard(orbType.id, "foo");
 			originalList.add(criteria);
 		}
 	}

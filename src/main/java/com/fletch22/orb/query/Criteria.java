@@ -18,7 +18,7 @@ public abstract class Criteria implements GsonSerializable {
 	transient public static final long UNSET_ID = -1;
 	
 	protected long criteriaId = UNSET_ID;
-	protected OrbType orbType;
+	public long orbTypeInternalId;
 	protected String label;
 	protected boolean hasIdBeenSet = false;
 	protected ArrayList<CriteriaSortInfo> sortInfoList = new ArrayList<CriteriaSortInfo>();
@@ -79,15 +79,11 @@ public abstract class Criteria implements GsonSerializable {
 	}
 
 	public long getOrbTypeInternalId() {
-		return getOrbType().id;
+		return orbTypeInternalId;
 	}
 
 	public String getLabel() {
 		return label;
-	}
-
-	public OrbType getOrbType() {
-		return orbType;
 	}
 
 	public List<CriteriaSortInfo> getSortInfoList() {

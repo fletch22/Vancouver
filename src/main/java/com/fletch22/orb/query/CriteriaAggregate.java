@@ -1,13 +1,12 @@
 package com.fletch22.orb.query;
 
-import com.fletch22.orb.OrbType;
 
 public class CriteriaAggregate extends Criteria {
 	
 	public String fieldOfInterest;
 	
-	public CriteriaAggregate(OrbType orbType, String label, String fieldOfInterest) {
-		this.orbType = orbType;
+	public CriteriaAggregate(long orbTypeInternalId, String label, String fieldOfInterest) {
+		this.orbTypeInternalId = orbTypeInternalId;
 		this.label = label;
 		this.fieldOfInterest = fieldOfInterest;
 	}

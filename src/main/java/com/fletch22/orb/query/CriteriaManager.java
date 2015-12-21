@@ -1,9 +1,10 @@
 package com.fletch22.orb.query;
 
 import java.util.List;
+import java.util.Map;
 
 import com.fletch22.orb.attribute.OrbEventAware;
-import com.fletch22.orb.query.Criteria;
+import com.fletch22.orb.cache.query.CriteriaCollection;
 
 public interface CriteriaManager extends OrbEventAware {
 
@@ -15,11 +16,15 @@ public interface CriteriaManager extends OrbEventAware {
 	
 	public void detach(long criteriaId);
 	
-	public List<Criteria> getOrbsTypeCriteria(long orbTypeInternalId);
+	public Map<Long, Criteria> getOrbsTypeCriteria(long orbTypeInternalId);
 	
 	public void nukeAllCriteria();
 	
 	public boolean doesCriteriaExist(long orbInternalIdQuery);
 	
 	public Criteria get(long orbInternalIdQuery);
+	
+	public void collectCriteriaChildren(final Criteria criteria, List<Criteria> criteriaListe);
+	
+	public CriteriaCollection getCriteriaCollection();
 }

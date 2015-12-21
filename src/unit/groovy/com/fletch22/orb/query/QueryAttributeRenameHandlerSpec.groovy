@@ -21,7 +21,7 @@ class QueryAttributeRenameHandlerSpec extends Specification {
 		
 		OrbType orbType = Mock(OrbType)
 		
-		Criteria criteria = new CriteriaStandard(orbType, ORIGINAL_QUERY_NAME)
+		Criteria criteria = new CriteriaStandard(orbType.id, ORIGINAL_QUERY_NAME)
 		
 		ConstraintDetailsSingleValue constraintDetailSingleValue = (ConstraintDetailsSingleValue) Constraint.eq(ORIGINAL_ATTRIBUTE_NAME, "someValue")
 		
@@ -42,7 +42,7 @@ class QueryAttributeRenameHandlerSpec extends Specification {
 		
 		OrbType orbType = Mock(OrbType)
 		
-		Criteria criteria = new CriteriaStandard(orbType, ORIGINAL_QUERY_NAME)
+		Criteria criteria = new CriteriaStandard(orbType.id, ORIGINAL_QUERY_NAME)
 		
 		ConstraintDetailsSingleValue constraintDetailSingleValue = (ConstraintDetailsSingleValue) Constraint.eq(ORIGINAL_ATTRIBUTE_NAME, "someValue")
 		

@@ -18,7 +18,7 @@ public class AppTransformer extends DomainTransformer<App> {
 		
 		this.setBaseAttributes(orb, app);
 		
-		logger.info("setting base attributes for AppTransformer: {}", app.getId());
+		logger.debug("setting base attributes for AppTransformer: {}", app.getId());
 		
 		app.label = orb.getUserDefinedProperties().get(App.ATTR_LABEL);
 		

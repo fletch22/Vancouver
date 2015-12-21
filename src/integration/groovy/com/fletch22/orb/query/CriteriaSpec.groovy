@@ -64,7 +64,7 @@ class CriteriaSpec extends Specification {
 	def 'test criteria search for green'() {
 
 		given:
-		Criteria criteria = new CriteriaStandard(orbType, "foo")
+		Criteria criteria = new CriteriaStandard(orbType.id, "foo")
 
 		criteria.addAnd(Constraint.eq(ATTRIBUTE_COLOR, COLOR_TO_FIND))
 
@@ -88,7 +88,7 @@ class CriteriaSpec extends Specification {
 	def 'test criteria search or'() {
 		
 		given:
-		Criteria criteria = new CriteriaStandard(orbType, "foo")
+		Criteria criteria = new CriteriaStandard(orbType.id, "foo")
 
 		criteria.addOr(Constraint.eq(ATTRIBUTE_COLOR, "red"), Constraint.eq(ATTRIBUTE_COLOR, COLOR_TO_FIND), Constraint.eq(ATTRIBUTE_COLOR, "orange"))
 
@@ -109,7 +109,7 @@ class CriteriaSpec extends Specification {
 	def 'test criteria search collection'() {
 		
 		given:
-		Criteria criteria = new CriteriaStandard(orbType, "foo")
+		Criteria criteria = new CriteriaStandard(orbType.id, "foo")
 		
 		Constraint[] constraintArray = new Constraint[3]
 		constraintArray[0] = Constraint.eq(ATTRIBUTE_COLOR, "red")
@@ -135,7 +135,7 @@ class CriteriaSpec extends Specification {
 	def 'test criteria search collection using in'() {
 		
 		given:
-		Criteria criteria = new CriteriaStandard(orbType, "foo")
+		Criteria criteria = new CriteriaStandard(orbType.id, "foo")
 		
 		List<String> list = new ArrayList<String>();
 		list.add("red")
@@ -160,9 +160,9 @@ class CriteriaSpec extends Specification {
 	def 'test criteria search collection using is unique and parent set'() {
 		
 		given:
-		Criteria criteria = new CriteriaStandard(orbType, "foo")
+		Criteria criteria = new CriteriaStandard(orbType.id, "foo")
 		
-		CriteriaAggregate criteriaForAggregation = new CriteriaAggregate(orbType, "foo", ATTRIBUTE_COLOR)
+		CriteriaAggregate criteriaForAggregation = new CriteriaAggregate(orbType.id, "foo", ATTRIBUTE_COLOR)
 		criteria.addAnd(Constraint.is(ATTRIBUTE_COLOR, Aggregate.UNIQUE, criteriaForAggregation))
 		
 		when:

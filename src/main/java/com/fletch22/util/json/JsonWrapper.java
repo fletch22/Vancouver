@@ -80,7 +80,7 @@ public class JsonWrapper {
 		JsonWrapper jsonWrapper = gson.fromJson(json, JsonWrapper.class);
 		jsonWrapper.gson = gson;
 
-		logger.info("Classname instantiating: {}", jsonWrapper.clazzName);
+		logger.debug("Classname instantiating: {}", jsonWrapper.clazzName);
 		
 		try {
 			if (jsonWrapper.clazzName == null) {

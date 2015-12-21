@@ -18,7 +18,6 @@ public class ConstraintRegistrationVisitor {
 	}
 	
 	public void visit(LogicalConstraint logicalConstraint) {
-		logger.info("In visit logical constraint.");
 		for (Constraint constraintChild : logicalConstraint.getConstraints()) {
 			constraintChild.acceptConstraintRegistrationVisitor(this);
 		}

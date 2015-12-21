@@ -1,8 +1,6 @@
 package com.fletch22.orb.cache.query;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -17,11 +15,11 @@ public abstract class CriteriaCollection {
 		return criteriaByIdMap.containsKey(queryInternalId);
 	}
 
-	public abstract void add(Criteria criteria);
+	public abstract void put(Criteria criteria);
 
 	public abstract Criteria removeByCriteriaId(long id);
 
-	public abstract List<Criteria> removeByOrbTypeId(long id);
+	public abstract Map<Long, Criteria> removeByOrbTypeId(long id);
 
 	public abstract void clear();
 
@@ -29,10 +27,10 @@ public abstract class CriteriaCollection {
 		return this.criteriaByIdMap.get(orbInternalIdQuery);
 	}
 	
-	public List<Criteria> getByOrbTypeInsideCriteria(long orbInternalId) {
+	public Map<Long, Criteria> getByOrbTypeInsideCriteria(long orbInternalId) {
 		
-		List<Criteria> criteria = this.criteriaByOrbTypeCollection.get(orbInternalId);
-		return (criteria == null) ? new ArrayList<Criteria>() : criteria;
+		HashMap<Long, Criteria> criteriaMap = this.criteriaByOrbTypeCollection.get(orbInternalId);
+		return (criteriaMap == null) ? new HashMap<Long, Criteria>() : criteriaMap;
 	}
 	
 	public Set<Long> getKeys() {
@@ -84,24 +82,20 @@ public abstract class CriteriaCollection {
 			throw new RuntimeException(message);
 		}
 
-		if (criteriaByIdMap.containsKey(id)) {
-			message = String.format("Encountered a problem. Criteria with id '%s' already exists.", id);
+		String label = criteriaToValidate.getLabel();
+		if (label == null) {
+			message = "Criteria's label cannot be null.";
 			throw new RuntimeException(message);
-		} else {
+		}
 
-			String label = criteriaToValidate.getLabel();
-			if (label == null) {
-				message = "Criteria's label cannot be null.";
+		Set<Long> keys = this.criteriaByIdMap.keySet();
+		for (Long key : keys) {
+			Criteria criteria = this.criteriaByIdMap.get(key);
+			if (criteriaToValidate.getOrbTypeInternalId() == criteria.getOrbTypeInternalId()
+			&& criteria.getCriteriaId() != criteriaToValidate.getCriteriaId()
+			&& criteria.getLabel().equals(label)) {
+				message = String.format("Encountered a problem. Criteria with with type id '%s' and label '%s' already exists.", criteria.getOrbTypeInternalId(), label);
 				throw new RuntimeException(message);
-			}
-
-			Set<Long> keys = this.criteriaByIdMap.keySet();
-			for (Long key : keys) {
-				Criteria criteria = this.criteriaByIdMap.get(key);
-				if (criteriaToValidate.getOrbTypeInternalId() == criteria.getOrbTypeInternalId() && criteria.getLabel().equals(label)) {
-					message = String.format("Encountered a problem. Criteria with with type id '%s' and label '%s' already exists.", criteria.getOrbTypeInternalId(), label);
-					throw new RuntimeException(message);
-				}
 			}
 		}
 	}

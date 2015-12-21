@@ -1,7 +1,10 @@
 package com.fletch22.orb.query;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,8 +17,10 @@ import com.fletch22.orb.OrbManager;
 import com.fletch22.orb.OrbType;
 import com.fletch22.orb.OrbTypeManager;
 import com.fletch22.orb.cache.query.CriteriaCollection;
-import com.fletch22.orb.query.constraint.ConstraintDeleteChildCriteriaVisitor;
+import com.fletch22.orb.query.constraint.CollectConstraintChildCriteriaVisitor;
+import com.fletch22.orb.query.constraint.ConstraintDetailsAggregate;
 import com.fletch22.orb.query.constraint.ConstraintRegistrationVisitor;
+import com.fletch22.orb.query.constraint.ConstraintRenameChildCriteriaAttributeVisitor;
 import com.fletch22.orb.query.constraint.ConstraintSetParentVisitor;
 import com.fletch22.orb.systemType.SystemType;
 
@@ -59,8 +64,6 @@ public abstract class AbstractCriteriaManager implements CriteriaManager {
 		
 		orb = orbManager.createOrb(orb);
 		
-		logger.info("Type: {}, ID: {}", orbType.id, orb.getOrbInternalId());
-		
 		criteria.setId(orb.getOrbInternalId());
 		
 		if (criteria.hasConstraints()) {
@@ -80,7 +83,7 @@ public abstract class AbstractCriteriaManager implements CriteriaManager {
 	@Loggable4Event
 	@Override
 	public void attach(Criteria criteria) {
-		getCriteriaCollection().add(criteria);
+		getCriteriaCollection().put(criteria);
 		
 		Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
 		detach(criteria.getCriteriaId());
@@ -98,7 +101,7 @@ public abstract class AbstractCriteriaManager implements CriteriaManager {
 	
 	@Override
 	public void handleAttributeRenameEvent(long orbTypeInternalId, String attributeOldName, String attributeNewName) {
-		criteriaAttributeRenameHandler.handleAttributeRename(getCriteriaCollection(), orbTypeInternalId, attributeOldName, attributeNewName);
+		criteriaAttributeRenameHandler.handleAttributeRename(this, orbTypeInternalId, attributeOldName, attributeNewName);
 	}
 
 	@Override
@@ -112,21 +115,14 @@ public abstract class AbstractCriteriaManager implements CriteriaManager {
 		if (isDeleteDependencies) {
 			if (doesExist) {
 				
-//				deleteCriteriaChildren(criteriaId, isDeleteDependencies);
-//				detach(criteriaId);
+				// Go to root and delete it.
+				Criteria criteria = getRootParentCriteria(criteriaId);
 				
-				Criteria criteriaRoot = getRootParentCriteria(criteriaId);
-				logger.info("Got root parent.");
-				if (criteriaRoot != null) {
-					logger.info("Handling root: {}", criteriaRoot.getCriteriaId());
-					detach(criteriaRoot.getCriteriaId());
-					deleteCriteriaChildren(criteriaRoot, isDeleteDependencies);
-				} else {
-					logger.info("Root was removed. Deleting {}", criteriaId);
-					Criteria criteria = this.get(criteriaId);
-					detach(criteria.getCriteriaId());
-					deleteCriteriaChildren(criteria, isDeleteDependencies);
-				}
+				List<Criteria> criteriaList = new ArrayList<Criteria>();
+				criteriaList.add(criteria);
+				collectCriteriaChildren(criteria, criteriaList);
+				
+				detachAndDeleteDependentCriteria(criteriaId, isDeleteDependencies, criteriaList);
 			}
 		} else {
 			if (doesExist) {
@@ -136,10 +132,29 @@ public abstract class AbstractCriteriaManager implements CriteriaManager {
 		}
 	}
 
-	private void deleteCriteriaChildren(Criteria criteria, boolean isDeleteDependencies) {
+	private void detachAndDeleteDependentCriteria(long criteriaId, boolean isDeleteDependencies, List<Criteria> criteriaList) {
+		for (Criteria criteriaFound : criteriaList) {
+			long criteriaIdFound = criteriaFound.getCriteriaId();
+			this.detach(criteriaIdFound);
+			if (criteriaIdFound != criteriaId) {
+				deleteIfDependencyAllowed(isDeleteDependencies, criteriaIdFound);
+			}
+		}
+	}
+
+	private void deleteIfDependencyAllowed(boolean isDeleteDependencies, long criteriaIdFound) {
+		if (isDeleteDependencies) {
+			this.delete(criteriaIdFound, isDeleteDependencies);
+		} else {
+			throw new RuntimeException("Encountered a criteria dependent on the criteria being deleted.");
+		}
+	}
+	
+	public void collectCriteriaChildren(final Criteria criteria, List<Criteria> criteriaList) {
+		
 		if (criteria.hasConstraints()) {
-			ConstraintDeleteChildCriteriaVisitor constraintDeleteChildCriteriaVisitor = new ConstraintDeleteChildCriteriaVisitor(this, isDeleteDependencies);
-			criteria.logicalConstraint.acceptConstraintDeleteChildCriteriaVisitor(constraintDeleteChildCriteriaVisitor);
+			CollectConstraintChildCriteriaVisitor constraintDeleteChildCriteriaVisitor = new CollectConstraintChildCriteriaVisitor(this);
+			criteria.logicalConstraint.acceptCollectConstraintChildCriteriaVisitor(constraintDeleteChildCriteriaVisitor, criteriaList);
 		}
 	}
 
@@ -151,14 +166,6 @@ public abstract class AbstractCriteriaManager implements CriteriaManager {
 		}
 		
 		return criteria;
-	}
-	
-	private void deleteCriteriaChildren(long criteriaId, boolean isDeleteDependencies) {
-		Criteria criteria = get(criteriaId);
-		if (criteria.hasConstraints()) {
-			ConstraintDeleteChildCriteriaVisitor constraintDeleteChildCriteriaVisitor = new ConstraintDeleteChildCriteriaVisitor(this, isDeleteDependencies);
-			criteria.logicalConstraint.acceptConstraintDeleteChildCriteriaVisitor(constraintDeleteChildCriteriaVisitor);
-		}
 	}
 	
 	@Loggable4Event
@@ -190,13 +197,9 @@ public abstract class AbstractCriteriaManager implements CriteriaManager {
 		}
 	}
 	
-	private List<Long> getCriteriaIdsByTypeIds(long orbTypeInternalId) {
-		List<Criteria> criteriaList = getCriteriaCollection().getByOrbTypeInsideCriteria(orbTypeInternalId);
-		List<Long> idList = new ArrayList<Long>();
-		for (Criteria criteria : criteriaList) {
-			idList.add(criteria.getCriteriaId());
-		}
-		return idList;
+	private Set<Long> getCriteriaIdsByTypeIds(long orbTypeInternalId) {
+		Map<Long, Criteria> criteriaMap = getCriteriaCollection().getByOrbTypeInsideCriteria(orbTypeInternalId);
+		return new HashSet<Long>(criteriaMap.keySet());
 	}
 	
 	@Override
@@ -204,7 +207,7 @@ public abstract class AbstractCriteriaManager implements CriteriaManager {
 		orbManager.deleteOrb(criteriaId, isDeleteDependencies);
 	}
 	
-	public List<Criteria> getOrbsTypeCriteria(long orbTypeInternalId) {
+	public Map<Long, Criteria> getOrbsTypeCriteria(long orbTypeInternalId) {
 		return getCriteriaCollection().getByOrbTypeInsideCriteria(orbTypeInternalId);
 	}
 }

@@ -1,6 +1,6 @@
 package com.fletch22.orb.query.constraint;
 
-import com.fletch22.orb.query.Criteria;
+import com.fletch22.orb.query.CriteriaAggregate;
 import com.fletch22.orb.query.LogicalConstraint;
 
 public class ConstraintRenameChildCriteriaAttributeVisitor {
@@ -22,8 +22,8 @@ public class ConstraintRenameChildCriteriaAttributeVisitor {
 	public void visit(ConstraintDetailsAggregate constraintDetailsAggregate) {
 		renameAttribute(constraintDetailsAggregate);
 		
-		Criteria criteriaAgg = constraintDetailsAggregate.criteriaForAggregation;
-		
+		CriteriaAggregate criteriaAgg = constraintDetailsAggregate.criteriaForAggregation;
+		renameFieldOfInterest(criteriaAgg);
 		if (criteriaAgg.hasConstraints()) {
 			criteriaAgg.logicalConstraint.acceptConstraintRenameChildCriteriaAttributeVisitor(this);
 		}
@@ -42,5 +42,10 @@ public class ConstraintRenameChildCriteriaAttributeVisitor {
 			constraintDetails.attributeName = newAttributeName;
 		}
 	}
-
+	
+	public void renameFieldOfInterest(CriteriaAggregate criteriaAggregate) {
+		if (criteriaAggregate.fieldOfInterest.equals(oldAttributeName)) {
+			criteriaAggregate.fieldOfInterest = newAttributeName;
+		}
+	}
 }

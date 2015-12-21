@@ -18,18 +18,41 @@ public class QueryMother {
 	
 	@Autowired
 	QueryManager queryManager;
-	public Criteria getAggregateQuery() {
+	
+	public Criteria getSimpleAggregateQuery() {
 	
 		String attributeName = "bar";
+		String attributeName2 = "bar2";
 		
 		long orbTypeInternalId = orbTypeManager.createOrbType("foo", new LinkedHashSet<String>());
-		OrbType orbType = orbTypeManager.getOrbType(orbTypeInternalId);
 		orbTypeManager.addAttribute(orbTypeInternalId, attributeName);
+		orbTypeManager.addAttribute(orbTypeInternalId, attributeName2);
 		
 		String queryLabel = "fuzzyThings";
-		Criteria criteria = new CriteriaStandard(orbType, queryLabel);
+		Criteria criteria = new CriteriaStandard(orbTypeInternalId, queryLabel);
 		
-		CriteriaAggregate criteriaAgg = new CriteriaAggregate(orbType, "agg", attributeName);
+		CriteriaAggregate criteriaAgg = new CriteriaAggregate(orbTypeInternalId, "agg", attributeName);
+		
+		criteria.addAnd(Constraint.is(attributeName, Aggregate.UNIQUE, criteriaAgg));
+		
+		queryManager.addToCollection(criteria);
+		
+		return criteria;
+	}
+	
+	public Criteria getComplexAggregateQuery1() {
+		
+		String attributeName = "bar";
+		String attributeName2 = "banana";
+		
+		long orbTypeInternalId = orbTypeManager.createOrbType("foo", new LinkedHashSet<String>());
+		orbTypeManager.addAttribute(orbTypeInternalId, attributeName);
+		orbTypeManager.addAttribute(orbTypeInternalId, attributeName2);
+		
+		String queryLabel = "fuzzyThings";
+		Criteria criteria = new CriteriaStandard(orbTypeInternalId, queryLabel);
+		
+		CriteriaAggregate criteriaAgg = new CriteriaAggregate(orbTypeInternalId, "agg", attributeName2);
 		
 		criteria.addAnd(Constraint.is(attributeName, Aggregate.UNIQUE, criteriaAgg));
 		

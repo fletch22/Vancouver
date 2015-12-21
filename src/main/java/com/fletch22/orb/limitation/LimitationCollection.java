@@ -1,7 +1,10 @@
 package com.fletch22.orb.limitation;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,14 +24,14 @@ public class LimitationCollection extends CriteriaCollection {
 	public List<Criteria> criteriaList = new ArrayList<Criteria>();
 	
 	@Override
-	public void add(Criteria criteria) {
+	public void put(Criteria criteria) {
 		validateCriteria(criteria);
 		criteriaByIdMap.put(criteria.getCriteriaId(), criteria);
-		criteriaByOrbTypeCollection.add(criteria);
+		criteriaByOrbTypeCollection.put(criteria);
 	}
 	
 	public void addDefault(Criteria criteria) {
-		add(criteria);
+		put(criteria);
 	}
 	
 	@Override
@@ -40,13 +43,14 @@ public class LimitationCollection extends CriteriaCollection {
 	}
 	
 	@Override
-	public List<Criteria> removeByOrbTypeId(long id) {
-		List<Criteria> criteriaList = criteriaByOrbTypeCollection.remove(id);
-		criteriaList = (criteriaList == null) ? new ArrayList<Criteria>() : criteriaList;
-		for (Criteria criteria : criteriaList) {
+	public Map<Long, Criteria> removeByOrbTypeId(long id) {
+		Map<Long, Criteria> criteriaMap = criteriaByOrbTypeCollection.remove(id);
+		criteriaMap = (criteriaMap == null) ? new HashMap<Long, Criteria>() : criteriaMap;
+		for (long key : criteriaMap.keySet()) {
+			Criteria criteria = criteriaMap.get(key);
 			criteriaByIdMap.remove(criteria.getCriteriaId());
 		}
-		return criteriaList;
+		return criteriaMap;
 	}
 	
 	@Override

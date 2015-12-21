@@ -178,7 +178,7 @@ class CommandProcessorIntegrationSpec extends Specification {
 		operationResult = commandProcessor.executeAction(commandProcessActionPackage)
 		
 		if (operationResult.operationResultException != null) {
-			logger.info("Exception message: {}", operationResult.operationResultException.printStackTrace())
+			logger.debug("Exception message: {}", operationResult.operationResultException.printStackTrace())
 		}
 		
 		then: 'the transaction persists'
@@ -222,7 +222,7 @@ class CommandProcessorIntegrationSpec extends Specification {
 		
 		then:
 		if (operationResult.operationResultException != null) {
-			logger.info("Exception: {}", operationResult.operationResultException)
+			logger.debug("Exception: {}", operationResult.operationResultException)
 		}
 		
 		operationResult != null
@@ -252,7 +252,7 @@ class CommandProcessorIntegrationSpec extends Specification {
 		then:
 		def size = commandProcessActionPackage.undoActionBundle.getActions().size()
 		
-		logger.info("Size: {}", size)
+		logger.debug("Size: {}", size)
 		
 		if (operationResult.operationResultException != null) {
 			logger.info("Exception: {}", operationResult.operationResultException)

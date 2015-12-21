@@ -1,10 +1,10 @@
 package com.fletch22.orb.query;
 
 import java.util.List;
-import java.util.Set;
+
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fletch22.orb.cache.query.CriteriaCollection;
-import com.fletch22.orb.query.Criteria;
 import com.fletch22.orb.query.constraint.Constraint;
 import com.fletch22.orb.query.constraint.ConstraintDetails;
 import com.fletch22.orb.query.constraint.ConstraintDetailsList;
@@ -13,68 +13,29 @@ import com.fletch22.orb.query.constraint.ConstraintDetailsSingleValue;
 public abstract class CriteriaAttributeDeleteHandler {
 
 	public abstract CriteriaCollection getCriteriaCollection();
-	
+
 	protected abstract CriteriaManager getCriteriaManager();
-	
+
+	@Autowired
+	public CriteriaCollector criteriaCollector;
+
 	public void handleAttributeDeletion(long orbTypeInternalId, String attributeName, boolean isDeleteDependencies) {
 		CriteriaCollection criteriaCollection = getCriteriaCollection();
 
-		Set<Long> criteriaKey = criteriaCollection.getKeys();
-		for (long key : criteriaKey) {
+		List<Criteria> criteriaNeedingChange = criteriaCollector.collectCriteria(criteriaCollection, orbTypeInternalId, attributeName);
 
-			Criteria criteria = criteriaCollection.getByQueryId(key);
-			if (criteria.getOrbType().id == orbTypeInternalId) {
-				handleAttributeDeletion(criteria.logicalConstraint, key, attributeName, isDeleteDependencies);
-			}
+		for (Criteria criteria : criteriaNeedingChange) {
+			handleAttributeDeletion(criteria.logicalConstraint, criteria.getCriteriaId(), attributeName, isDeleteDependencies);
 		}
 	}
-	
-	protected boolean hasAttribute(ConstraintDetails constraintDetails, String attributeName) {
-		boolean hasAttribute = false;
-		if (constraintDetails.attributeName.equals(attributeName)) {
-			hasAttribute = true;
-		}
 
-		return hasAttribute;
-	}
-	
-	protected boolean hasAttribute(LogicalConstraint logicalConstraint, String attributeName) {
-		List<Constraint> constraintList = logicalConstraint.constraintList;
-		boolean hasAttribute = false;
-
-		for (Constraint constraintInner : constraintList) {
-
-			if (constraintInner instanceof ConstraintDetailsSingleValue) {
-				hasAttribute = hasAttribute((ConstraintDetails) constraintInner, attributeName);
-			} else if (constraintInner instanceof ConstraintDetailsList) {
-				hasAttribute = hasAttribute((ConstraintDetails) constraintInner, attributeName);
-			} else if (constraintInner instanceof LogicalConstraint) {
-				hasAttribute = hasAttribute((LogicalConstraint) constraintInner, attributeName);
+	protected void handleAttributeDeletion(LogicalConstraint logicalConstraint, long queryOrbInternalId, String attributeName, boolean isDeleteDependencies) {
+		if (isDeleteDependencies) {
+			if (getCriteriaManager().doesCriteriaExist(queryOrbInternalId)) {
+				getCriteriaManager().delete(queryOrbInternalId, isDeleteDependencies);
 			}
-
-			if (hasAttribute) {
-				break;
-			}
+		} else {
+			throw new RuntimeException("The attribute has a dependent query. System will not allow deletion.");
 		}
-
-		return hasAttribute;
-	}
-	
-	protected boolean handleAttributeDeletion(LogicalConstraint logicalConstraint, long queryOrbInternalId, String attributeName, boolean isDeleteDependencies) {
-		boolean hasBeenDeleted = false;
-
-		boolean hasAttribute = hasAttribute(logicalConstraint, attributeName);
-		if (hasAttribute) {
-			if (isDeleteDependencies) {
-				if (getCriteriaManager().doesCriteriaExist(queryOrbInternalId)) {
-					getCriteriaManager().delete(queryOrbInternalId, isDeleteDependencies);
-				}
-				hasBeenDeleted = true;
-			} else {
-				throw new RuntimeException("The attribute has a dependent query. System will not allow deletion.");
-			}
-		}
-
-		return hasBeenDeleted;
 	}
 }

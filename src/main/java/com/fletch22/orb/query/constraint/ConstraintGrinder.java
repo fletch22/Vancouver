@@ -89,7 +89,7 @@ public class ConstraintGrinder {
 				GrinderSortInfo grinderSortInfo = new GrinderSortInfo();
 				grinderSortInfo.sortDirection = criteriaSortInfo.sortDirection;
 				grinderSortInfo.sortType = criteriaSortInfo.sortType;
-				grinderSortInfo.sortIndex = orbTypeManager.getIndexOfAttribute(criteria.getOrbType(), criteriaSortInfo.sortAttributeName);
+				grinderSortInfo.sortIndex = orbTypeManager.getIndexOfAttribute(criteria.getOrbTypeInternalId(), criteriaSortInfo.sortAttributeName);
 				grinderSortInfoList.add(grinderSortInfo);
 			}
 			

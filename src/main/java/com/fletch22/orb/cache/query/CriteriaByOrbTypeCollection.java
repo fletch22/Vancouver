@@ -10,31 +10,31 @@ import com.fletch22.orb.query.Criteria;
 
 public class CriteriaByOrbTypeCollection {
 	
-	Map<Long, List<Criteria>> collection = new HashMap<Long, List<Criteria>>();
+	HashMap<Long, HashMap<Long, Criteria>> collection = new HashMap<Long, HashMap<Long, Criteria>>();
 	
-	public void add(Criteria criteria) {
+	public void put(Criteria criteria) {
 		long id = criteria.getOrbTypeInternalId();
 					
-		List<Criteria> list = collection.get(id);
+		HashMap<Long, Criteria> map = collection.get(id);
 		
-		if (list != null) {
-			list.add(criteria);
+		if (map != null) {
+			map.put(criteria.getCriteriaId(), criteria);
 		} else {
-			list = new ArrayList<Criteria>();
-			list.add(criteria);
-			collection.put(id, list);
+			map = new HashMap<Long, Criteria>();
+			map.put(criteria.getCriteriaId(), criteria);
+			collection.put(id, map);
 		}
 	}
 	
-	public List<Criteria> remove(long orbTypeInternalId) {
+	public HashMap<Long, Criteria> remove(long orbTypeInternalId) {
 		return collection.remove(orbTypeInternalId);
 	}
 	
 	public void removeByCriteriaId(Criteria criteria) {
-		Collection<Criteria> collection = this.get(criteria.getOrbTypeInternalId());
+		Map<Long, Criteria> map = this.get(criteria.getOrbTypeInternalId());
 		
-		collection.remove(criteria);
-		if (collection.size() == 0) {
+		map.remove(criteria.getCriteriaId());
+		if (map.size() == 0) {
 			this.remove(criteria.getOrbTypeInternalId());
 		}
 	}
@@ -43,7 +43,7 @@ public class CriteriaByOrbTypeCollection {
 		this.collection.clear();
 	}
 	
-	public List<Criteria> get(long orbTypeInternalId) {
+	public HashMap<Long, Criteria> get(long orbTypeInternalId) {
 		return collection.get(orbTypeInternalId);
 	}
 	

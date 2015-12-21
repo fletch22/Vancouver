@@ -1,11 +1,10 @@
 package com.fletch22.orb.query;
 
-import com.fletch22.orb.OrbType;
 
 public class CriteriaStandard extends Criteria {
 	
-	public CriteriaStandard(OrbType orbType, String label) {
-		this.orbType = orbType;
+	public CriteriaStandard(long orbTypeInternalId, String label) {
+		this.orbTypeInternalId = orbTypeInternalId;
 		this.label = label;
 	}
 }

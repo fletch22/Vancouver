@@ -1,6 +1,9 @@
 package com.fletch22.orb.query.constraint;
 
+import java.util.List;
+
 import com.fletch22.orb.cache.local.CacheEntry;
+import com.fletch22.orb.query.Criteria;
 import com.fletch22.orb.query.CriteriaAggregate;
 import com.fletch22.orb.query.RelationshipOperator;
 import com.fletch22.orb.query.constraint.aggregate.Aggregate;
@@ -52,12 +55,17 @@ public class ConstraintDetailsAggregate extends ConstraintDetails {
 	}
 	
 	@Override
-	public void acceptConstraintDeleteChildCriteriaVisitor(ConstraintDeleteChildCriteriaVisitor visitor) {
+	public void acceptConstraintRenameChildCriteriaAttributeVisitor(ConstraintRenameChildCriteriaAttributeVisitor visitor) {
 		visitor.visit(this);
 	}
 	
 	@Override
-	public void acceptConstraintRenameChildCriteriaAttributeVisitor(ConstraintRenameChildCriteriaAttributeVisitor visitor) {
-		visitor.visit(this);
+	public void acceptCollectConstraintChildCriteriaVisitor(CollectConstraintChildCriteriaVisitor visitor, List<Criteria> criteriaList) {
+		visitor.visit(this, criteriaList);
+	}
+
+	@Override
+	public boolean acceptCollectCriteriaWithAttributeVisitor(CollectCriteriaWithAttributeVisitor visitor) {
+		return visitor.visit(this);
 	}
 }

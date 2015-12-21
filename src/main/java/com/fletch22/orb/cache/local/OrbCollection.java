@@ -319,15 +319,17 @@ public class OrbCollection {
 
 		OrbSingleTypesInstanceCollection orbSingleTypeInstancesCollection = allInstances.get(orbTypeInternalId);
 
-		for (CacheEntry cacheEntry : orbSingleTypeInstancesCollection.instances) {
-
-			OrbSteamerTrunk trunk = quickLookup.get(cacheEntry.id);
-			Orb orb = trunk.orb;
-			orbReference.referenceCollection.renameAttributeReference(orb.getOrbInternalId(), attributeNameOld, attributeNameNew);
-
-			LinkedHashMap<String, String> linkedHashMap = orb.getUserDefinedProperties();
-			String value = linkedHashMap.remove(attributeNameOld);
-			linkedHashMap.put(attributeNameNew, value);
+		if (orbSingleTypeInstancesCollection != null) {
+			for (CacheEntry cacheEntry : orbSingleTypeInstancesCollection.instances) {
+	
+				OrbSteamerTrunk trunk = quickLookup.get(cacheEntry.id);
+				Orb orb = trunk.orb;
+				orbReference.referenceCollection.renameAttributeReference(orb.getOrbInternalId(), attributeNameOld, attributeNameNew);
+	
+				LinkedHashMap<String, String> linkedHashMap = orb.getUserDefinedProperties();
+				String value = linkedHashMap.remove(attributeNameOld);
+				linkedHashMap.put(attributeNameNew, value);
+			}
 		}
 	}
 

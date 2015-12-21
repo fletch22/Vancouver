@@ -43,7 +43,7 @@ public class DefLimitationMother {
 
 	public Criteria createAndAddCriteriaSimple() {
 		
-		Criteria criteria = new CriteriaStandard(getOrbType(), "foo");
+		Criteria criteria = new CriteriaStandard(getOrbType().id, "foo");
 		
 		defLimitationManager.addToCollection(criteria);
 		

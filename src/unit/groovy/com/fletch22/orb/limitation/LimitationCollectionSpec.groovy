@@ -5,12 +5,18 @@ import static org.junit.Assert.*
 import java.util.function.Predicate
 import java.util.stream.Collectors
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+
+import spock.lang.Shared
 import spock.lang.Specification
 
 import com.fletch22.orb.query.Criteria
 import com.fletch22.util.StopWatch
 
 class LimitationCollectionSpec extends Specification {
+	
+	@Shared Logger logger = LoggerFactory.getLogger(LimitationCollectionSpec)
 
 	def 'test lambda filter'() {
 		
@@ -25,7 +31,7 @@ class LimitationCollectionSpec extends Specification {
 			.collect(Collectors.toList())
 		stopWatch.stop()
 		
-		println("Elapsed millis: " + stopWatch.elapsedMillis)
+		logger.debug("Elapsed millis: " + stopWatch.elapsedMillis)
 		
 		then:
 		list.size() == 0

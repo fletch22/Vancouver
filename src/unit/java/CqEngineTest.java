@@ -79,7 +79,7 @@ public class CqEngineTest {
 		
 		BigDecimal millis = new BigDecimal(stopWatch.getNanoTime()).divide(new BigDecimal(1000000));
 		
-		logger.info("Elapsed time for list: {}", millis);
+		logger.debug("Elapsed time for list: {}", millis);
 	}
 	
 

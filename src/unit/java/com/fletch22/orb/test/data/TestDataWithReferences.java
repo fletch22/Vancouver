@@ -82,7 +82,7 @@ public class TestDataWithReferences {
 		
 		OrbType orbType = orbTypeManager.getOrbType(orbTypeInternalId);
 		
-		Criteria criteria = new CriteriaStandard(orbType, "foo");
+		Criteria criteria = new CriteriaStandard(orbType.id, "foo");
 		
 		Constraint constraint = Constraint.eq(ATTRIBUTE_COLOR, "green");
 		

@@ -73,7 +73,7 @@ public class QueryManagerImpl extends AbstractCriteriaManager implements QueryMa
 	public OrbResultSet findByAttribute(long orbTypeInternalId, String attributeName, String attributeValueToFind) {
 
 		OrbType orbType = orbTypeManager.getOrbType(orbTypeInternalId);
-		Criteria criteria = new CriteriaStandard(orbType, "findByAttribute");
+		Criteria criteria = new CriteriaStandard(orbType.id, "findByAttribute");
 		criteria.addAnd(Constraint.eq(attributeName, attributeValueToFind));
 
 		return executeQuery(criteria);

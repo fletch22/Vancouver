@@ -129,7 +129,7 @@ class OrbTypeManagerLocalCacheSpec extends Specification {
 		int indexOriginal = findIndexOfKey(orbTypeInternalId, TestDataWithReferences.ATTRIBUTE_COLOR)
 		orbTypeManager.deleteAttribute(orbTypeInternalId, TestDataWithReferences.ATTRIBUTE_COLOR, true)
 		
-		logger.info("orbInternalIdQuery: {}", orbInternalIdQuery);
+		logger.debug("orbInternalIdQuery: {}", orbInternalIdQuery);
 		
 		then:
 		notThrown Exception

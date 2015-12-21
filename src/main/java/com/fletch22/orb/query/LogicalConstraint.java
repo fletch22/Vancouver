@@ -2,10 +2,12 @@ package com.fletch22.orb.query;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import com.fletch22.orb.cache.local.CacheEntry;
+import com.fletch22.orb.query.constraint.CollectConstraintChildCriteriaVisitor;
+import com.fletch22.orb.query.constraint.CollectCriteriaWithAttributeVisitor;
 import com.fletch22.orb.query.constraint.Constraint;
-import com.fletch22.orb.query.constraint.ConstraintDeleteChildCriteriaVisitor;
 import com.fletch22.orb.query.constraint.ConstraintProcessVisitor;
 import com.fletch22.orb.query.constraint.ConstraintRegistrationVisitor;
 import com.fletch22.orb.query.constraint.ConstraintRenameChildCriteriaAttributeVisitor;
@@ -59,12 +61,17 @@ public class LogicalConstraint extends Constraint {
 	}
 
 	@Override
-	public void acceptConstraintDeleteChildCriteriaVisitor(ConstraintDeleteChildCriteriaVisitor visitor) {
+	public void acceptConstraintRenameChildCriteriaAttributeVisitor(ConstraintRenameChildCriteriaAttributeVisitor visitor) {
 		visitor.visit(this);
 	}
 	
 	@Override
-	public void acceptConstraintRenameChildCriteriaAttributeVisitor(ConstraintRenameChildCriteriaAttributeVisitor visitor) {
-		visitor.visit(this);
+	public void acceptCollectConstraintChildCriteriaVisitor(CollectConstraintChildCriteriaVisitor visitor, List<Criteria> criteriaList) {
+		visitor.visit(this, criteriaList);
+	}
+
+	@Override
+	public boolean acceptCollectCriteriaWithAttributeVisitor(CollectCriteriaWithAttributeVisitor visitor) {
+		return visitor.visit(this);
 	}
 }

@@ -97,9 +97,10 @@ public class OrbManagerLocalCache implements OrbManager {
 
 	private void checkDefaultDataLimitations(Orb orb) {
 		
-		List<Criteria> limitations = defLimitationManager.getOrbsTypeCriteria(orb.getOrbTypeInternalId());
+		Map<Long, Criteria> limitationMap = defLimitationManager.getOrbsTypeCriteria(orb.getOrbTypeInternalId());
 		
-		for (Criteria criteria : limitations) {
+		for (long key : limitationMap.keySet()) {
+			Criteria criteria = limitationMap.get(key);
 			constraintChecker.checkConstraint(criteria, orb);
 		}
 	}

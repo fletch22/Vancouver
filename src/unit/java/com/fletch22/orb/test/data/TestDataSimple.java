@@ -65,7 +65,7 @@ public class TestDataSimple {
 		
 		OrbType orbType = orbTypeManager.getOrbType(orbTypeInternalId);
 		
-		Criteria criteria = new CriteriaStandard(orbType, "foo");
+		Criteria criteria = new CriteriaStandard(orbType.id, "foo");
 		criteria.addAnd(Constraint.eq(ATTRIBUTE_COLOR, ATTRIBUTE_GREEN));
 		
 		long orbInternalIdQuery = queryManager.addToCollection(criteria);

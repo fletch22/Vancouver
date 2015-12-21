@@ -3,9 +3,12 @@ package com.fletch22.orb.criteria.tester;
 import static com.googlecode.cqengine.query.QueryFactory.equal
 import static org.junit.Assert.*
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
 
+import spock.lang.Shared
 import spock.lang.Specification
 
 import com.fletch22.orb.IntegrationTests
@@ -25,6 +28,8 @@ import com.fletch22.util.StopWatch
 @ContextConfiguration(locations = "classpath:/springContext-test.xml")
 class ConstraintCheckerSpec extends Specification {
 
+	Logger logger = LoggerFactory.getLogger(ConstraintCheckerSpec)
+	
 	@Autowired
 	ConstraintChecker constraintChecker
 
@@ -85,6 +90,6 @@ class ConstraintCheckerSpec extends Specification {
 
 		then:
 		criteria
-		println stopWatch.elapsedMillis
+		stopWatch.logElapsed()
 	}
 }

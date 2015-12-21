@@ -233,7 +233,7 @@ public class JsonWrapperTest {
 		OrbType orbType = new OrbType(123, "foo", new BigDecimal("3456"), set);
 		long orbTypeInternalIdOriginal = orbType.id;
 
-		Criteria criteria = new CriteriaStandard(orbType, "foo");
+		Criteria criteria = new CriteriaStandard(orbType.id, "foo");
 
 		JsonWrapper jsonWrapper = new JsonWrapper(criteria, gsonFactory);
 
@@ -254,7 +254,7 @@ public class JsonWrapperTest {
 		OrbType orbType = new OrbType(123, "foo", new BigDecimal("3456"), set);
 		long orbTypeInternalIdOriginal = orbType.id;
 
-		Criteria criteria = new CriteriaStandard(orbType, "foo");
+		Criteria criteria = new CriteriaStandard(orbType.id, "foo");
 
 		Constraint constraint = Constraint.eq("bar", "somevalue");
 		criteria.addAnd(constraint);
@@ -289,7 +289,7 @@ public class JsonWrapperTest {
 	@Test
 	public void testConstraintDetailsAggregate() {
 
-		Criteria criteria = queryMother.getAggregateQuery();
+		Criteria criteria = queryMother.getSimpleAggregateQuery();
 
 		JsonWrapper jsonWrapper = new JsonWrapper(criteria, gsonFactory);
 

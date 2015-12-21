@@ -1,7 +1,7 @@
 package com.fletch22.orb.cache.query;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,10 +17,10 @@ public class QueryCollection extends CriteriaCollection {
 	static Logger logger = LoggerFactory.getLogger(QueryCollection.class);
 	
 	@Override
-	public void add(Criteria criteria) {
+	public void put(Criteria criteria) {
 		validateCriteria(criteria);
 		criteriaByIdMap.put(criteria.getCriteriaId(), criteria);
-		criteriaByOrbTypeCollection.add(criteria);
+		criteriaByOrbTypeCollection.put(criteria);
 	}
 	
 	@Override
@@ -31,13 +31,15 @@ public class QueryCollection extends CriteriaCollection {
 	}
 	
 	@Override
-	public List<Criteria> removeByOrbTypeId(long id) {
-		List<Criteria> criteriaList = criteriaByOrbTypeCollection.remove(id);
-		criteriaList = (criteriaList == null) ? new ArrayList<Criteria>() : criteriaList;
-		for (Criteria criteria : criteriaList) {
-			criteriaByIdMap.remove(criteria.getCriteriaId());
+	public Map<Long, Criteria> removeByOrbTypeId(long id) {
+		Map<Long, Criteria> criteriaMap = criteriaByOrbTypeCollection.remove(id);
+		criteriaMap = (criteriaMap == null) ? new HashMap<Long, Criteria>() : criteriaMap;
+		
+		for (long criteriaId: criteriaMap.keySet()) {
+			criteriaByIdMap.remove(criteriaId);
 		}
-		return criteriaList;
+		
+		return criteriaMap;
 	}
 	
 	@Override

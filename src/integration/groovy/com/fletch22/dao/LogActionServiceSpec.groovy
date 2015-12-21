@@ -32,7 +32,7 @@ import com.fletch22.orb.rollback.UndoActionBundle
 @ContextConfiguration(locations = ['classpath:/springContext-test.xml'])
 class LogActionServiceSpec extends Specification {
 	
-	@Shared Logger logger = LoggerFactory.getLogger(LogActionServiceSpec)
+	Logger logger = LoggerFactory.getLogger(LogActionServiceSpec)
 	
 	@Autowired
 	IntegrationSystemInitializer integrationSystemInitializer
