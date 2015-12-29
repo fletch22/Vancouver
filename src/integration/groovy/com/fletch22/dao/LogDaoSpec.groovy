@@ -27,7 +27,7 @@ class LogDaoSpec extends Specification {
 	static Logger logger = LoggerFactory.getLogger(LogDaoSpec)
 	
 	@Autowired
-	LogActionDao logDao;
+	LogActionDaoImpl logDao;
 	
 	@Autowired
 	TranDateGenerator tranDateGenerator

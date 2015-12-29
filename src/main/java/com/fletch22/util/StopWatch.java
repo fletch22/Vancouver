@@ -2,6 +2,7 @@ package com.fletch22.util;
 
 import java.math.BigDecimal;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,6 +29,11 @@ public class StopWatch {
 	}
 	
 	public void logElapsed() {
-		logger.info("Elapsed millis: {}", this.getElapsedMillis());
+		logElapsed(StringUtils.EMPTY);
+	}
+	
+	public void logElapsed(String prefix) {
+		prefix = (StringUtils.isNotBlank(prefix)) ? prefix + ": " : prefix; 
+		logger.info("{}Elapsed millis: {}", prefix, this.getElapsedMillis());
 	}
 }

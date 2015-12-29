@@ -40,7 +40,7 @@ public class RollbackTransactionService {
 	
 	public void rollbackToSpecificTransaction(BigDecimal tranId) {
 		
-		List<UndoActionBundle> undoActionBundleList = logActionService.getUndoActions(tranId.longValue());
+		List<UndoActionBundle> undoActionBundleList = logActionService.getUndoActions(tranId);
 		
 		OperationResult operationResult = null;
 		for (UndoActionBundle undoActionBundle : undoActionBundleList) {

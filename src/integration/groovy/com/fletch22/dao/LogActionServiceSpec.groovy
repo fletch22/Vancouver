@@ -59,7 +59,7 @@ class LogActionServiceSpec extends Specification {
 	TranDateGenerator tranDateGenerator;
 	
 	@Autowired
-	LogActionDao logActionDao
+	LogActionDaoImpl logActionDao
 	
 	@Autowired
 	OrbTypeService orbTypeService

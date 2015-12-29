@@ -12,7 +12,7 @@ import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import com.fletch22.dao.LogActionDao
+import com.fletch22.dao.LogActionDaoImpl
 import com.fletch22.orb.IntegrationSystemInitializer
 import com.fletch22.orb.IntegrationTests
 import com.fletch22.orb.cache.local.Cache
@@ -33,7 +33,7 @@ class TransactionServiceSpec extends Specification {
 	OrbTypeService orbTypeService
 	
 	@Autowired
-	LogActionDao logActionDao
+	LogActionDaoImpl logActionDao
 	
 	@Autowired
 	IntegrationSystemInitializer integrationSystemInitializer

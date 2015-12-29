@@ -1,4 +1,4 @@
-package com.fletch22.command;
+package com.fletch22.orb.command;
 
 import static org.junit.Assert.*
 
