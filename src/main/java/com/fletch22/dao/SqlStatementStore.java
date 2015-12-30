@@ -125,7 +125,7 @@ public class SqlStatementStore {
 		return getSingleLineFromFile("removeTransactionAndAllAfter6_ActionLog.sql");
 	}
 
-	public String getDeleteFromCurrentTransactionSql() {
+	public String getResetCurrenTransaction() {
 		return getSingleLineFromFile("resetCurrentTransaction.sql");
 	}
 	

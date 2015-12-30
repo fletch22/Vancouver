@@ -40,10 +40,23 @@ public abstract class Dao {
 	public abstract List<ActionInfo> getAllActions();
 	public abstract void rollbackToBeforeSpecificTransaction(BigDecimal tranId);
 	public abstract void recordTransactionStart(BigDecimal tranId);
-
+	public abstract void resetCurrentTransaction();
+	
 	public boolean isConnectionOpen() {
 		try {
 			return (null != connection && !connection.isClosed());
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
+	}
+	
+	public void rollbackCurrentTransaction() {
+		try {
+			BigDecimal tranId = getCurrentTransactionIfAny();
+
+			if (NO_TRANSACTION_FOUND.compareTo(tranId) != 0) {
+				this.rollbackToBeforeSpecificTransaction(tranId);
+			}
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}

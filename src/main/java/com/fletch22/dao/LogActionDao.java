@@ -214,18 +214,6 @@ public abstract class LogActionDao extends Dao {
 		}
 	}
 
-	public void rollbackCurrentTransaction() {
-		try {
-			BigDecimal tranId = getCurrentTransactionIfAny();
-
-			if (NO_TRANSACTION_FOUND.compareTo(tranId) != 0) {
-				this.rollbackToBeforeSpecificTransaction(tranId);
-			}
-		} catch (Exception e) {
-			throw new RuntimeException(e.getMessage(), e);
-		}
-	}
-
 	@Override
 	public BigDecimal getCurrentTransactionIfAny() {
 		
@@ -252,6 +240,7 @@ public abstract class LogActionDao extends Dao {
 		return tranId;
 	}
 
+	@Override
 	public void resetCurrentTransaction() {
 		
 		CallableStatement callableStatement = null;

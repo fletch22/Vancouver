@@ -2,6 +2,7 @@ package com.fletch22.dao;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -152,6 +153,24 @@ public class LogInMemDaoTest {
 	}
 	
 	@Test
+	public void testTryRecordTransactionStartTwice() {
+		
+		testRecordTransactionStart();
+		
+		BigDecimal tranId = new BigDecimal("23342342324.2544253");
+		
+		boolean wasExceptionThrown = false;
+		
+		try {
+			logActionInMemDao.recordTransactionStart(tranId);
+		} catch (Exception e) {
+			wasExceptionThrown = true;
+		}
+		
+		assertTrue(wasExceptionThrown);
+	}
+	
+	@Test
 	public void testRollbackToBeforeSpecificTransaction() {
 		
 		BigDecimal tranId = new BigDecimal("123213.892890890132");
@@ -169,5 +188,21 @@ public class LogInMemDaoTest {
 		assertEquals(Dao.NO_TRANSACTION_FOUND, currentTranId);
 	}
 	
-	
+	@Test
+	public void testResetCurrentTransaction() {
+		
+		BigDecimal tranId = new BigDecimal("123213.892890890132");
+		
+		logActionInMemDao.recordTransactionStart(tranId);
+		
+		BigDecimal currentTranId = logActionInMemDao.getCurrentTransactionIfAny();
+		
+		assertEquals(tranId, currentTranId);
+		
+		logActionInMemDao.resetCurrentTransaction();
+		
+		currentTranId = logActionInMemDao.getCurrentTransactionIfAny();
+		
+		assertEquals(currentTranId, Dao.NO_TRANSACTION_FOUND);
+	}
 }

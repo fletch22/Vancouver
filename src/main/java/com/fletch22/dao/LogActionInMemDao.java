@@ -49,7 +49,7 @@ public class LogActionInMemDao extends Dao {
 
 	@Value("${h2.database.driver}")
 	private String driver;
-	
+
 	@Autowired
 	SqlStatementStore sqlStatementStore;
 
@@ -109,25 +109,25 @@ public class LogActionInMemDao extends Dao {
 			cleanUpConnectionAfterSqlOperation(connection);
 		}
 	}
-	
+
 	@Override
 	public BigDecimal getCurrentTransactionIfAny() {
 		BigDecimal currentTranId = NO_TRANSACTION_FOUND;
-		
+
 		String getAnyOrphanedTransactionsSql = sqlStatementStore.getAnyOrphanedTransactionsSql();
-		
+
 		Connection connection = null;
 		try {
-			
+
 			connection = this.getConnection();
 			connection.setAutoCommit(false);
-			
+
 			PreparedStatement preparedStatement = connection.prepareStatement(getAnyOrphanedTransactionsSql);
-						
+
 			ResultSet resultSet = preparedStatement.executeQuery();
-			
+
 			boolean hasRows = resultSet.first();
-			
+
 			if (hasRows) {
 				currentTranId = resultSet.getBigDecimal(1);
 			}
@@ -147,31 +147,31 @@ public class LogActionInMemDao extends Dao {
 	@Override
 	public void logAction(StringBuilder action, StringBuilder undoAction, BigDecimal tranId, BigDecimal tranDate) {
 
-		String undoActionValue = (action == null) ? null: undoAction.toString();
+		String undoActionValue = (action == null) ? null : undoAction.toString();
 		String actionValue = action.toString();
 
 		String insertIntoUndoActionLogSql = sqlStatementStore.getInsertIntoUndoActionLog();
 		String insertIntoActionLogSql = sqlStatementStore.getInsertIntoActionLog();
-		
+
 		Connection connection = null;
 		try {
-			
+
 			connection = this.getConnection();
 			connection.setAutoCommit(false);
-			
+
 			if (!StringUtils.isEmpty(undoActionValue)) {
 				PreparedStatement preparedStatement = connection.prepareStatement(insertIntoUndoActionLogSql);
 				preparedStatement.setBigDecimal(1, tranDate);
 				preparedStatement.setString(2, undoActionValue);
 				preparedStatement.setBigDecimal(3, tranId);
-				
+
 				preparedStatement.execute();
 			}
-			
+
 			PreparedStatement preparedStatement = connection.prepareStatement(insertIntoActionLogSql);
 			preparedStatement.setString(1, actionValue);
 			preparedStatement.setBigDecimal(2, tranDate);
-			
+
 			preparedStatement.execute();
 
 			connection.commit();
@@ -207,7 +207,7 @@ public class LogActionInMemDao extends Dao {
 				throw new RuntimeException("Encountered problem rolling back transaction.", sqlex);
 			}
 		}
-		
+
 		throw new RuntimeException("Encountered problem executing sql.", e);
 	}
 
@@ -218,26 +218,26 @@ public class LogActionInMemDao extends Dao {
 		e.printStackTrace();
 		logger.info("################################################");
 	}
-	
+
 	@Override
 	public List<UndoActionBundle> getUndosForTransactionAndSubesequentTransactions(BigDecimal tranId) {
 
 		String getSelectUndoSql = sqlStatementStore.getSelectUndoSql();
-		
+
 		Connection connection = null;
 		List<UndoActionBundle> listUndoActionBundle = new ArrayList<UndoActionBundle>();
 		try {
-			
+
 			connection = this.getConnection();
 			connection.setAutoCommit(false);
-			
+
 			PreparedStatement preparedStatement = connection.prepareStatement(getSelectUndoSql);
 			preparedStatement.setBigDecimal(1, tranId);
-			
+
 			ResultSet resultSet = preparedStatement.executeQuery();
-			
+
 			listUndoActionBundle = transformUndos(resultSet);
-			
+
 		} catch (Exception e) {
 			throw new RuntimeException("Encountered error while trying to get Undos.", e);
 		} finally {
@@ -249,20 +249,20 @@ public class LogActionInMemDao extends Dao {
 	@Override
 	public int countCommands() {
 		String getCountLogItemsSql = sqlStatementStore.getCountLogItemsSql();
-		
+
 		int count = 0;
 		Connection connection = null;
 		try {
-			
+
 			connection = this.getConnection();
 			connection.setAutoCommit(false);
-			
+
 			PreparedStatement preparedStatement = connection.prepareStatement(getCountLogItemsSql);
-						
+
 			ResultSet resultSet = preparedStatement.executeQuery();
-			
+
 			boolean hasRows = resultSet.first();
-			
+
 			if (hasRows) {
 				count = resultSet.getInt(1);
 			}
@@ -277,22 +277,22 @@ public class LogActionInMemDao extends Dao {
 	@Override
 	public List<ActionInfo> getAllActions() {
 		String getLogSql = sqlStatementStore.getLogSql();
-		
+
 		Connection connection = null;
 		List<ActionInfo> actionInfoList = new ArrayList<ActionInfo>();
 		try {
-			
+
 			connection = this.getConnection();
 			connection.setAutoCommit(false);
-			
+
 			PreparedStatement preparedStatement = connection.prepareStatement(getLogSql);
 			preparedStatement.setBigDecimal(1, new BigDecimal("0"));
 			preparedStatement.setBigDecimal(2, new BigDecimal("9999999999999999"));
-			
+
 			ResultSet resultSet = preparedStatement.executeQuery();
-			
+
 			actionInfoList = transformActions(resultSet);
-			
+
 		} catch (Exception e) {
 			throw new RuntimeException("Encountered error while trying to get Undos.", e);
 		} finally {
@@ -306,29 +306,29 @@ public class LogActionInMemDao extends Dao {
 		String deleteActionLogSql = sqlStatementStore.getDeleteActionLogSql();
 		String deleteUndoLogSql = sqlStatementStore.getDeleteUndoLogSql();
 		String getCurrentTransactionSql = sqlStatementStore.getGetCurrentTransactionSql();
-		String deleteFromCurrentTransactionSql = sqlStatementStore.getDeleteFromCurrentTransactionSql();
-		
+		String deleteFromCurrentTransactionSql = sqlStatementStore.getResetCurrenTransaction();
+
 		Connection connection = null;
 		try {
-			
+
 			connection = this.getConnection();
 			connection.setAutoCommit(false);
-			
+
 			PreparedStatement preparedStatement = connection.prepareStatement(deleteActionLogSql);
 			preparedStatement.setBigDecimal(1, tranId);
 			preparedStatement.execute();
-			
+
 			preparedStatement = connection.prepareStatement(deleteUndoLogSql);
 			preparedStatement.setBigDecimal(1, tranId);
 			preparedStatement.execute();
-			
+
 			Statement statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery(getCurrentTransactionSql);
-			
+
 			boolean hasRows = resultSet.first();
 			if (hasRows) {
-				BigDecimal dbTranId = resultSet.getBigDecimal(1);
-				if (tranId.equals(dbTranId)) {
+				BigDecimal tranIdFound = resultSet.getBigDecimal(1);
+				if (tranId.equals(tranIdFound)) {
 					statement = connection.createStatement();
 					statement.execute(deleteFromCurrentTransactionSql);
 				}
@@ -347,28 +347,49 @@ public class LogActionInMemDao extends Dao {
 	public void recordTransactionStart(BigDecimal tranId) {
 		String getCurrentTransactionSql = sqlStatementStore.getGetCurrentTransactionSql();
 		String recordTransactionStartSql = sqlStatementStore.getGetRecordTransactionStartSql();
-		
-		Connection connection = null;
+
 		try {
-			
+
 			connection = this.getConnection();
 			connection.setAutoCommit(false);
-			
+
 			Statement statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery(getCurrentTransactionSql);
-			
+
 			boolean hasRows = resultSet.first();
+
+			logger.info("Has rows {}", hasRows);
+
 			if (hasRows) {
 				BigDecimal result = resultSet.getBigDecimal(1);
-				if (result.equals(BigDecimal.ZERO)) {
-					throw new RuntimeException("Encountered problem while trying to begin transaction with id '" + tranId.toString() + "'. Transaction cannot be set -- perhaps because it already is set.");
-				}
+				throw new RuntimeException("Encountered problem while trying to begin transaction with id '" + tranId + "'. Transaction '" + result + "' already exists.");
 			} else {
 				PreparedStatement preparedStatement = connection.prepareStatement(recordTransactionStartSql);
 				preparedStatement.setBigDecimal(1, tranId);
 				preparedStatement.execute();
 			}
-			
+
+			connection.commit();
+
+		} catch (Exception e) {
+			processCaughtExceptionDuringTransactionOperation(connection, e);
+		} finally {
+			cleanUpConnectionAfterSqlOperation(connection);
+		}
+	}
+
+	@Override
+	public void resetCurrentTransaction() {
+		String resetCurrentTransactionSql = sqlStatementStore.getResetCurrenTransaction();
+
+		try {
+
+			connection = this.getConnection();
+			connection.setAutoCommit(false);
+
+			Statement statement = connection.createStatement();
+			statement.execute(resetCurrentTransactionSql);
+
 			connection.commit();
 
 		} catch (Exception e) {
