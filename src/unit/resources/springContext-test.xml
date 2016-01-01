@@ -36,5 +36,7 @@
 		<property name="password" value="${h2.database.password}" />
 	</bean>
 	
+	<bean id="logActionDao" class="com.fletch22.dao.LogActionInMemDao" />
+	
 </beans>
             

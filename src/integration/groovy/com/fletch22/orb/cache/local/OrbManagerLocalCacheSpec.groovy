@@ -3,7 +3,6 @@ package com.fletch22.orb.cache.local;
 import static org.junit.Assert.*
 
 import org.apache.commons.lang3.StringUtils
-import org.apache.commons.lang3.time.StopWatch
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -22,8 +21,9 @@ import com.fletch22.orb.cache.reference.OrbReference
 import com.fletch22.orb.cache.reference.ReferenceCollection
 import com.fletch22.orb.cache.reference.ReferenceUtil
 import com.fletch22.orb.client.service.BeginTransactionService
-import com.fletch22.orb.command.transaction.RollbackTransactionService;
+import com.fletch22.orb.command.transaction.RollbackTransactionService
 import com.fletch22.util.RandomUtil
+import com.fletch22.util.StopWatch
 
 @org.junit.experimental.categories.Category(IntegrationTests.class)
 @ContextConfiguration(locations = ['classpath:/springContext-test.xml'])
@@ -177,9 +177,7 @@ class OrbManagerLocalCacheSpec extends Specification {
 		def set2 = getSet(numberOfReferences)
 		stopWatch.stop()
 		
-		def elapsedMillis = new BigDecimal(stopWatch.getNanoTime()).divide(1000000)
-		
-		logger.debug("Time to get 2 * 2 * {} orbs/orb types: {}", numberOfReferences, elapsedMillis)
+		logger.debug("Time to get 2 * 2 * {} orbs/orb types: {}", numberOfReferences, stopWatch.elapsedMillis)
 		
 		stopWatch.reset()
 
@@ -195,12 +193,8 @@ class OrbManagerLocalCacheSpec extends Specification {
 		}
 		stopWatch.stop()
 		
-		Thread.sleep(10000);
-
-		def elapsedMillisPerSetAction = new BigDecimal(stopWatch.getNanoTime()).divide(1000000).divide(numberSetActions)
-
 		when:
-		logger.debug("Each set action averaged {} millis", elapsedMillisPerSetAction)
+		logger.debug("Each set action averaged {} millis", stopWatch.elapsedMillis)
 		def fetchedValue = orbManager.getAttribute(orb.orbInternalId, attributeName)
 
 		then:

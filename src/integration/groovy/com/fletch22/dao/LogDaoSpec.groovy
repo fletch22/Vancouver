@@ -27,7 +27,7 @@ class LogDaoSpec extends Specification {
 	static Logger logger = LoggerFactory.getLogger(LogDaoSpec)
 	
 	@Autowired
-	LogActionDaoImpl logDao;
+	LogActionDao logActionDao;
 	
 	@Autowired
 	TranDateGenerator tranDateGenerator
@@ -61,10 +61,10 @@ class LogDaoSpec extends Specification {
 		given:
 		
 		when:
-		Connection connection = logDao.getConnection()
+		Connection connection = logActionDao.getConnection()
 		
 		then:
-		logDao.isConnectionOpen()
+		logActionDao.isConnectionOpen()
 	} 
 	
 	@Test
@@ -73,13 +73,13 @@ class LogDaoSpec extends Specification {
 		given:
 		
 		when:
-		Connection connection = logDao.getConnection()
+		Connection connection = logActionDao.getConnection()
 		
 		connection.close()
 		
 		then:
 		connection
-		false == logDao.isConnectionOpen()
+		false == logActionDao.isConnectionOpen()
 	}
 	
 	@Test
@@ -88,10 +88,10 @@ class LogDaoSpec extends Specification {
 		given:
 				
 		when:
-		logDao.clearOutDatabase();
+		logActionDao.clearOutDatabase();
 		
 		then:
-		int numberCommands = logDao.countCommands()
+		int numberCommands = logActionDao.countCommands()
 		numberCommands == 0
 	}
 	
@@ -100,7 +100,7 @@ class LogDaoSpec extends Specification {
 		
 		given:
 		when:
-		String connectionString = logDao.getConnectionString()
+		String connectionString = logActionDao.getConnectionString()
 		
 		then:
 		connectionString
@@ -121,7 +121,7 @@ class LogDaoSpec extends Specification {
 		logger.debug("TD: {}", tranDate);
 		
 		when:
-		logDao.logAction(action, undoAction, tranDate, tranId);
+		logActionDao.logAction(action, undoAction, tranDate, tranId);
 		
 		then:
 		1 == 1

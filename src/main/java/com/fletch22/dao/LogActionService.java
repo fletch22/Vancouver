@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.fletch22.dao.Dao.ActionInfo;
+import com.fletch22.dao.LogActionDao.ActionInfo;
 import com.fletch22.orb.InternalIdGenerator;
 import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory;
 import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory.CommandProcessActionPackage;
@@ -23,7 +23,7 @@ public class LogActionService {
 	Logger logger = LoggerFactory.getLogger(LogActionService.class);
 
 	@Autowired
-	LogActionDaoImpl logActionDao;
+	LogActionDao logActionDao;
 
 	@Autowired
 	InternalIdGenerator internalIdGenerator;

@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.fletch22.dao.LogActionDaoImpl;
+import com.fletch22.dao.LogActionDao;
 import com.fletch22.orb.TranDateGenerator;
 import com.fletch22.util.NowFactory;
 
@@ -25,7 +25,7 @@ public class TransactionService {
 	TranDateGenerator tranDateGenerator;
 	
 	@Autowired
-	LogActionDaoImpl logActionDao;
+	LogActionDao logActionDao;
 	
 	@Autowired
 	NowFactory nowFactory;

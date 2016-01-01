@@ -18,6 +18,6 @@
 	</bean>
 
 	<bean id="contextApplicationContextProvider" class="com.fletch22.ApplicationContextProvider"></bean>
-	
+	<bean id="logActionDao" class="com.fletch22.dao.LogActionDaoImpl" />
 </beans>
             

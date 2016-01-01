@@ -16,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.fletch22.dao.Dao.ActionInfo;
+import com.fletch22.dao.LogActionDao.ActionInfo;
 import com.fletch22.util.StopWatch;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -26,14 +26,13 @@ public class LogInMemDaoTest {
 	Logger logger = LoggerFactory.getLogger(LogInMemDaoTest.class);
 	
 	@Autowired
-	LogActionInMemDao logActionInMemDao;
-	
-	@Autowired
-	LogActionDaoImpl logActionDaoImpl;
+	LogActionDao logActionDao;
 	
 	@Before
 	public void before() {
-		logActionInMemDao.clearOutDatabase();
+		
+		logActionDao.clearOutDatabase();
+		logActionDao.resetCurrentTransaction();
 	}
 	
 	@Test
@@ -45,19 +44,8 @@ public class LogInMemDaoTest {
 		
 		stopWatch.start();
 		for (int i = 0; i < count; i++) {
-			logActionInMemDao.getConnection();
-			logActionInMemDao.closeConnection();
-		}
-		stopWatch.stop();
-		
-		stopWatch.logElapsed();
-		
-		stopWatch.reset();
-		
-		stopWatch.start();
-		for (int i = 0; i < count; i++) {
-			logActionDaoImpl.getConnection();
-			logActionDaoImpl.closeConnection();
+			logActionDao.getConnection();
+			logActionDao.closeConnection();
 		}
 		stopWatch.stop();
 		
@@ -73,21 +61,11 @@ public class LogInMemDaoTest {
 		
 		stopWatch.start();
 		for (int i = 0; i < count; i++) {
-			logActionInMemDao.clearOutDatabase();
+			logActionDao.clearOutDatabase();
 		}
 		stopWatch.stop();
 		
 		stopWatch.logElapsed("clear out in mem");
-		
-		stopWatch.reset();
-		
-		stopWatch.start();
-		for (int i = 0; i < count; i++) {
-			logActionDaoImpl.clearOutDatabase();
-		}
-		stopWatch.stop();
-		
-		stopWatch.logElapsed("clear out in impl");
 	}
 	
 	@Test
@@ -102,7 +80,7 @@ public class LogInMemDaoTest {
 		StringBuilder undoAction = new StringBuilder();
 		undoAction.append("This is the undo action to log.");
 		
-		logActionInMemDao.logAction(action, undoAction, tranId, tranDate);
+		logActionDao.logAction(action, undoAction, tranId, tranDate);
 		
 	}
 	
@@ -110,20 +88,20 @@ public class LogInMemDaoTest {
 	public void testGetUndosForTransactionAndSubesequentTransactions() {
 		
 		BigDecimal tranId = new BigDecimal("123123213.0000001");
-		logActionInMemDao.getUndosForTransactionAndSubesequentTransactions(tranId);
+		logActionDao.getUndosForTransactionAndSubesequentTransactions(tranId);
 	}
 	
 	@Test 
 	public void testgetUndosForTransactionAndSubesequentTransactions() {
 		
 		BigDecimal tranId = new BigDecimal("23452543.23452543");
-		logActionInMemDao.getUndosForTransactionAndSubesequentTransactions(tranId);
+		logActionDao.getUndosForTransactionAndSubesequentTransactions(tranId);
 	}
 	
 	@Test 
 	public void testGetCountCommand() {
 		
-		int count = logActionInMemDao.countCommands();
+		int count = logActionDao.countCommands();
 		
 		assertEquals(0, count);
 	}
@@ -131,7 +109,7 @@ public class LogInMemDaoTest {
 	@Test
 	public void testGetActionsAll() {
 		
-		List<ActionInfo> actionInfos = logActionInMemDao.getAllActions();
+		List<ActionInfo> actionInfos = logActionDao.getAllActions();
 		
 		assertNotNull(actionInfos);
 	}
@@ -139,15 +117,15 @@ public class LogInMemDaoTest {
 	@Test
 	public void testRecordTransactionStart() {
 		
-		BigDecimal currentTranId = logActionInMemDao.getCurrentTransactionIfAny();
+		BigDecimal currentTranId = logActionDao.getCurrentTransactionIfAny();
 		
-		assertEquals(Dao.NO_TRANSACTION_FOUND, currentTranId);
+		assertEquals(LogActionDao.NO_TRANSACTION_FOUND, currentTranId);
 		
 		BigDecimal tranId = new BigDecimal("123213.892890890132");
 		
-		logActionInMemDao.recordTransactionStart(tranId);
+		logActionDao.recordTransactionStart(tranId);
 		
-		currentTranId = logActionInMemDao.getCurrentTransactionIfAny();
+		currentTranId = logActionDao.getCurrentTransactionIfAny();
 		
 		assertEquals(tranId, currentTranId);
 	}
@@ -162,7 +140,7 @@ public class LogInMemDaoTest {
 		boolean wasExceptionThrown = false;
 		
 		try {
-			logActionInMemDao.recordTransactionStart(tranId);
+			logActionDao.recordTransactionStart(tranId);
 		} catch (Exception e) {
 			wasExceptionThrown = true;
 		}
@@ -173,19 +151,23 @@ public class LogInMemDaoTest {
 	@Test
 	public void testRollbackToBeforeSpecificTransaction() {
 		
+		BigDecimal currentTranId = logActionDao.getCurrentTransactionIfAny();
+		
+		assertEquals(LogActionDao.NO_TRANSACTION_FOUND, currentTranId);
+		
 		BigDecimal tranId = new BigDecimal("123213.892890890132");
 		
-		logActionInMemDao.recordTransactionStart(tranId);
+		logActionDao.recordTransactionStart(tranId);
 		
-		BigDecimal currentTranId = logActionInMemDao.getCurrentTransactionIfAny();
+		currentTranId = logActionDao.getCurrentTransactionIfAny();
 		
 		assertEquals(tranId, currentTranId);
 		
-		logActionInMemDao.rollbackToBeforeSpecificTransaction(tranId);
+		logActionDao.rollbackToBeforeSpecificTransaction(tranId);
 		
-		currentTranId = logActionInMemDao.getCurrentTransactionIfAny();
+		currentTranId = logActionDao.getCurrentTransactionIfAny();
 		
-		assertEquals(Dao.NO_TRANSACTION_FOUND, currentTranId);
+		assertEquals(LogActionDao.NO_TRANSACTION_FOUND, currentTranId);
 	}
 	
 	@Test
@@ -193,16 +175,16 @@ public class LogInMemDaoTest {
 		
 		BigDecimal tranId = new BigDecimal("123213.892890890132");
 		
-		logActionInMemDao.recordTransactionStart(tranId);
+		logActionDao.recordTransactionStart(tranId);
 		
-		BigDecimal currentTranId = logActionInMemDao.getCurrentTransactionIfAny();
+		BigDecimal currentTranId = logActionDao.getCurrentTransactionIfAny();
 		
 		assertEquals(tranId, currentTranId);
 		
-		logActionInMemDao.resetCurrentTransaction();
+		logActionDao.resetCurrentTransaction();
 		
-		currentTranId = logActionInMemDao.getCurrentTransactionIfAny();
+		currentTranId = logActionDao.getCurrentTransactionIfAny();
 		
-		assertEquals(currentTranId, Dao.NO_TRANSACTION_FOUND);
+		assertEquals(LogActionDao.NO_TRANSACTION_FOUND, currentTranId);
 	}
 }

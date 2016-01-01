@@ -4,7 +4,7 @@ import java.sql.Connection;
 
 public class DaoUtils {
 
-	public Connection getConnection(Dao dao) {
-		return dao.getConnection();
+	public Connection getConnection(LogActionDao logActionDao) {
+		return logActionDao.getConnection();
 	}
 }

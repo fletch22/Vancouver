@@ -12,7 +12,7 @@ import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import com.fletch22.dao.LogActionDaoImpl
+import com.fletch22.dao.LogActionDao
 import com.fletch22.orb.IntegrationSystemInitializer
 import com.fletch22.orb.IntegrationTests
 import com.fletch22.orb.cache.local.Cache
@@ -33,7 +33,7 @@ class TransactionServiceSpec extends Specification {
 	OrbTypeService orbTypeService
 	
 	@Autowired
-	LogActionDaoImpl logActionDao
+	LogActionDao logActionDao
 	
 	@Autowired
 	IntegrationSystemInitializer integrationSystemInitializer
@@ -150,6 +150,5 @@ class TransactionServiceSpec extends Specification {
 		
 		then:
 		Exception e = thrown(Exception)
-		e.getMessage().contains("Transaction cannot be set")
 	}
 }

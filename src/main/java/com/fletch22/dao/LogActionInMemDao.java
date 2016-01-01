@@ -1,37 +1,26 @@
 package com.fletch22.dao;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.net.URL;
-import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.h2.jdbcx.JdbcConnectionPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import com.fletch22.orb.rollback.UndoActionBundle;
 
-@Component
-public class LogActionInMemDao extends Dao {
+public class LogActionInMemDao extends LogActionDao {
 
 	Logger logger = LoggerFactory.getLogger(LogActionInMemDao.class);
 
@@ -326,9 +315,12 @@ public class LogActionInMemDao extends Dao {
 			ResultSet resultSet = statement.executeQuery(getCurrentTransactionSql);
 
 			boolean hasRows = resultSet.first();
+			
+			logger.info("Has rows? {}", hasRows);
+			
 			if (hasRows) {
 				BigDecimal tranIdFound = resultSet.getBigDecimal(1);
-				if (tranId.equals(tranIdFound)) {
+				if (tranId.compareTo(tranIdFound) == 0) {
 					statement = connection.createStatement();
 					statement.execute(deleteFromCurrentTransactionSql);
 				}
@@ -362,7 +354,7 @@ public class LogActionInMemDao extends Dao {
 
 			if (hasRows) {
 				BigDecimal result = resultSet.getBigDecimal(1);
-				throw new RuntimeException("Encountered problem while trying to begin transaction with id '" + tranId + "'. Transaction '" + result + "' already exists.");
+				throw new RuntimeException("Encountered problem while trying to begin transaction with id '" + tranId + "'. Transaction cannot be set because transaction '" + result + "' already exists.");
 			} else {
 				PreparedStatement preparedStatement = connection.prepareStatement(recordTransactionStartSql);
 				preparedStatement.setBigDecimal(1, tranId);
@@ -397,5 +389,10 @@ public class LogActionInMemDao extends Dao {
 		} finally {
 			cleanUpConnectionAfterSqlOperation(connection);
 		}
+	}
+
+	@Override
+	public String getConnectionString() {
+		return this.jdbcUrl;
 	}
 }
