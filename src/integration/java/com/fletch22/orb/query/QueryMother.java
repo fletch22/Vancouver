@@ -33,7 +33,7 @@ public class QueryMother {
 		
 		CriteriaAggregate criteriaAgg = new CriteriaAggregate(orbTypeInternalId, "agg", attributeName);
 		
-		criteria.addAnd(Constraint.is(attributeName, Aggregate.UNIQUE, criteriaAgg));
+		criteria.addAnd(Constraint.is(attributeName, Aggregate.AMONGST_UNIQUE, criteriaAgg));
 		
 		queryManager.addToCollection(criteria);
 		
@@ -54,7 +54,7 @@ public class QueryMother {
 		
 		CriteriaAggregate criteriaAgg = new CriteriaAggregate(orbTypeInternalId, "agg", attributeName2);
 		
-		criteria.addAnd(Constraint.is(attributeName, Aggregate.UNIQUE, criteriaAgg));
+		criteria.addAnd(Constraint.is(attributeName, Aggregate.AMONGST_UNIQUE, criteriaAgg));
 		
 		queryManager.addToCollection(criteria);
 		

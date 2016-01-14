@@ -39,7 +39,7 @@ public interface OrbManager {
 
 	public List<Orb> getOrbsOfType(long orbInternalId);
 
-	public void nukeAllOrbs();
+	public void nukeAndPave();
 	
 	void removeReference(long arrowOrbInternalId, String arrowAttributeName, long targetOrbInternalId);
 	

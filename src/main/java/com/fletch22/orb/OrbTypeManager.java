@@ -19,7 +19,7 @@ public interface OrbTypeManager {
 	
 	public boolean doesOrbTypeExist(long orbTypeInternalId);
 	
-	public void nukeAllTypes();
+	public void nukeAndPave();
 	
 	public void addAttribute(long orbInternalId, String attributeName);
 	

@@ -18,7 +18,7 @@ public interface CriteriaManager extends OrbEventAware {
 	
 	public Map<Long, Criteria> getOrbsTypeCriteria(long orbTypeInternalId);
 	
-	public void nukeAllCriteria();
+	public void nukeAndPave();
 	
 	public boolean doesCriteriaExist(long orbInternalIdQuery);
 	

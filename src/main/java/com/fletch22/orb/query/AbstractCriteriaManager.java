@@ -90,7 +90,7 @@ public abstract class AbstractCriteriaManager implements CriteriaManager {
 	}
 
 	@Override
-	public void nukeAllCriteria() {
+	public void nukeAndPave() {
 		getCriteriaCollection().clear();
 	}
 

@@ -16,6 +16,7 @@ public class AppContainerService extends DomainService<AppContainer, App> {
 		AppContainer appContainer = new AppContainer();
 		appContainer.label = label;
 		save(appContainer);
+		
 		return appContainer;
 	}
 	

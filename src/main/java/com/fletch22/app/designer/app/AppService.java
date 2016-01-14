@@ -22,6 +22,7 @@ public class AppService extends DomainService<App, Website> {
 		App app = new App();
 		app.label = label;
 		save(app);
+		
 		return app;
 	}
 	

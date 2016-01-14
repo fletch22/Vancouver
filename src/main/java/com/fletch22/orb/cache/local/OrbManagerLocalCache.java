@@ -101,7 +101,9 @@ public class OrbManagerLocalCache implements OrbManager {
 		
 		for (long key : limitationMap.keySet()) {
 			Criteria criteria = limitationMap.get(key);
-			constraintChecker.checkConstraint(criteria, orb);
+			if (criteria.isParent()) {
+				constraintChecker.checkConstraint(criteria, orb);
+			}
 		}
 	}
 
@@ -261,7 +263,7 @@ public class OrbManagerLocalCache implements OrbManager {
 	}
 
 	@Override
-	public void nukeAllOrbs() {
+	public void nukeAndPave() {
 		cache.orbCollection.deleteAll();
 	}
 

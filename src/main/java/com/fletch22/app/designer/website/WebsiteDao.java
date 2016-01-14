@@ -20,7 +20,7 @@ public class WebsiteDao extends AppDesignerDao<Website, WebsiteTransformer> {
 	@Override
 	public void create(Website website) {
 
-		OrbType orbType = ensureInstanceUnique(Website.TYPE_LABEL, Website.ATTR_LABEL, website.label);
+		OrbType orbType = this.orbTypeManager.getOrbType(Website.TYPE_LABEL);
 		
 		create(website, orbType);
 	}

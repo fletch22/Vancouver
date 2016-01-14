@@ -20,7 +20,7 @@ public class AppContainerDao extends AppDesignerDao<AppContainer, AppContainerTr
 	@Override
 	public void create(AppContainer appContainer) {
 
-		OrbType orbType = ensureInstanceUnique(AppContainer.TYPE_LABEL, AppContainer.ATTR_LABEL, appContainer.label);
+		OrbType orbType = this.orbTypeManager.getOrbType(AppContainer.TYPE_LABEL);
 		
 		create(appContainer, orbType);
 	}

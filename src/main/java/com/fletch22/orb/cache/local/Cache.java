@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 import com.fletch22.orb.OrbManager;
 import com.fletch22.orb.OrbTypeManager;
 import com.fletch22.orb.cache.query.QueryCollection;
+import com.fletch22.orb.limitation.DefLimitationManager;
+import com.fletch22.orb.limitation.LimitationManager;
 import com.fletch22.orb.query.QueryManager;
 
 @Component
@@ -30,6 +32,12 @@ public class Cache {
 	QueryManager queryManager;
 	
 	@Autowired
+	LimitationManager limitationManager;
+	
+	@Autowired
+	DefLimitationManager defLimitationManager;
+	
+	@Autowired
 	CacheComponentsFactory cacheComponentsFactory;
 	
 	public CacheComponentsDto getCacheComponentsDto() {
@@ -37,8 +45,10 @@ public class Cache {
 	}
 
 	public void nukeAllItemsFromCache() {
-		 orbManager.nukeAllOrbs();
-		 orbTypeManager.nukeAllTypes();
-		 queryManager.nukeAllCriteria();
+		orbManager.nukeAndPave();
+		orbTypeManager.nukeAndPave();
+		queryManager.nukeAndPave();
+		limitationManager.nukeAndPave();
+		defLimitationManager.nukeAndPave();
 	}
 }

@@ -1,5 +1,7 @@
 package com.fletch22.app.designer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +25,8 @@ import com.fletch22.orb.query.QueryManager;
 @Component
 public class AppDesignerModule implements OrbSystemModule {
 	
+	Logger logger = LoggerFactory.getLogger(AppDesignerModule.class);
+	
 	@Autowired
 	OrbManager orbManager;
 
@@ -37,6 +41,9 @@ public class AppDesignerModule implements OrbSystemModule {
 	
 	@Autowired
 	AppService appService;
+	
+	@Autowired
+	ComponentConstrainer componentConstrainer;
 	
 	@Override
 	public void initialize() {
@@ -53,31 +60,41 @@ public class AppDesignerModule implements OrbSystemModule {
 	}
 
 	private void createTypes() {
+		logger.info("Creating types.");
 		long orbTypeInternalId = orbTypeManager.createOrbType(AppContainer.TYPE_LABEL, AppContainer.ATTRIBUTE_LIST); 
 		primeQueryIndex(orbTypeInternalId, AppContainer.ATTR_LABEL);
+		componentConstrainer.addNotAmongstUniqueConstraintOnField(orbTypeInternalId, AppContainer.ATTR_LABEL);
 		
 		orbTypeInternalId = orbTypeManager.createOrbType(App.TYPE_LABEL, App.ATTRIBUTE_LIST);
+		componentConstrainer.addNotAmongstUniqueConstraintOnField(orbTypeInternalId, App.ATTR_LABEL);
 		primeQueryIndex(orbTypeInternalId, App.ATTR_LABEL);
 		
 		orbTypeInternalId = orbTypeManager.createOrbType(Website.TYPE_LABEL, Website.ATTRIBUTE_LIST);
+		componentConstrainer.addNotAmongstUniqueConstraintOnField(orbTypeInternalId, Website.ATTR_LABEL);
 		primeQueryIndex(orbTypeInternalId, Website.ATTR_LABEL);
 		
 		orbTypeInternalId = orbTypeManager.createOrbType(WebFolder.TYPE_LABEL, WebFolder.ATTRIBUTE_LIST);
+		componentConstrainer.addNotAmongstUniqueConstraintOnField(orbTypeInternalId, WebFolder.ATTR_LABEL);
 		primeQueryIndex(orbTypeInternalId, WebFolder.ATTR_LABEL);
 		
 		orbTypeInternalId = orbTypeManager.createOrbType(Page.TYPE_LABEL, Page.ATTRIBUTE_LIST);
+		componentConstrainer.addNotAmongstUniqueConstraintOnField(orbTypeInternalId, Page.ATTR_PAGE_NAME);
 		primeQueryIndex(orbTypeInternalId, Page.ATTR_PAGE_NAME);
 		
 		orbTypeInternalId = orbTypeManager.createOrbType(Head.TYPE_LABEL, Head.ATTRIBUTE_LIST);
+		componentConstrainer.addNotAmongstUniqueConstraintOnField(orbTypeInternalId, Head.ATTR_LABEL);
 		primeQueryIndex(orbTypeInternalId, Head.ATTR_LABEL);
 		
 		orbTypeInternalId = orbTypeManager.createOrbType(Body.TYPE_LABEL, Body.ATTRIBUTE_LIST);
+		componentConstrainer.addNotAmongstUniqueConstraintOnField(orbTypeInternalId, Body.ATTR_LABEL);
 		primeQueryIndex(orbTypeInternalId, Body.ATTR_LABEL);
 		
 		orbTypeInternalId = orbTypeManager.createOrbType(Div.TYPE_LABEL, Div.ATTRIBUTE_LIST);
+		componentConstrainer.addNotAmongstUniqueConstraintOnField(orbTypeInternalId, Div.ATTR_LABEL);
 		primeQueryIndex(orbTypeInternalId, Div.ATTR_LABEL);
 		
 		orbTypeInternalId = orbTypeManager.createOrbType(Form.TYPE_LABEL, Form.ATTRIBUTE_LIST);
+		componentConstrainer.addNotAmongstUniqueConstraintOnField(orbTypeInternalId, Form.ATTR_LABEL);
 		primeQueryIndex(orbTypeInternalId, Form.ATTR_LABEL);
 	}
 	

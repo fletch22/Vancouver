@@ -3,6 +3,7 @@ package com.fletch22.util;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.Random;
+import java.util.UUID;
 
 import org.springframework.stereotype.Component;
 
@@ -65,5 +66,9 @@ public class RandomUtil {
 		}
 		
 		return new String(buf);
+	}
+	
+	public String getRandomUuidString() {
+		return UUID.randomUUID().toString();
 	}
 }

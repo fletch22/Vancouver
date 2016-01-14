@@ -196,23 +196,23 @@ Status: Done
 
 Add code that prevents infinite loops on orb and attribute deletion when deleteDependencies is true. This can be accomplished by passing a reference of the item being delete through 
 the delete calls. When a delete action detects that the item being examined is the item the process started with, then perform a detach and start deleting "backwards".
-Status: Not done.
+Status: Done.
 
 Add code that registers sub queries (known as criteria) so that sub queries can natively respond to Orb action events. When that type of criteria is deleted, 
 it's parent must be deleted as well. Find Criteria, for 'add' method, add visitor pattern to handle agg constraint additions and set the parent on the child criteria.
-Status: Not done.
+Status: Done.
 
 Allow empty/blank criteria labels in validation
 Status: Not done.
 
 Finish attr rename, attr delete, orb delete, and type delete handling 
-Status: Not done.
+Status: Mostly done. Ensure tests.
 
 Springify Visitors by adding Criteria to parameter list.
 Status: Not done. Cancelled. Better to make it a non-Spring managed instance class -- needs state.
 
 Replace all StoredProcs with SQL files.
-Status: Not done.
+Status: Done for tests.
 
 Rename Criteria to CriteriaImpl then create abstract parent.
 Status: Done.
@@ -221,4 +221,15 @@ Create CriteriaAggregation and rename CriteriaImpl to CriteriaStandard
 Status: Done.
 
 Test can roll back delete inner criteriaAgg.
+Status: Mostly done. Confirm test working.
+
+When default criteria
+And No instances
+Then user should be able to successfully create one record.
+Status: Done.
+
+Create special exception for constraint validation exception.
+Status: Not done. See "def 'test criteria unique'() {"
+
+Test criteria aggregate working with custom IndexCollection like the defaultLimitation constraint test does
 Status: Not done.

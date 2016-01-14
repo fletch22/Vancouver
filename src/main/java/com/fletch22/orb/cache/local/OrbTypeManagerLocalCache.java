@@ -147,7 +147,7 @@ public class OrbTypeManagerLocalCache implements OrbTypeManager {
 	}
 
 	@Override
-	public void nukeAllTypes() {
+	public void nukeAndPave() {
 		cache.orbTypeCollection.deleteAll();
 	}
 

@@ -106,6 +106,10 @@ public abstract class Criteria implements GsonSerializable {
 		return (this.criteriaIdParent != UNSET_ID);
 	}
 	
+	public boolean isParent()  {
+		return !this.hasParent(); 
+	}
+	
 	public boolean hasConstraints() {
 		return this.logicalConstraint != null && this.logicalConstraint.constraintList.size() > 0;
 	}

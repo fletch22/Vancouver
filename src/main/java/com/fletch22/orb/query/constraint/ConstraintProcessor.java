@@ -1,5 +1,6 @@
 package com.fletch22.orb.query.constraint;
 
+import static com.googlecode.cqengine.query.QueryFactory.not;
 import static com.googlecode.cqengine.query.QueryFactory.and;
 import static com.googlecode.cqengine.query.QueryFactory.equal;
 import static com.googlecode.cqengine.query.QueryFactory.in;
@@ -27,9 +28,11 @@ import com.fletch22.orb.query.LogicalConstraint;
 import com.fletch22.orb.query.LogicalOperator;
 import com.fletch22.orb.query.OrbResultSet;
 import com.fletch22.orb.query.RelationshipOperator;
+import com.fletch22.orb.query.constraint.aggregate.Aggregate;
 import com.fletch22.orb.search.GeneratedCacheEntryClassFactory;
 import com.googlecode.cqengine.attribute.SimpleNullableAttribute;
 import com.googlecode.cqengine.query.Query;
+import com.googlecode.cqengine.query.QueryFactory;
 
 @Component
 public class ConstraintProcessor implements ConstraintProcessVisitor {
@@ -80,17 +83,23 @@ public class ConstraintProcessor implements ConstraintProcessVisitor {
 		Query<CacheEntry> queryLocal = null;	
 		
 		SimpleNullableAttribute<CacheEntry, String> simpleNullableAttribute = createSimpleNullableAtttribute(orbTypeInternalId, constraintDetailsAggregate);
-
 		if (constraintDetailsAggregate.getRelationshipOperator() == RelationshipOperator.IS) {
 			
 			OrbResultSet orbResultSet = cache.orbCollection.executeQuery(constraintDetailsAggregate.criteriaForAggregation);
 			Set<String> aggregateColumnValues = getAttributeValuesByFrequency(constraintDetailsAggregate, orbResultSet, 1);
 			
-			if (aggregateColumnValues.size() == 1) {
-				Iterator<String> iter = aggregateColumnValues.iterator();
-				queryLocal = equal(simpleNullableAttribute, iter.next());	
+			if (aggregateColumnValues.size() > 0) {
+				if (aggregateColumnValues.size() == 1) {
+					Iterator<String> iter = aggregateColumnValues.iterator();
+					queryLocal = equal(simpleNullableAttribute, iter.next());	
+				} else {
+					queryLocal = in(simpleNullableAttribute, aggregateColumnValues);
+				}
+				if (constraintDetailsAggregate.aggregate.equals(Aggregate.NOT_AMONGST_UNIQUE)) {
+					queryLocal = not(queryLocal);
+				}
 			} else {
-				queryLocal = in(simpleNullableAttribute, aggregateColumnValues);
+				queryLocal = QueryFactory.all(CacheEntry.class);
 			}
 		} else {
 			throw new NotImplementedException("Encountered problem processing aggregate constrinat. Relationship '" + constraintDetailsAggregate.getRelationshipOperator() + "' not recognized.");

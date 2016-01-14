@@ -316,8 +316,6 @@ public class LogActionInMemDao extends LogActionDao {
 
 			boolean hasRows = resultSet.first();
 			
-			logger.info("Has rows? {}", hasRows);
-			
 			if (hasRows) {
 				BigDecimal tranIdFound = resultSet.getBigDecimal(1);
 				if (tranId.compareTo(tranIdFound) == 0) {

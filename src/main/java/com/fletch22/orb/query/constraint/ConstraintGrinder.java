@@ -40,7 +40,7 @@ public class ConstraintGrinder {
 	
 	private OrbCollection orbCollection;
 	
-	private ConstraintProcessor contstraintProcessor;
+	private ConstraintProcessor constraintProcessor;
 	
 	public ConstraintGrinder(Criteria criteria, IndexedCollection<CacheEntry> indexedCollection) {
 		this.criteria = criteria;
@@ -49,7 +49,7 @@ public class ConstraintGrinder {
 		this.constraintKitchen = (ConstraintKitchen) Fletch22ApplicationContext.getApplicationContext().getBean(ConstraintKitchen.class);
 		this.orbTypeManager = (OrbTypeManager) Fletch22ApplicationContext.getApplicationContext().getBean(OrbTypeManager.class);
 		this.orbCollection = (OrbCollection) Fletch22ApplicationContext.getApplicationContext().getBean(Cache.class).orbCollection;
-		this.contstraintProcessor = (ConstraintProcessor) Fletch22ApplicationContext.getApplicationContext().getBean(ConstraintProcessor.class); 
+		this.constraintProcessor = (ConstraintProcessor) Fletch22ApplicationContext.getApplicationContext().getBean(ConstraintProcessor.class); 
 		
 		if (criteria.logicalConstraint == null)  {
 			this.query = QueryFactory.all(CacheEntry.class);
@@ -102,6 +102,6 @@ public class ConstraintGrinder {
 	}
 	
 	private Query<CacheEntry> processConstraint(LogicalConstraint logicalConstraint) {
-		return logicalConstraint.acceptConstraintProcessorVisitor(this.contstraintProcessor, this.orbTypeInternalId);
+		return logicalConstraint.acceptConstraintProcessorVisitor(this.constraintProcessor, this.orbTypeInternalId);
 	}
 }

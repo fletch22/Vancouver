@@ -2,6 +2,7 @@ package com.fletch22.app.designer.dao;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -21,7 +22,6 @@ import com.fletch22.orb.OrbManager;
 import com.fletch22.orb.OrbType;
 import com.fletch22.orb.OrbTypeManager;
 import com.fletch22.orb.cache.reference.ReferenceUtil;
-import com.fletch22.orb.query.OrbResultSet;
 import com.fletch22.orb.query.QueryManager;
 
 public abstract class AppDesignerDao<T extends OrbBasedComponent, U extends DomainTransformer<T>> {
@@ -43,7 +43,7 @@ public abstract class AppDesignerDao<T extends OrbBasedComponent, U extends Doma
 	@Autowired
 	DaoJunction daoJunction;
 	
-	protected abstract void create(T appContainer);
+	protected abstract void create(T t);
 	
 	protected void create(T t, OrbType orbType) {
 
@@ -76,19 +76,6 @@ public abstract class AppDesignerDao<T extends OrbBasedComponent, U extends Doma
 	public void delete(long id) {
 		orbManager.deleteOrb(id, false);
 	}
-	
-	protected OrbType ensureInstanceUnique(String typeLabel, String attributeName, String attributeValue)  {
-		
-		OrbType orbType = this.orbTypeManager.getOrbType(typeLabel);
-		OrbResultSet orbResultSet = this.queryManager.findByAttribute(orbType.id, attributeName, attributeValue);
-
-		if (orbResultSet.getOrbList().size() > 0) {
-			String message = String.format("Encountered problem while tyring to create an %s instance. Found more than one instance.", typeLabel);
-			throw new RuntimeException(message);
-		}
-		
-		return orbType;
-	}
 
 	protected Orb getOrbMustExist(long orbInternalId) {
 		Orb orb = this.orbManager.getOrb(orbInternalId);
@@ -107,8 +94,18 @@ public abstract class AppDesignerDao<T extends OrbBasedComponent, U extends Doma
 	protected Orb craftProtoOrb(OrbBasedComponent orbBasedComponent, OrbType orbType) {
 		Orb orb = new Orb();
 		orb.setOrbTypeInternalId(orbType.id);
+		
+		initializeOrbFields(orbType, orb);
+		
 		orb.getUserDefinedProperties().put(OrbBasedComponent.ATTR_PARENT, String.valueOf(orbBasedComponent.getParentId()));
 		return orb;
+	}
+
+	private void initializeOrbFields(OrbType orbType, Orb orb) {
+		LinkedHashSet<String> linkedHashSet = orbType.customFields;
+		for (String field: linkedHashSet) {
+			orb.getUserDefinedProperties().put(field, null);
+		}
 	}
 	
 	protected abstract U getTransformer();

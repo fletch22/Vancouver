@@ -20,7 +20,7 @@ public class PageDao extends AppDesignerDao<Page, PageTransformer> {
 	@Override
 	protected void create(Page page) {
 		
-		OrbType orbType = ensureInstanceUnique(Page.TYPE_LABEL, Page.ATTR_PAGE_NAME, page.pageName);
+		OrbType orbType = this.orbTypeManager.getOrbType(Page.TYPE_LABEL);
 
 		create(page, orbType);
 	}

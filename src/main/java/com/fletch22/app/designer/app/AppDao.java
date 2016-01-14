@@ -19,7 +19,7 @@ public class AppDao extends AppDesignerDao<App, AppTransformer> {
 
 	@Override
 	protected void create(App app) {
-		OrbType orbType = ensureInstanceUnique(App.TYPE_LABEL, App.ATTR_LABEL, app.label);
+		OrbType orbType = this.orbTypeManager.getOrbType(App.TYPE_LABEL);
 		create(app, orbType);
 	}
 
