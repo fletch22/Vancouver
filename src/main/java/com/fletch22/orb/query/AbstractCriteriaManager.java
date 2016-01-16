@@ -16,11 +16,11 @@ import com.fletch22.orb.Orb;
 import com.fletch22.orb.OrbManager;
 import com.fletch22.orb.OrbType;
 import com.fletch22.orb.OrbTypeManager;
+import com.fletch22.orb.cache.local.Cache;
+import com.fletch22.orb.cache.local.OrbCollection;
 import com.fletch22.orb.cache.query.CriteriaCollection;
 import com.fletch22.orb.query.constraint.CollectConstraintChildCriteriaVisitor;
-import com.fletch22.orb.query.constraint.ConstraintDetailsAggregate;
 import com.fletch22.orb.query.constraint.ConstraintRegistrationVisitor;
-import com.fletch22.orb.query.constraint.ConstraintRenameChildCriteriaAttributeVisitor;
 import com.fletch22.orb.query.constraint.ConstraintSetParentVisitor;
 import com.fletch22.orb.systemType.SystemType;
 

@@ -11,5 +11,7 @@ public interface LimitationManager extends CriteriaManager {
 	Map<Long, Criteria> getOrbsTypeCriteria(long orbTypeInternalId);
 	
 	public CriteriaCollection getCriteriaCollection();
+	
+	public long addToCollectionWithPreCheckConstraint(Criteria criteria);
 }
 

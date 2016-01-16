@@ -99,7 +99,7 @@ public class ConstraintProcessor implements ConstraintProcessVisitor {
 					queryLocal = not(queryLocal);
 				}
 			} else {
-				queryLocal = QueryFactory.all(CacheEntry.class);
+				queryLocal = not(QueryFactory.none(CacheEntry.class));
 			}
 		} else {
 			throw new NotImplementedException("Encountered problem processing aggregate constrinat. Relationship '" + constraintDetailsAggregate.getRelationshipOperator() + "' not recognized.");

@@ -30,7 +30,7 @@ class DefLimitationManagerImplSpec extends Specification {
 
 	@Autowired
 	OrbTypeManager orbTypeManager
-	
+
 	@Autowired
 	OrbManager orbManager
 
@@ -92,7 +92,7 @@ class DefLimitationManagerImplSpec extends Specification {
 		String attributeColorName = "color";
 		def tranId = beginTransactionService.beginTransaction()
 		long orbTypeInternalId = orbTypeManager.createOrbType("asdf", null);
-		
+
 		orbTypeManager.addAttribute(orbTypeInternalId, attributeColorName);
 
 		OrbType orbType = orbTypeManager.getOrbType(orbTypeInternalId)
@@ -103,14 +103,65 @@ class DefLimitationManagerImplSpec extends Specification {
 		criteria.addAnd(Constraint.is(attributeColorName, Aggregate.AMONGST_UNIQUE, criteriaForAggregation))
 		defLimitationManager.addToCollection(criteria);
 
-		when:
 		Orb orb = orbManager.createOrb(orbTypeInternalId)
 		orbManager.setAttribute(orb.getOrbInternalId(), attributeColorName, "red");
 		
+		when:
 		orb = orbManager.createOrb(orbTypeInternalId)
 		orbManager.setAttribute(orb.getOrbInternalId(), attributeColorName, "red");
 
 		then:
 		thrown Exception
+	}
+
+	def 'test dry run criteria'() {
+
+		given:
+		String attributeColorName = "color";
+		long orbTypeInternalId = orbTypeManager.createOrbType("asdf", null);
+		orbTypeManager.addAttribute(orbTypeInternalId, attributeColorName);
+
+		OrbType orbType = orbTypeManager.getOrbType(orbTypeInternalId)
+		
+		Orb orb = orbManager.createOrb(orbTypeInternalId)
+		orbManager.setAttribute(orb.getOrbInternalId(), attributeColorName, "red");
+
+		orb = orbManager.createOrb(orbTypeInternalId)
+		orbManager.setAttribute(orb.getOrbInternalId(), attributeColorName, "red");
+		
+		orb = orbManager.createOrb(orbTypeInternalId)
+		orbManager.setAttribute(orb.getOrbInternalId(), attributeColorName, "orange");
+
+		Criteria criteria = new CriteriaStandard(orbType.id, "foo1")
+
+		CriteriaAggregate criteriaForAggregation = new CriteriaAggregate(orbType.id, "foo2", attributeColorName)
+		criteria.addAnd(Constraint.is(attributeColorName, Aggregate.NOT_AMONGST_UNIQUE, criteriaForAggregation))
+
+		when:
+		defLimitationManager.addToCollectionWithPreCheckConstraint(criteria);
+		
+		then:
+		thrown Exception
+	}
+	
+	def 'test dry run criteria when no records'() {
+		
+		given:
+		String attributeColorName = "color";
+		long orbTypeInternalId = orbTypeManager.createOrbType("asdf", null);
+		orbTypeManager.addAttribute(orbTypeInternalId, attributeColorName);
+
+		OrbType orbType = orbTypeManager.getOrbType(orbTypeInternalId)
+		
+		Criteria criteria = new CriteriaStandard(orbType.id, "foo1")
+
+		CriteriaAggregate criteriaForAggregation = new CriteriaAggregate(orbType.id, "foo2", attributeColorName)
+		criteria.addAnd(Constraint.is(attributeColorName, Aggregate.NOT_AMONGST_UNIQUE, criteriaForAggregation))
+
+		when:
+		defLimitationManager.addToCollectionWithPreCheckConstraint(criteria);
+		
+		then:
+		notThrown(Exception)
 	}
 }
