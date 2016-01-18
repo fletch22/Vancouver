@@ -1,4 +1,4 @@
-package com.fletch22.dao;
+package com.fletch22.dao.inmem;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -10,9 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
-@Component
 public class SqlStatementStore {
 	
 	@Value("${h2.database.rootScriptPath}")

@@ -31,7 +31,6 @@ import com.fletch22.orb.query.constraint.Constraint;
 import com.fletch22.orb.query.constraint.ConstraintDetailsAggregate;
 import com.fletch22.orb.query.constraint.ConstraintDetailsSingleValue;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/springContext-test.xml")

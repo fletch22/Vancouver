@@ -27,4 +27,8 @@ public class AppContainerService extends DomainService<AppContainer, App> {
 	public AppContainer get(long orbInternalId) {
 		return appContainerDao.read(orbInternalId);
 	}
+
+	public AppContainer findByLabel(String defaultAppContainerName) {
+		return appContainerDao.findByLabel(defaultAppContainerName);
+	}
 }

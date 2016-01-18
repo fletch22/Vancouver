@@ -48,7 +48,7 @@ class AppContainerDaoSpec extends Specification {
 			
 		when:
 		orbResultSet
-		AppContainer appContainer = appContainerDao.read("foo")
+		AppContainer appContainer = appContainerDao.findByLabel("foo")
 		
 		then:
 		notThrown Exception

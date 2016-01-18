@@ -25,7 +25,7 @@ public class AppContainerDao extends AppDesignerDao<AppContainer, AppContainerTr
 		create(appContainer, orbType);
 	}
 
-	public AppContainer read(String appContainerLabel) {
+	public AppContainer findByLabel(String appContainerLabel) {
 
 		OrbType orbType = this.orbTypeManager.getOrbType(AppContainer.TYPE_LABEL);
 

@@ -119,7 +119,7 @@ public abstract class AppDesignerDao<T extends OrbBasedComponent, U extends Doma
 
 				switch (orbBasedComponentChild.getTypeLabel()) {
 					case AppContainer.TYPE_LABEL:
-						daoJunction.appContainerDao.save( (AppContainer) orbBasedComponentChild);
+						daoJunction.appContainerDao.update( (AppContainer) orbBasedComponentChild);
 						break;
 					case App.TYPE_LABEL:
 						daoJunction.appDao.update( (App) orbBasedComponentChild);

@@ -206,10 +206,10 @@ Allow empty/blank criteria labels in validation
 Status: Not done.
 
 Finish attr rename, attr delete, orb delete, and type delete handling 
-Status: Mostly done. Ensure tests.
+Status: Done.
 
 Springify Visitors by adding Criteria to parameter list.
-Status: Not done. Cancelled. Better to make it a non-Spring managed instance class -- needs state.
+Status: Cancelled. Better to make it a non-Spring managed instance class -- needs state.
 
 Replace all StoredProcs with SQL files.
 Status: Done for tests.
@@ -221,7 +221,7 @@ Create CriteriaAggregation and rename CriteriaImpl to CriteriaStandard
 Status: Done.
 
 Test can roll back delete inner criteriaAgg.
-Status: Mostly done. Confirm test working.
+Status: Done
 
 When default criteria
 And No instances
@@ -232,4 +232,7 @@ Create special exception for constraint validation exception.
 Status: Not done. See "def 'test criteria unique'() {"
 
 Test criteria aggregate working with custom IndexCollection like the defaultLimitation constraint test does
+Status: Done
+
+Startup Doesn't allow clean orb system module initialization; seems to get duplicate IDs -- fix.
 Status: Not done.

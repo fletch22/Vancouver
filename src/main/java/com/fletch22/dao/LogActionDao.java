@@ -31,7 +31,7 @@ public abstract class LogActionDao {
 	
 	DataSource dataSource;
 	
-	abstract Connection getConnection();
+	protected abstract Connection getConnection();
 	public abstract BigDecimal getCurrentTransactionIfAny();
 	public abstract void clearOutDatabase();
 	public abstract void logAction(StringBuilder action, StringBuilder undoAction, BigDecimal tranId, BigDecimal tranDate);

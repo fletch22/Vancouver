@@ -1,4 +1,4 @@
-package com.fletch22.dao;
+package com.fletch22.dao.inmem;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
+import com.fletch22.dao.LogActionDao;
 import com.fletch22.orb.rollback.UndoActionBundle;
 
 public class LogActionInMemDao extends LogActionDao {
@@ -45,7 +46,7 @@ public class LogActionInMemDao extends LogActionDao {
 	JdbcConnectionPool connectionPool = null;
 
 	@Override
-	Connection getConnection() {
+	protected Connection getConnection() {
 
 		if (connectionPool == null) {
 			connectionPool = JdbcConnectionPool.create(jdbcUrl, login, password);
@@ -347,8 +348,6 @@ public class LogActionInMemDao extends LogActionDao {
 			ResultSet resultSet = statement.executeQuery(getCurrentTransactionSql);
 
 			boolean hasRows = resultSet.first();
-
-			logger.info("Has rows {}", hasRows);
 
 			if (hasRows) {
 				BigDecimal result = resultSet.getBigDecimal(1);

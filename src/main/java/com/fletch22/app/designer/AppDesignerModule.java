@@ -27,6 +27,8 @@ public class AppDesignerModule implements OrbSystemModule {
 	
 	Logger logger = LoggerFactory.getLogger(AppDesignerModule.class);
 	
+	public static final String DEFAULT_APP_CONTAINER_NAME = "DefaultAppContainer";
+	
 	@Autowired
 	OrbManager orbManager;
 
@@ -53,14 +55,13 @@ public class AppDesignerModule implements OrbSystemModule {
 	}
 
 	private void createInstances() {
-		AppContainer appContainer = appContainerService.createInstance("HelloWorldAppContainer");
+		AppContainer appContainer = appContainerService.createInstance(DEFAULT_APP_CONTAINER_NAME);
 		
 		App app = appService.createInstance("HelloWorldApp");
 		appContainerService.addToParent(appContainer, app);
 	}
 
 	private void createTypes() {
-		logger.info("Creating types.");
 		long orbTypeInternalId = orbTypeManager.createOrbType(AppContainer.TYPE_LABEL, AppContainer.ATTRIBUTE_LIST); 
 		primeQueryIndex(orbTypeInternalId, AppContainer.ATTR_LABEL);
 		componentConstrainer.addNotAmongstUniqueConstraintOnField(orbTypeInternalId, AppContainer.ATTR_LABEL);
