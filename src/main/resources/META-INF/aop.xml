@@ -1,6 +1,7 @@
 <aspectj>
     <aspects>
         <aspect name="com.fletch22.aop.Log4EventAspect"/>
+        <aspect name="com.fletch22.aop.TransactionalAspect"/>
     </aspects>
-    <!-- <weaver options="-verbose"></weaver> -->
+    <weaver options="-verbose"></weaver>
 </aspectj> 

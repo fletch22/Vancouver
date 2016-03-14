@@ -49,5 +49,7 @@
 			</bean>
 		</property>
 	</bean>
+	
+	<bean id="startupListener" class="com.fletch22.web.listener.StartupListener" />
 </beans>
             

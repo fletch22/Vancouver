@@ -55,7 +55,7 @@ public class ReferenceResolverService {
 
 		clearAndResolveNextGeneration(orbBasedComponentParent, references);
 		
-		for (Child child : orbBasedComponentParent.getChildren().list()) {
+		for (Child child : orbBasedComponentParent.getChildren().getList()) {
 			if (child instanceof Parent) {
 				clearAndResolveNextGeneration((Parent) child);
 			}
@@ -104,7 +104,7 @@ public class ReferenceResolverService {
 	}
 
 	private OrbBasedComponent addChild(Parent parent, Orb orbChild, OrbType orbType) {
-		ArrayList<Child> children = parent.getChildren().list();
+		ArrayList<Child> children = parent.getChildren().getList();
 		long childId = orbChild.getOrbInternalId();
 		
 		OrbBasedComponent orbBaseComponentChild = null;

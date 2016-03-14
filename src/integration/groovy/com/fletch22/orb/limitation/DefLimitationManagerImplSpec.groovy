@@ -80,7 +80,7 @@ class DefLimitationManagerImplSpec extends Specification {
 		defLimitationManager.addToCollection(criteria)
 
 		when:
-		rollbackTransactionService.rollbackToSpecificTransaction(tranId)
+		rollbackTransactionService.rollbackToBeforeSpecificTransaction(tranId)
 
 		then:
 		!defLimitationManager.doesCriteriaExist(criteria.getCriteriaId())

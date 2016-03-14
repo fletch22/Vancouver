@@ -52,7 +52,7 @@ class RollbackServiceSpec extends Specification {
 		def tranId = beginTransactionService.beginTransaction()
 		
 		when:
-		this.rollbackService.rollbackToSpecificTransaction(tranId)
+		this.rollbackService.rollbackToBeforeSpecificTransaction(tranId)
 		
 		then:
 		notThrown(Exception)

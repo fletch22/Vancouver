@@ -40,7 +40,7 @@ public abstract class LogActionDao {
 	public abstract List<ActionInfo> getAllActions();
 	public abstract void rollbackToBeforeSpecificTransaction(BigDecimal tranId);
 	public abstract void recordTransactionStart(BigDecimal tranId);
-	public abstract void resetCurrentTransaction();
+	public abstract void clearCurrentTransaction();
 	public abstract String getConnectionString();
 	
 	public boolean isConnectionOpen() {

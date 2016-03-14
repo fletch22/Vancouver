@@ -136,7 +136,7 @@ class OrbManagerLocalCacheSpec extends Specification {
 		
 		orbManager.deleteOrb(orb.orbInternalId, true)
 		
-		rollbackTransactionService.rollbackToSpecificTransaction(tranDate)
+		rollbackTransactionService.rollbackToBeforeSpecificTransaction(tranDate)
 		
 		when:
 		def rolledBack = cacheCloner.clone(cache.cacheComponentsDto)
@@ -240,7 +240,7 @@ class OrbManagerLocalCacheSpec extends Specification {
 		orbTypeManager.addAttribute(orbTypeInternalId, "pinkCrush")
 		
 		when:
-		rollbackTransactionService.rollbackToSpecificTransaction(tranId)
+		rollbackTransactionService.rollbackToBeforeSpecificTransaction(tranId)
 		
 		then:
 		notThrown(Exception)

@@ -241,7 +241,7 @@ public class LogActionDaoImpl extends LogActionDao {
 	}
 
 	@Override
-	public void resetCurrentTransaction() {
+	public void clearCurrentTransaction() {
 		
 		CallableStatement callableStatement = null;
 		try {

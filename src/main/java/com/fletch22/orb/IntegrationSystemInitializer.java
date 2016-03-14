@@ -2,8 +2,8 @@ package com.fletch22.orb;
 
 import java.util.ArrayList;
 
-import javax.annotation.PostConstruct;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +15,8 @@ import com.fletch22.orb.modules.system.OrbSystemModule;
 
 @Component
 public class IntegrationSystemInitializer {
+	
+	Logger logger = LoggerFactory.getLogger(IntegrationSystemInitializer.class);
 
 	@Autowired
 	Cache cache;
@@ -33,11 +35,6 @@ public class IntegrationSystemInitializer {
 	
 	private ArrayList<OrbSystemModule> orbSystemModuleList = new ArrayList<OrbSystemModule>();
 	
-	@PostConstruct
-	public void postConstruct() {
-		initializeSystemTypes();
-	}
-	
 	public void addOrbSystemModule(OrbSystemModule orbSystemModule) {
 		this.orbSystemModuleList.add(orbSystemModule);
 	}
@@ -51,6 +48,7 @@ public class IntegrationSystemInitializer {
 	}
 	
 	public void nukeAndPaveAllIntegratedSystems() {
+		logger.debug("Nuking everything.");
 		transactionService.endTransaction();
 		cache.nukeAllItemsFromCache();
 		logActionService.clearOutDatabase();

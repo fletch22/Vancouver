@@ -7,7 +7,6 @@ import groovy.util.logging.Slf4j;
 
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.junit.After;
 import org.junit.Before;
@@ -31,7 +30,6 @@ import com.fletch22.orb.cache.local.Cache;
 import com.fletch22.orb.cache.local.CacheEntry;
 import com.fletch22.orb.limitation.DefLimitationManager;
 import com.fletch22.orb.query.Criteria;
-import com.fletch22.orb.query.OrbResultSet;
 import com.fletch22.orb.query.constraint.ConstraintGrinder;
 import com.fletch22.orb.query.constraint.CriteriaBuilder;
 import com.fletch22.util.StopWatch;
@@ -105,7 +103,7 @@ public class AppContainerDaoTest {
 
 		// Assert
 		assertNotNull(appContainer);
-		assertEquals(1, appContainer.getChildren().list().size());
+		assertEquals(1, appContainer.getChildren().getList().size());
 	}
 
 	@Test

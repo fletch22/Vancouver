@@ -236,3 +236,9 @@ Status: Done
 
 Startup Doesn't allow clean orb system module initialization; seems to get duplicate IDs -- fix.
 Status: Not done.
+
+Add Single Threading access. (CommandProcessing?)
+Status:
+
+Add transaction handling to open transactions in filter after processing.
+Status:

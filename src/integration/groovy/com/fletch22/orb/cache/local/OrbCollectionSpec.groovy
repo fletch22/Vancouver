@@ -182,7 +182,7 @@ class OrbCollectionSpec extends Specification {
 		Assert.assertEquals 0, orbReference.@referenceCollection.countArrows()
 		
 		when:
-		rollbackTransactionService.rollbackToSpecificTransaction(tranId)
+		rollbackTransactionService.rollbackToBeforeSpecificTransaction(tranId)
 		
 		then:
 		assertOrbPropertySize(map, 1)

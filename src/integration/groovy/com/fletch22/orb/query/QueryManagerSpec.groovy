@@ -215,7 +215,7 @@ class QueryManagerSpec extends Specification {
 		Criteria criteriaAgg = extractAggregateCriteria(criteria)
 		
 		when:
-		this.rollbackTransactionService.rollbackToSpecificTransaction(tranId)
+		this.rollbackTransactionService.rollbackToBeforeSpecificTransaction(tranId)
 		
 		then:
 		!queryManager.doesCriteriaExist(criteria.getCriteriaId())
@@ -237,7 +237,7 @@ class QueryManagerSpec extends Specification {
 		queryManager.delete(criteria.getCriteriaId(), true)
 		
 		when:
-		this.rollbackTransactionService.rollbackToSpecificTransaction(tranId)
+		this.rollbackTransactionService.rollbackToBeforeSpecificTransaction(tranId)
 		
 		then:
 		queryManager.doesCriteriaExist(criteria.getCriteriaId())

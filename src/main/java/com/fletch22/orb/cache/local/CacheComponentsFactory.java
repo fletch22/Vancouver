@@ -1,5 +1,7 @@
 package com.fletch22.orb.cache.local;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -10,7 +12,12 @@ import com.fletch22.orb.cache.query.QueryCollection;
 @Component
 public class CacheComponentsFactory {
 	
+	Logger logger = LoggerFactory.getLogger(CacheComponentsFactory.class);
+	
 	public CacheComponentsDto getInstance() {
+		
+		logger.info("Creating copy of cache.");
+		
 		CacheComponentsDto cacheComponentsDto = new CacheComponentsDto();
 		cacheComponentsDto.orbTypeCollection = (OrbTypeCollection) getApplicationContext().getBean(OrbTypeCollection.class);
 		cacheComponentsDto.orbCollection = (OrbCollection) getApplicationContext().getBean(OrbCollection.class); 

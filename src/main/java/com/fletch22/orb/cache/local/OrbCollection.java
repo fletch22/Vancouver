@@ -37,6 +37,8 @@ public class OrbCollection {
 
 	@Autowired
 	OrbSingleTypesInstanceCollectionFactory orbSingleTypesInstanceCollectionFactory;
+	
+	public boolean touchFlag = false;
 
 	Map<Long, OrbSingleTypesInstanceCollection> allInstances = new HashMap<Long, OrbSingleTypesInstanceCollection>();
 	private Map<Long, OrbSteamerTrunk> quickLookup = new HashMap<Long, OrbSteamerTrunk>();
@@ -129,6 +131,7 @@ public class OrbCollection {
 	}
 
 	public Orb delete(OrbType orbType, long orbInternalId) {
+		
 		Orb orb = quickLookup.get(orbInternalId).orb;
 
 		orbReference.ensureOrbsArrowsRemoved(orb);

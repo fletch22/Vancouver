@@ -3,6 +3,8 @@ package com.fletch22.orb.systemType;
 import java.math.BigDecimal;
 import java.util.LinkedHashSet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,6 +16,8 @@ import com.fletch22.orb.cache.local.Cache;
 
 @Component
 public class OrbTypeInitializer {
+	
+	Logger logger = LoggerFactory.getLogger(OrbTypeInitializer.class);
 	
 	@Autowired
 	OrbTypeManager orbTypeManager;
@@ -42,11 +46,10 @@ public class OrbTypeInitializer {
 		}
 
 		BigDecimal tranDate = this.tranDateGenerator.getTranDate();
-
+		
 		OrbType orbType = new OrbType(id, label, tranDate, fields);
 		cache.orbTypeCollection.add(orbType);
 
 		return orbType;
 	}
-
 }

@@ -41,6 +41,7 @@ public class Log4EventAspect {
 	
 	@Around("redoLogger()")
 	public Object loggingAround(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+		
 		EventLogCommandProcessPackageHolder packageHolder = getPackageHolder();
 		
 		Object retObject = null;

@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fletch22.app.designer.DomainService;
-import com.fletch22.app.designer.OrbBasedComponent;
 import com.fletch22.app.designer.website.Website;
 
 @Component
@@ -29,8 +28,8 @@ public class AppService extends DomainService<App, Website> {
 	public void save(App app) {
 		appDao.save(app);
 	}
-
-	public OrbBasedComponent get(long orbInternalId) {
+	
+	public App get(long orbInternalId) {
 		return appDao.read(orbInternalId);
 	}
 }

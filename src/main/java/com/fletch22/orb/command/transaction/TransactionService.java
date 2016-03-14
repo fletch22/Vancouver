@@ -18,7 +18,7 @@ public class TransactionService {
 	
 	Logger logger = LoggerFactory.getLogger(TransactionService.class);
 	
-	private static final BigDecimal NO_TRANSACTION_IN_FLIGHT = null;
+	public static final BigDecimal NO_TRANSACTION_IN_FLIGHT = null;
 	private static int transactionTimeoutInSeconds = 10;
 
 	@Autowired 
@@ -79,7 +79,7 @@ public class TransactionService {
 	}
 
 	public void commitTransaction() {
-		this.logActionDao.resetCurrentTransaction();
+		this.logActionDao.clearCurrentTransaction();
 		this.transactionIdInFlight = NO_TRANSACTION_IN_FLIGHT;
 	}
 	
@@ -97,5 +97,9 @@ public class TransactionService {
 		}
 		
 		return hasExpiredTransaction;
+	}
+
+	public BigDecimal getCurrentTransactionId() {
+		return this.transactionIdInFlight;
 	}
 }

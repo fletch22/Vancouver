@@ -38,7 +38,7 @@ public class RollbackTransactionService {
 	@Autowired
 	EventLogCommandProcessPackageHolder eventLogCommandProcessPackageHolder;
 	
-	public void rollbackToSpecificTransaction(BigDecimal tranId) {
+	public void rollbackToBeforeSpecificTransaction(BigDecimal tranId) {
 		
 		List<UndoActionBundle> undoActionBundleList = logActionService.getUndoActions(tranId);
 		
@@ -64,5 +64,11 @@ public class RollbackTransactionService {
 		this.transactionService.rollbackToBeforeSpecificTransaction(tranId);
 		
 		eventLogCommandProcessPackageHolder.cleanup();
+	}
+
+	public void rollbackCurrentTransaction() {
+		BigDecimal tranId = transactionService.getCurrentTransactionId();
+		
+		rollbackToBeforeSpecificTransaction(tranId);
 	}
 }

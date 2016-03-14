@@ -56,7 +56,5 @@ class ReferenceResolverSpec extends Specification {
 		
 		then:
 		appContainer.getChildren().isHaveChildrenBeenResolved()
-//		appContainerService.resolveChildren(appContainer, "", false)
 	}
-
 }

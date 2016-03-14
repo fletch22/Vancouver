@@ -410,4 +410,26 @@ public class OrbManagerLocalCache implements OrbManager {
 		Log4EventAspect.preventNextLineFromExecutingAndLogTheUndoAction();
 		updateOrb(orbClone);
 	}
+
+	@Override
+	public Orb createUnsavedInitializedOrb(long orbTypeInternalId) {
+		OrbType orbType = orbTypeManager.getOrbType(orbTypeInternalId);
+		return createUnsavedInitializedOrb(orbType);
+	}
+	
+	private Orb initializeOrbFields(OrbType orbType, Orb orb) {
+		LinkedHashSet<String> linkedHashSet = orbType.customFields;
+		for (String field: linkedHashSet) {
+			orb.getUserDefinedProperties().put(field, null);
+		}
+		return orb;
+	}
+
+	@Override
+	public Orb createUnsavedInitializedOrb(OrbType orbType) {
+		Orb orb = new Orb();
+		orb.setOrbTypeInternalId(orbType.id);
+		
+		return initializeOrbFields(orbType, orb);
+	}
 }

@@ -135,7 +135,7 @@ public class QueryManagerTest {
 		queryManager.addToCollection(criteria);
 		
 		// Act
-		rollbackTransactionService.rollbackToSpecificTransaction(tranId);
+		rollbackTransactionService.rollbackToBeforeSpecificTransaction(tranId);
 		
 		// Assert
 		assertEquals(0, cache.queryCollection.getSize());

@@ -32,7 +32,7 @@ public class LogInMemDaoTest {
 	public void before() {
 		
 		logActionDao.clearOutDatabase();
-		logActionDao.resetCurrentTransaction();
+		logActionDao.clearCurrentTransaction();
 	}
 	
 	@Test
@@ -181,7 +181,7 @@ public class LogInMemDaoTest {
 		
 		assertEquals(tranId, currentTranId);
 		
-		logActionDao.resetCurrentTransaction();
+		logActionDao.clearCurrentTransaction();
 		
 		currentTranId = logActionDao.getCurrentTransactionIfAny();
 		

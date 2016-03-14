@@ -69,6 +69,8 @@ public class OrbTypeCollection {
 	
 	public void deleteAll() {
 		this.quickLookup.clear();
+		
+		logger.debug("Deleting all types.");
 		this.types.clear();
 	}
 

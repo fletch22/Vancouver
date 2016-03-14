@@ -1,9 +1,9 @@
 apply plugin: 'eclipse'
 apply plugin: 'maven'
 apply plugin: 'groovy'
-apply plugin: 'war'
-apply plugin: 'jetty'
 apply plugin: 'eclipse-wtp'
+apply plugin: 'war'
+apply from: 'https://raw.github.com/akhikhl/gretty/master/pluginScripts/gretty.plugin'
 
 eclipse {
 	classpath {
@@ -54,12 +54,6 @@ sourceSets {
 	}
 }
 
-task(debug) << {
-	println System.properties['java.home']
-
-	configurations.compile.each { println it }
-}
-
 dependencies {
 	
 	String springVersion = '4.2.3.RELEASE'
@@ -71,6 +65,7 @@ dependencies {
 	compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
 	compile 'org.slf4j:slf4j-api:1.7.7'
 	compile 'org.eclipse.jetty:jetty-server:9.3.0.M0'
+	compile 'org.eclipse.jetty:jetty-servlets:9.3.0.M0'
 	compile 'redis.clients:jedis:2.6.1'
 	compile group: 'junit', name: 'junit', version: '4.11'
 	compile "org.springframework:spring-context:${springVersion}"
@@ -88,8 +83,8 @@ dependencies {
 	compile 'org.aspectj:aspectjrt:1.8.5'
 	compile 'org.javassist:javassist:3.20.0-GA'
 	
-	compile "com.fasterxml.jackson.core:jackson-core:2.4.1.1"
-	compile "com.fasterxml.jackson.core:jackson-databind:2.4.1.1"
+	compile "com.fasterxml.jackson.core:jackson-core:2.5.3"
+	compile "com.fasterxml.jackson.core:jackson-databind:2.5.3"
 	
 	compile 'org.apache.commons:commons-dbcp2:2.1.1'
 	compile 'com.h2database:h2:1.4.190'
@@ -138,10 +133,7 @@ task integrationTest(type: Test) {
 
 check.dependsOn integrationTest
 
-/**
- * Configure jettyRun, jettyRunWar and jettyStop tasks.
- */
-[jettyRun]*.jettyEnvXml = file('src/main/resources/jetty-env.xml')
-httpPort = 8080
-stopPort = 9080
-stopKey = "stopKey"
+gretty {
+	contextConfigFile = 'src/main/resources/jetty-env.xml'
+	jvmArgs "-javaagent:C:/Users/ninjapop/.gradle/caches/modules-2/files-2.1/org.aspectj/aspectjweaver/1.8.4/2ee166facba0b05c5dc444a934027baa114fddd9/aspectjweaver-1.8.4.jar"
+}

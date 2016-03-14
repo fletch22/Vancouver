@@ -52,4 +52,8 @@ public interface OrbManager {
 	public void setAttribute(long orbInternalId, String attributeName, String value);
 
 	void updateOrb(Orb orb);
+	
+	public Orb createUnsavedInitializedOrb(OrbType orbType);
+	
+	public Orb createUnsavedInitializedOrb(long orbTypeInternalId);
 }

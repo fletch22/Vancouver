@@ -40,6 +40,8 @@ public class Log4EventAspectTest {
 		// Arrange
 		int numRuns = 100;
 		
+		logger.info("Is logger working?");
+		
 		// Act
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
@@ -101,6 +103,7 @@ public class Log4EventAspectTest {
 		public void runForwards(boolean hasStickInMouth, boolean throwException);
 		public void runBackwards();
 		public void dancing(Map<String, String> thing);
+		public void bark();
 	}
 	
 	@SuppressWarnings("serial")
@@ -109,7 +112,7 @@ public class Log4EventAspectTest {
 		
 		@Loggable4Event
 		public void bark() {
-			logger.debug("Inside the bark method.");
+			logger.info("Inside the bark method.");
 		}
 		
 		@Loggable4Event

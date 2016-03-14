@@ -368,7 +368,7 @@ public class LogActionInMemDao extends LogActionDao {
 	}
 
 	@Override
-	public void resetCurrentTransaction() {
+	public void clearCurrentTransaction() {
 		String resetCurrentTransactionSql = sqlStatementStore.getResetCurrenTransaction();
 
 		try {

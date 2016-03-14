@@ -145,7 +145,7 @@ class OrbReferenceSpec extends Specification {
 		assertTrue(doesExist)
 		
 		when:
-		rollbackTransactionService.rollbackToSpecificTransaction(tranId)
+		rollbackTransactionService.rollbackToBeforeSpecificTransaction(tranId)
 				
 		then:
 		int countx = orbReference.countArrowsPointToTarget(orbTarget)
@@ -174,7 +174,7 @@ class OrbReferenceSpec extends Specification {
 		assertEquals(count, 1)
 		
 		when:
-		rollbackTransactionService.rollbackToSpecificTransaction(tranId)
+		rollbackTransactionService.rollbackToBeforeSpecificTransaction(tranId)
 		
 		then:
 		int countx = orbReference.countArrowsPointToTarget(orbTarget)
@@ -194,7 +194,7 @@ class OrbReferenceSpec extends Specification {
 		assertTrue(doesExist)
 		
 		logger.debug("Rollback back first tran.")
-		rollbackTransactionService.rollbackToSpecificTransaction(tranId)
+		rollbackTransactionService.rollbackToBeforeSpecificTransaction(tranId)
 		
 		doesExist = orbTypeManager.doesOrbTypeExist(orbTypeInternalId1)
 		assertFalse(doesExist)
@@ -206,7 +206,7 @@ class OrbReferenceSpec extends Specification {
 		
 		when:
 		logger.debug("Rolling back 2nd tran.")
-		rollbackTransactionService.rollbackToSpecificTransaction(tranId)
+		rollbackTransactionService.rollbackToBeforeSpecificTransaction(tranId)
 		
 		then:
 		boolean doesExistNow = orbTypeManager.doesOrbTypeExist(orbTypeInternalId2)

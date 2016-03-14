@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.fletch22.app.AppModule;
+import com.fletch22.app.AppModuleImpl;
 import com.fletch22.app.designer.app.App;
 import com.fletch22.app.designer.app.AppService;
 import com.fletch22.app.designer.appContainer.AppContainer;
@@ -16,6 +18,7 @@ import com.fletch22.app.designer.page.form.Form;
 import com.fletch22.app.designer.page.head.Head;
 import com.fletch22.app.designer.webFolder.WebFolder;
 import com.fletch22.app.designer.website.Website;
+import com.fletch22.app.state.FrontEndState;
 import com.fletch22.orb.Orb;
 import com.fletch22.orb.OrbManager;
 import com.fletch22.orb.OrbTypeManager;
@@ -55,6 +58,8 @@ public class AppDesignerModule implements OrbSystemModule {
 	}
 
 	private void createInstances() {
+		logger.info("Creating instances....");
+		
 		AppContainer appContainer = appContainerService.createInstance(DEFAULT_APP_CONTAINER_NAME);
 		
 		App app = appService.createInstance("HelloWorldApp");
@@ -97,6 +102,19 @@ public class AppDesignerModule implements OrbSystemModule {
 		orbTypeInternalId = orbTypeManager.createOrbType(Form.TYPE_LABEL, Form.ATTRIBUTE_LIST);
 		componentConstrainer.addNotAmongstUniqueConstraintOnField(orbTypeInternalId, Form.ATTR_LABEL);
 		primeQueryIndex(orbTypeInternalId, Form.ATTR_LABEL);
+		
+		createType(AppModuleImpl.FrontEndState);
+	}
+	
+	public void createType(AppModule appModule) {
+		long orbTypeInternalId = orbTypeManager.createOrbType(appModule.getTypeLabel(), appModule.getAttributes());
+		
+		if (appModule.getAttributes().size() > 0) {
+			String randomAttributeName = appModule.getAttributes().iterator().next();
+			
+			componentConstrainer.addNotAmongstUniqueConstraintOnField(orbTypeInternalId, randomAttributeName);
+			primeQueryIndex(orbTypeInternalId, randomAttributeName);
+		}
 	}
 	
 	private void primeQueryIndex(long orbTypeInternalId, String attributeName) {

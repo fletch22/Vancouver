@@ -47,7 +47,8 @@ public abstract class AppDesignerDao<T extends OrbBasedComponent, U extends Doma
 	
 	protected void create(T t, OrbType orbType) {
 
-		Orb orbToCreate = craftProtoOrb(t, orbType);
+		Orb orbToCreate = orbManager.createUnsavedInitializedOrb(orbType.id);
+		orbToCreate.getUserDefinedProperties().put(OrbBasedComponent.ATTR_PARENT, String.valueOf(t.getParentId()));
 		
 		setNonChildrenAttributes(t, orbToCreate);
 		
@@ -61,10 +62,9 @@ public abstract class AppDesignerDao<T extends OrbBasedComponent, U extends Doma
 		t.setId(orbToCreate.getOrbInternalId());
 	}
 		
-	
 	public StringBuffer convertToChildReferences(ComponentChildren componentChildren) {
 		
-		ArrayList<Child> list = componentChildren.list();
+		ArrayList<Child> list = componentChildren.getList();
 		Set<String> refSet = new HashSet<String>();
 		for (Child child : list) {
 			refSet.add(referenceUtil.composeReference(child.getId()));
@@ -91,23 +91,6 @@ public abstract class AppDesignerDao<T extends OrbBasedComponent, U extends Doma
 		orbToUpdate.getUserDefinedProperties().put(Parent.ATTR_CHILDREN, convertToChildReferences(parent.getChildren()).toString());
 	}
 
-	protected Orb craftProtoOrb(OrbBasedComponent orbBasedComponent, OrbType orbType) {
-		Orb orb = new Orb();
-		orb.setOrbTypeInternalId(orbType.id);
-		
-		initializeOrbFields(orbType, orb);
-		
-		orb.getUserDefinedProperties().put(OrbBasedComponent.ATTR_PARENT, String.valueOf(orbBasedComponent.getParentId()));
-		return orb;
-	}
-
-	private void initializeOrbFields(OrbType orbType, Orb orb) {
-		LinkedHashSet<String> linkedHashSet = orbType.customFields;
-		for (String field: linkedHashSet) {
-			orb.getUserDefinedProperties().put(field, null);
-		}
-	}
-	
 	protected abstract U getTransformer();
 
 	protected void saveChildren(Orb orbToUpdate, Parent parent) {
@@ -115,7 +98,7 @@ public abstract class AppDesignerDao<T extends OrbBasedComponent, U extends Doma
 		ComponentChildren componentChildren = parent.getChildren();
 		if (componentChildren.isHaveChildrenBeenResolved()) {
 			
-			for (Child orbBasedComponentChild : componentChildren.list()) {
+			for (Child orbBasedComponentChild : componentChildren.getList()) {
 
 				switch (orbBasedComponentChild.getTypeLabel()) {
 					case AppContainer.TYPE_LABEL:
@@ -164,9 +147,10 @@ public abstract class AppDesignerDao<T extends OrbBasedComponent, U extends Doma
 	protected void update(T t) {
 
 		Orb orbToUpdate = getOrbMustExist(t.getId());
-
-		setNonChildrenAttributes(t, orbToUpdate);
+		orbToUpdate.getUserDefinedProperties().put(OrbBasedComponent.ATTR_PARENT, String.valueOf(t.getParentId()));
 		
+		setNonChildrenAttributes(t, orbToUpdate);
+		  
 		if (t instanceof Parent) {
 			this.setOrbChildrenAttribute((Parent) t, orbToUpdate);
 		}

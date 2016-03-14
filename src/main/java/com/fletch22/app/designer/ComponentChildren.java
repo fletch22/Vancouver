@@ -7,7 +7,7 @@ public class ComponentChildren {
 	private ArrayList<Child> children = new ArrayList<Child>();
 	private boolean haveChildrenBeenResolved = false;
 
-	public ArrayList<Child> list() {
+	public ArrayList<Child> getList() {
 		return children;
 	}
 
