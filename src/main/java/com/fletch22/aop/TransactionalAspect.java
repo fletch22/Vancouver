@@ -29,11 +29,13 @@ public class TransactionalAspect {
 			throws Throwable {
 		Object retObject = null;
 		
-		logger.info("ogging from inside new ASPECT!!!!");
+		logger.debug("Logging from inside new ASPECT!!!!");
 		
 		try {
 			
+			logger.debug("Current counter {}", transactionCounter);
 			if (transactionCounter == 0) {
+				logger.debug("beginning tran.");
 				getTransactionService().beginTransaction();
 			}
 			
@@ -46,6 +48,7 @@ public class TransactionalAspect {
 				getTransactionService().commitTransaction();
 			}
 		} catch (Exception e) {
+			transactionCounter = 0;
 			getTransactionService().rollbackCurrentTransaction();
 			throw new RuntimeException(
 					"Encountered problem. Rolling back transaction. Logging from aspect", e);

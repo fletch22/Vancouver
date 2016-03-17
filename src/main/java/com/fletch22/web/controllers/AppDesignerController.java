@@ -25,6 +25,7 @@ import com.fletch22.app.designer.app.AppService;
 import com.fletch22.app.designer.appContainer.AppContainer;
 import com.fletch22.app.designer.appContainer.AppContainerService;
 import com.fletch22.app.designer.viewmodel.AllModels;
+import com.fletch22.app.state.FrontEndStateService;
 import com.fletch22.util.json.GsonFactory;
 
 @RestController
@@ -50,6 +51,9 @@ public class AppDesignerController {
 	
 	@Autowired
 	ComponentSaveFromMapService componentServiceRouter;
+
+	@Autowired
+	FrontEndStateService frontEndStateService;
 	
 	@RequestMapping(path = "/", method = RequestMethod.GET)
 	public @ResponseBody Object getRootAppContainer() {
@@ -83,10 +87,19 @@ public class AppDesignerController {
 
 		return componentServiceRouter.save(mapParam);
 	}
+	
+	@RequestMapping(value = "/ping", method = RequestMethod.POST, consumes={MediaType.APPLICATION_JSON_VALUE})
+	public @ResponseBody Object ping(@RequestBody String body) {
+		String test = "XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX ";
+		frontEndStateService.save(test + System.currentTimeMillis());
+		
+		return body;
+	}
 
 	@ExceptionHandler(RuntimeException.class)
 	public void handleApplicationExceptions(Throwable exception, HttpServletResponse response) {
 	   try {
+		   exception.printStackTrace();
 		response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, exception.getMessage());
 		} catch (IOException e) {
 			e.printStackTrace();

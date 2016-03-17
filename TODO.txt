@@ -238,7 +238,10 @@ Startup Doesn't allow clean orb system module initialization; seems to get dupli
 Status: Not done.
 
 Add Single Threading access. (CommandProcessing?)
-Status:
+Status: Done.
 
 Add transaction handling to open transactions in filter after processing.
-Status:
+Status: Done. But might not be necessary with new aspect.
+
+Fix client side javaScript queue so that order of send is correct.
+Status: Not done.

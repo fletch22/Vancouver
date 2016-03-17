@@ -109,12 +109,8 @@ public class AppDesignerModule implements OrbSystemModule {
 	public void createType(AppModule appModule) {
 		long orbTypeInternalId = orbTypeManager.createOrbType(appModule.getTypeLabel(), appModule.getAttributes());
 		
-		if (appModule.getAttributes().size() > 0) {
-			String randomAttributeName = appModule.getAttributes().iterator().next();
-			
-			componentConstrainer.addNotAmongstUniqueConstraintOnField(orbTypeInternalId, randomAttributeName);
-			primeQueryIndex(orbTypeInternalId, randomAttributeName);
-		}
+		String randomAttributeName = appModule.getAttributes().iterator().next();
+		primeQueryIndex(orbTypeInternalId, randomAttributeName);
 	}
 	
 	private void primeQueryIndex(long orbTypeInternalId, String attributeName) {
