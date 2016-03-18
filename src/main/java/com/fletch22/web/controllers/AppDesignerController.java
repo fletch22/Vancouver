@@ -1,6 +1,7 @@
 package com.fletch22.web.controllers;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
@@ -20,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fletch22.app.designer.AppDesignerModule;
 import com.fletch22.app.designer.ComponentFactory;
 import com.fletch22.app.designer.ComponentSaveFromMapService;
-import com.fletch22.app.designer.OrbBasedComponent;
 import com.fletch22.app.designer.app.AppService;
 import com.fletch22.app.designer.appContainer.AppContainer;
 import com.fletch22.app.designer.appContainer.AppContainerService;
@@ -89,16 +89,28 @@ public class AppDesignerController {
 	}
 	
 	@RequestMapping(value = "/ping", method = RequestMethod.POST, consumes={MediaType.APPLICATION_JSON_VALUE})
-	public @ResponseBody Object ping(@RequestBody String body) {
-		String test = "XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX XXXXXXXXXX ";
-		frontEndStateService.save(test + System.currentTimeMillis());
+	public @ResponseBody Object ping(@RequestBody StatePackage statePackage) {
 		
-		return body;
+		String message = "Items saved: " + statePackage.states.size();
+		frontEndStateService.save(statePackage.states);
+		
+		logger.info(message);
+		
+		return message;
+	}
+	
+	public static class StatePackage {
+		List<String> states;
+		
+		public void setStates(List<String> states) {
+			this.states = states;
+		}
 	}
 
 	@ExceptionHandler(RuntimeException.class)
 	public void handleApplicationExceptions(Throwable exception, HttpServletResponse response) {
 	   try {
+		   logger.info("An exception was thrown: {}", exception.getMessage());
 		   exception.printStackTrace();
 		response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, exception.getMessage());
 		} catch (IOException e) {

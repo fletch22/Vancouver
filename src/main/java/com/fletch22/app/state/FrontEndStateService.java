@@ -1,5 +1,7 @@
 package com.fletch22.app.state;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,5 +16,12 @@ public class FrontEndStateService {
 	@Transactional
 	public void save(String state) {
 		frontEndStateDao.save(state);
+	}
+	
+	@Transactional
+	public void save(List<String> stateList) {
+		for (String state : stateList) {
+			save(state);
+		}
 	}
 }
