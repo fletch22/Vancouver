@@ -95,8 +95,8 @@ public class AppDesignerController {
 		frontEndStateService.save(statePackage.states);
 		
 		logger.info(message);
-		
-		return message;
+				
+		return "{ \"test\": \"value\" }";
 	}
 	
 	public static class StatePackage {
