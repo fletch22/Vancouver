@@ -88,7 +88,7 @@ public class AppDesignerController {
 		return componentServiceRouter.save(mapParam);
 	}
 	
-	@RequestMapping(value = "/ping", method = RequestMethod.POST, consumes={MediaType.APPLICATION_JSON_VALUE})
+	@RequestMapping(value = "/state", method = RequestMethod.PUT, consumes={MediaType.APPLICATION_JSON_VALUE})
 	public @ResponseBody Object ping(@RequestBody StatePackage statePackage) {
 		
 		String message = "Items saved: " + statePackage.states.size();
