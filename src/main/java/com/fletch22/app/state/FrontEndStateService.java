@@ -24,4 +24,8 @@ public class FrontEndStateService {
 			save(state);
 		}
 	}
+
+	public String getMostRecent() {
+		return frontEndStateDao.getState(-1);
+	}
 }
