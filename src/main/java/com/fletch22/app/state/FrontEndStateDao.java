@@ -62,7 +62,7 @@ public class FrontEndStateDao {
 		orbManager.createOrb(orb);
 	}
 
-	public String getState(int i) {
+	public StateIndexInfo getHistorical(int index) {
 
 		OrbType orbType = orbTypeManager.getOrbType(FrontEndState.TYPE_LABEL);
 		Criteria criteria = new CriteriaStandard(orbType.id, "findFrontEndState");
@@ -74,9 +74,25 @@ public class FrontEndStateDao {
 		criteria.setSortOrder(criteriaSortInfo);	
 		
 		OrbResultSet orbResultSet = this.queryManager.executeQuery(criteria);
-
-		Orb orb = orbResultSet.orbList.get(0);
 		
-		return orb.getUserDefinedProperties().get(FrontEndState.ATTR_STATE);
+		index = Math.abs(index);
+		
+		String result = null;
+		int size = orbResultSet.orbList.size();
+		
+		if (size > index) {
+			Orb orb = orbResultSet.orbList.get(index);
+			result = orb.getUserDefinedProperties().get(FrontEndState.ATTR_STATE);
+		}
+		
+		logger.info("Getting element {}, when size: {}", index, size);
+		
+		StateIndexInfo stateIndexInfo = new StateIndexInfo();
+		stateIndexInfo.state = result;
+		if (size > 0) {
+			stateIndexInfo.isEarliestState = (size == index);
+		}
+		
+		return stateIndexInfo;
 	}
 }

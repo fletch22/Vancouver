@@ -25,7 +25,7 @@ public class FrontEndStateService {
 		}
 	}
 
-	public String getMostRecent() {
-		return frontEndStateDao.getState(-1);
+	public StateIndexInfo getHistorical(int index) {
+		return frontEndStateDao.getHistorical(index);
 	}
 }

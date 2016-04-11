@@ -28,6 +28,7 @@ import com.fletch22.app.designer.appContainer.AppContainer;
 import com.fletch22.app.designer.appContainer.AppContainerService;
 import com.fletch22.app.designer.viewmodel.AllModels;
 import com.fletch22.app.state.FrontEndStateService;
+import com.fletch22.app.state.StateIndexInfo;
 import com.fletch22.util.json.GsonFactory;
 
 @RestController
@@ -47,16 +48,16 @@ public class AppDesignerController {
 
 	@Autowired
 	GsonFactory gsonFactory;
-	
+
 	@Autowired
 	TransformerDocks transformerDocks;
-	
+
 	@Autowired
 	ComponentSaveFromMapService componentServiceRouter;
 
 	@Autowired
 	FrontEndStateService frontEndStateService;
-	
+
 	@RequestMapping(path = "/", method = RequestMethod.GET)
 	public @ResponseBody Object getRootAppContainer() {
 
@@ -73,11 +74,12 @@ public class AppDesignerController {
 		return componentFactory.getInstance(id);
 	}
 
-	@RequestMapping(value = "/components", method = RequestMethod.POST, consumes={MediaType.APPLICATION_JSON_VALUE})
-	public @ResponseBody Object addComponent(@RequestBody Map<String, String> extParameters) {
-		
+	@RequestMapping(value = "/components", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE })
+	public @ResponseBody Object addComponent(
+			@RequestBody Map<String, String> extParameters) {
+
 		logger.error(gsonFactory.getInstance().toJson(extParameters));
-		
+
 		Map<String, String> mapParam = extParameters;
 
 		if (!mapParam.containsKey(AllModels.TYPE_LABEL)) {
@@ -89,41 +91,46 @@ public class AppDesignerController {
 
 		return componentServiceRouter.save(mapParam);
 	}
-	
-	@RequestMapping(value = "/state", method = RequestMethod.PUT, consumes={MediaType.APPLICATION_JSON_VALUE})
+
+	@RequestMapping(value = "/state", method = RequestMethod.PUT, consumes = { MediaType.APPLICATION_JSON_VALUE })
 	@ResponseStatus(value = HttpStatus.OK)
 	public @ResponseBody String state(@RequestBody StatePackage statePackage) {
-		
+
 		String message = "Items saved: " + statePackage.states.size();
 		frontEndStateService.save(statePackage.states);
-		
+
 		logger.info(message);
-		
+
 		return "{ \"result\": \"Success\" }";
 	}
-	
-	@RequestMapping(value = "/stateMostRecent", method = RequestMethod.GET)
+
+	@RequestMapping(value = "/stateHistory/{index}", method = RequestMethod.GET)
 	@ResponseStatus(value = HttpStatus.OK)
-	public @ResponseBody String stateMostRecent() {
-		logger.info("Getting state most recent.");
-		return "{ \"state\": " + frontEndStateService.getMostRecent() + "}";
-		
+	public @ResponseBody StateIndexInfo stateHistory(@PathVariable int index) {
+
+		StateIndexInfo stateIndexInfo = frontEndStateService.getHistorical(index);
+		logger.info("Getting {} state : {}: isEarliest: {}", index, stateIndexInfo.state, stateIndexInfo.isEarliestState);
+
+		return stateIndexInfo;
+
 	}
-	
+
 	public static class StatePackage {
 		List<String> states;
-		
+
 		public void setStates(List<String> states) {
 			this.states = states;
 		}
 	}
 
 	@ExceptionHandler(RuntimeException.class)
-	public void handleApplicationExceptions(Throwable exception, HttpServletResponse response) {
-	   try {
-		   logger.info("An exception was thrown: {}", exception.getMessage());
-		   exception.printStackTrace();
-		response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, exception.getMessage());
+	public void handleApplicationExceptions(Throwable exception,
+			HttpServletResponse response) {
+		try {
+			logger.info("An exception was thrown: {}", exception.getMessage());
+			exception.printStackTrace();
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+					exception.getMessage());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
