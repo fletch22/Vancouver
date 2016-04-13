@@ -81,18 +81,19 @@ public class FrontEndStateDao {
 		int size = orbResultSet.orbList.size();
 		
 		StateIndexInfo stateIndexInfo = new StateIndexInfo();
+		stateIndexInfo.indexOfMaxElement = size - 1;
 		if (size > index) {
 			Orb orb = orbResultSet.orbList.get(index);
 			orb.getUserDefinedProperties();
 			result = orb.getUserDefinedProperties().get(FrontEndState.ATTR_STATE);
-			stateIndexInfo.transactionId = Long.parseLong(orb.getUserDefinedProperties().get(FrontEndState.ATTR_ASSOCIATED_TRANSACTION_ID));
+			stateIndexInfo.transactionId = new BigDecimal(orb.getUserDefinedProperties().get(FrontEndState.ATTR_ASSOCIATED_TRANSACTION_ID));
 		}
 		
 		logger.info("Getting element {}, when size: {}", index, size);
 		
 		stateIndexInfo.state = result;
 		if (size > 0) {
-			stateIndexInfo.isEarliestState = (size == index);
+			stateIndexInfo.isEarliestState = (size <= index);
 		}
 		
 		return stateIndexInfo;
