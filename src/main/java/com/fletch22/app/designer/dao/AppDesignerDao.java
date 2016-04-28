@@ -2,7 +2,6 @@ package com.fletch22.app.designer.dao;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -18,19 +17,15 @@ import com.fletch22.app.designer.app.App;
 import com.fletch22.app.designer.appContainer.AppContainer;
 import com.fletch22.app.designer.website.Website;
 import com.fletch22.orb.Orb;
-import com.fletch22.orb.OrbManager;
 import com.fletch22.orb.OrbType;
 import com.fletch22.orb.OrbTypeManager;
 import com.fletch22.orb.cache.reference.ReferenceUtil;
 import com.fletch22.orb.query.QueryManager;
 
-public abstract class AppDesignerDao<T extends OrbBasedComponent, U extends DomainTransformer<T>> {
+public abstract class AppDesignerDao<T extends OrbBasedComponent, U extends DomainTransformer<T>> extends BaseDao {
 	
 	static Logger logger = LoggerFactory.getLogger(AppDesignerDao.class);
 	
-	@Autowired
-	public OrbManager orbManager;
-
 	@Autowired
 	public ReferenceUtil referenceUtil;
 	
@@ -73,10 +68,6 @@ public abstract class AppDesignerDao<T extends OrbBasedComponent, U extends Doma
 		return referenceUtil.composeReferences(refSet);
 	}
 	
-	public void delete(long id) {
-		orbManager.deleteOrb(id, false);
-	}
-
 	protected Orb getOrbMustExist(long orbInternalId) {
 		Orb orb = this.orbManager.getOrb(orbInternalId);
 	

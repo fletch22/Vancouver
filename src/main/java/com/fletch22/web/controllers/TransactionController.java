@@ -25,6 +25,6 @@ public class TransactionController extends Controller {
 
 		logger.info("Getting transactionId {}", transactionId);
 
-		return "{ \"result\": \"success\" }";
+		return JSON_SUCCESS;
 	}
 }

@@ -49,5 +49,9 @@ public class ComponentSaveFromMapService {
 		}
 		return savedObject;
 	}
+
+	public void delete(long id) {
+		return ;
+	}
 	
 }

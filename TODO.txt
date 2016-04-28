@@ -244,4 +244,10 @@ Add transaction handling to open transactions in filter after processing.
 Status: Done. But might not be necessary with new aspect.
 
 Fix client side javaScript queue so that order of send is correct.
-Status: Not done.
+Status: Done.
+
+Fix client side defaultState - not copying correctly.
+Status: Done.
+
+Make special state submitter with diff; server side use diff to update graph;
+Status: Need to to create create either a server side java class for diff or use JSONObjects.

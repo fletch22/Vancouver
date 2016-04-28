@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class Controller {
 	
 	Logger logger = LoggerFactory.getLogger(Controller.class);
+	
+	public static final String JSON_SUCCESS = "{ \"result\": \"Success\" }";
 
 	@ExceptionHandler(RuntimeException.class)
 	public void handleApplicationExceptions(Throwable exception, HttpServletResponse response) {

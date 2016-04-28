@@ -73,7 +73,7 @@ public class FrontEndStateDao {
 		
 		criteria.setSortOrder(criteriaSortInfo);	
 		
-		OrbResultSet orbResultSet = this.queryManager.executeQuery(criteria);
+		OrbResultSet orbResultSet = this.queryManager.executeQuery(criteria);   
 		
 		index = Math.abs(index);
 		
@@ -84,16 +84,16 @@ public class FrontEndStateDao {
 		stateIndexInfo.indexOfMaxElement = size - 1;
 		if (size > index) {
 			Orb orb = orbResultSet.orbList.get(index);
-			orb.getUserDefinedProperties();
+			orb.getUserDefinedProperties();   
 			result = orb.getUserDefinedProperties().get(FrontEndState.ATTR_STATE);
 			stateIndexInfo.transactionId = new BigDecimal(orb.getUserDefinedProperties().get(FrontEndState.ATTR_ASSOCIATED_TRANSACTION_ID));
 		}
 		
-		logger.info("Getting element {}, when size: {}", index, size);
+		logger.info("Getting element {}, when size: {}", index, size); 
 		
 		stateIndexInfo.state = result;
 		if (size > 0) {
-			stateIndexInfo.isEarliestState = (size <= index);
+			stateIndexInfo.isEarliestState = (size <= index); 
 		}
 		
 		return stateIndexInfo;

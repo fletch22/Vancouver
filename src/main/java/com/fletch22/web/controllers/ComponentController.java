@@ -1,6 +1,6 @@
 package com.fletch22.web.controllers;
 
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fletch22.app.designer.ComponentFactory;
 import com.fletch22.app.designer.ComponentSaveFromMapService;
+import com.fletch22.app.designer.service.DeleteComponentService;
 import com.fletch22.app.designer.viewmodel.AllModels;
 import com.fletch22.app.state.FrontEndStateService;
 import com.fletch22.app.state.StateIndexInfo;
@@ -40,6 +41,9 @@ public class ComponentController extends Controller {
 
 	@Autowired
 	FrontEndStateService frontEndStateService;
+	
+	@Autowired
+	DeleteComponentService baseComponentService;
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	public @ResponseBody Object getComponent(@PathVariable long id) {
@@ -63,17 +67,25 @@ public class ComponentController extends Controller {
 
 		return componentServiceRouter.save(mapParam);
 	}
+	
+	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+	public @ResponseBody String deleteComponent(@PathVariable long id) {
+
+		baseComponentService.delete(id);
+
+		return JSON_SUCCESS;
+	}
 
 	@RequestMapping(value = "/state", method = RequestMethod.PUT, consumes = { MediaType.APPLICATION_JSON_VALUE })
 	@ResponseStatus(value = HttpStatus.OK)
-	public @ResponseBody String state(@RequestBody StatePackage statePackage) {
+	public @ResponseBody String state(@RequestBody StatePallet statePallet) {
 
-		String message = "Items saved: " + statePackage.states.size();
-		frontEndStateService.save(statePackage.states);
+		String message = "Items saved: " + statePallet.statePackages.size();
+		frontEndStateService.save(statePallet.statePackages);
 
 		logger.info(message);
 
-		return "{ \"result\": \"Success\" }";
+		return JSON_SUCCESS;
 	}
 
 	@RequestMapping(value = "/stateHistory/{index}", method = RequestMethod.GET)
@@ -86,12 +98,17 @@ public class ComponentController extends Controller {
 		return stateIndexInfo;
 
 	}
+	
+	public static class StatePallet {
+		ArrayList<StatePackage> statePackages;
 
-	public static class StatePackage {
-		List<String> states;
-
-		public void setStates(List<String> states) {
-			this.states = states;
+		public void setStates(ArrayList<StatePackage> statePackages) {
+			this.statePackages = statePackages;
 		}
+	}
+	
+	public static class StatePackage {
+		public String state;
+		public String diffBetweenOldAndNew;
 	}
 }
