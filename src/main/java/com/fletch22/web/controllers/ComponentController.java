@@ -103,8 +103,8 @@ public class ComponentController extends Controller {
 		AppContainer appContainer = appContainerService.getDefault();
 		appContainerService.clearAndResolveAllDescendents(appContainer);
 		
-		Gson gson = gsonFactory.getInstance();
-		logger.info(gson.toJson(appContainer));
+//		Gson gson = gsonFactory.getInstance();
+//		logger.info(gson.toJson(appContainer));
 
 		return appContainer;
 	}

@@ -48,13 +48,13 @@ public class JsonDiffProcessorService {
 	@Transactional
 	public void process(String state, String jsonArrayDiff) {
 		
-		logger.info(jsonArrayDiff.toString());
+		logger.debug(jsonArrayDiff.toString());
 
 		Gson gson = gsonFactory.getInstance();
 		JsonObject jsonObjectState = gson.fromJson(state, JsonObject.class);
 		
 		JsonObject jsonObjectModelState = jsonObjectState.get("model").getAsJsonObject();
-		logger.info(jsonObjectModelState.toString());
+		logger.debug(jsonObjectModelState.toString());
 		
 		JsonArray jsonArray = gson.fromJson(jsonArrayDiff, JsonArray.class);
 
@@ -111,7 +111,7 @@ public class JsonDiffProcessorService {
 
 	private void processAddedChild(JsonObject state, JsonArray pathInformation, long index, JsonElement jsonElementChild) {
 		
-		logger.info(state.toString());
+		logger.debug(state.toString());
 		
 		JsonElement parentElement = getParentDescribedByPath(pathInformation, state);
 		
@@ -179,7 +179,7 @@ public class JsonDiffProcessorService {
 
 	private Child getChild(JsonElement jsonElementChild) {
 		
-		logger.info(jsonElementChild.toString());
+		logger.debug(jsonElementChild.toString());
 		
 		String key = null;
 		Map<String, String> properties = new HashMap<String, String>();
