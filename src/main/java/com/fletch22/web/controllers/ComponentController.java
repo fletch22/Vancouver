@@ -18,11 +18,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fletch22.app.designer.ComponentFactory;
 import com.fletch22.app.designer.ComponentSaveFromMapService;
+import com.fletch22.app.designer.appContainer.AppContainer;
+import com.fletch22.app.designer.appContainer.AppContainerService;
 import com.fletch22.app.designer.service.DeleteComponentService;
 import com.fletch22.app.designer.viewmodel.AllModels;
 import com.fletch22.app.state.FrontEndStateService;
 import com.fletch22.app.state.StateIndexInfo;
 import com.fletch22.util.json.GsonFactory;
+import com.google.gson.Gson;
 
 @RestController
 @RequestMapping("/api/component")
@@ -44,6 +47,9 @@ public class ComponentController extends Controller {
 	
 	@Autowired
 	DeleteComponentService baseComponentService;
+	
+	@Autowired
+	AppContainerService appContainerService;
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	public @ResponseBody Object getComponent(@PathVariable long id) {
@@ -76,9 +82,9 @@ public class ComponentController extends Controller {
 		return JSON_SUCCESS;
 	}
 
-	@RequestMapping(value = "/state", method = RequestMethod.PUT, consumes = { MediaType.APPLICATION_JSON_VALUE })
+	@RequestMapping(value = "/statePallet", method = RequestMethod.PUT, consumes = { MediaType.APPLICATION_JSON_VALUE })
 	@ResponseStatus(value = HttpStatus.OK)
-	public @ResponseBody String state(@RequestBody StatePallet statePallet) {
+	public @ResponseBody String saveStatePallet(@RequestBody StatePallet statePallet) {
 
 		String message = "Items saved: " + statePallet.statePackages.size();
 		frontEndStateService.save(statePallet.statePackages);
@@ -86,6 +92,21 @@ public class ComponentController extends Controller {
 		logger.info(message);
 
 		return JSON_SUCCESS;
+	}
+	
+	@RequestMapping(value = "/statePackage", method = RequestMethod.PUT, consumes = { MediaType.APPLICATION_JSON_VALUE })
+	@ResponseStatus(value = HttpStatus.OK)
+	public @ResponseBody Object saveStatePackage(@RequestBody StatePackage statePackage) {
+
+		frontEndStateService.processStateChange(statePackage);
+		
+		AppContainer appContainer = appContainerService.getDefault();
+		appContainerService.clearAndResolveAllDescendents(appContainer);
+		
+		Gson gson = gsonFactory.getInstance();
+		logger.info(gson.toJson(appContainer));
+
+		return appContainer;
 	}
 
 	@RequestMapping(value = "/stateHistory/{index}", method = RequestMethod.GET)

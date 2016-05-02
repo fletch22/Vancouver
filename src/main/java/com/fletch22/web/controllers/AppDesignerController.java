@@ -28,9 +28,7 @@ public class AppDesignerController extends Controller {
 	@RequestMapping(path = "/", method = RequestMethod.GET)
 	public @ResponseBody Object getRootAppContainer() {
 
-		AppContainer appContainer = appContainerService
-				.findByLabel(AppDesignerModule.DEFAULT_APP_CONTAINER_NAME);
-
+		AppContainer appContainer = appContainerService.getDefault();
 		appContainerService.clearAndResolveAllDescendents(appContainer);
 
 		return appContainer;

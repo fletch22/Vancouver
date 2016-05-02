@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import com.fletch22.app.designer.app.App;
 import com.fletch22.app.designer.appContainer.AppContainer;
 import com.fletch22.app.designer.appContainer.AppContainerService;
-import com.fletch22.app.designer.util.DomainUtilService;
+import com.fletch22.app.designer.util.DomainUtilDao;
 import com.fletch22.app.designer.viewmodel.AllModels;
 import com.fletch22.web.controllers.TransformerDocks;
 
@@ -22,7 +22,7 @@ public class ComponentSaveFromMapService {
 	ServiceJunction serviceJunction;
 	
 	@Autowired
-	DomainUtilService domainServiceUtil;
+	DomainUtilDao domainServiceUtil;
 	
 	@Autowired
 	ServiceFactory serviceFactory;

@@ -1,10 +1,14 @@
 package com.fletch22.app.designer.appContainer;
 
+import java.util.Map;
+
+import org.apache.commons.lang3.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.fletch22.app.designer.AppDesignerModule;
 import com.fletch22.app.designer.DomainService;
 import com.fletch22.app.designer.app.App;
 
@@ -21,6 +25,11 @@ public class AppContainerService extends DomainService<AppContainer, App> {
 	}
 
 	public boolean flag = false;
+	
+	public void addToParent(AppContainer appContainer, App app) {
+		connectParentAndChild(appContainer, app);
+		save(appContainer);
+	}
 	
 	public AppContainer createInstance(String label) {
 		AppContainer appContainer = new AppContainer();
@@ -40,5 +49,14 @@ public class AppContainerService extends DomainService<AppContainer, App> {
 
 	public AppContainer findByLabel(String defaultAppContainerName) {
 		return appContainerDao.findByLabel(defaultAppContainerName);
+	}
+	
+	@Override
+	public AppContainer createInstance(Map<String, String> properties) {
+		throw new NotImplementedException("Not yet finished developing");
+	}
+	
+	public AppContainer getDefault() {
+		return this.findByLabel(AppDesignerModule.DEFAULT_APP_CONTAINER_NAME);
 	}
 }

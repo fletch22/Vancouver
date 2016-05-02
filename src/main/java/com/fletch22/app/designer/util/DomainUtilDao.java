@@ -9,7 +9,7 @@ import com.fletch22.orb.OrbType;
 import com.fletch22.orb.OrbTypeManager;
 
 @Component
-public class DomainUtilService {
+public class DomainUtilDao {
 	
 	@Autowired
 	OrbManager orbManager;

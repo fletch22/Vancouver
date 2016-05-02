@@ -1,0 +1,11 @@
+How to Create a new Domain Type
+
+1. Create new <domain>.java, <domain>Dao.java, <domain>Service.java, and <domain>Transformer.java.
+
+2. Ensure REST CRUD type property maps to <domain>Service.java. 
+
+3. Modify serviceFactory.getServiceFromTypeLabel to ensure CRUD ops get routed correctly.
+
+4. On Front end: Modify transformer to handle new type (if necessary).
+
+5. Add new ui factory type.

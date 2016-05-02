@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fletch22.aop.Transactional;
+import com.fletch22.app.designer.appContainer.AppContainer;
+import com.fletch22.app.designer.appContainer.AppContainerService;
+import com.fletch22.app.state.diff.service.JsonDiffProcessorService;
 import com.fletch22.web.controllers.ComponentController.StatePackage;
 
 @Component
@@ -17,6 +20,12 @@ public class FrontEndStateService {
 	
 	@Autowired
 	FrontEndStateDao frontEndStateDao;
+	
+	@Autowired
+	JsonDiffProcessorService jsonDiffProcessorService;
+	
+	@Autowired
+	AppContainerService appContainerService;
 
 	@Transactional
 	public void save(String state) {
@@ -27,8 +36,22 @@ public class FrontEndStateService {
 	public void save(List<StatePackage> statePackageList) {
 		for (StatePackage statePackage : statePackageList) {
 			logger.info(statePackage.state);
-			save(statePackage.state);
+			saveStatePackage(statePackage);
 		}
+	}
+
+	@Transactional
+	public void saveStatePackage(StatePackage statePackage) {
+		if (statePackage.diffBetweenOldAndNew != null) {
+			logger.info("processing json diff.");
+			jsonDiffProcessorService.process(statePackage.state, statePackage.diffBetweenOldAndNew);
+		}
+		save(statePackage.state);
+	}
+	
+	@Transactional
+	public void processStateChange(StatePackage statePackage) {
+		jsonDiffProcessorService.process(statePackage.state, statePackage.diffBetweenOldAndNew);
 	}
 
 	public StateIndexInfo getHistorical(int index) {
