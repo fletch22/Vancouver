@@ -1,5 +1,6 @@
 package com.fletch22.app.state.diff.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -27,12 +28,16 @@ import com.google.gson.JsonPrimitive;
 @Component
 public class JsonDiffProcessorService {
 	
+	private static final String PROPERTY_ID = "id";
+
 	Logger logger = LoggerFactory.getLogger(JsonDiffProcessorService.class);
 	
 	private static final String EX_MSG_NO_RECOGNIZE_DIFF_CODE = "Encountered problem. Did not recognize diff code: %s";
-	private static final String TYPE_LABEL = "typeLabel";
+	private static final String PROPERTY_TYPE_LABEL = "typeLabel";
 	private static final String EX_MSG_UNSUPPORTED_NEW_ADD = "Encountered problem while trying to process diff state - cannot add item outside of array object addition. Not yet implemented.";
 	private static final String EX_MSG_DIFF_KIND_UNSUPPORTED = "Encountered problem while trying to process diff state - diff kind is unsupported";
+
+	private static final long UNSET_PARENT_ID = -1;
 	
 	public enum FamilyMember {
 		Parent,
@@ -46,7 +51,7 @@ public class JsonDiffProcessorService {
 	AddChildService addChildService;
 
 	@Transactional
-	public void process(String state, String jsonArrayDiff) {
+	public ArrayList<StuntDoubleAndNewId> process(String state, String jsonArrayDiff) {
 		
 		logger.debug(jsonArrayDiff.toString());
 
@@ -60,13 +65,18 @@ public class JsonDiffProcessorService {
 
 		logger.debug("size of jsonArray: {}", jsonArray.size());
 
+		ArrayList<StuntDoubleAndNewId> stuntDoubleAndNewIdList = new ArrayList<StuntDoubleAndNewId>();
 		for (int i = 0; i < jsonArray.size(); i++) {
 			JsonElement jsonElement = jsonArray.get(i);
-			processDiff(jsonObjectModelState, jsonElement);
+			ResultDiffProcessing resultDiffProcessing = processDiff(jsonObjectModelState, jsonElement);
+			if (resultDiffProcessing.hasStuntDoubleAndNewId()) {
+				stuntDoubleAndNewIdList.add(resultDiffProcessing.stuntDoubleAndNewId);
+			}
 		}
+		return stuntDoubleAndNewIdList;
 	}
 
-	private void processDiff(JsonObject jsonObjectState, JsonElement jsonElement) {
+	private ResultDiffProcessing processDiff(JsonObject jsonObjectState, JsonElement jsonElement) {
 		JsonObject jsonObject = jsonElement.getAsJsonObject();
 
 		String letter = jsonObject.get("kind").getAsJsonPrimitive().getAsString();
@@ -75,10 +85,11 @@ public class JsonDiffProcessorService {
 
 		DiffKind diffKind = getKind(letter);
 
-		processDiffKind(jsonObjectState, jsonObject, pathInformation, diffKind);
+		return processDiffKind(jsonObjectState, jsonObject, pathInformation, diffKind);
 	}
 
-	private void processDiffKind(JsonObject jsonObjectState, JsonObject jsonObject, JsonArray pathInformation, DiffKind diffKind) {
+	private ResultDiffProcessing processDiffKind(JsonObject jsonObjectState, JsonObject jsonObject, JsonArray pathInformation, DiffKind diffKind) {
+		ResultDiffProcessing resultDiffProcessing = new ResultDiffProcessing();
 		switch (diffKind) {
 			case DELETED_THING:
 				JsonElement deletedChild = jsonObject.get("lhs");
@@ -92,13 +103,14 @@ public class JsonDiffProcessorService {
 			case ARRAY_CHANGE:
 				JsonElement item = jsonObject.get("item");
 				JsonElement index = jsonObject.get("index");
-				processChangedArray(jsonObjectState, pathInformation, index, item);
+				resultDiffProcessing = processChangedArray(jsonObjectState, pathInformation, index, item);
 				break;
 			case NEWLY_ADDED_PROPERTY:
 				throw new RuntimeException(EX_MSG_UNSUPPORTED_NEW_ADD);
 			default:
 				throw new RuntimeException(EX_MSG_DIFF_KIND_UNSUPPORTED);
 		}
+		return resultDiffProcessing;
 	}
 
 	private void processEditedProperty(JsonObject state, JsonArray pathInformation, JsonElement newValue) {
@@ -109,25 +121,29 @@ public class JsonDiffProcessorService {
 		ParentAndChild parentAndChild = getDeletePropertyInfo(state, pathInformation, deletedChild);
 	}
 
-	private void processAddedChild(JsonObject state, JsonArray pathInformation, long index, JsonElement jsonElementChild) {
+	private StuntDoubleAndNewId processAddedChild(JsonObject state, JsonArray pathInformation, long index, JsonElement jsonElementChild) {
 		
 		logger.debug(state.toString());
 		
 		JsonElement parentElement = getParentDescribedByPath(pathInformation, state);
 		
 		Child child = getChild(jsonElementChild);
+		String temporaryId = child.props.remove(PROPERTY_ID);
 		long parentId = getId(parentElement);
 		
-		AddedChild addedChild = new AddedChild(parentId, child);
+		AddedChild addedChild = new AddedChild(parentId, child, temporaryId);
 		
-		addChildService.process(addedChild);
+		long childNewId = addChildService.process(addedChild);
+		
+		return new StuntDoubleAndNewId(temporaryId, childNewId);
 	}
 	
 	private void processDeletedChild(JsonObject state, JsonArray pathInformation, long index, JsonElement deletedChildElement) {
 		DeletedChild deletedChild = getDeletedChildInfo(state, pathInformation, index, deletedChildElement);
 	}
 	
-	protected void processChangedArray(JsonObject state, JsonArray pathInformation, JsonElement jsonElementIndex, JsonElement item) {
+	protected ResultDiffProcessing processChangedArray(JsonObject state, JsonArray pathInformation, JsonElement jsonElementIndex, JsonElement item) {
+		ResultDiffProcessing resultProcessChangedArray = new ResultDiffProcessing();
 		JsonElement jsonElement = (JsonElement) state;
 		jsonElement = getParentDescribedByPath(pathInformation, jsonElement);
 
@@ -151,10 +167,20 @@ public class JsonDiffProcessorService {
 			throw new RuntimeException("Encountered problem while trying to process changed array. The changed array had an edited element. Handling this type of operation is not yet implemented.");
 		case NEWLY_ADDED_PROPERTY:
 			JsonElement addedChild = jsonObject.get("rhs");
-			processAddedChild(state, pathInformation, index, addedChild);
+			resultProcessChangedArray.stuntDoubleAndNewId = processAddedChild(state, pathInformation, index, addedChild);
 			break;
 		default:
 			throw new RuntimeException(EX_MSG_DIFF_KIND_UNSUPPORTED);
+		}
+		
+		return resultProcessChangedArray;
+	}
+	
+	public class ResultDiffProcessing {
+		public StuntDoubleAndNewId stuntDoubleAndNewId;
+
+		public boolean hasStuntDoubleAndNewId() {
+			return this.stuntDoubleAndNewId != null;
 		}
 	}
 	
@@ -188,6 +214,8 @@ public class JsonDiffProcessorService {
 			throw new RuntimeException("Encountered problem while trying to get the properties from a newly added object. Was expecting an object. Found something else. This is not allowed.");
 		}
 		
+		long parentId = UNSET_PARENT_ID;
+		
 		for (Entry<String, JsonElement> entry : jsonElementChild.getAsJsonObject().entrySet()) {
 			key = entry.getKey();
 			JsonElement jsonElement = entry.getValue();
@@ -196,15 +224,23 @@ public class JsonDiffProcessorService {
 				if (jsonPrimitive.isString()) {
 					properties.put(key, jsonPrimitive.getAsString());
 				} else {
-					throw new RuntimeException("Encountered problem while trying to get the properties from a newly added object. Encountered an object property whose value was not a string. This is not allowed. Added objects must only have string valued properties.");
+					if (key.equals("parentId")) {
+						parentId = jsonPrimitive.getAsLong();
+					} else {
+						throw new RuntimeException(String.format("Encountered problem while trying to get the propery '%s' from a newly added object. Encountered an object property whose value was not a string. This is not allowed. Added objects must only have string valued properties.", key));
+					}
 				}
 			} else {
 				throw new RuntimeException("Encountered problem while trying to get the properties from a newly added object. Encountered an object property whose value was not a primitive. This is not allowed. Added objects must only have string valued properties.");
 			}
 		}
-		String type = properties.remove(TYPE_LABEL);
+		String type = properties.remove(PROPERTY_TYPE_LABEL);
 		
-		return new Child(type, properties);
+		if (parentId == UNSET_PARENT_ID) {
+			throw new RuntimeException("Encountered problem with diff node. Changed section did not have a parent ID.");
+		}
+		
+		return new Child(type, properties, parentId);
 	}
 	
 	private DeletedChild getDeletedChildInfo(JsonObject state, JsonArray pathInformation, long index, JsonElement deletedChildElement) {
@@ -271,7 +307,7 @@ public class JsonDiffProcessorService {
 		long childId;
 		try {
 			parentId = getId(parentElement);
-			childId = childElement.getAsJsonObject().get("id").getAsLong();
+			childId = childElement.getAsJsonObject().get(PROPERTY_ID).getAsLong();
 		} catch (Exception e) {
 			throw new RuntimeException("Encountered problem trying to get parent ID or child ID. Check JSON validity.");
 		}
@@ -280,7 +316,7 @@ public class JsonDiffProcessorService {
 	}
 
 	private long getId(JsonElement jsonElement) {
-		return jsonElement.getAsJsonObject().get("id").getAsLong();
+		return jsonElement.getAsJsonObject().get(PROPERTY_ID).getAsLong();
 	}
 
 	public DiffKind getKind(String letter) {

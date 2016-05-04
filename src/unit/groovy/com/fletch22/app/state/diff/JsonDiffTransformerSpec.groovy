@@ -30,25 +30,28 @@ class JsonDiffTransformerSpec extends Specification {
 	GsonFactory gsonFactory;
 	
 	@Shared
-	String stateNew = '{"id":43543,"type":"mofo","index":0,"guid":"73c0904d-e88a-44f9-b871-39491de284da","isActive":true,"balance":"$3,541.62","picture":"http://placehold.it/32x32","age":22,"eyeColor":"blue","children":[],"jewelry":[{"hand":{"id":867765,"type":"manipulator"}}],"spa":{"id":525,"type":"recreation","virtue":{"id":777,"type":"beliefOfBeneficialConductAndOrBehaviour","honesty":{"type":"transparencyVirtue","id":7476,"truth":"yes"},"faithfulness":"maybe"}},"company":"QUONATA","email":"hayden.yates@quonata.me","phone":"+1 (850) 577-3564","address":"448 Ellery Street, Kanauga, Maryland, 6098","about":"Reprehenderit dolor veniam eu Lorem nisi ullamco tempor excepteur. Sint ea nostrud occaecat est aute. Ullamco sit pariatur eiusmod consectetur nulla enim irure velit laboris deserunt ut ut minim eu. Ipsum nulla minim sit aute irure consectetur mollit officia deserunt ullamco.","registered":"Friday, July 25, 2014 12:45 PM","latitude":"44.662608","longitude":"-37.689721","tags":[7,"qui","banana"],"range":[0,1,2,3,4,5,6,7,8,9],"friends":[3,{"id":4,"type":"closeFriend","name":"Earnestine Reese"}],"greeting":"Hello, Hayden! You have 7 unread messages.","favoriteFruit":"apple","brickleberry":{"id":525,"type":"berry","weather":"sunshine","temp":70,"arm":{"id":534,"type":"appendage","hand":{"id":435,"type":"manipulator","finger":[{"id":63,"type":"gripper","scissors":"fiskers"}]}}}}'
+	String stateModel = '{"id":43543,"type":"mofo","index":0,"guid":"73c0904d-e88a-44f9-b871-39491de284da","isActive":true,"balance":"$3,541.62","picture":"http://placehold.it/32x32","age":22,"eyeColor":"blue","children":[],"jewelry":[{"hand":{"id":867765,"type":"manipulator"}}],"spa":{"id":525,"type":"recreation","virtue":{"id":777,"type":"beliefOfBeneficialConductAndOrBehaviour","honesty":{"type":"transparencyVirtue","id":7476,"truth":"yes"},"faithfulness":"maybe"}},"company":"QUONATA","email":"hayden.yates@quonata.me","phone":"+1 (850) 577-3564","address":"448 Ellery Street, Kanauga, Maryland, 6098","about":"Reprehenderit dolor veniam eu Lorem nisi ullamco tempor excepteur. Sint ea nostrud occaecat est aute. Ullamco sit pariatur eiusmod consectetur nulla enim irure velit laboris deserunt ut ut minim eu. Ipsum nulla minim sit aute irure consectetur mollit officia deserunt ullamco.","registered":"Friday, July 25, 2014 12:45 PM","latitude":"44.662608","longitude":"-37.689721","tags":[7,"qui","banana"],"range":[0,1,2,3,4,5,6,7,8,9],"friends":[3,{"id":4,"type":"closeFriend","name":"Earnestine Reese"}],"greeting":"Hello, Hayden! You have 7 unread messages.","favoriteFruit":"apple","brickleberry":{"id":525,"type":"berry","weather":"sunshine","temp":70,"arm":{"id":534,"type":"appendage","hand":{"id":435,"type":"manipulator","finger":[{"id":63,"type":"gripper","scissors":"fiskers"}]}}}}'
+	
+	@Shared
+	String stateNew = '{ "model": ' + stateModel + '}'
 	
 	@Shared
 	String deletePropertyBadDiff = '{"kind":"D","path":["name"],"lhs":{"id":1234,"type":"somethingNamed","first":"Hayden","last":"Yates"}}'
 		
 	@Shared
-	String deletePropertyGoodDiff = '{"kind":"D","path":["jewelry",0,"hand","ring"],"lhs":{"id":6677,"type":"jewelry","setting":{"id":52525,"type":"appearance","prodType":"princess","material":"platinum"}}}'
+	String deletePropertyGoodDiff = '{"kind":"D","path":["jewelry",0,"hand","ring"],"lhs":{"parentId": 867765, "id":6677,"type":"jewelry","setting":{"parentId": 6677,"id":52525,"type":"appearance","prodType":"princess","material":"platinum"}}}'
 	
 	@Shared 
 	String editedPropertyGoodDiff1 = '{"kind":"E","path":["spa","virtue","faithfulness"],"lhs":"yeah","rhs":"maybe"}'
 	
 	@Shared 
-	String deleteFromArrayGoodDiff = '{"kind":"A","path":["children"],"index":0,"item":{"kind":"D","lhs":{"id":56679,"type":"aKindOfChild","foo":"bar"}}}'
+	String deleteFromArrayGoodDiff = '{"kind":"A","path":["children"],"index":0,"item":{"kind":"D","lhs":{"parentId": 43543, "id":56679,"type":"aKindOfChild","foo":"bar"}}}'
 	
 	@Shared
 	String addedObjectToArrayBadDiff = '{"kind":"A","path":["tags"],"index":2,"item":{"kind":"N","rhs":"banana"}}'
 	
 	@Shared
-	String addedObjectToArrayGoodDiff = '{"kind":"A","path":["tags"],"index":2,"item":{"kind":"N","rhs":{"type":"floober","hardness":"reallyHard","foo":"fum"}}}'
+	String addedObjectToArrayGoodDiff = '{"kind":"A","path":["tags"],"index":2,"item":{"kind":"N","rhs":{"parentId":43543,"id":"asdfhjkfhdjkahfjkdashfjkdas","typeLabel":"floober","hardness":"reallyHard","foo":"fum"}}}'
 	
 	@Shared 
 	String editPropertyGoodDiff2 = '{"kind":"E","path":["friends",1,"id"],"lhs":1,"rhs":4}'
@@ -77,12 +80,12 @@ class JsonDiffTransformerSpec extends Specification {
 	def 'test all diffs processing'() {
 		
 		given:
-		Gson gson = gsonFactory.getInstance();
+		Gson gson = gsonFactory.getInstance()
 		
-		JsonObject joStateNew = gson.fromJson(stateNew, JsonObject.class);
-				
+		JsonObject joStateNew = gson.fromJson(stateNew, JsonObject.class)
+						
 		when:
-		jsonDiffProcessorService.process(stateNew, jsonGood);
+		jsonDiffProcessorService.process(stateNew, jsonGood)
 		
 		then:
 		noExceptionThrown()
@@ -98,7 +101,7 @@ class JsonDiffTransformerSpec extends Specification {
 		JsonArray jsonArray = deleteDiff.getAsJsonArray("path");
 				
 		when:
-		ArrayList<String> diffs = JsonDiffProcessorService jsonDiffProcessorService.processDeleteProperty(joStateNew, jsonArray);
+		ArrayList<String> diffs = jsonDiffProcessorService.processDeleteProperty(joStateNew, jsonArray);
 		
 		then:
 		thrown RuntimeException
@@ -108,7 +111,7 @@ class JsonDiffTransformerSpec extends Specification {
 		
 		given:
 		Gson gson = gsonFactory.getInstance()
-		JsonObject joStateNew = gson.fromJson(stateNew, JsonObject.class)
+		JsonObject joStateNew = gson.fromJson(stateModel, JsonObject.class)
 		
 		JsonObject deleteDiff = gson.fromJson(deletePropertyGoodDiff, JsonObject.class)
 		JsonArray jsonArray = deleteDiff.getAsJsonArray("path")
@@ -116,7 +119,7 @@ class JsonDiffTransformerSpec extends Specification {
 		JsonElement deletedChild = deleteDiff.get("lhs")
 				
 		when:
-		ParentAndChild parentAndChild = JsonDiffProcessorService jsonDiffProcessorService.getDeletePropertyInfo(joStateNew, jsonArray, deletedChild)
+		ParentAndChild parentAndChild = jsonDiffProcessorService.getDeletePropertyInfo(joStateNew, jsonArray, deletedChild)
 		
 		then:
 		parentAndChild != null
@@ -128,7 +131,7 @@ class JsonDiffTransformerSpec extends Specification {
 		
 		given:
 		Gson gson = gsonFactory.getInstance()
-		JsonObject joStateNew = gson.fromJson(stateNew, JsonObject.class)
+		JsonObject joStateNew = gson.fromJson(stateModel, JsonObject.class)
 		
 		JsonObject diff = gson.fromJson(deleteFromArrayGoodDiff, JsonObject.class)
 		JsonArray jsonArray = diff.getAsJsonArray("path")
@@ -137,17 +140,17 @@ class JsonDiffTransformerSpec extends Specification {
 		JsonElement item = diff.get("item")
 				
 		when:
-		JsonDiffProcessorService jsonDiffProcessorService.processChangedArray(joStateNew, jsonArray, index, item)
+		jsonDiffProcessorService.processChangedArray(joStateNew, jsonArray, index, item)
 		
 		then:
 		noExceptionThrown()
 	}
 	
-	def 'test get parent child info'() {
+	def 'test get parent and child info'() {
 		
 		given:
 		Gson gson = gsonFactory.getInstance()
-		JsonObject state = gson.fromJson(stateNew, JsonObject.class)
+		JsonObject state = gson.fromJson(stateModel, JsonObject.class)
 		
 		JsonObject diff = gson.fromJson(deleteFromArrayGoodDiff, JsonObject.class)
 		JsonArray pathInformation = diff.getAsJsonArray("path")
@@ -157,7 +160,7 @@ class JsonDiffTransformerSpec extends Specification {
 		JsonElement deletedChildElement = item.getAsJsonObject().get("lhs");
 				
 		when:
-		DeletedChild deletedChild = JsonDiffProcessorService jsonDiffProcessorService.getDeletedChildInfo(state, pathInformation, index, deletedChildElement)
+		DeletedChild deletedChild = jsonDiffProcessorService.getDeletedChildInfo(state, pathInformation, index, deletedChildElement)
 		
 		then:
 		noExceptionThrown()
@@ -170,7 +173,7 @@ class JsonDiffTransformerSpec extends Specification {
 		
 		given:
 		Gson gson = gsonFactory.getInstance()
-		JsonObject state = gson.fromJson(stateNew, JsonObject.class)
+		JsonObject state = gson.fromJson(stateModel, JsonObject.class)
 		
 		JsonObject diff = gson.fromJson(editedPropertyGoodDiff1, JsonObject.class)
 		JsonArray pathInformation = diff.getAsJsonArray("path")
@@ -178,7 +181,7 @@ class JsonDiffTransformerSpec extends Specification {
 		JsonElement newValue = diff.get("rhs");
 				
 		when:
-		EditedProperty editPropertyInfo = JsonDiffProcessorService jsonDiffProcessorService.getEditedPropertyInfo(state, pathInformation, newValue)
+		EditedProperty editPropertyInfo = jsonDiffProcessorService.getEditedPropertyInfo(state, pathInformation, newValue)
 		
 		then:
 		noExceptionThrown()
@@ -195,7 +198,7 @@ class JsonDiffTransformerSpec extends Specification {
 		JsonObject state = gson.fromJson(stateNew, JsonObject.class);
 		
 		when:
-		JsonDiffProcessorService jsonDiffProcessorService.processDiff(state, diff);
+		jsonDiffProcessorService.processDiff(state, diff);
 		
 		then:
 		def exception = thrown RuntimeException
@@ -210,7 +213,7 @@ class JsonDiffTransformerSpec extends Specification {
 		JsonObject state = gson.fromJson(stateNew, JsonObject.class);
 		
 		when:
-		JsonDiffProcessorService jsonDiffProcessorService.processDiff(state, diff);
+		jsonDiffProcessorService.processDiff(state, diff);
 		
 		then:
 		def exception = thrown RuntimeException
@@ -226,7 +229,7 @@ class JsonDiffTransformerSpec extends Specification {
 		JsonElement jsonElementChild = diff.get("item").getAsJsonObject().get("rhs");
 				
 		when:
-		JsonDiffProcessorService jsonDiffProcessorService.getChild(jsonElementChild);
+		jsonDiffProcessorService.getChild(jsonElementChild);
 		
 		then:
 		thrown RuntimeException
@@ -240,13 +243,14 @@ class JsonDiffTransformerSpec extends Specification {
 		JsonElement jsonElementChild = diff.get("item").getAsJsonObject().get("rhs");
 				
 		when:
-		Child child = JsonDiffProcessorService jsonDiffProcessorService.getChild(jsonElementChild);
+		Child child = jsonDiffProcessorService.getChild(jsonElementChild);
 		
 		then:
 		noExceptionThrown()
 		child.typeLabel == 'floober'
-		child.props.size() == 2
+		child.props.size() == 3
 		child.props.get("hardness") == "reallyHard"
 		child.props.get("foo") == "fum"
+		child.parentId == 43543 
 	}
 }

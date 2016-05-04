@@ -77,6 +77,7 @@ public class ReferenceResolverService {
 		}
 		
 		orbBasedComponentParent.getChildren().setHaveChildrenBeenResolved(true);
+		orbBasedComponentParent.getChildren().sort();
 	}
 
 	private void validateChildKey(DecomposedKey decomposedKey) {

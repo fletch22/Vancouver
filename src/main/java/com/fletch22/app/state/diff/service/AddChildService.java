@@ -25,7 +25,7 @@ public class AddChildService {
 	DomainUtilDao domainUtilDao;
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void process(AddedChild addedChild) {
+	public long process(AddedChild addedChild) {
 		String typeLabel = addedChild.child.typeLabel;
 
 		DomainService domainService = serviceFactory.getServiceFromTypeLabel(typeLabel);
@@ -34,5 +34,7 @@ public class AddChildService {
 		String typeLabelParent = domainUtilDao.getTypeLabelFromId(addedChild.parentId);
 		domainService = serviceFactory.getServiceFromTypeLabel(typeLabelParent);
 		domainService.addToParent(domainService.get(addedChild.parentId), child);
+		
+		return child.getId();
 	}
 }

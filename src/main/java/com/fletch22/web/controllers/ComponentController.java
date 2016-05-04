@@ -96,17 +96,15 @@ public class ComponentController extends Controller {
 	
 	@RequestMapping(value = "/statePackage", method = RequestMethod.PUT, consumes = { MediaType.APPLICATION_JSON_VALUE })
 	@ResponseStatus(value = HttpStatus.OK)
-	public @ResponseBody Object saveStatePackage(@RequestBody StatePackage statePackage) {
-
-		frontEndStateService.processStateChange(statePackage);
+	public @ResponseBody String saveStatePackage(@RequestBody StatePackage statePackage) {
 		
-		AppContainer appContainer = appContainerService.getDefault();
-		appContainerService.clearAndResolveAllDescendents(appContainer);
-		
+//		AppContainer appContainer = appContainerService.getDefault();
+//		appContainerService.clearAndResolveAllDescendents(appContainer);
+//		
 //		Gson gson = gsonFactory.getInstance();
 //		logger.info(gson.toJson(appContainer));
 
-		return appContainer;
+		return frontEndStateService.saveStatePackage(statePackage);
 	}
 
 	@RequestMapping(value = "/stateHistory/{index}", method = RequestMethod.GET)
@@ -115,6 +113,16 @@ public class ComponentController extends Controller {
 
 		StateIndexInfo stateIndexInfo = frontEndStateService.getHistorical(index);
 		logger.info("Getting {} state : {}: isEarliest: {}", index, stateIndexInfo.state, stateIndexInfo.isEarliestState);
+
+		return stateIndexInfo;
+
+	}
+	
+	@RequestMapping(value = "/mostRecentStateHistory", method = RequestMethod.GET)
+	@ResponseStatus(value = HttpStatus.OK)
+	public @ResponseBody StateIndexInfo getMostRecentStateHistory() {
+
+		StateIndexInfo stateIndexInfo = frontEndStateService.getMostRecentHistorical();
 
 		return stateIndexInfo;
 

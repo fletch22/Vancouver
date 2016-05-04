@@ -64,16 +64,19 @@ public class FrontEndStateDao {
 
 	public StateIndexInfo getHistorical(int index) {
 
+//		OrbType orbType = orbTypeManager.getOrbType(FrontEndState.TYPE_LABEL);
+//		Criteria criteria = new CriteriaStandard(orbType.id, "findFrontEndState");
+//		
+//		CriteriaSortInfo criteriaSortInfo = new CriteriaSortInfo();
+//		criteriaSortInfo.sortDirection = SortDirection.DESC;
+//		criteriaSortInfo.sortAttributeName = FrontEndState.ATTR_ASSOCIATED_TRANSACTION_ID;
+//		
+//		criteria.setSortOrder(criteriaSortInfo);	
+//		
+//		OrbResultSet orbResultSet = this.queryManager.executeQuery(criteria);
+		
 		OrbType orbType = orbTypeManager.getOrbType(FrontEndState.TYPE_LABEL);
-		Criteria criteria = new CriteriaStandard(orbType.id, "findFrontEndState");
-		
-		CriteriaSortInfo criteriaSortInfo = new CriteriaSortInfo();
-		criteriaSortInfo.sortDirection = SortDirection.DESC;
-		criteriaSortInfo.sortAttributeName = FrontEndState.ATTR_ASSOCIATED_TRANSACTION_ID;
-		
-		criteria.setSortOrder(criteriaSortInfo);	
-		
-		OrbResultSet orbResultSet = this.queryManager.executeQuery(criteria);   
+		OrbResultSet orbResultSet = this.queryManager.executeQuery(FrontEndState.QUERY_GET_STATES);
 		
 		index = Math.abs(index);
 		
@@ -94,6 +97,29 @@ public class FrontEndStateDao {
 		stateIndexInfo.state = result;
 		if (size > 0) {
 			stateIndexInfo.isEarliestState = (size <= index); 
+		}
+		
+		return stateIndexInfo;
+	}
+
+	public StateIndexInfo getMostRecentHistorical() {
+		
+		OrbResultSet orbResultSet = this.queryManager.executeQuery(FrontEndState.QUERY_GET_STATES);
+
+		int size = orbResultSet.orbList.size();
+		StateIndexInfo stateIndexInfo = new StateIndexInfo();
+		stateIndexInfo.indexOfMaxElement = 0;
+		
+		if (size > 0) {
+			Orb orb = orbResultSet.orbList.get(stateIndexInfo.indexOfMaxElement);
+			stateIndexInfo.state = orb.getUserDefinedProperties().get(FrontEndState.ATTR_STATE);
+			stateIndexInfo.transactionId = new BigDecimal(orb.getUserDefinedProperties().get(FrontEndState.ATTR_ASSOCIATED_TRANSACTION_ID));
+		}
+		
+		logger.debug("Getting element {}, when size {}", size); 
+		
+		if (size > 0) {
+			stateIndexInfo.isEarliestState = (size <= stateIndexInfo.indexOfMaxElement); 
 		}
 		
 		return stateIndexInfo;

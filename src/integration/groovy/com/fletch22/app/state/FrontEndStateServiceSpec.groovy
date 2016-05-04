@@ -10,6 +10,7 @@ import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 
 import com.fletch22.app.designer.AppDesignerModule
+import com.fletch22.app.state.diff.service.StuntDoubleAndNewId;
 import com.fletch22.orb.IntegrationSystemInitializer
 import com.fletch22.orb.Orb
 import com.fletch22.orb.OrbManager
@@ -72,4 +73,19 @@ class FrontEndStateServiceSpec extends Specification {
 		orbs.size() == 1;
 	}
 
+	def 'test find and replace'() {
+		
+		given:
+		List<StuntDoubleAndNewId> list = new ArrayList<StuntDoubleAndNewId>()
+		StuntDoubleAndNewId stuntDoubleAndNewId = new StuntDoubleAndNewId('fdajkljkfldas-sample-id-asdfjkljfkldsjklfds', 123456754321)
+		list.add(stuntDoubleAndNewId);
+		
+		StringBuffer sb = new StringBuffer('1234567890')
+				
+		when:
+		String result = frontEndStateService.insertNewIdsIntoState('{ id: "fdajkljkfldas-sample-id-asdfjkljfkldsjklfds", "foo":"bar" }', list)
+		
+		then:
+		result == '{ id: 123456754321, "foo":"bar" }'
+	}
 }

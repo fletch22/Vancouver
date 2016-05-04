@@ -21,9 +21,14 @@ import com.fletch22.app.designer.website.Website;
 import com.fletch22.app.state.FrontEndState;
 import com.fletch22.orb.Orb;
 import com.fletch22.orb.OrbManager;
+import com.fletch22.orb.OrbType;
 import com.fletch22.orb.OrbTypeManager;
 import com.fletch22.orb.modules.system.OrbSystemModule;
+import com.fletch22.orb.query.Criteria;
+import com.fletch22.orb.query.CriteriaStandard;
 import com.fletch22.orb.query.QueryManager;
+import com.fletch22.orb.query.sort.CriteriaSortInfo;
+import com.fletch22.orb.query.sort.SortInfo.SortDirection;
 
 @Component
 public class AppDesignerModule implements OrbSystemModule {
@@ -111,6 +116,21 @@ public class AppDesignerModule implements OrbSystemModule {
 		
 		String randomAttributeName = appModule.getAttributes().iterator().next();
 		primeQueryIndex(orbTypeInternalId, randomAttributeName);
+		
+		createFrontEndStateQueryGetStates();
+	}
+
+	private void createFrontEndStateQueryGetStates() {
+		OrbType orbType = orbTypeManager.getOrbType(FrontEndState.TYPE_LABEL);
+		Criteria criteria = new CriteriaStandard(orbType.id, FrontEndState.QUERY_GET_STATES);
+		
+		CriteriaSortInfo criteriaSortInfo = new CriteriaSortInfo();
+		criteriaSortInfo.sortDirection = SortDirection.DESC;
+		criteriaSortInfo.sortAttributeName = FrontEndState.ATTR_ASSOCIATED_TRANSACTION_ID;
+		
+		criteria.setSortOrder(criteriaSortInfo);
+		
+		this.queryManager.addToCollection(criteria);
 	}
 	
 	private void primeQueryIndex(long orbTypeInternalId, String attributeName) {

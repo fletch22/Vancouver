@@ -5,7 +5,7 @@ import com.fletch22.orb.query.Criteria;
 
 public interface QueryManager extends CriteriaManager {
 	
-	public OrbResultSet executeQuery(long orbTypeInternalId, String queryLabel);
+	public OrbResultSet executeQuery(String queryLabel);
 
 	public OrbResultSet executeQuery(Criteria criteria);
 	
