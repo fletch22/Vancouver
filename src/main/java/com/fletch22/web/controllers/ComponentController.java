@@ -18,14 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fletch22.app.designer.ComponentFactory;
 import com.fletch22.app.designer.ComponentSaveFromMapService;
-import com.fletch22.app.designer.appContainer.AppContainer;
 import com.fletch22.app.designer.appContainer.AppContainerService;
 import com.fletch22.app.designer.service.DeleteComponentService;
 import com.fletch22.app.designer.viewmodel.AllModels;
 import com.fletch22.app.state.FrontEndStateService;
 import com.fletch22.app.state.StateIndexInfo;
 import com.fletch22.util.json.GsonFactory;
-import com.google.gson.Gson;
 
 @RestController
 @RequestMapping("/api/component")
@@ -98,13 +96,14 @@ public class ComponentController extends Controller {
 	@ResponseStatus(value = HttpStatus.OK)
 	public @ResponseBody String saveStatePackage(@RequestBody StatePackage statePackage) {
 		
-//		AppContainer appContainer = appContainerService.getDefault();
-//		appContainerService.clearAndResolveAllDescendents(appContainer);
-//		
-//		Gson gson = gsonFactory.getInstance();
-//		logger.info(gson.toJson(appContainer));
+		String result = null; 
+		try {
+			result = frontEndStateService.saveStatePackage(statePackage);
+		} catch (Exception e) {
+			throw new RestException(e, ErrorCode.SAVE_STATE_FAILED);
+		}
 
-		return frontEndStateService.saveStatePackage(statePackage);
+		return result;
 	}
 
 	@RequestMapping(value = "/stateHistory/{index}", method = RequestMethod.GET)
@@ -126,6 +125,18 @@ public class ComponentController extends Controller {
 
 		return stateIndexInfo;
 
+	}
+	
+	@RequestMapping(value = "/getExceptionForTesting", method = RequestMethod.GET)
+	@ResponseStatus(value = HttpStatus.OK)
+	public @ResponseBody StateIndexInfo getExceptionForTesting() {
+		throw new RestException(new Exception("test test test"), ErrorCode.UKNOWN_ERROR);
+	}
+	
+	public static class ExceptionJSONInfo {
+		public String url;
+	    public String message;
+	    public String errorCode;
 	}
 	
 	public static class StatePallet {

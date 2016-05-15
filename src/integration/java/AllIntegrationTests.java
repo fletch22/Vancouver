@@ -1,5 +1,3 @@
-
-
 import org.junit.experimental.categories.Categories.IncludeCategory;
 import org.junit.runner.RunWith;
 

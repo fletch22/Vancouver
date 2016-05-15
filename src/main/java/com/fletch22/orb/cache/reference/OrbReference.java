@@ -149,7 +149,7 @@ public class OrbReference {
 		referenceCollection.addReferences(orbInternalId, attributeName, keys);
 	}
 
-	private List<DecomposedKey> convertToDecomposedKeys(String value) {
+	public List<DecomposedKey> convertToDecomposedKeys(String value) {
 		List<DecomposedKey> keys = new ArrayList<DecomposedKey>();
 		
 		logger.debug("CTDK: {}", value);	

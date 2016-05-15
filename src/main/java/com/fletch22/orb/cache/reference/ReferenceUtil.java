@@ -5,6 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -15,7 +16,7 @@ public class ReferenceUtil {
 	static Logger logger = LoggerFactory.getLogger(ReferenceUtil.class);
 
 	public String composeReference(long orbInternalId, String attributeName) {
-		return composeReference(orbInternalId) + "^" + attributeName;
+		return composeReference(orbInternalId) + ReferenceCollection.ID_ATTRIBUTE_NAME_SEPARATOR + attributeName;
 	}
 	
 	public String composeReference(long orbInternalId) {
@@ -54,6 +55,10 @@ public class ReferenceUtil {
 		return (attributeValue == null ? false: attributeValue.startsWith(ReferenceCollection.REFERENCE_KEY_PREFIX));
 	}
 	
+	public boolean isValueAnAttributeReference(String attributeValue) {
+		throw new NotImplementedException("Not yet implemented."); //return (attributeValue == null ? false: attributeValue.startsWith(ReferenceCollection.REFERENCE_KEY_PREFIX));
+	}
+	
 	public Set<String> getComposedKeys(String attributeReferenceValue) {
 		
 		Set<String> set = new HashSet<String>();
@@ -67,11 +72,13 @@ public class ReferenceUtil {
 	
 	public DecomposedKey decomposeKey(String composedKey) {
 		
+//		logger.info("Composed Key 1: {}", composedKey);
+		
 		composedKey = composedKey.substring(ReferenceCollection.REFERENCE_KEY_PREFIX.length());
 		
 		int index = composedKey.indexOf(ReferenceCollection.ID_ATTRIBUTE_NAME_SEPARATOR);
 		
-		logger.debug("Composed Key: {}", composedKey);
+//		logger.info("Composed Key 2: {}", composedKey);
 		
 		DecomposedKey key = null;
 		if (index < 0) {

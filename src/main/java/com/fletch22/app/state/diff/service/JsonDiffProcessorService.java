@@ -28,6 +28,8 @@ import com.google.gson.JsonPrimitive;
 @Component
 public class JsonDiffProcessorService {
 	
+	private static final String PROPERTY_PARENT_ID = "parentId";
+
 	private static final String PROPERTY_ID = "id";
 
 	Logger logger = LoggerFactory.getLogger(JsonDiffProcessorService.class);
@@ -49,26 +51,18 @@ public class JsonDiffProcessorService {
 	
 	@Autowired
 	AddChildService addChildService;
+	
+	private Gson gson = new Gson();
 
 	@Transactional
 	public ArrayList<StuntDoubleAndNewId> process(String state, String jsonArrayDiff) {
 		
-		logger.debug(jsonArrayDiff.toString());
-
-		Gson gson = gsonFactory.getInstance();
-		JsonObject jsonObjectState = gson.fromJson(state, JsonObject.class);
-		
-		JsonObject jsonObjectModelState = jsonObjectState.get("model").getAsJsonObject();
-		logger.debug(jsonObjectModelState.toString());
-		
 		JsonArray jsonArray = gson.fromJson(jsonArrayDiff, JsonArray.class);
-
-		logger.debug("size of jsonArray: {}", jsonArray.size());
 
 		ArrayList<StuntDoubleAndNewId> stuntDoubleAndNewIdList = new ArrayList<StuntDoubleAndNewId>();
 		for (int i = 0; i < jsonArray.size(); i++) {
 			JsonElement jsonElement = jsonArray.get(i);
-			ResultDiffProcessing resultDiffProcessing = processDiff(jsonObjectModelState, jsonElement);
+			ResultDiffProcessing resultDiffProcessing = processDiff(state, jsonElement);
 			if (resultDiffProcessing.hasStuntDoubleAndNewId()) {
 				stuntDoubleAndNewIdList.add(resultDiffProcessing.stuntDoubleAndNewId);
 			}
@@ -76,7 +70,7 @@ public class JsonDiffProcessorService {
 		return stuntDoubleAndNewIdList;
 	}
 
-	private ResultDiffProcessing processDiff(JsonObject jsonObjectState, JsonElement jsonElement) {
+	private ResultDiffProcessing processDiff(String state, JsonElement jsonElement) {
 		JsonObject jsonObject = jsonElement.getAsJsonObject();
 
 		String letter = jsonObject.get("kind").getAsJsonPrimitive().getAsString();
@@ -85,25 +79,24 @@ public class JsonDiffProcessorService {
 
 		DiffKind diffKind = getKind(letter);
 
-		return processDiffKind(jsonObjectState, jsonObject, pathInformation, diffKind);
+		return processDiffKind(state, jsonObject, pathInformation, diffKind);
 	}
 
-	private ResultDiffProcessing processDiffKind(JsonObject jsonObjectState, JsonObject jsonObject, JsonArray pathInformation, DiffKind diffKind) {
+	private ResultDiffProcessing processDiffKind(String state, JsonObject jsonObject, JsonArray pathInformation, DiffKind diffKind) {
 		ResultDiffProcessing resultDiffProcessing = new ResultDiffProcessing();
 		switch (diffKind) {
 			case DELETED_THING:
 				JsonElement deletedChild = jsonObject.get("lhs");
-				processDeleteProperty(jsonObjectState, pathInformation, deletedChild);
+				processDeleteProperty(state, pathInformation, deletedChild);
 				break;
 			case EDITED_PROPERTY:
-				logger.debug("Got edited property.");
 				JsonElement newValue = jsonObject.get("rhs");
-				processEditedProperty(jsonObjectState, pathInformation, newValue);
+				processEditedProperty(state, pathInformation, newValue);
 				break;
 			case ARRAY_CHANGE:
 				JsonElement item = jsonObject.get("item");
 				JsonElement index = jsonObject.get("index");
-				resultDiffProcessing = processChangedArray(jsonObjectState, pathInformation, index, item);
+				resultDiffProcessing = processChangedArray(state, pathInformation, index, item);
 				break;
 			case NEWLY_ADDED_PROPERTY:
 				throw new RuntimeException(EX_MSG_UNSUPPORTED_NEW_ADD);
@@ -113,17 +106,15 @@ public class JsonDiffProcessorService {
 		return resultDiffProcessing;
 	}
 
-	private void processEditedProperty(JsonObject state, JsonArray pathInformation, JsonElement newValue) {
+	private void processEditedProperty(String state, JsonArray pathInformation, JsonElement newValue) {
 		EditedProperty editPropertyInfo = getEditedPropertyInfo(state, pathInformation, newValue);
 	}
 	
-	protected void processDeleteProperty(JsonObject state, JsonArray pathInformation, JsonElement deletedChild) {
+	protected void processDeleteProperty(String state, JsonArray pathInformation, JsonElement deletedChild) {
 		ParentAndChild parentAndChild = getDeletePropertyInfo(state, pathInformation, deletedChild);
 	}
 
 	private StuntDoubleAndNewId processAddedChild(JsonObject state, JsonArray pathInformation, long index, JsonElement jsonElementChild) {
-		
-		logger.debug(state.toString());
 		
 		JsonElement parentElement = getParentDescribedByPath(pathInformation, state);
 		
@@ -138,19 +129,28 @@ public class JsonDiffProcessorService {
 		return new StuntDoubleAndNewId(temporaryId, childNewId);
 	}
 	
+	private StuntDoubleAndNewId processAddedChildNew(JsonArray pathInformation, long index, JsonElement jsonElementChild) {
+		
+		Child child = getChild(jsonElementChild);
+		String temporaryId = child.props.remove(PROPERTY_ID);
+		long parentId = child.parentId;
+		
+		AddedChild addedChild = new AddedChild(parentId, child, temporaryId);
+		
+		long childNewId = addChildService.process(addedChild);
+		
+		return new StuntDoubleAndNewId(temporaryId, childNewId);
+	}
+	
 	private void processDeletedChild(JsonObject state, JsonArray pathInformation, long index, JsonElement deletedChildElement) {
 		DeletedChild deletedChild = getDeletedChildInfo(state, pathInformation, index, deletedChildElement);
 	}
 	
-	protected ResultDiffProcessing processChangedArray(JsonObject state, JsonArray pathInformation, JsonElement jsonElementIndex, JsonElement item) {
+	protected ResultDiffProcessing processChangedArray(String state, JsonArray pathInformation, JsonElement jsonElementIndex, JsonElement item) {
 		ResultDiffProcessing resultProcessChangedArray = new ResultDiffProcessing();
-		JsonElement jsonElement = (JsonElement) state;
-		jsonElement = getParentDescribedByPath(pathInformation, jsonElement);
-
+		long index;
+		
 		JsonObject jsonObject = (JsonObject) item;
-
-		long index = jsonElementIndex.getAsLong();
-
 		String letter = jsonObject.get("kind").getAsJsonPrimitive().getAsString();
 
 		Diff diff = new Diff();
@@ -158,16 +158,21 @@ public class JsonDiffProcessorService {
 
 		switch (diff.diffKind) {
 		case DELETED_THING:
+			index = jsonElementIndex.getAsLong();
 			JsonElement deletedChild = jsonObject.get("lhs");
-			processDeletedChild(state, pathInformation, index, deletedChild);
+			
+			Gson gson = new Gson();
+			JsonObject joState = gson.fromJson(state, JsonObject.class); 
+			processDeletedChild(joState, pathInformation, index, deletedChild);
 			break;
 		case EDITED_PROPERTY:
 			throw new RuntimeException("Encountered problem while trying to process changed array. The changed array had an edited element. Handling this type of operation is not yet implemented.");
 		case ARRAY_CHANGE:
 			throw new RuntimeException("Encountered problem while trying to process changed array. The changed array had an edited element. Handling this type of operation is not yet implemented.");
 		case NEWLY_ADDED_PROPERTY:
+			index = jsonElementIndex.getAsLong();
 			JsonElement addedChild = jsonObject.get("rhs");
-			resultProcessChangedArray.stuntDoubleAndNewId = processAddedChild(state, pathInformation, index, addedChild);
+			resultProcessChangedArray.stuntDoubleAndNewId = processAddedChildNew(pathInformation, index, addedChild);
 			break;
 		default:
 			throw new RuntimeException(EX_MSG_DIFF_KIND_UNSUPPORTED);
@@ -184,8 +189,9 @@ public class JsonDiffProcessorService {
 		}
 	}
 	
-	private EditedProperty getEditedPropertyInfo(JsonObject state, JsonArray pathInformation, JsonElement jsonElementNewValue) {
-		JsonElement parentElement = (JsonElement) state;
+	private EditedProperty getEditedPropertyInfo(String state, JsonArray pathInformation, JsonElement jsonElementNewValue) {
+		Gson gson = new Gson();
+		JsonElement parentElement = gson.fromJson(state, JsonElement.class);
 		
 		JsonElement childElement = getParentDescribedByPath(pathInformation, parentElement);
 		
@@ -196,8 +202,9 @@ public class JsonDiffProcessorService {
 		return new EditedProperty(id, property, newValue);
 	}
 
-	private ParentAndChild getDeletePropertyInfo(JsonObject state, JsonArray pathInformation, JsonElement deletedChild) {
-		JsonElement parentElement = (JsonElement) state;
+	private ParentAndChild getDeletePropertyInfo(String state, JsonArray pathInformation, JsonElement deletedChild) {
+		Gson gson = new Gson();
+		JsonElement parentElement = gson.fromJson(state, JsonElement.class);
 		parentElement = getParentDescribedByPath(pathInformation, parentElement);
 
 		return getParentAndChild(parentElement, deletedChild);
@@ -205,7 +212,7 @@ public class JsonDiffProcessorService {
 
 	private Child getChild(JsonElement jsonElementChild) {
 		
-		logger.debug(jsonElementChild.toString());
+//		logger.debug(jsonElementChild.toString());
 		
 		String key = null;
 		Map<String, String> properties = new HashMap<String, String>();
@@ -224,7 +231,7 @@ public class JsonDiffProcessorService {
 				if (jsonPrimitive.isString()) {
 					properties.put(key, jsonPrimitive.getAsString());
 				} else {
-					if (key.equals("parentId")) {
+					if (key.equals(PROPERTY_PARENT_ID)) {
 						parentId = jsonPrimitive.getAsLong();
 					} else {
 						throw new RuntimeException(String.format("Encountered problem while trying to get the propery '%s' from a newly added object. Encountered an object property whose value was not a string. This is not allowed. Added objects must only have string valued properties.", key));
@@ -245,10 +252,12 @@ public class JsonDiffProcessorService {
 	
 	private DeletedChild getDeletedChildInfo(JsonObject state, JsonArray pathInformation, long index, JsonElement deletedChildElement) {
 		
-		JsonElement parentElement = getParentDescribedByPath(pathInformation, state);
-		
 		DeletedChild deletedChild = new DeletedChild();
-		deletedChild.parentAndChild = getParentAndChild(parentElement, deletedChildElement);
+		
+		long parentId = deletedChildElement.getAsJsonObject().get(PROPERTY_PARENT_ID).getAsLong();
+		long childId = deletedChildElement.getAsJsonObject().get(PROPERTY_ID).getAsLong();
+		
+		deletedChild.parentAndChild = new ParentAndChild(parentId, childId);
 		deletedChild.index = index;
 		
 		return deletedChild;
@@ -264,7 +273,7 @@ public class JsonDiffProcessorService {
 
 	private JsonElement getNodeDescribedByPath(JsonArray pathInformation, JsonElement jsonElement, FamilyMember familyMember) {
 		
-		logger.debug("jsonElement: " + jsonElement.toString());
+//		logger.debug("jsonElement: " + jsonElement.toString());
 		
 		int depthOfTraversal = getDepthOfPathTraversal(pathInformation, familyMember);
 		

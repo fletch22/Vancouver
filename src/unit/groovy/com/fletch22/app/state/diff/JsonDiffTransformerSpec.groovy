@@ -82,10 +82,8 @@ class JsonDiffTransformerSpec extends Specification {
 		given:
 		Gson gson = gsonFactory.getInstance()
 		
-		JsonObject joStateNew = gson.fromJson(stateNew, JsonObject.class)
-						
 		when:
-		jsonDiffProcessorService.process(stateNew, jsonGood)
+		jsonDiffProcessorService.process(stateModel, jsonGood)
 		
 		then:
 		noExceptionThrown()
@@ -111,7 +109,6 @@ class JsonDiffTransformerSpec extends Specification {
 		
 		given:
 		Gson gson = gsonFactory.getInstance()
-		JsonObject joStateNew = gson.fromJson(stateModel, JsonObject.class)
 		
 		JsonObject deleteDiff = gson.fromJson(deletePropertyGoodDiff, JsonObject.class)
 		JsonArray jsonArray = deleteDiff.getAsJsonArray("path")
@@ -119,7 +116,7 @@ class JsonDiffTransformerSpec extends Specification {
 		JsonElement deletedChild = deleteDiff.get("lhs")
 				
 		when:
-		ParentAndChild parentAndChild = jsonDiffProcessorService.getDeletePropertyInfo(joStateNew, jsonArray, deletedChild)
+		ParentAndChild parentAndChild = jsonDiffProcessorService.getDeletePropertyInfo(stateModel, jsonArray, deletedChild)
 		
 		then:
 		parentAndChild != null
@@ -131,7 +128,6 @@ class JsonDiffTransformerSpec extends Specification {
 		
 		given:
 		Gson gson = gsonFactory.getInstance()
-		JsonObject joStateNew = gson.fromJson(stateModel, JsonObject.class)
 		
 		JsonObject diff = gson.fromJson(deleteFromArrayGoodDiff, JsonObject.class)
 		JsonArray jsonArray = diff.getAsJsonArray("path")
@@ -140,7 +136,7 @@ class JsonDiffTransformerSpec extends Specification {
 		JsonElement item = diff.get("item")
 				
 		when:
-		jsonDiffProcessorService.processChangedArray(joStateNew, jsonArray, index, item)
+		jsonDiffProcessorService.processChangedArray(stateModel, jsonArray, index, item)
 		
 		then:
 		noExceptionThrown()
@@ -173,7 +169,6 @@ class JsonDiffTransformerSpec extends Specification {
 		
 		given:
 		Gson gson = gsonFactory.getInstance()
-		JsonObject state = gson.fromJson(stateModel, JsonObject.class)
 		
 		JsonObject diff = gson.fromJson(editedPropertyGoodDiff1, JsonObject.class)
 		JsonArray pathInformation = diff.getAsJsonArray("path")
@@ -181,7 +176,7 @@ class JsonDiffTransformerSpec extends Specification {
 		JsonElement newValue = diff.get("rhs");
 				
 		when:
-		EditedProperty editPropertyInfo = jsonDiffProcessorService.getEditedPropertyInfo(state, pathInformation, newValue)
+		EditedProperty editPropertyInfo = jsonDiffProcessorService.getEditedPropertyInfo(stateModel, pathInformation, newValue)
 		
 		then:
 		noExceptionThrown()
@@ -195,10 +190,9 @@ class JsonDiffTransformerSpec extends Specification {
 		given:
 		Gson gson = gsonFactory.getInstance();
 		JsonObject diff = gson.fromJson(editedPropertyBadDiff, JsonObject.class);
-		JsonObject state = gson.fromJson(stateNew, JsonObject.class);
 		
 		when:
-		jsonDiffProcessorService.processDiff(state, diff);
+		jsonDiffProcessorService.processDiff(stateModel, diff);
 		
 		then:
 		def exception = thrown RuntimeException
@@ -210,10 +204,9 @@ class JsonDiffTransformerSpec extends Specification {
 		given:
 		Gson gson = gsonFactory.getInstance();
 		JsonObject diff = gson.fromJson(addedObjectToNonArrayBadDiff, JsonObject.class);
-		JsonObject state = gson.fromJson(stateNew, JsonObject.class);
 		
 		when:
-		jsonDiffProcessorService.processDiff(state, diff);
+		jsonDiffProcessorService.processDiff(stateModel, diff);
 		
 		then:
 		def exception = thrown RuntimeException

@@ -218,15 +218,18 @@ public class OrbCollection {
 		if (!areEqualAttributes(oldValue, value)) {
 			boolean isNewValueAReference = referenceUtil.isValueAReference(value);
 			if (isNewValueAReference) {
-				if (isTargetAttributeValueAlreadyAReference(value)) {
-					throw new RuntimeException("A reference can't point to another reference. I don't know why but that's not allowed. Figure it out later.");
+				List<DecomposedKey> keys = this.orbReference.convertToDecomposedKeys(value);
+				for (DecomposedKey decomposeKey: keys) {
+					if (decomposeKey.isKeyPointingToAttribute()) {
+						if (isTargetAttributeValueAlreadyAReference(value)) {
+							throw new RuntimeException("A reference can't point to another reference. I don't know why but that's not allowed. Figure it out later.");
+						}	
+					}
 				}
 			}
 
 			if (referenceUtil.isValueAReference(oldValue)) {
-
 				logger.debug("setAttribute oldValue: {}", oldValue);
-
 				orbReference.removeArrowsFromIndex(orbInternalId, attributeName, oldValue);
 			}
 

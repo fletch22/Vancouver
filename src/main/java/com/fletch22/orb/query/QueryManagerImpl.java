@@ -46,37 +46,6 @@ public class QueryManagerImpl extends AbstractCriteriaManager implements QueryMa
 		return cache.orbCollection.executeQuery(criteria);
 	}
 
-//	protected Criteria findQuery(long criteriaOrbTypeInternalId, String queryLabel) {
-//
-//		boolean isCriteriaFound = false;
-//		Criteria criteriaFound = null;
-//		
-//		OrbType orbType = getParentOrbType();
-//		List<Orb> orbList = orbManager.getOrbsOfType(orbType.id);
-//		for (Orb orb : orbList) {
-//			criteriaFound = get(orb.getOrbInternalId());
-//			
-//			for (String prop : orb.getUserDefinedProperties().keySet()) {
-//				logger.info("Prop: {}", prop);
-//			}
-//			logger.info("oid: {}", orb.getOrbInternalId());
-//			logger.info("typeOid: {}", orb.getOrbTypeInternalId());
-//			logger.info("Is criteria found null? {}", (null == criteriaFound));
-//			
-//			if (criteriaFound.getLabel().equals(queryLabel)
-//			&& criteriaFound.getOrbTypeInternalId() == criteriaOrbTypeInternalId) {
-//				isCriteriaFound = true;
-//				break;
-//			}
-//		}
-//
-//		if (!isCriteriaFound) {
-//			throw new RuntimeException(String.format("Encountered problem trying to find query. Couldn't find query '%s'.", queryLabel));
-//		}
-//
-//		return criteriaFound;
-//	}
-
 	@Override
 	public OrbResultSet findByAttribute(long orbTypeInternalId, String attributeName, String attributeValueToFind) {
 

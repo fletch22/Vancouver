@@ -62,24 +62,6 @@ class QueryManagerSpec extends Specification {
 		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems();
 	}
 	
-	def testFindQuery() {
-		
-		given:
-		long orbTypeInternalId = orbTypeManager.createOrbType("foo", new LinkedHashSet<String>())
-		
-		OrbType orbType = orbTypeManager.getOrbType(orbTypeInternalId)
-		
-		String queryLabel = 'fuzzyThings'
-		Criteria criteria = new CriteriaStandard(orbType.id, queryLabel)
-		queryManager.addToCollection(criteria)
-		
-		when:
-		Criteria criteriaFound = queryManager.findQuery(orbTypeInternalId, queryLabel);
-		
-		then:
-		criteriaFound
-	}
-
 	def 'test handle type simple delete event'() {
 		
 		given:
