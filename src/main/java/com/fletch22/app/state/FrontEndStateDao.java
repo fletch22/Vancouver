@@ -1,6 +1,7 @@
 package com.fletch22.app.state;
 
 import java.math.BigDecimal;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,12 +13,8 @@ import com.fletch22.orb.OrbManager;
 import com.fletch22.orb.OrbType;
 import com.fletch22.orb.OrbTypeManager;
 import com.fletch22.orb.command.transaction.TransactionService;
-import com.fletch22.orb.query.Criteria;
-import com.fletch22.orb.query.CriteriaStandard;
 import com.fletch22.orb.query.OrbResultSet;
 import com.fletch22.orb.query.QueryManager;
-import com.fletch22.orb.query.sort.CriteriaSortInfo;
-import com.fletch22.orb.query.sort.SortInfo.SortDirection;
 
 @Component
 public class FrontEndStateDao {
@@ -36,13 +33,15 @@ public class FrontEndStateDao {
 	@Autowired
 	QueryManager queryManager;
 
-	public void save(String state) {
+	public void save(String state, String clientId) {
 		OrbType orbType = this.orbTypeManager
 				.getOrbType(FrontEndState.TYPE_LABEL);
 
 		Orb orb = orbManager.createUnsavedInitializedOrb(orbType);
 
-		orb.getUserDefinedProperties().put(FrontEndState.ATTR_STATE, state);
+		Map<String, String> properties = orb.getUserDefinedProperties();
+		properties.put(FrontEndState.ATTR_STATE, state);
+		properties.put(FrontEndState.ATTR_CLIENT_ID, clientId);
 
 		BigDecimal currentTransactionId = transactionService
 				.getCurrentTransactionId();

@@ -3,7 +3,6 @@ package com.fletch22.app.state;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +12,7 @@ import com.fletch22.aop.Transactional;
 import com.fletch22.app.designer.appContainer.AppContainerService;
 import com.fletch22.app.state.diff.service.JsonDiffProcessorService;
 import com.fletch22.app.state.diff.service.StuntDoubleAndNewId;
-import com.fletch22.util.StopWatch;
+import com.fletch22.web.controllers.ComponentController.ClientIdsPackage;
 import com.fletch22.web.controllers.ComponentController.StatePackage;
 
 @Component
@@ -31,8 +30,8 @@ public class FrontEndStateService {
 	AppContainerService appContainerService;
 
 	@Transactional
-	public void save(String state) {
-		frontEndStateDao.save(state);
+	public void save(String state, String clientId) {
+		frontEndStateDao.save(state, clientId);
 	}
 	
 	@Transactional
@@ -50,7 +49,7 @@ public class FrontEndStateService {
 			ArrayList<StuntDoubleAndNewId> stuntDoubleAndNewIdList = jsonDiffProcessorService.process(statePackage.state, statePackage.diffBetweenOldAndNew);
 			statePackage.state = insertNewIdsIntoState(statePackage.state, stuntDoubleAndNewIdList);
 		}
-		save(statePackage.state);
+		save(statePackage.state, statePackage.clientId);
 		
 		return statePackage.state;
 	}
@@ -74,5 +73,17 @@ public class FrontEndStateService {
 
 	public StateIndexInfo getMostRecentHistorical() {
 		return frontEndStateDao.getMostRecentHistorical();
+	}
+
+	public String determineLastGoodState(ClientIdsPackage clientIdsPackage) {
+		
+		// Work through the outer array in ascending order.
+		
+		// Query database for uuid. If found then add to 'found' collection.
+		
+		// When unfound discovered, then query the 'found' collection for the most recently added item. 
+		
+		// Find the state for the given state id and return that state and the transaction id.
+		throw new RuntimeException("Not yet implemented.");
 	}
 }

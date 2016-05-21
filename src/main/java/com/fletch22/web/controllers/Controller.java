@@ -18,17 +18,10 @@ public class Controller {
 	
 	public static final String JSON_SUCCESS = "{ \"result\": \"Success\" }";
 
-//	@ExceptionHandler(RuntimeException.class)
-//	public void handleApplicationExceptions(Throwable exception, HttpServletResponse response) {
-//		try {
-//			logger.info("An exception was thrown: {}", exception.getMessage());
-//			exception.printStackTrace();
-//			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-//					exception.getMessage());
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//	}
+	@ExceptionHandler(Exception.class)
+	public void handleApplicationExceptions(Throwable exception, HttpServletResponse response) {
+		throw new RestException(exception, ErrorCode.UKNOWN_ERROR);
+	}
 
 	@ExceptionHandler(RestException.class)
 	public @ResponseBody ExceptionJSONInfo handleRestException(HttpServletRequest request, HttpServletResponse response, RestException restException){

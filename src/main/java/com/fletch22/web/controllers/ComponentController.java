@@ -1,6 +1,7 @@
 package com.fletch22.web.controllers;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -124,7 +125,20 @@ public class ComponentController extends Controller {
 		StateIndexInfo stateIndexInfo = frontEndStateService.getMostRecentHistorical();
 
 		return stateIndexInfo;
+	}
+	
+	@RequestMapping(value = "/determineLastGoodState", method = RequestMethod.POST)
+	@ResponseStatus(value = HttpStatus.OK)
+	public @ResponseBody String determineLastGoodState(@RequestBody ClientIdsPackage clientIdsPackage) {
 
+		logger.info("Size of clientIds: {}", clientIdsPackage.idPackages.size());
+		StateIndexInfo stateIndexInfo = frontEndStateService.determineLastGoodState(clientIdsPackage);
+
+		return JSON_SUCCESS;
+	}
+	
+	public static class ClientIdsPackage {
+		public List<List<String>> idPackages;
 	}
 	
 	@RequestMapping(value = "/getExceptionForTesting", method = RequestMethod.GET)
@@ -150,5 +164,6 @@ public class ComponentController extends Controller {
 	public static class StatePackage {
 		public String state;
 		public String diffBetweenOldAndNew;
+		public String clientId;
 	}
 }
