@@ -20,9 +20,9 @@ import com.fletch22.orb.command.transaction.TransactionService
 import com.fletch22.orb.query.QueryManager
 
 @ContextConfiguration(locations = 'classpath:/springContext-test.xml')
-class FrontEndStateServiceSpec extends Specification {
+class FrontEndStateServiceIntSpec extends Specification {
 	
-	Logger logger = LoggerFactory.getLogger(FrontEndStateServiceSpec);
+	Logger logger = LoggerFactory.getLogger(FrontEndStateServiceIntSpec);
 
 	@Autowired
 	FrontEndStateService frontEndStateService;

@@ -132,7 +132,7 @@ public class ComponentController extends Controller {
 	public @ResponseBody String determineLastGoodState(@RequestBody ClientIdsPackage clientIdsPackage) {
 
 		logger.info("Size of clientIds: {}", clientIdsPackage.idPackages.size());
-		StateIndexInfo stateIndexInfo = frontEndStateService.determineLastGoodState(clientIdsPackage);
+		String state = frontEndStateService.determineLastGoodState(clientIdsPackage);
 
 		return JSON_SUCCESS;
 	}

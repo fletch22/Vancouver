@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import com.fletch22.aop.Transactional;
 import com.fletch22.app.designer.appContainer.AppContainerService;
+import com.fletch22.app.state.FrontEndStateDao.StateSearchResult;
 import com.fletch22.app.state.diff.service.JsonDiffProcessorService;
 import com.fletch22.app.state.diff.service.StuntDoubleAndNewId;
 import com.fletch22.web.controllers.ComponentController.ClientIdsPackage;
@@ -77,13 +78,17 @@ public class FrontEndStateService {
 
 	public String determineLastGoodState(ClientIdsPackage clientIdsPackage) {
 		
+		String foundState = null;
+		
 		// Work through the outer array in ascending order.
+		for (List<String> packages : clientIdsPackage.idPackages) {
+			StateSearchResult stateSearchResult = frontEndStateDao.determineLastGoodState(packages);
+			if (stateSearchResult.isStateFound()) {
+				foundState = stateSearchResult.state;
+				break;
+			}
+		}
 		
-		// Query database for uuid. If found then add to 'found' collection.
-		
-		// When unfound discovered, then query the 'found' collection for the most recently added item. 
-		
-		// Find the state for the given state id and return that state and the transaction id.
-		throw new RuntimeException("Not yet implemented.");
+		return foundState;
 	}
 }
