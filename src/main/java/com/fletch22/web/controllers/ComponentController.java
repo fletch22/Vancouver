@@ -22,6 +22,7 @@ import com.fletch22.app.designer.ComponentSaveFromMapService;
 import com.fletch22.app.designer.appContainer.AppContainerService;
 import com.fletch22.app.designer.service.DeleteComponentService;
 import com.fletch22.app.designer.viewmodel.AllModels;
+import com.fletch22.app.state.FrontEndStateDao.StateSearchResult;
 import com.fletch22.app.state.FrontEndStateService;
 import com.fletch22.app.state.StateIndexInfo;
 import com.fletch22.util.json.GsonFactory;
@@ -30,7 +31,7 @@ import com.fletch22.util.json.GsonFactory;
 @RequestMapping("/api/component")
 public class ComponentController extends Controller {
 
-	Logger logger = LoggerFactory.getLogger(HomeController.class);
+	Logger logger = LoggerFactory.getLogger(ComponentController.class);
 
 	@Autowired
 	ComponentFactory componentFactory;
@@ -115,7 +116,6 @@ public class ComponentController extends Controller {
 		logger.info("Getting {} state : {}: isEarliest: {}", index, stateIndexInfo.state, stateIndexInfo.isEarliestState);
 
 		return stateIndexInfo;
-
 	}
 	
 	@RequestMapping(value = "/mostRecentStateHistory", method = RequestMethod.GET)
@@ -130,11 +130,15 @@ public class ComponentController extends Controller {
 	@RequestMapping(value = "/determineLastGoodState", method = RequestMethod.POST)
 	@ResponseStatus(value = HttpStatus.OK)
 	public @ResponseBody String determineLastGoodState(@RequestBody ClientIdsPackage clientIdsPackage) {
-
+		
 		logger.info("Size of clientIds: {}", clientIdsPackage.idPackages.size());
-		String state = frontEndStateService.determineLastGoodState(clientIdsPackage);
+		StateSearchResult searchResultState = frontEndStateService.determineLastGoodState(clientIdsPackage);
+		
+		if (!searchResultState.isStateFound()) {
+			throw new RestException(ErrorCode.COULD_NOT_DETERMINE_GOOD_STATE_FROM_CLIENT_IDS);
+		}
 
-		return JSON_SUCCESS;
+		return String.format("{ state: '%s' }", searchResultState.state);
 	}
 	
 	public static class ClientIdsPackage {
@@ -149,8 +153,8 @@ public class ComponentController extends Controller {
 	
 	public static class ExceptionJSONInfo {
 		public String url;
-	    public String message;
-	    public String errorCode;
+	    public String systemMessage;
+	    public int errorCode;
 	}
 	
 	public static class StatePallet {

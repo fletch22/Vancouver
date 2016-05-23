@@ -76,19 +76,18 @@ public class FrontEndStateService {
 		return frontEndStateDao.getMostRecentHistorical();
 	}
 
-	public String determineLastGoodState(ClientIdsPackage clientIdsPackage) {
+	public StateSearchResult determineLastGoodState(ClientIdsPackage clientIdsPackage) {
 		
-		String foundState = null;
+		StateSearchResult stateSearchResult = new StateSearchResult();
 		
 		// Work through the outer array in ascending order.
 		for (List<String> packages : clientIdsPackage.idPackages) {
-			StateSearchResult stateSearchResult = frontEndStateDao.determineLastGoodState(packages);
+			stateSearchResult = frontEndStateDao.determineLastGoodState(packages);
 			if (stateSearchResult.isStateFound()) {
-				foundState = stateSearchResult.state;
 				break;
 			}
 		}
 		
-		return foundState;
+		return stateSearchResult;
 	}
 }
