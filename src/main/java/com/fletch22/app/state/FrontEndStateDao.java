@@ -133,6 +133,8 @@ public class FrontEndStateDao {
 		
 		criteria.setSortOrder(criteriaSortInfo);
 		
+		logger.info("Number of client IDs {}", clientIds.size());
+		
 		criteria.addAnd(Constraint.in(FrontEndState.ATTR_CLIENT_ID, clientIds));
 		
 		return criteria;

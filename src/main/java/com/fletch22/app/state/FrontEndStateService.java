@@ -38,7 +38,7 @@ public class FrontEndStateService {
 	@Transactional
 	public void save(List<StatePackage> statePackageList) {
 		for (StatePackage statePackage : statePackageList) {
-			logger.debug(statePackage.state);
+			logger.debug(statePackage.state); 
 			saveStatePackage(statePackage);
 		}
 	}

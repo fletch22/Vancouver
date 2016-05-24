@@ -32,6 +32,7 @@ public abstract class Constraint {
 	public static Constraint in(String attributeName, List<String> operativeList) {
 		ConstraintDetailsList constraintDetailsList = new ConstraintDetailsList();
 		
+		
 		constraintDetailsList.relationshipOperator = RelationshipOperator.IN;
 		constraintDetailsList.attributeName = attributeName;
 		constraintDetailsList.operativeValueList = operativeList;

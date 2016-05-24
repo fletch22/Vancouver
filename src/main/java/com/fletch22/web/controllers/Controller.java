@@ -31,6 +31,8 @@ public class Controller {
 	@ExceptionHandler(Exception.class)
 	@ResponseBody String handleBadRequest(HttpServletRequest req, Exception exception) {
 		
+		exception.printStackTrace();
+		
 		ExceptionJSONInfo info = new ExceptionJSONInfo();
 	    info.url = req.getRequestURL().toString();
 	    info.systemMessage = exception.getMessage();

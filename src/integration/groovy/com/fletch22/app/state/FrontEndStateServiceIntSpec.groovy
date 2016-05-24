@@ -2,6 +2,8 @@ package com.fletch22.app.state;
 
 import static org.junit.Assert.*
 
+import java.util.List;
+
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,6 +20,7 @@ import com.fletch22.orb.OrbType
 import com.fletch22.orb.OrbTypeManager
 import com.fletch22.orb.command.transaction.TransactionService
 import com.fletch22.orb.query.QueryManager
+import com.fletch22.web.controllers.ComponentController.StatePackage;
 
 @ContextConfiguration(locations = 'classpath:/springContext-test.xml')
 class FrontEndStateServiceIntSpec extends Specification {
@@ -59,18 +62,25 @@ class FrontEndStateServiceIntSpec extends Specification {
 		
 		given:
 		String state = "this is a test";
+		StatePackage statePackage = new StatePackage()
+		statePackage.state = state
+		statePackage.diffBetweenOldAndNew = null
+		statePackage.clientId = '123412341243423141233241'
+		
+		List<StatePackage> statePackageList = new ArrayList<StatePackage>()
+		statePackageList.add(statePackage)
 				
 		when:
-		frontEndStateService.save(state);
+		frontEndStateService.save(statePackageList)
 		
-		OrbType orbType = orbTypeManager.getOrbType(FrontEndState.TYPE_LABEL);
+		OrbType orbType = orbTypeManager.getOrbType(FrontEndState.TYPE_LABEL)
 		
-		logger.debug("OrbType ID: {}", orbType.id);
+		logger.debug("OrbType ID: {}", orbType.id)
 		
-		List<Orb> orbs = orbManager.getOrbsOfType(orbType.id);
+		List<Orb> orbs = orbManager.getOrbsOfType(orbType.id)
 		
 		then:
-		orbs.size() == 1;
+		orbs.size() == 1
 	}
 
 	def 'test find and replace'() {
