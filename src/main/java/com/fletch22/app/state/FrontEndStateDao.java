@@ -144,30 +144,30 @@ public class FrontEndStateDao {
 		Criteria criteria = createCriteriaFindByClientIds(clientIds);
 		OrbResultSet orbResultSet = this.queryManager.executeQuery(criteria);
 		
-		return determineLastGoodStateFromList(clientIds, orbResultSet);
+		return determineLastGoodStateFromSortedList(clientIds, orbResultSet);
 	}
 
-	private StateSearchResult determineLastGoodStateFromList(List<String> clientIds, OrbResultSet orbResultSet) {
+	private StateSearchResult determineLastGoodStateFromSortedList(List<String> clientIds, OrbResultSet orbResultSet) {
 		
 		StateSearchResult stateSearchResult = new StateSearchResult();
 		
 		int size = orbResultSet.orbList.size();
 		
-		// All IDs present in result set. That means none were lost or skipped during the problem. 
+		// All IDs present in result set. That means none were lost during the error state. 
 		// We can infer that the last item in the result is the lexicographically
 		// highest; therefore the most recent.
 		if (size == clientIds.size()) {
 			Orb orb = orbResultSet.orbList.get(clientIds.size() - 1);
 			stateSearchResult.state = orb.getUserDefinedProperties().get(FrontEndState.ATTR_STATE);
 		} else {
-			// Find missing state if it exists in this set. Once found then use the previous "good" state.
-			stateSearchResult = findMissingState(clientIds, orbResultSet);
+			stateSearchResult = findLastGoodState(clientIds, orbResultSet);
 		}
 		
 		return stateSearchResult;
 	}
 
-	private StateSearchResult findMissingState(List<String> clientIdsList, OrbResultSet orbResultSet) {
+	// Find missing state if it exists in this set. Once found then use the previous "good" state.
+	private StateSearchResult findLastGoodState(List<String> clientIdsList, OrbResultSet orbResultSet) {
 		
 		StateSearchResult stateSearchResult = new StateSearchResult();
 		

@@ -30,14 +30,19 @@ public abstract class Constraint {
 	}
 	
 	public static Constraint in(String attributeName, List<String> operativeList) {
-		ConstraintDetailsList constraintDetailsList = new ConstraintDetailsList();
+		Constraint constraint = null;
+				
+		if (operativeList.size() == 1) {
+			constraint = Constraint.eq(attributeName, operativeList.get(0));
+		} else {
+			ConstraintDetailsList constraintDetailsList = new ConstraintDetailsList();
+			constraintDetailsList.relationshipOperator = RelationshipOperator.IN;
+			constraintDetailsList.attributeName = attributeName;
+			constraintDetailsList.operativeValueList = operativeList;
+			constraint = constraintDetailsList;
+		}
 		
-		
-		constraintDetailsList.relationshipOperator = RelationshipOperator.IN;
-		constraintDetailsList.attributeName = attributeName;
-		constraintDetailsList.operativeValueList = operativeList;
-		
-		return constraintDetailsList;
+		return constraint;
 	}
 	
 	public static Constraint is(String attributeName, Aggregate aggregate, CriteriaAggregate criteriaForAggregation) {

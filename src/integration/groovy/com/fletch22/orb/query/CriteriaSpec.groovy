@@ -157,6 +157,30 @@ class CriteriaSpec extends Specification {
 		orbResultSet.orbList.size == 70
 	}
 	
+	def 'test criteria search collection using in - when only one item.'() {
+		
+		given:
+		Criteria criteria = new CriteriaStandard(orbType.id, "foo")
+		
+		List<String> list = new ArrayList<String>();
+		list.add("red")
+		
+		criteria.addAnd(Constraint.in(ATTRIBUTE_COLOR, list))
+
+		when:
+		StopWatch stopWatch = new StopWatch()
+		stopWatch.start()
+		OrbResultSet orbResultSet = cache.orbCollection.executeQuery(criteria);
+		stopWatch.stop()
+		
+		logger.debug("elapsed time: {}", stopWatch.elapsedMillis)
+		
+		then:
+		notThrown Exception
+		orbResultSet.orbList
+		orbResultSet.orbList.size == 60
+	}
+	
 	def 'test criteria search collection using is unique and parent set'() {
 		
 		given:

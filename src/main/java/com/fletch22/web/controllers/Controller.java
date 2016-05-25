@@ -19,11 +19,6 @@ public class Controller {
 	
 	public static final String JSON_SUCCESS = "{ \"result\": \"Success\" }";
 
-	/*@ExceptionHandler(Exception.class)
-	public void handleApplicationExceptions(Throwable exception, HttpServletResponse response) {
-		throw new RestException(exception, ErrorCode.UKNOWN_ERROR);
-	}*/
-	
 	@Autowired
 	GsonFactory gsonFactory;
 	

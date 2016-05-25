@@ -31,7 +31,7 @@ class FrontEndStateDaoSpec extends Specification {
 		orbResultSet.orbList.add(orb);
 		
 		when:
-		StateSearchResult stateSearchResult = frontEndStateDao.determineLastGoodStateFromList(clientIds, orbResultSet)
+		StateSearchResult stateSearchResult = frontEndStateDao.determineLastGoodStateFromSortedList(clientIds, orbResultSet)
 			
 		then:
 		stateSearchResult.isStateFound()
@@ -63,7 +63,7 @@ class FrontEndStateDaoSpec extends Specification {
 		orbResultSet.orbList.add(orb);
 		
 		when:
-		StateSearchResult stateSearchResult = frontEndStateDao.determineLastGoodStateFromList(clientIds, orbResultSet)
+		StateSearchResult stateSearchResult = frontEndStateDao.determineLastGoodStateFromSortedList(clientIds, orbResultSet)
 			
 		then:
 		stateSearchResult.isStateFound()
@@ -92,7 +92,7 @@ class FrontEndStateDaoSpec extends Specification {
 		orbResultSet.orbList.add(orb);
 		
 		when:
-		StateSearchResult stateSearchResult = frontEndStateDao.determineLastGoodStateFromList(clientIds, orbResultSet)
+		StateSearchResult stateSearchResult = frontEndStateDao.determineLastGoodStateFromSortedList(clientIds, orbResultSet)
 			
 		then:
 		stateSearchResult.isStateFound()
@@ -121,7 +121,7 @@ class FrontEndStateDaoSpec extends Specification {
 		orbResultSet.orbList.add(orb);
 		
 		when:
-		StateSearchResult stateSearchResult = frontEndStateDao.determineLastGoodStateFromList(clientIds, orbResultSet)
+		StateSearchResult stateSearchResult = frontEndStateDao.determineLastGoodStateFromSortedList(clientIds, orbResultSet)
 			
 		then:
 		stateSearchResult.isStateFound()
