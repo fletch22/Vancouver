@@ -40,8 +40,16 @@ public class RollbackTransactionService {
 	
 	public void rollbackToBeforeSpecificTransaction(BigDecimal tranId) {
 		
-		List<UndoActionBundle> undoActionBundleList = logActionService.getUndoActions(tranId);
+		List<UndoActionBundle> undoActionBundleList = logActionService.getUndoActionsForTransactionsAndSubsequent(tranId);
 		
+		executeUndoActions(undoActionBundleList);
+		
+		this.transactionService.rollbackToBeforeSpecificTransaction(tranId);
+		
+		eventLogCommandProcessPackageHolder.cleanup();
+	}
+	
+	private void executeUndoActions(List<UndoActionBundle> undoActionBundleList) {
 		OperationResult operationResult = null;
 		for (UndoActionBundle undoActionBundle : undoActionBundleList) {
 			
@@ -60,10 +68,6 @@ public class RollbackTransactionService {
 				}
 			}
 		}
-		
-		this.transactionService.rollbackToBeforeSpecificTransaction(tranId);
-		
-		eventLogCommandProcessPackageHolder.cleanup();
 	}
 
 	public void rollbackCurrentTransaction() {

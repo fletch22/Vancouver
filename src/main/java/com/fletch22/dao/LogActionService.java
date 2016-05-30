@@ -51,10 +51,10 @@ public class LogActionService {
 		this.logActionDao.logAction(action, undoAction, commandProcessActionPackage.getTranId(), commandProcessActionPackage.getTranDate());
 	}
 
-	public List<UndoActionBundle> getUndoActions(BigDecimal tranId) {
+	public List<UndoActionBundle> getUndoActionsForTransactionsAndSubsequent(BigDecimal tranId) {
 		return this.logActionDao.getUndosForTransactionAndSubesequentTransactions(tranId);
 	}
-
+		
 	public void loadCacheFromDb() {
 		List<ActionInfo> actionInfoList = this.logActionDao.getAllActions(); 
 		

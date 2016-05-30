@@ -92,7 +92,7 @@ class LogActionServiceSpec extends Specification {
 		OperationResult operationResult = this.commandProcessor.processAction(commandProcessActionPackage)
 		
 		when:
-		List<UndoActionBundle> undoActionBundleList = logActionService.getUndoActions(commandProcessActionPackage.getTranId().longValue())
+		List<UndoActionBundle> undoActionBundleList = logActionService.getUndoActionsForTransactionsAndSubsequent(commandProcessActionPackage.getTranId().longValue())
 		
 		then:
 		undoActionBundleList
@@ -107,6 +107,49 @@ class LogActionServiceSpec extends Specification {
 	
 	@Unroll
 	@Test
+	def 'test get undos after transaction'() {
+		
+		given:
+		setup()
+		
+		CommandBundle commandBundle = new CommandBundle();
+		
+		CommandProcessActionPackage commandProcessActionPackage = null
+		for (i in 0..numberOfAdds.intValue()) {
+			def json = addOrbTypeCommand.toJson('foo' + i)
+			commandBundle.addCommand(json);
+		}
+		
+		commandProcessActionPackage = commandProcessActionPackageFactory.getInstance(commandBundle.toJson())
+		OperationResult operationResult = this.commandProcessor.processAction(commandProcessActionPackage)
+		
+		when:
+		List<UndoActionBundle> undoActionBundleList = logActionService.getUndoActionsForSubsequentTransactions(commandProcessActionPackage.getTranId())
+		
+		then:
+		undoActionBundleList == []
+		undoActionBundleList.size() == 0
+		
+		where:
+		numberOfAdds << [1, 3]
+	}
+	
+
+	def printActionList(List<UndoActionBundle> undoActionBundleList) {
+		if (undoActionBundleList.size() == 0) {
+			println 'nothing in bundle.'
+		}
+		
+		for (UndoActionBundle undoActionBundle : undoActionBundleList) {
+			for (UndoAction undoAction : undoActionBundle.actions) {
+				println undoAction.tranDate.toString() + ": " + undoAction.action
+			}
+		}
+	}
+	
+	
+	@Unroll
+	@Test
 	def 'test get result set from multiple actions same tran date'() {
 		
 		given:
@@ -118,7 +161,7 @@ class LogActionServiceSpec extends Specification {
 		commandProcessActionPackage = insertTypes(numberOfAdds, commandProcessActionPackage)
 		
 		when:
-		List<UndoActionBundle> undoActionBundleList = logActionService.getUndoActions(commandProcessActionPackage.getTranId().longValue())
+		List<UndoActionBundle> undoActionBundleList = logActionService.getUndoActionsForTransactionsAndSubsequent(commandProcessActionPackage.getTranId().longValue())
 		
 		then:
 		undoActionBundleList
@@ -211,6 +254,7 @@ class LogActionServiceSpec extends Specification {
 		
 	private CommandProcessActionPackage insertTypes(Integer numberOfAdds, CommandProcessActionPackage commandProcessActionPackage) {
 		BigDecimal tranId;
+		int count = 0;
 		for (i in 1..numberOfAdds.intValue()) {
 			def json = addOrbTypeCommand.toJson('foo' + i)
 			
@@ -218,16 +262,19 @@ class LogActionServiceSpec extends Specification {
 			
 			commandBundle.addCommand(json);
 			commandProcessActionPackage = commandProcessActionPackageFactory.getInstance(commandBundle.toJson())
-			if (null != tranId) {
+			if (null != tranId) { 
 				commandProcessActionPackage.setTranId(tranId)
 			}
 			
 			OperationResult operationResult = this.commandProcessor.processAction(commandProcessActionPackage)
+			count++;
 			
 			if (null == tranId) {
 				tranId = commandProcessActionPackage.getTranId()
 			}
 		}
+		
+		println "Number types inserted: ${count}"
 		
 		return commandProcessActionPackage
 	}

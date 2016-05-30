@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,6 +31,8 @@ import com.fletch22.util.json.GsonFactory;
 @RestController
 @RequestMapping("/api/component")
 public class ComponentController extends Controller {
+
+	private static final String ACTION_ROLLBACK_TO = "rollbackTo";
 
 	Logger logger = LoggerFactory.getLogger(ComponentController.class);
 
@@ -87,6 +90,11 @@ public class ComponentController extends Controller {
 	public @ResponseBody String saveStatePallet(@RequestBody StatePallet statePallet) {
 
 		String message = "Items saved: " + statePallet.statePackages.size();
+		
+		if (statePallet.statePackages.get(0).state.contains("x")) {
+			throw new RuntimeException("CONTAINS X");
+		}
+		
 		frontEndStateService.save(statePallet.statePackages);
 
 		logger.info(message);
@@ -129,20 +137,50 @@ public class ComponentController extends Controller {
 	
 	@RequestMapping(value = "/determineLastGoodState", method = RequestMethod.POST)
 	@ResponseStatus(value = HttpStatus.OK)
-	public @ResponseBody String determineLastGoodState(@RequestBody ClientIdsPackage clientIdsPackage) {
+	public @ResponseBody LastGoodState determineLastGoodState(@RequestBody List<List<String>> idPackages) {
 		
-		logger.info("Size of clientIds: {}", clientIdsPackage.idPackages.size());
-		StateSearchResult searchResultState = frontEndStateService.determineLastGoodState(clientIdsPackage);
+		logger.info("Size of clientIds: {}", idPackages.size());
+		
+		StateSearchResult searchResultState = frontEndStateService.determineLastGoodState(new ClientIdsPackage(idPackages));
 		
 		if (!searchResultState.isStateFound()) {
 			throw new RestException(ErrorCode.COULD_NOT_DETERMINE_GOOD_STATE_FROM_CLIENT_IDS);
 		}
+		
+		logger.info("Expecting to get a call to rollback to {}", searchResultState.clientId);
 
-		return String.format("{ state: '%s' }", searchResultState.state);
+		return new LastGoodState(searchResultState.clientId, searchResultState.state);
+	}
+	
+	public static class LastGoodState {
+		public String clientId;
+		public String stateJson;
+		
+		public LastGoodState(String clientId, String stateJson) {
+			this.clientId = clientId;
+			this.stateJson = stateJson;
+		}
+	}
+	
+	@RequestMapping(value = "/states/{stateClientId}", method = RequestMethod.POST)
+	@ResponseStatus(value = HttpStatus.OK)
+	public @ResponseBody String rollbackToState(@PathVariable String stateClientId, @RequestParam(value="action", required=true) String action) {
+		
+		if (!action.equals(ACTION_ROLLBACK_TO)) {
+			throw new RuntimeException(String.format("Unrecognized action '%s'. Must be '%s'.", action, ACTION_ROLLBACK_TO));
+		}
+		
+		this.frontEndStateService.rollbackToState(stateClientId);
+		
+		return JSON_SUCCESS;
 	}
 	
 	public static class ClientIdsPackage {
 		public List<List<String>> idPackages;
+		
+		public ClientIdsPackage(List<List<String>> idPackages) {
+			this.idPackages = idPackages;
+		}
 	}
 	
 	@RequestMapping(value = "/getExceptionForTesting", method = RequestMethod.GET)
@@ -157,7 +195,7 @@ public class ComponentController extends Controller {
 	    public int errorCode;
 	}
 	
-	public static class StatePallet {
+	public static class StatePallet { 
 		ArrayList<StatePackage> statePackages;
 
 		public void setStates(ArrayList<StatePackage> statePackages) {

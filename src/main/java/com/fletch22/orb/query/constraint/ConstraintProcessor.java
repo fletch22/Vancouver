@@ -3,6 +3,7 @@ package com.fletch22.orb.query.constraint;
 import static com.googlecode.cqengine.query.QueryFactory.not;
 import static com.googlecode.cqengine.query.QueryFactory.and;
 import static com.googlecode.cqengine.query.QueryFactory.equal;
+import static com.googlecode.cqengine.query.QueryFactory.greaterThan;
 import static com.googlecode.cqengine.query.QueryFactory.in;
 import static com.googlecode.cqengine.query.QueryFactory.or;
 
@@ -71,6 +72,8 @@ public class ConstraintProcessor implements ConstraintProcessVisitor {
 
 		if (constraintDetailsSingleValue.getRelationshipOperator() == RelationshipOperator.EQUALS) {
 			queryLocal = equal(simpleNullableAttribute, constraintDetailsSingleValue.operativeValue);
+		} else if (constraintDetailsSingleValue.getRelationshipOperator() == RelationshipOperator.GREATER_THAN) {
+			queryLocal = greaterThan(simpleNullableAttribute, constraintDetailsSingleValue.operativeValue);
 		} else {
 			throw new NotImplementedException("Encountered problem processing aggregate constrinat. Relationship '" + constraintDetailsSingleValue.getRelationshipOperator() + "' not recognized.");
 		}

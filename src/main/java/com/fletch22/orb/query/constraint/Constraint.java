@@ -56,6 +56,16 @@ public abstract class Constraint {
 		return constraintDetailsAggregate;
 	}
 	
+	public static Constraint gt(String attributeName, String operativeValue) {
+		ConstraintDetailsSingleValue constraintDetails = new ConstraintDetailsSingleValue();
+		
+		constraintDetails.relationshipOperator = RelationshipOperator.GREATER_THAN;
+		constraintDetails.attributeName = attributeName;
+		constraintDetails.operativeValue = operativeValue;
+		
+		return constraintDetails;
+	}
+	
 	public abstract Query<CacheEntry> acceptConstraintProcessorVisitor(ConstraintProcessVisitor visitor, long orbTypeInternalId);
 	
 	public abstract void acceptConstraintRegistrationVisitor(ConstraintRegistrationVisitor constraintVisitor);

@@ -90,4 +90,8 @@ public class FrontEndStateService {
 		
 		return stateSearchResult;
 	}
+
+	public void rollbackToState(String stateClientId) {
+		frontEndStateDao.rollbackToState(stateClientId);
+	}
 }

@@ -25,7 +25,7 @@
 
 	<context:property-placeholder location="classpath:application-test.properties" />
 
-	<bean id="dataSource"
+<!-- 	<bean id="dataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="${h2.database.driver}" />
 		<property name="url" value="${h2.database.url}" />
@@ -35,7 +35,9 @@
 
 	<bean id="logActionDao" class="com.fletch22.dao.inmem.LogActionInMemDao" />
 	<bean id="sqlStatementStore" class="com.fletch22.dao.inmem.SqlStatementStore" />
-
+ -->
+    <bean id="logActionDao" class="com.fletch22.dao.LogActionDaoImpl" />
+ 
 	<bean
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="viewClass"

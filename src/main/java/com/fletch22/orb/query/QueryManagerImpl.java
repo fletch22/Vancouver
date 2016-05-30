@@ -1,18 +1,14 @@
 package com.fletch22.orb.query;
 
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.fletch22.orb.Orb;
 import com.fletch22.orb.OrbType;
 import com.fletch22.orb.cache.local.Cache;
 import com.fletch22.orb.cache.query.CriteriaCollection;
 import com.fletch22.orb.command.transaction.RollbackTransactionService;
-import com.fletch22.orb.query.Criteria;
 import com.fletch22.orb.query.constraint.Constraint;
 import com.fletch22.orb.query.event.QueryAttributeDeleteHandler;
 

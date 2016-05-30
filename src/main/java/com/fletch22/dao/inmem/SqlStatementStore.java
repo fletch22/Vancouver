@@ -91,8 +91,12 @@ public class SqlStatementStore {
 		return getSingleLineFromFile("logAction5_insertIntoUndoActionLog.sql");
 	}
 	
-	public String getSelectUndoSql() {
+	public String getSelectTransactionAndSubsequentUndosSql() {
 		return getSingleLineFromFile("getTransactionAndSubsequentUndos2.sql");
+	}
+	
+	public String getSelectSubsequentUndosSql() {
+		return getSingleLineFromFile("getSubsequentUndos.sql");
 	}
 	
 	public String[] getInitializeDatabaseSql() {

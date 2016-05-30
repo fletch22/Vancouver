@@ -11,6 +11,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.h2.jdbcx.JdbcConnectionPool;
 import org.slf4j.Logger;
@@ -212,8 +213,11 @@ public class LogActionInMemDao extends LogActionDao {
 	@Override
 	public List<UndoActionBundle> getUndosForTransactionAndSubesequentTransactions(BigDecimal tranId) {
 
-		String getSelectUndoSql = sqlStatementStore.getSelectUndoSql();
-
+		String getSelectUndoSql = sqlStatementStore.getSelectTransactionAndSubsequentUndosSql();
+		return getUndoActions(tranId, getSelectUndoSql);
+	}
+			
+	private List<UndoActionBundle> getUndoActions(BigDecimal tranId, String sql) {
 		Connection connection = null;
 		List<UndoActionBundle> listUndoActionBundle = new ArrayList<UndoActionBundle>();
 		try {
@@ -221,7 +225,7 @@ public class LogActionInMemDao extends LogActionDao {
 			connection = this.getConnection();
 			connection.setAutoCommit(false);
 
-			PreparedStatement preparedStatement = connection.prepareStatement(getSelectUndoSql);
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setBigDecimal(1, tranId);
 
 			ResultSet resultSet = preparedStatement.executeQuery();
@@ -391,5 +395,11 @@ public class LogActionInMemDao extends LogActionDao {
 	@Override
 	public String getConnectionString() {
 		return this.jdbcUrl;
+	}
+
+	@Override
+	public TransactionSearchResult getSubsequentTransactionIfAny(BigDecimal tranId) {
+		throw new NotImplementedException("Not i y.");
+//		return null;
 	}
 }

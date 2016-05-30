@@ -120,15 +120,19 @@ public class LogActionDaoImpl extends LogActionDao {
 
 	@Override
 	public List<UndoActionBundle> getUndosForTransactionAndSubesequentTransactions(BigDecimal tranId) {
+		return getUndoActions(tranId, "getTransactionAndSubsequentUndos2");
+	}
+	
+	private List<UndoActionBundle> getUndoActions(BigDecimal tranId, String storedProcedureName) {
 		List<UndoActionBundle> actions = new ArrayList<UndoActionBundle>();
 		
 		PreparedStatement pstmt = null;
 		try {
 			this.connection = getConnection();
 
-			String transactionAndSubsequentUndo = "{call getTransactionAndSubsequentUndos2(?)}";
+			String statement = String.format("{call %s(?)}", storedProcedureName);
 
-			pstmt = this.connection.prepareStatement(transactionAndSubsequentUndo);
+			pstmt = this.connection.prepareStatement(statement);
 			pstmt.setBigDecimal(1, tranId);
 			ResultSet resultSet = pstmt.executeQuery();
 
@@ -257,5 +261,32 @@ public class LogActionDaoImpl extends LogActionDao {
 			try { if (callableStatement != null) callableStatement.close(); } catch(Exception e) { }
 			closeConnection();
 		}
+	}
+
+	@Override
+	public TransactionSearchResult getSubsequentTransactionIfAny(BigDecimal tranId) {
+		TransactionSearchResult transactionSearchResult = new TransactionSearchResult();
+		
+		CallableStatement callableStatement = null;
+		try {
+			connection = getConnection();
+
+			String beginTransaction = "{call getSubsequentTranIdIfAny(?, ?)}";
+			callableStatement = connection.prepareCall(beginTransaction);
+
+			callableStatement.setBigDecimal(1, tranId);
+			callableStatement.registerOutParameter(2, java.sql.Types.DECIMAL);
+
+			callableStatement.executeUpdate();
+
+			transactionSearchResult.tranId = callableStatement.getBigDecimal(2);
+			
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage(), e);
+		} finally {
+			try { if (callableStatement != null) callableStatement.close(); } catch(Exception e) { }
+			closeConnection();
+		}
+		return transactionSearchResult;
 	}
 }

@@ -12,9 +12,11 @@ import org.springframework.test.context.ContextConfiguration
 
 import spock.lang.Specification
 
+import com.fletch22.dao.LogActionDao.TransactionSearchResult
 import com.fletch22.orb.CommandExpressor
 import com.fletch22.orb.IntegrationSystemInitializer
 import com.fletch22.orb.IntegrationTests
+import com.fletch22.orb.OrbTypeManager
 import com.fletch22.orb.TranDateGenerator
 import com.fletch22.orb.command.orbType.AddOrbTypeCommand
 import com.fletch22.orb.command.orbType.DeleteOrbTypeCommand
@@ -22,9 +24,9 @@ import com.fletch22.orb.command.transaction.TransactionService
 
 @org.junit.experimental.categories.Category(IntegrationTests.class)
 @ContextConfiguration(locations = "classpath:/springContext-test.xml")
-class LogDaoSpec extends Specification {
+class LogActionDaoSpec extends Specification {
 	
-	static Logger logger = LoggerFactory.getLogger(LogDaoSpec)
+	static Logger logger = LoggerFactory.getLogger(LogActionDaoSpec)
 	
 	@Autowired
 	LogActionDao logActionDao;
@@ -46,6 +48,9 @@ class LogDaoSpec extends Specification {
 	
 	@Autowired
 	IntegrationSystemInitializer integrationSystemInitializer
+	
+	@Autowired
+	OrbTypeManager orbTypeManager
 	
 	def setup() {
 		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems()
@@ -125,5 +130,35 @@ class LogDaoSpec extends Specification {
 		
 		then:
 		1 == 1
+	}
+	
+	@Test
+	def 'test subsequent tran'() {
+		given:
+		BigDecimal tranIdFirst = transactionService.beginTransaction()
+		
+		this.orbTypeManager.createOrbType("foo", null)
+		
+		transactionService.commitTransaction();
+		
+		TransactionSearchResult transactionSearchResult = logActionDao.getSubsequentTransactionIfAny(tranIdFirst)
+		
+		tranIdFirst = transactionSearchResult.tranId
+		
+		BigDecimal tranIdSecond = transactionService.beginTransaction()
+		
+		this.orbTypeManager.createOrbType("bar", null)
+		
+		transactionSearchResult = logActionDao.getSubsequentTransactionIfAny(tranIdFirst)
+		
+		def tranId2 = transactionSearchResult.tranId;
+		
+		transactionService.commitTransaction()
+		
+		when:
+		transactionSearchResult = logActionDao.getSubsequentTransactionIfAny(tranIdFirst)
+		
+		then:
+		transactionSearchResult.tranId == tranId2
 	}
 }

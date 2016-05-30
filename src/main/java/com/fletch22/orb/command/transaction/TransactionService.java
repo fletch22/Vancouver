@@ -2,6 +2,7 @@ package com.fletch22.orb.command.transaction;
 
 import java.math.BigDecimal;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.joda.time.DateTime;
 import org.joda.time.Seconds;
 import org.slf4j.Logger;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fletch22.dao.LogActionDao;
+import com.fletch22.dao.LogActionDao.TransactionSearchResult;
 import com.fletch22.orb.TranDateGenerator;
 import com.fletch22.util.NowFactory;
 
@@ -101,5 +103,14 @@ public class TransactionService {
 
 	public BigDecimal getCurrentTransactionId() {
 		return this.transactionIdInFlight;
+	}
+
+	public void rollbackToSpecificTransaction(BigDecimal tranId) {
+		
+		// NOTE: This technique is not pure but reduces some store proc creation work.
+		TransactionSearchResult transactionSearchResult = this.logActionDao.getSubsequentTransactionIfAny(tranId);
+		if (transactionSearchResult.wasTransactionFound()) {
+			this.logActionDao.rollbackToBeforeSpecificTransaction(transactionSearchResult.tranId);
+		}
 	}
 }

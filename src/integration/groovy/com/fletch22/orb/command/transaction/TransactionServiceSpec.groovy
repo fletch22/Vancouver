@@ -16,6 +16,7 @@ import com.fletch22.dao.LogActionDao
 import com.fletch22.orb.IntegrationSystemInitializer
 import com.fletch22.orb.IntegrationTests
 import com.fletch22.orb.cache.local.Cache
+import com.fletch22.orb.client.service.BeginTransactionService
 import com.fletch22.orb.client.service.OrbTypeService
 
 @org.junit.experimental.categories.Category(IntegrationTests.class)
@@ -37,6 +38,9 @@ class TransactionServiceSpec extends Specification {
 	
 	@Autowired
 	IntegrationSystemInitializer integrationSystemInitializer
+	
+	@Autowired
+	BeginTransactionService beginTransactionService
 	
 	@Autowired
 	Cache cache;
@@ -121,6 +125,31 @@ class TransactionServiceSpec extends Specification {
 		notThrown(Exception)
 		assert !this.transactionService.isTransactionInFlight()
 	}
+	
+//	@Test
+//	def 'test rollback to specified transaction transaction'() {
+//		
+//		given:
+//		transactionService.@transactionIdInFlight = TransactionService.NO_TRANSACTION_IN_FLIGHT
+//		assert !this.transactionService.isTransactionInFlight()
+//		
+//		BigDecimal tranIdFirst = this.transactionService.beginTransaction();
+//		orbTypeService.addOrbType("firstType")
+//		
+//		this.transactionService.commitTransaction();
+//		
+//		BigDecimal tranIdSecond = this.transactionService.beginTransaction();
+//		orbTypeService.addOrbType("secondType")
+//		
+//		this.transactionService.commitTransaction();
+//		
+//		when:
+//		this.transactionService.rollback
+//		
+//		then:
+//		notThrown(Exception)
+//		assert !this.transactionService.isTransactionInFlight()
+//	}
 	
 	@Test
 	def 'test calling begin transaction when another transaction already in flight'() {
