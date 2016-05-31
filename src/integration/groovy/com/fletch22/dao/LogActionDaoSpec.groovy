@@ -159,6 +159,7 @@ class LogActionDaoSpec extends Specification {
 		transactionSearchResult = logActionDao.getSubsequentTransactionIfAny(tranIdFirst)
 		
 		then:
+		transactionSearchResult.wasTransactionFound() == true
 		transactionSearchResult.tranId == tranId2
 	}
 }

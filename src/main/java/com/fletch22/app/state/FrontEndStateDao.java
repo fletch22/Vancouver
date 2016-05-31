@@ -101,14 +101,14 @@ public class FrontEndStateDao {
 
 	public StateIndexInfo getMostRecentHistorical() {
 		
-		OrbResultSet orbResultSet = this.queryManager.executeQuery(FrontEndState.QUERY_GET_STATES);
-
-		int size = orbResultSet.orbList.size();
+		StateHistory stateHistory = new StateHistory();
+		
+		int size = stateHistory.getSize();
 		StateIndexInfo stateIndexInfo = new StateIndexInfo();
 		stateIndexInfo.indexOfMaxElement = 0;
 		
 		if (size > 0) {
-			Orb orb = orbResultSet.orbList.get(stateIndexInfo.indexOfMaxElement);
+			Orb orb = getState(stateIndexInfo.indexOfMaxElement);
 			stateIndexInfo.state = orb.getUserDefinedProperties().get(FrontEndState.ATTR_STATE);
 			stateIndexInfo.transactionId = new BigDecimal(orb.getUserDefinedProperties().get(FrontEndState.ATTR_ASSOCIATED_TRANSACTION_ID));
 		}
@@ -120,6 +120,38 @@ public class FrontEndStateDao {
 		}
 		
 		return stateIndexInfo;
+	}
+	
+	private Orb getState(int ordinal) {
+		OrbResultSet orbResultSet = this.queryManager.executeQuery(FrontEndState.QUERY_GET_STATES);
+		return orbResultSet.orbList.get(ordinal);
+	}
+	
+	public class StateHistory {
+		private static final int ORDINAL_MOST_RECENT = 0;
+		private OrbResultSet orbResultSet = null;
+		
+		public StateHistory() {
+			this.orbResultSet = queryManager.executeQuery(FrontEndState.QUERY_GET_STATES);
+		}
+		
+		public Orb getOrbMostRecent() {
+			Orb orb = null;
+			
+			if (getSize() > 0) {
+				orb = this.orbResultSet.getOrbList().get(ORDINAL_MOST_RECENT); 
+			}
+			
+			return orb;
+		}
+		
+		public int getSize() {
+			return this.orbResultSet.getOrbList().size();
+		}
+		
+		public boolean hasARecentState() {
+			return (getSize() > 0);
+		}
 	}
 	
 	private Criteria createCriteriaFindByClientIds(List<String> clientIds) {
@@ -152,6 +184,8 @@ public class FrontEndStateDao {
 		
 		int size = orbResultSet.orbList.size();
 		
+		logger.info("Found number of states from passed in from client: {}", size);
+		
 		// All IDs present in result set. That means none were lost during the error state. 
 		// We can infer that the last item in the result is the lexicographically
 		// highest; therefore the most recent.
@@ -176,23 +210,36 @@ public class FrontEndStateDao {
 		int resultSetSize = orbResultSet.getOrbList().size();
 		int maxLoopCount = clientIdsList.size();
 		
-		for (int i = 0; i < maxLoopCount; i++) {
-			if (i >= resultSetSize) {
-				stateSearchResult.state = getPreviousOrbStateIfAvailable(orbResultSet, isAtLeastOneClientIdFound, i);
-				break;
+		if (resultSetSize == 0) {
+			StateHistory stateHistory = new StateHistory();
+			
+			logger.info("Number is findLastGoodState: {}", stateHistory.getSize());
+			
+			if (stateHistory.hasARecentState()) {
+				Orb orbMostRecent = stateHistory.getOrbMostRecent();
+						
+				stateSearchResult.state = orbMostRecent.getUserDefinedProperties().get(FrontEndState.ATTR_STATE);
+				stateSearchResult.clientId = orbMostRecent.getUserDefinedProperties().get(FrontEndState.ATTR_CLIENT_ID);
 			}
-			
-			orb = orbResultSet.getOrbList().get(i);
-			
-			String clientIdFromClient = clientIdsList.get(i);
-			String clientIdFromOrbDb = orb.getUserDefinedProperties().get(FrontEndState.ATTR_CLIENT_ID);
-			
-			if (!clientIdFromClient.equals(clientIdFromOrbDb)) {
-				stateSearchResult.state = getPreviousOrbStateIfAvailable(orbResultSet, isAtLeastOneClientIdFound, i);
-				stateSearchResult.clientId = clientIdFromOrbDb;
-				break;
-			} else {
-				isAtLeastOneClientIdFound = true;	
+		} else {
+			for (int i = 0; i < maxLoopCount; i++) {
+				if (i >= resultSetSize) {
+					stateSearchResult.state = getPreviousOrbStateIfAvailable(orbResultSet, isAtLeastOneClientIdFound, i);
+					break;
+				}
+				
+				orb = orbResultSet.getOrbList().get(i);
+				
+				String clientIdFromClient = clientIdsList.get(i);
+				String clientIdFromOrbDb = orb.getUserDefinedProperties().get(FrontEndState.ATTR_CLIENT_ID);
+				
+				if (!clientIdFromClient.equals(clientIdFromOrbDb)) {
+					stateSearchResult.state = getPreviousOrbStateIfAvailable(orbResultSet, isAtLeastOneClientIdFound, i);
+					stateSearchResult.clientId = clientIdFromOrbDb;
+					break;
+				} else {
+					isAtLeastOneClientIdFound = true;	
+				}
 			}
 		}
 		
@@ -246,6 +293,7 @@ public class FrontEndStateDao {
 		}
 		
 		for (Orb orbFound : orbResultSet.orbList) {
+			logger.info("Removing state '{}'", orbFound.getOrbInternalId()); 
 			orbManager.deleteOrb(orbFound.getOrbInternalId(), true);
 		}
 	}

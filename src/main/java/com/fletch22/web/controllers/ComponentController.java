@@ -23,9 +23,11 @@ import com.fletch22.app.designer.ComponentSaveFromMapService;
 import com.fletch22.app.designer.appContainer.AppContainerService;
 import com.fletch22.app.designer.service.DeleteComponentService;
 import com.fletch22.app.designer.viewmodel.AllModels;
+import com.fletch22.app.state.FrontEndState;
 import com.fletch22.app.state.FrontEndStateDao.StateSearchResult;
 import com.fletch22.app.state.FrontEndStateService;
 import com.fletch22.app.state.StateIndexInfo;
+import com.fletch22.orb.query.QueryManager;
 import com.fletch22.util.json.GsonFactory;
 
 @RestController
@@ -53,6 +55,9 @@ public class ComponentController extends Controller {
 	
 	@Autowired
 	AppContainerService appContainerService;
+	
+	@Autowired
+	QueryManager queryManager;
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	public @ResponseBody Object getComponent(@PathVariable long id) {
@@ -90,6 +95,8 @@ public class ComponentController extends Controller {
 	public @ResponseBody String saveStatePallet(@RequestBody StatePallet statePallet) {
 
 		String message = "Items saved: " + statePallet.statePackages.size();
+		
+		logger.info("Size of state list: {}", queryManager.executeQuery(FrontEndState.QUERY_GET_STATES).orbList.size());
 		
 		if (statePallet.statePackages.get(0).state.contains("x")) {
 			throw new RuntimeException("CONTAINS X");
@@ -140,6 +147,8 @@ public class ComponentController extends Controller {
 	public @ResponseBody LastGoodState determineLastGoodState(@RequestBody List<List<String>> idPackages) {
 		
 		logger.info("Size of clientIds: {}", idPackages.size());
+		
+		logger.info("Size of state list: {}", queryManager.executeQuery(FrontEndState.QUERY_GET_STATES).orbList.size());
 		
 		StateSearchResult searchResultState = frontEndStateService.determineLastGoodState(new ClientIdsPackage(idPackages));
 		

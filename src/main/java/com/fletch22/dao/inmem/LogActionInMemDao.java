@@ -399,7 +399,30 @@ public class LogActionInMemDao extends LogActionDao {
 
 	@Override
 	public TransactionSearchResult getSubsequentTransactionIfAny(BigDecimal tranId) {
-		throw new NotImplementedException("Not i y.");
-//		return null;
+		TransactionSearchResult transactionSearchResult = new TransactionSearchResult();
+		
+		String sql = sqlStatementStore.getSubsequentTranIdIfAny();
+
+		try {
+			connection = this.getConnection();
+
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setBigDecimal(1, tranId);
+			
+			ResultSet resultSet = preparedStatement.executeQuery();
+			
+			boolean hasRows = resultSet.first();
+			
+			if (hasRows) {
+				transactionSearchResult.tranId = resultSet.getBigDecimal(1);
+			}
+
+		} catch (Exception e) {
+			processCaughtExceptionDuringTransactionOperation(connection, e);
+		} finally {
+			cleanUpConnectionAfterSqlOperation(connection);
+		}
+		
+		return transactionSearchResult;
 	}
 }

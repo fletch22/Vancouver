@@ -105,36 +105,6 @@ class LogActionServiceSpec extends Specification {
 		numberOfAdds << [1, 5000]
 	}
 	
-	@Unroll
-	@Test
-	def 'test get undos after transaction'() {
-		
-		given:
-		setup()
-		
-		CommandBundle commandBundle = new CommandBundle();
-		
-		CommandProcessActionPackage commandProcessActionPackage = null
-		for (i in 0..numberOfAdds.intValue()) {
-			def json = addOrbTypeCommand.toJson('foo' + i)
-			commandBundle.addCommand(json);
-		}
-		
-		commandProcessActionPackage = commandProcessActionPackageFactory.getInstance(commandBundle.toJson())
-		OperationResult operationResult = this.commandProcessor.processAction(commandProcessActionPackage)
-		
-		when:
-		List<UndoActionBundle> undoActionBundleList = logActionService.getUndoActionsForSubsequentTransactions(commandProcessActionPackage.getTranId())
-		
-		then:
-		undoActionBundleList == []
-		undoActionBundleList.size() == 0
-		
-		where:
-		numberOfAdds << [1, 3]
-	}
-	
-
 	def printActionList(List<UndoActionBundle> undoActionBundleList) {
 		if (undoActionBundleList.size() == 0) {
 			println 'nothing in bundle.'
@@ -146,7 +116,6 @@ class LogActionServiceSpec extends Specification {
 			}
 		}
 	}
-	
 	
 	@Unroll
 	@Test

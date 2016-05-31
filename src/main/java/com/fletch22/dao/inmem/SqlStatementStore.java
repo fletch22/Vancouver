@@ -138,4 +138,8 @@ public class SqlStatementStore {
 	public String getGetRecordTransactionStartSql() {
 		return getSingleLineFromFile("recordTransactionStart3.sql");
 	}
+
+	public String getSubsequentTranIdIfAny() {
+		 return getSingleLineFromFile("getSubsequentTranIdIfAny.sql");
+	}
 }
