@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 
 import com.fletch22.orb.cache.query.CriteriaCollection;
 import com.fletch22.orb.cache.query.QueryCollection;
-import com.fletch22.orb.query.Criteria;
+import com.fletch22.orb.query.criteria.Criteria;
 
 @Component
 @Scope("prototype")

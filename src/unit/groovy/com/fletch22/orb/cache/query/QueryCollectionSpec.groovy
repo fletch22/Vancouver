@@ -9,8 +9,8 @@ import spock.lang.Shared
 import spock.lang.Specification
 
 import com.fletch22.orb.OrbType
-import com.fletch22.orb.query.Criteria
-import com.fletch22.orb.query.CriteriaStandard
+import com.fletch22.orb.query.criteria.Criteria;
+import com.fletch22.orb.query.criteria.CriteriaStandard;
 
 public class QueryCollectionSpec extends Specification {
 	

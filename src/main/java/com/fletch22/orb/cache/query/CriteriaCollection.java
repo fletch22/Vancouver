@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import com.fletch22.orb.query.Criteria;
+import com.fletch22.orb.query.criteria.Criteria;
 
 public abstract class CriteriaCollection {
 	

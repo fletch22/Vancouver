@@ -5,8 +5,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fletch22.orb.query.Criteria;
 import com.fletch22.orb.query.LogicalConstraint;
+import com.fletch22.orb.query.criteria.Criteria;
 
 public class ConstraintSetParentVisitor {
 	

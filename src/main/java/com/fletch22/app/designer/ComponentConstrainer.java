@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fletch22.orb.limitation.DefLimitationManager;
-import com.fletch22.orb.query.Criteria;
 import com.fletch22.orb.query.constraint.CriteriaBuilder;
+import com.fletch22.orb.query.criteria.Criteria;
 
 @Component
 public class ComponentConstrainer {

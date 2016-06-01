@@ -12,8 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fletch22.orb.OrbType;
-import com.fletch22.orb.query.Criteria;
-import com.fletch22.orb.query.CriteriaStandard;
+import com.fletch22.orb.query.criteria.Criteria;
+import com.fletch22.orb.query.criteria.CriteriaStandard;
 import com.fletch22.util.RandomUtil;
 import com.fletch22.util.StopWatch;
 

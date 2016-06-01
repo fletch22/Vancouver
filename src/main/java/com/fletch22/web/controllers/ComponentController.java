@@ -29,6 +29,7 @@ import com.fletch22.app.state.FrontEndStateService;
 import com.fletch22.app.state.StateIndexInfo;
 import com.fletch22.orb.query.QueryManager;
 import com.fletch22.util.json.GsonFactory;
+import com.fletch22.web.controllers.exception.RestException;
 
 @RestController
 @RequestMapping("/api/component")

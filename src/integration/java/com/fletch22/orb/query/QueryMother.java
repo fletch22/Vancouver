@@ -8,6 +8,9 @@ import org.springframework.stereotype.Component;
 import com.fletch22.orb.OrbTypeManager;
 import com.fletch22.orb.query.constraint.Constraint;
 import com.fletch22.orb.query.constraint.aggregate.Aggregate;
+import com.fletch22.orb.query.criteria.Criteria;
+import com.fletch22.orb.query.criteria.CriteriaAggregate;
+import com.fletch22.orb.query.criteria.CriteriaStandard;
 
 @Component
 public class QueryMother {

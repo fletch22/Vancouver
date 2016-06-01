@@ -15,11 +15,11 @@ import com.fletch22.orb.OrbType
 import com.fletch22.orb.OrbTypeManager
 import com.fletch22.orb.client.service.BeginTransactionService
 import com.fletch22.orb.command.transaction.RollbackTransactionService
-import com.fletch22.orb.query.Criteria
-import com.fletch22.orb.query.CriteriaAggregate
-import com.fletch22.orb.query.CriteriaStandard
 import com.fletch22.orb.query.constraint.Constraint
 import com.fletch22.orb.query.constraint.aggregate.Aggregate
+import com.fletch22.orb.query.criteria.Criteria;
+import com.fletch22.orb.query.criteria.CriteriaAggregate;
+import com.fletch22.orb.query.criteria.CriteriaStandard;
 
 @org.junit.experimental.categories.Category(IntegrationTests.class)
 @ContextConfiguration(locations = "classpath:/springContext-test.xml")

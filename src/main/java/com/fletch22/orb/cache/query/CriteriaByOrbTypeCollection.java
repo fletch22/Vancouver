@@ -3,7 +3,7 @@ package com.fletch22.orb.cache.query;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.fletch22.orb.query.Criteria;
+import com.fletch22.orb.query.criteria.Criteria;
 
 public class CriteriaByOrbTypeCollection {
 	

@@ -3,9 +3,9 @@ package com.fletch22.orb.query.constraint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fletch22.orb.query.Criteria;
-import com.fletch22.orb.query.CriteriaManager;
 import com.fletch22.orb.query.LogicalConstraint;
+import com.fletch22.orb.query.criteria.Criteria;
+import com.fletch22.orb.query.criteria.CriteriaManager;
 
 public class ConstraintRegistrationVisitor {
 	

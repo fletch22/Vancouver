@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory
 import spock.lang.Shared
 import spock.lang.Specification
 
-import com.fletch22.orb.query.Criteria
+import com.fletch22.orb.query.criteria.Criteria;
 import com.fletch22.util.StopWatch
 
 class LimitationCollectionSpec extends Specification {

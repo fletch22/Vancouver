@@ -24,9 +24,9 @@ import com.fletch22.orb.OrbManager;
 import com.fletch22.orb.OrbType;
 import com.fletch22.orb.OrbTypeManager;
 import com.fletch22.orb.modules.system.OrbSystemModule;
-import com.fletch22.orb.query.Criteria;
-import com.fletch22.orb.query.CriteriaStandard;
 import com.fletch22.orb.query.QueryManager;
+import com.fletch22.orb.query.criteria.Criteria;
+import com.fletch22.orb.query.criteria.CriteriaStandard;
 import com.fletch22.orb.query.sort.CriteriaSortInfo;
 import com.fletch22.orb.query.sort.SortInfo.SortDirection;
 

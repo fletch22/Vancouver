@@ -1,4 +1,4 @@
-package com.fletch22.orb.query;
+package com.fletch22.orb.query.criteria;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

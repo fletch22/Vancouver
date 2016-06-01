@@ -1,18 +1,15 @@
 package com.fletch22.orb.criteria.tester;
 
-import java.util.LinkedHashMap;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.fletch22.app.designer.appContainer.AppContainer;
 import com.fletch22.orb.Orb;
 import com.fletch22.orb.cache.indexcollection.IndexedCollectionFactory;
 import com.fletch22.orb.cache.local.CacheEntry;
-import com.fletch22.orb.query.Criteria;
 import com.fletch22.orb.query.constraint.ConstraintGrinder;
+import com.fletch22.orb.query.criteria.Criteria;
 import com.googlecode.cqengine.IndexedCollection;
 
 @Component
@@ -22,6 +19,9 @@ public class ConstraintChecker {
 
 	@Autowired
 	IndexedCollectionFactory indexedCollectionFactory;
+	
+	@Autowired
+	ConstraintDescriptionRefiner constraintDescriptionRefiner;
 
 	IndexedCollection<CacheEntry> indexedCollection;
 
@@ -38,9 +38,10 @@ public class ConstraintChecker {
 		getIndexedCollection().add(cacheEntry);
 
 		ConstraintGrinder criteriaGrinder = new ConstraintGrinder(criteria, indexedCollection);
-
+		
 		if (criteriaGrinder.listCacheEntries().size() == 0) {
-			throw new RuntimeException("Check constraint fails validation.");
+			StringBuffer description = this.constraintDescriptionRefiner.refine(criteria.getDescription());
+			throw new F22ConstraintViolationException(description);
 		}
 	}
 }

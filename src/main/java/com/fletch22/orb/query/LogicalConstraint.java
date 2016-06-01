@@ -12,6 +12,7 @@ import com.fletch22.orb.query.constraint.ConstraintProcessVisitor;
 import com.fletch22.orb.query.constraint.ConstraintRegistrationVisitor;
 import com.fletch22.orb.query.constraint.ConstraintRenameChildCriteriaAttributeVisitor;
 import com.fletch22.orb.query.constraint.ConstraintSetParentVisitor;
+import com.fletch22.orb.query.criteria.Criteria;
 import com.googlecode.cqengine.query.Query;
 
 public class LogicalConstraint extends Constraint {
@@ -73,5 +74,19 @@ public class LogicalConstraint extends Constraint {
 	@Override
 	public boolean acceptCollectCriteriaWithAttributeVisitor(CollectCriteriaWithAttributeVisitor visitor) {
 		return visitor.visit(this);
+	}
+
+	@Override
+	public StringBuffer getDescription(StringBuffer description) {
+		
+		if (this.logicalOperator != null) {
+			description.append(this.logicalOperator.toString());
+		}
+		
+		for (Constraint constraint : this.constraintList) {
+			description = constraint.getDescription(description);
+		}
+		
+		return description;
 	}
 }

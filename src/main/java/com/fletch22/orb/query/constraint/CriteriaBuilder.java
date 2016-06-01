@@ -4,10 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fletch22.Fletch22ApplicationContext;
-import com.fletch22.orb.query.Criteria;
-import com.fletch22.orb.query.CriteriaAggregate;
-import com.fletch22.orb.query.CriteriaStandard;
 import com.fletch22.orb.query.constraint.aggregate.Aggregate;
+import com.fletch22.orb.query.criteria.Criteria;
+import com.fletch22.orb.query.criteria.CriteriaAggregate;
+import com.fletch22.orb.query.criteria.CriteriaStandard;
 import com.fletch22.util.RandomUtil;
 
 public class CriteriaBuilder {

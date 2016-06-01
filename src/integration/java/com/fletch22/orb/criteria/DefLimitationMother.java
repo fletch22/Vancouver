@@ -9,8 +9,8 @@ import com.fletch22.orb.OrbManager;
 import com.fletch22.orb.OrbType;
 import com.fletch22.orb.OrbTypeManager;
 import com.fletch22.orb.limitation.DefLimitationManager;
-import com.fletch22.orb.query.Criteria;
-import com.fletch22.orb.query.CriteriaStandard;
+import com.fletch22.orb.query.criteria.Criteria;
+import com.fletch22.orb.query.criteria.CriteriaStandard;
 
 @Component
 public class DefLimitationMother {

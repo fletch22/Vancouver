@@ -22,14 +22,14 @@ import com.fletch22.aop.QueryThing;
 import com.fletch22.orb.OrbType;
 import com.fletch22.orb.command.MethodCallCommand;
 import com.fletch22.orb.command.orbType.dto.MethodCallDto;
-import com.fletch22.orb.query.Criteria;
-import com.fletch22.orb.query.CriteriaStandard;
 import com.fletch22.orb.query.LogicalConstraint;
 import com.fletch22.orb.query.LogicalOperator;
 import com.fletch22.orb.query.QueryMother;
 import com.fletch22.orb.query.constraint.Constraint;
 import com.fletch22.orb.query.constraint.ConstraintDetailsAggregate;
 import com.fletch22.orb.query.constraint.ConstraintDetailsSingleValue;
+import com.fletch22.orb.query.criteria.Criteria;
+import com.fletch22.orb.query.criteria.CriteriaStandard;
 import com.google.gson.Gson;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -318,14 +318,14 @@ public class JsonWrapperTest {
 		
 		Gson gson = gsonFactory.getInstance();
 		
-		CriteriaStandard criteriaStandard = gson.fromJson(json, com.fletch22.orb.query.CriteriaStandard.class);
+		CriteriaStandard criteriaStandard = gson.fromJson(json, com.fletch22.orb.query.criteria.CriteriaStandard.class);
 		
 		assertNotNull(criteriaStandard);
 	}
 
 	@Test
 	public void testMethodCallAttach() {
-		String json = "{\"command\":{\"methodCall\":{\"className\":\"com.fletch22.orb.query.QueryManager\"},\"methodName\":\"attach\",\"methodParameters\":[{\"parameterTypeName\":\"class com.fletch22.orb.query.Criteria\", \"argument\":{\"clazzName\":\"com.fletch22.orb.query.CriteriaStandard\",\"objectValueAsJson\":\"{\\\"criteriaId\\\":1002,\\\"orbType\\\":{\\\"id\\\":1001,\\\"label\\\":\\\"foo\\\",\\\"tranDate\\\":1450397912218.0000000000,\\\"customFields\\\":[\\\"bar\\\"]},\\\"label\\\":\\\"fuzzyThings\\\",\\\"hasIdBeenSet\\\":true,\\\"sortInfoList\\\":[],\\\"criteriaIdParent\\\":-1,\\\"logicalConstraint\\\":{\\\"logicalOperator\\\":\\\"AND\\\",\\\"constraintList\\\":[{\\\"type\\\":\\\"com.fletch22.orb.query.constraint.ConstraintDetailsAggregate\\\",\\\"properties\\\":{\\\"relationshipOperator\\\":\\\"IS\\\",\\\"aggregate\\\":\\\"UNIQUE\\\",\\\"criteriaForAggregation\\\":{\\\"fieldOfInterest\\\":\\\"bar\\\",\\\"criteriaId\\\":1003,\\\"orbType\\\":{\\\"id\\\":1001,\\\"label\\\":\\\"foo\\\",\\\"tranDate\\\":1450397912218.0000000000,\\\"customFields\\\":[\\\"bar\\\"]},\\\"label\\\":\\\"agg\\\",\\\"hasIdBeenSet\\\":true,\\\"sortInfoList\\\":[],\\\"criteriaIdParent\\\":1002},\\\"attributeName\\\":\\\"bar\\\"}}]}}\"}}]}}";
+		String json = "{\"command\":{\"methodCall\":{\"className\":\"com.fletch22.orb.query.QueryManager\"},\"methodName\":\"attach\",\"methodParameters\":[{\"parameterTypeName\":\"class com.fletch22.orb.query.criteria.Criteria\", \"argument\":{\"clazzName\":\"com.fletch22.orb.query.criteria.CriteriaStandard\",\"objectValueAsJson\":\"{\\\"criteriaId\\\":1002,\\\"orbType\\\":{\\\"id\\\":1001,\\\"label\\\":\\\"foo\\\",\\\"tranDate\\\":1450397912218.0000000000,\\\"customFields\\\":[\\\"bar\\\"]},\\\"label\\\":\\\"fuzzyThings\\\",\\\"hasIdBeenSet\\\":true,\\\"sortInfoList\\\":[],\\\"criteriaIdParent\\\":-1,\\\"logicalConstraint\\\":{\\\"logicalOperator\\\":\\\"AND\\\",\\\"constraintList\\\":[{\\\"type\\\":\\\"com.fletch22.orb.query.constraint.ConstraintDetailsAggregate\\\",\\\"properties\\\":{\\\"relationshipOperator\\\":\\\"IS\\\",\\\"aggregate\\\":\\\"UNIQUE\\\",\\\"criteriaForAggregation\\\":{\\\"fieldOfInterest\\\":\\\"bar\\\",\\\"criteriaId\\\":1003,\\\"orbType\\\":{\\\"id\\\":1001,\\\"label\\\":\\\"foo\\\",\\\"tranDate\\\":1450397912218.0000000000,\\\"customFields\\\":[\\\"bar\\\"]},\\\"label\\\":\\\"agg\\\",\\\"hasIdBeenSet\\\":true,\\\"sortInfoList\\\":[],\\\"criteriaIdParent\\\":1002},\\\"attributeName\\\":\\\"bar\\\"}}]}}\"}}]}}";
 
 		MethodCallCommand methodCallCommand = new MethodCallCommand();
 		methodCallCommand.setGsonFactory(gsonFactory);

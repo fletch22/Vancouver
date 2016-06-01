@@ -1,4 +1,4 @@
-package com.fletch22.orb.query;
+package com.fletch22.orb.query.criteria;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +6,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fletch22.orb.OrbType;
+import com.fletch22.orb.query.LogicalConstraint;
+import com.fletch22.orb.query.LogicalOperator;
 import com.fletch22.orb.query.constraint.Constraint;
 import com.fletch22.orb.query.sort.CriteriaSortInfo;
 import com.fletch22.orb.serialization.GsonSerializable;
@@ -23,8 +24,15 @@ public abstract class Criteria implements GsonSerializable {
 	protected boolean hasIdBeenSet = false;
 	protected ArrayList<CriteriaSortInfo> sortInfoList = new ArrayList<CriteriaSortInfo>();
 	public long criteriaIdParent = UNSET_ID;
-	
 	public LogicalConstraint logicalConstraint = null;
+	
+	public StringBuffer getDescription() {
+		StringBuffer description = new StringBuffer();
+		if (logicalConstraint != null) {
+			description = logicalConstraint.getDescription(description);
+		}
+		return description;
+	}
 	
 	public void setId(long id) {
 		
@@ -47,7 +55,6 @@ public abstract class Criteria implements GsonSerializable {
 	}
 	
 	public Criteria addAnd(Constraint ... constraintArray) {
-
 		for (Constraint constraint : constraintArray) {
 			add(LogicalOperator.AND, constraint);
 		}

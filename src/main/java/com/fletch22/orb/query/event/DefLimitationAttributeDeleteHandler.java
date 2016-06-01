@@ -6,8 +6,8 @@ import org.springframework.stereotype.Component;
 import com.fletch22.orb.cache.local.Cache;
 import com.fletch22.orb.cache.query.CriteriaCollection;
 import com.fletch22.orb.limitation.DefLimitationManager;
-import com.fletch22.orb.query.CriteriaAttributeDeleteHandler;
-import com.fletch22.orb.query.CriteriaManager;
+import com.fletch22.orb.query.criteria.CriteriaAttributeDeleteHandler;
+import com.fletch22.orb.query.criteria.CriteriaManager;
 
 @Component
 public class DefLimitationAttributeDeleteHandler extends CriteriaAttributeDeleteHandler {

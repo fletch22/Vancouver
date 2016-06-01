@@ -1,7 +1,8 @@
 package com.fletch22.orb.query;
 
 import com.fletch22.orb.cache.query.CriteriaCollection;
-import com.fletch22.orb.query.Criteria;
+import com.fletch22.orb.query.criteria.Criteria;
+import com.fletch22.orb.query.criteria.CriteriaManager;
 
 public interface QueryManager extends CriteriaManager {
 	

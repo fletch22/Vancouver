@@ -14,11 +14,11 @@ import com.fletch22.orb.OrbManager;
 import com.fletch22.orb.OrbType;
 import com.fletch22.orb.OrbTypeManager;
 import com.fletch22.orb.command.transaction.TransactionService;
-import com.fletch22.orb.query.Criteria;
-import com.fletch22.orb.query.CriteriaStandard;
 import com.fletch22.orb.query.OrbResultSet;
 import com.fletch22.orb.query.QueryManager;
 import com.fletch22.orb.query.constraint.Constraint;
+import com.fletch22.orb.query.criteria.Criteria;
+import com.fletch22.orb.query.criteria.CriteriaStandard;
 import com.fletch22.orb.query.sort.CriteriaSortInfo;
 import com.fletch22.orb.query.sort.SortInfo.SortDirection;
 import com.fletch22.util.RandomUtil;
@@ -211,16 +211,7 @@ public class FrontEndStateDao {
 		int maxLoopCount = clientIdsList.size();
 		
 		if (resultSetSize == 0) {
-			StateHistory stateHistory = new StateHistory();
-			
-			logger.info("Number is findLastGoodState: {}", stateHistory.getSize());
-			
-			if (stateHistory.hasARecentState()) {
-				Orb orbMostRecent = stateHistory.getOrbMostRecent();
-						
-				stateSearchResult.state = orbMostRecent.getUserDefinedProperties().get(FrontEndState.ATTR_STATE);
-				stateSearchResult.clientId = orbMostRecent.getUserDefinedProperties().get(FrontEndState.ATTR_CLIENT_ID);
-			}
+			stateSearchResult = getStateFromPreviousHistory();
 		} else {
 			for (int i = 0; i < maxLoopCount; i++) {
 				if (i >= resultSetSize) {
@@ -241,6 +232,22 @@ public class FrontEndStateDao {
 					isAtLeastOneClientIdFound = true;	
 				}
 			}
+		}
+		
+		return stateSearchResult;
+	}
+
+	private StateSearchResult getStateFromPreviousHistory() {
+		StateSearchResult stateSearchResult = new StateSearchResult();
+		StateHistory stateHistory = new StateHistory();
+		
+		logger.debug("Number states found: {}", stateHistory.getSize());
+		
+		if (stateHistory.hasARecentState()) {
+			Orb orbMostRecent = stateHistory.getOrbMostRecent();
+					
+			stateSearchResult.state = orbMostRecent.getUserDefinedProperties().get(FrontEndState.ATTR_STATE);
+			stateSearchResult.clientId = orbMostRecent.getUserDefinedProperties().get(FrontEndState.ATTR_CLIENT_ID);
 		}
 		
 		return stateSearchResult;

@@ -5,9 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.fletch22.orb.cache.local.Cache;
 import com.fletch22.orb.cache.local.OrbCollection;
 import com.fletch22.orb.cache.query.CriteriaCollection;
-import com.fletch22.orb.query.AbstractCriteriaManager;
-import com.fletch22.orb.query.Criteria;
 import com.fletch22.orb.query.OrbResultSet;
+import com.fletch22.orb.query.criteria.AbstractCriteriaManager;
+import com.fletch22.orb.query.criteria.Criteria;
 
 public abstract class AbstractLimitationManager extends AbstractCriteriaManager {
 	

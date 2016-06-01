@@ -1,8 +1,8 @@
 package com.fletch22.orb.query.constraint;
 
-import com.fletch22.orb.query.CriteriaAggregate;
-import com.fletch22.orb.query.CriteriaCollector;
 import com.fletch22.orb.query.LogicalConstraint;
+import com.fletch22.orb.query.criteria.CriteriaAggregate;
+import com.fletch22.orb.query.criteria.CriteriaCollector;
 
 public class CollectCriteriaWithAttributeVisitor {
 

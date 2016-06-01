@@ -1,10 +1,11 @@
-package com.fletch22.orb.query;
+package com.fletch22.orb.query.criteria;
 
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fletch22.orb.cache.query.CriteriaCollection;
+import com.fletch22.orb.query.LogicalConstraint;
 import com.fletch22.orb.query.constraint.Constraint;
 import com.fletch22.orb.query.constraint.ConstraintDetails;
 import com.fletch22.orb.query.constraint.ConstraintDetailsList;

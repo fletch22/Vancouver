@@ -1,4 +1,5 @@
-package com.fletch22.orb.query;
+package com.fletch22.orb.query.criteria;
+
 
 
 public class CriteriaStandard extends Criteria {

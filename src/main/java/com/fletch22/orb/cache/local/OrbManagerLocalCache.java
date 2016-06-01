@@ -30,8 +30,8 @@ import com.fletch22.orb.command.orbType.dto.AddOrbDto;
 import com.fletch22.orb.criteria.tester.ConstraintChecker;
 import com.fletch22.orb.limitation.DefLimitationManager;
 import com.fletch22.orb.limitation.LimitationManager;
-import com.fletch22.orb.query.Criteria;
 import com.fletch22.orb.query.QueryManager;
+import com.fletch22.orb.query.criteria.Criteria;
 import com.fletch22.orb.rollback.UndoActionBundle;
 import com.fletch22.util.json.MapLongString;
 

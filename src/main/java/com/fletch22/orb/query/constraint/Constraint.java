@@ -4,10 +4,10 @@ import java.util.List;
 import java.util.UUID;
 
 import com.fletch22.orb.cache.local.CacheEntry;
-import com.fletch22.orb.query.Criteria;
-import com.fletch22.orb.query.CriteriaAggregate;
 import com.fletch22.orb.query.RelationshipOperator;
 import com.fletch22.orb.query.constraint.aggregate.Aggregate;
+import com.fletch22.orb.query.criteria.Criteria;
+import com.fletch22.orb.query.criteria.CriteriaAggregate;
 import com.googlecode.cqengine.query.Query;
 
 public abstract class Constraint {
@@ -77,5 +77,7 @@ public abstract class Constraint {
 	public abstract void acceptCollectConstraintChildCriteriaVisitor(CollectConstraintChildCriteriaVisitor collectConstraintChildCriteriaVisitor, List<Criteria> criteriaList);
 	
 	public abstract boolean acceptCollectCriteriaWithAttributeVisitor(CollectCriteriaWithAttributeVisitor collectCriteriaWithAttributeVisitor);
+
+	public abstract StringBuffer getDescription(StringBuffer description);
 }
 

@@ -5,12 +5,14 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
 import static org.mockito.BDDMockito.*;
+
 import org.mockito.Mockito;
 import org.springframework.context.ApplicationContext;
 
 import com.fletch22.Fletch22ApplicationContext;
-import com.fletch22.orb.query.Criteria;
+import com.fletch22.orb.query.criteria.Criteria;
 import com.fletch22.util.RandomUtil;
 
 public class CriteriaBuilderTest {

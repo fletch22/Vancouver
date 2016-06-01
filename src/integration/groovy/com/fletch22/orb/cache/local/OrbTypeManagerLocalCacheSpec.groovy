@@ -19,8 +19,8 @@ import com.fletch22.orb.OrbTypeManager
 import com.fletch22.orb.TranDateGenerator
 import com.fletch22.orb.cache.reference.OrbReference
 import com.fletch22.orb.query.QueryManager
-import com.fletch22.orb.query.Criteria
 import com.fletch22.orb.query.constraint.ConstraintDetailsSingleValue;
+import com.fletch22.orb.query.criteria.Criteria;
 import com.fletch22.orb.test.data.TestDataWithReferences
 
 @org.junit.experimental.categories.Category(IntegrationTests.class)

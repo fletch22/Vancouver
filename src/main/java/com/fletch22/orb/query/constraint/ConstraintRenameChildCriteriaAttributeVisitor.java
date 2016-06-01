@@ -1,7 +1,7 @@
 package com.fletch22.orb.query.constraint;
 
-import com.fletch22.orb.query.CriteriaAggregate;
 import com.fletch22.orb.query.LogicalConstraint;
+import com.fletch22.orb.query.criteria.CriteriaAggregate;
 
 public class ConstraintRenameChildCriteriaAttributeVisitor {
 	

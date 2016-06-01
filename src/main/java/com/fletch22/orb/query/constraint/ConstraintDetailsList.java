@@ -2,9 +2,11 @@ package com.fletch22.orb.query.constraint;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.fletch22.orb.cache.local.CacheEntry;
-import com.fletch22.orb.query.Criteria;
 import com.fletch22.orb.query.RelationshipOperator;
+import com.fletch22.orb.query.criteria.Criteria;
 import com.googlecode.cqengine.query.Query;
 
 public class ConstraintDetailsList extends ConstraintDetails {
@@ -64,5 +66,20 @@ public class ConstraintDetailsList extends ConstraintDetails {
 	@Override
 	public boolean acceptCollectCriteriaWithAttributeVisitor(CollectCriteriaWithAttributeVisitor visitor) {
 		return visitor.visit(this);
+	}
+
+	@Override
+	public StringBuffer getDescription(StringBuffer description) {
+	
+		description.append(this.attributeName);
+		description.append(StringUtils.SPACE);
+		description.append(this.relationshipOperator.toString());
+		description.append(StringUtils.SPACE);
+		for (String value: this.operativeValueList) {
+			description.append(value);
+			description.append(StringUtils.SPACE);
+		}
+		
+		return description;
 	}
 }

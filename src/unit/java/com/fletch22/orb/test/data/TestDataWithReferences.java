@@ -13,10 +13,10 @@ import com.fletch22.orb.OrbType;
 import com.fletch22.orb.OrbTypeManager;
 import com.fletch22.orb.cache.local.Cache;
 import com.fletch22.orb.cache.reference.ReferenceUtil;
-import com.fletch22.orb.query.Criteria;
-import com.fletch22.orb.query.CriteriaStandard;
 import com.fletch22.orb.query.QueryManager;
 import com.fletch22.orb.query.constraint.Constraint;
+import com.fletch22.orb.query.criteria.Criteria;
+import com.fletch22.orb.query.criteria.CriteriaStandard;
 
 @Component
 public class TestDataWithReferences {
