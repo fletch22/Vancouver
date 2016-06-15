@@ -16,6 +16,8 @@ import com.fletch22.app.state.diff.service.JsonDiffProcessorService;
 import com.fletch22.app.state.diff.service.StuntDoubleAndNewId;
 import com.fletch22.web.controllers.ComponentController.ClientIdsPackage;
 import com.fletch22.web.controllers.ComponentController.StatePackage;
+import com.fletch22.web.controllers.exception.ErrorCode;
+import com.fletch22.web.controllers.exception.RestException;
 
 @Component
 public class FrontEndStateService {
@@ -57,7 +59,7 @@ public class FrontEndStateService {
 			}
 			save(statePackage.state, statePackage.clientId);
 		} else {
-			throw new RuntimeException("Server has restarted. Rejecting state update.");
+			throw new RestException(ErrorCode.CLIENT_THINKS_TALKING_TO_PREV_INSTANCE_OLD_SERVER);
 		}
 			
 		return statePackage.state;
