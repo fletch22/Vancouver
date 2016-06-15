@@ -1,6 +1,5 @@
 package com.fletch22.web.controllers.exception;
 
-import com.fletch22.web.controllers.Controller.ErrorCode;
 
 @SuppressWarnings("serial")
 public class RestException extends RuntimeException {

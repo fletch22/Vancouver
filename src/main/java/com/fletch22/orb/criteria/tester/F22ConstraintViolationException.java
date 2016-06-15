@@ -1,6 +1,6 @@
 package com.fletch22.orb.criteria.tester;
 
-import com.fletch22.web.controllers.Controller.ErrorCode;
+import com.fletch22.web.controllers.exception.ErrorCode;
 
 public class F22ConstraintViolationException extends RuntimeException {
 

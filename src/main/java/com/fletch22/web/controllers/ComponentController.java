@@ -29,6 +29,7 @@ import com.fletch22.app.state.FrontEndStateService;
 import com.fletch22.app.state.StateIndexInfo;
 import com.fletch22.orb.query.QueryManager;
 import com.fletch22.util.json.GsonFactory;
+import com.fletch22.web.controllers.exception.ErrorCode;
 import com.fletch22.web.controllers.exception.RestException;
 
 @RestController
@@ -50,13 +51,13 @@ public class ComponentController extends Controller {
 
 	@Autowired
 	FrontEndStateService frontEndStateService;
-	
+
 	@Autowired
 	DeleteComponentService baseComponentService;
-	
+
 	@Autowired
 	AppContainerService appContainerService;
-	
+
 	@Autowired
 	QueryManager queryManager;
 
@@ -66,23 +67,20 @@ public class ComponentController extends Controller {
 	}
 
 	@RequestMapping(value = "/", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE })
-	public @ResponseBody Object addComponent(
-			@RequestBody Map<String, String> extParameters) {
+	public @ResponseBody Object addComponent(@RequestBody Map<String, String> extParameters) {
 
 		logger.error(gsonFactory.getInstance().toJson(extParameters));
 
 		Map<String, String> mapParam = extParameters;
 
 		if (!mapParam.containsKey(AllModels.TYPE_LABEL)) {
-			String message = String.format(
-					"Data is missing some key info: specifically '%s.'",
-					AllModels.TYPE_LABEL);
+			String message = String.format("Data is missing some key info: specifically '%s.'", AllModels.TYPE_LABEL);
 			throw new RuntimeException(message);
 		}
 
 		return componentServiceRouter.save(mapParam);
 	}
-	
+
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
 	public @ResponseBody String deleteComponent(@PathVariable long id) {
 
@@ -96,8 +94,6 @@ public class ComponentController extends Controller {
 	public @ResponseBody String saveStatePallet(@RequestBody StatePallet statePallet) {
 
 		String message = "Items saved: " + statePallet.statePackages.size();
-		
-		logger.info("Size of state list: {}", queryManager.executeQuery(FrontEndState.QUERY_GET_STATES).orbList.size());
 		
 		if (statePallet.statePackages.get(0).state.contains("x")) {
 			throw new RuntimeException("CONTAINS X");
@@ -113,8 +109,8 @@ public class ComponentController extends Controller {
 	@RequestMapping(value = "/statePackage", method = RequestMethod.PUT, consumes = { MediaType.APPLICATION_JSON_VALUE })
 	@ResponseStatus(value = HttpStatus.OK)
 	public @ResponseBody String saveStatePackage(@RequestBody StatePackage statePackage) {
-		
-		String result = null; 
+
+		String result = null;
 		try {
 			result = frontEndStateService.saveStatePackage(statePackage);
 		} catch (Exception e) {
@@ -133,7 +129,7 @@ public class ComponentController extends Controller {
 
 		return stateIndexInfo;
 	}
-	
+
 	@RequestMapping(value = "/mostRecentStateHistory", method = RequestMethod.GET)
 	@ResponseStatus(value = HttpStatus.OK)
 	public @ResponseBody StateIndexInfo getMostRecentStateHistory() {
@@ -142,80 +138,104 @@ public class ComponentController extends Controller {
 
 		return stateIndexInfo;
 	}
-	
+
 	@RequestMapping(value = "/determineLastGoodState", method = RequestMethod.POST)
 	@ResponseStatus(value = HttpStatus.OK)
 	public @ResponseBody LastGoodState determineLastGoodState(@RequestBody List<List<String>> idPackages) {
-		
+
 		logger.info("Size of clientIds: {}", idPackages.size());
+
+		int numberPreviousStates = queryManager.executeQuery(FrontEndState.QUERY_GET_STATES).orbList.size(); 
+		logger.info("Size of state list: {}", numberPreviousStates);
 		
-		logger.info("Size of state list: {}", queryManager.executeQuery(FrontEndState.QUERY_GET_STATES).orbList.size());
-		
+		if (numberPreviousStates == 0) {
+			throw new RestException(ErrorCode.NO_PREVIOUS_ERROR_STATES);
+		}
+
 		StateSearchResult searchResultState = frontEndStateService.determineLastGoodState(new ClientIdsPackage(idPackages));
-		
+
 		if (!searchResultState.isStateFound()) {
 			throw new RestException(ErrorCode.COULD_NOT_DETERMINE_GOOD_STATE_FROM_CLIENT_IDS);
 		}
-		
+
 		logger.info("Expecting to get a call to rollback to {}", searchResultState.clientId);
 
 		return new LastGoodState(searchResultState.clientId, searchResultState.state);
 	}
 	
+//	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+//	@ExceptionHandler(RestException.class)
+//	@ResponseBody ResponseEntity<String> handleBadRequest(HttpServletRequest req, RestException restException) {
+//		
+//		logger.info("HideyHo!");
+//		
+//		restException.printStackTrace();
+//		
+//		ExceptionJSONInfo info = new ExceptionJSONInfo();
+//		info.errorCode = 6;
+//		info.systemMessage = "Foo";
+//		
+//		HttpHeaders headers = new HttpHeaders();
+//	    headers.setContentType(MediaType.APPLICATION_JSON);
+//	    
+//	    return new ResponseEntity<String>(gsonFactory.getInstance().toJson(info), headers, HttpStatus.INTERNAL_SERVER_ERROR);
+//	} 
+
 	public static class LastGoodState {
 		public String clientId;
 		public String stateJson;
-		
+
 		public LastGoodState(String clientId, String stateJson) {
 			this.clientId = clientId;
 			this.stateJson = stateJson;
 		}
 	}
-	
+
 	@RequestMapping(value = "/states/{stateClientId}", method = RequestMethod.POST)
 	@ResponseStatus(value = HttpStatus.OK)
-	public @ResponseBody String rollbackToState(@PathVariable String stateClientId, @RequestParam(value="action", required=true) String action) {
-		
+	public @ResponseBody String rollbackToState(@PathVariable String stateClientId, @RequestParam(value = "action", required = true) String action) {
+
 		if (!action.equals(ACTION_ROLLBACK_TO)) {
 			throw new RuntimeException(String.format("Unrecognized action '%s'. Must be '%s'.", action, ACTION_ROLLBACK_TO));
 		}
-		
+
 		this.frontEndStateService.rollbackToState(stateClientId);
-		
+
 		return JSON_SUCCESS;
 	}
-	
+
 	public static class ClientIdsPackage {
 		public List<List<String>> idPackages;
-		
+
 		public ClientIdsPackage(List<List<String>> idPackages) {
 			this.idPackages = idPackages;
 		}
 	}
-	
+
 	@RequestMapping(value = "/getExceptionForTesting", method = RequestMethod.GET)
 	@ResponseStatus(value = HttpStatus.OK)
 	public @ResponseBody StateIndexInfo getExceptionForTesting() {
 		throw new RestException(new Exception("test test test"), ErrorCode.UKNOWN_ERROR);
 	}
-	
+
 	public static class ExceptionJSONInfo {
 		public String url;
-	    public String systemMessage;
-	    public int errorCode;
+		public String systemMessage;
+		public int errorCode;
 	}
-	
-	public static class StatePallet { 
+
+	public static class StatePallet {
 		ArrayList<StatePackage> statePackages;
 
 		public void setStates(ArrayList<StatePackage> statePackages) {
 			this.statePackages = statePackages;
 		}
 	}
-	
+
 	public static class StatePackage {
 		public String state;
 		public String diffBetweenOldAndNew;
 		public String clientId;
+		public String serverStartupTimestamp;
 	}
 }

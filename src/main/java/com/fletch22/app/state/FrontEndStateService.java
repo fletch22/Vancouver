@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fletch22.aop.Transactional;
+import com.fletch22.app.designer.Root;
 import com.fletch22.app.designer.appContainer.AppContainerService;
 import com.fletch22.app.state.FrontEndStateDao.StateSearchResult;
 import com.fletch22.app.state.diff.service.JsonDiffProcessorService;
@@ -29,6 +30,9 @@ public class FrontEndStateService {
 	
 	@Autowired
 	AppContainerService appContainerService;
+	
+	@Autowired
+	Root root;
 
 	@Transactional
 	public void save(String state, String clientId) {
@@ -46,12 +50,16 @@ public class FrontEndStateService {
 	@Transactional
 	public String saveStatePackage(StatePackage statePackage) {
 		
-		if (statePackage.diffBetweenOldAndNew != null) {
-			ArrayList<StuntDoubleAndNewId> stuntDoubleAndNewIdList = jsonDiffProcessorService.process(statePackage.state, statePackage.diffBetweenOldAndNew);
-			statePackage.state = insertNewIdsIntoState(statePackage.state, stuntDoubleAndNewIdList);
+		if (String.valueOf(root.startupTimestamp).equals(statePackage.serverStartupTimestamp)) {
+			if (statePackage.diffBetweenOldAndNew != null) {
+				ArrayList<StuntDoubleAndNewId> stuntDoubleAndNewIdList = jsonDiffProcessorService.process(statePackage.state, statePackage.diffBetweenOldAndNew);
+				statePackage.state = insertNewIdsIntoState(statePackage.state, stuntDoubleAndNewIdList);
+			}
+			save(statePackage.state, statePackage.clientId);
+		} else {
+			throw new RuntimeException("Server has restarted. Rejecting state update.");
 		}
-		save(statePackage.state, statePackage.clientId);
-		
+			
 		return statePackage.state;
 	}
 	
