@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,8 @@ import com.google.gson.JsonPrimitive;
 @Component
 public class JsonDiffProcessorService {
 	
+	private static final String MODEL_NODE_NAME = "model";
+
 	private static final String PROPERTY_PARENT_ID = "parentId";
 
 	private static final String PROPERTY_ID = "id";
@@ -51,6 +54,9 @@ public class JsonDiffProcessorService {
 	
 	@Autowired
 	AddChildService addChildService;
+	
+	@Autowired
+	DeleteService deleteService;
 	
 	private Gson gson = new Gson();
 
@@ -84,8 +90,11 @@ public class JsonDiffProcessorService {
 
 	private ResultDiffProcessing processDiffKind(String state, JsonObject jsonObject, JsonArray pathInformation, DiffKind diffKind) {
 		ResultDiffProcessing resultDiffProcessing = new ResultDiffProcessing();
+		
+		logger.debug("processDiffKind: {}", diffKind.toString());
+		
 		switch (diffKind) {
-			case DELETED_THING:
+			case DELETED_PROPERTY:
 				JsonElement deletedChild = jsonObject.get("lhs");
 				processDeleteProperty(state, pathInformation, deletedChild);
 				break;
@@ -112,6 +121,8 @@ public class JsonDiffProcessorService {
 	
 	protected void processDeleteProperty(String state, JsonArray pathInformation, JsonElement deletedChild) {
 		ParentAndChild parentAndChild = getDeletePropertyInfo(state, pathInformation, deletedChild);
+
+		throw new NotImplementedException("processDeleteProperty not implemented yet. (Set to null?)");
 	}
 
 	private StuntDoubleAndNewId processAddedChild(JsonObject state, JsonArray pathInformation, long index, JsonElement jsonElementChild) {
@@ -144,6 +155,8 @@ public class JsonDiffProcessorService {
 	
 	private void processDeletedChild(JsonObject state, JsonArray pathInformation, long index, JsonElement deletedChildElement) {
 		DeletedChild deletedChild = getDeletedChildInfo(state, pathInformation, index, deletedChildElement);
+		
+		deleteService.process(deletedChild.parentAndChild.childId);
 	}
 	
 	protected ResultDiffProcessing processChangedArray(String state, JsonArray pathInformation, JsonElement jsonElementIndex, JsonElement item) {
@@ -155,9 +168,11 @@ public class JsonDiffProcessorService {
 
 		Diff diff = new Diff();
 		diff.diffKind = getKind(letter);
+		
+		logger.debug("diff.diffKind: {}", diff.diffKind.toString());
 
 		switch (diff.diffKind) {
-		case DELETED_THING:
+		case DELETED_PROPERTY:
 			index = jsonElementIndex.getAsLong();
 			JsonElement deletedChild = jsonObject.get("lhs");
 			
@@ -191,7 +206,7 @@ public class JsonDiffProcessorService {
 	
 	private EditedProperty getEditedPropertyInfo(String state, JsonArray pathInformation, JsonElement jsonElementNewValue) {
 		Gson gson = new Gson();
-		JsonElement parentElement = gson.fromJson(state, JsonElement.class);
+		JsonElement parentElement = getModelNodeInState(state, gson);
 		
 		JsonElement childElement = getParentDescribedByPath(pathInformation, parentElement);
 		
@@ -200,6 +215,12 @@ public class JsonDiffProcessorService {
 		String newValue = jsonElementNewValue.getAsJsonPrimitive().getAsString();
 		
 		return new EditedProperty(id, property, newValue);
+	}
+
+	private JsonElement getModelNodeInState(String state, Gson gson) {
+		JsonElement parentElement = gson.fromJson(state, JsonElement.class);
+		parentElement = parentElement.getAsJsonObject().get(MODEL_NODE_NAME);
+		return parentElement;
 	}
 
 	private ParentAndChild getDeletePropertyInfo(String state, JsonArray pathInformation, JsonElement deletedChild) {
@@ -273,7 +294,9 @@ public class JsonDiffProcessorService {
 
 	private JsonElement getNodeDescribedByPath(JsonArray pathInformation, JsonElement jsonElement, FamilyMember familyMember) {
 		
-//		logger.debug("jsonElement: " + jsonElement.toString());
+		logger.info("pathInformation: {}", pathInformation.toString());
+		logger.info("jsonElement: {}", jsonElement.toString());
+		logger.info("familyMember: {}", familyMember);
 		
 		int depthOfTraversal = getDepthOfPathTraversal(pathInformation, familyMember);
 		
@@ -285,8 +308,23 @@ public class JsonDiffProcessorService {
 				if (jsonPrimitive.isNumber()) {
 					jsonElement = jsonElement.getAsJsonArray().get(jsonPrimitive.getAsInt());
 				} else {
+					if (jsonPrimitive.isJsonArray()) {
+						
+					}
+					
+					logger.info("jsonPrimitive: " + jsonPrimitive.toString());
+					logger.info("isJsonArray: " + jsonPrimitive.isJsonArray());
+					logger.info("jsonElement is jsonArray? " + jsonElement.isJsonArray());
+					
 					String memberName = jsonPrimitive.getAsString();
+					
+					logger.info("memberName: {}", memberName);
+					
 					jsonElement = jsonElement.getAsJsonObject().get(memberName);
+					
+//					jsonElement = jsonElement.getAsJsonArray().get(memberName);
+					
+					logger.info("is jsonElement null?, {}", jsonElement == null);
 				}
 			} else {
 				throw new RuntimeException("Encountered problem reading diff array. Encountered an array item that was not a primitive -- inconceivable!");
@@ -336,7 +374,7 @@ public class JsonDiffProcessorService {
 			diffKind = DiffKind.NEWLY_ADDED_PROPERTY;
 			break;
 		case "D":
-			diffKind = DiffKind.DELETED_THING;
+			diffKind = DiffKind.DELETED_PROPERTY;
 			break;
 		case "E":
 			diffKind = DiffKind.EDITED_PROPERTY;

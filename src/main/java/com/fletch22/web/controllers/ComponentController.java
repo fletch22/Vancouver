@@ -109,7 +109,7 @@ public class ComponentController extends Controller {
 	@RequestMapping(value = "/statePackage", method = RequestMethod.PUT, consumes = { MediaType.APPLICATION_JSON_VALUE })
 	@ResponseStatus(value = HttpStatus.OK)
 	public @ResponseBody String saveStatePackage(@RequestBody StatePackage statePackage) {
-
+		
 		String result = null;
 		try {
 			result = frontEndStateService.saveStatePackage(statePackage);
@@ -118,6 +118,15 @@ public class ComponentController extends Controller {
 		}
 
 		return result;
+	}
+	
+	@RequestMapping(value = "/states", method = RequestMethod.POST)
+	@ResponseStatus(value = HttpStatus.OK)
+	public @ResponseBody StateIndexInfo getEarliestState() {
+		
+		logger.info("Got to get earliest state");
+
+		return frontEndStateService.getEarliestState();
 	}
 
 	@RequestMapping(value = "/stateHistory/{index}", method = RequestMethod.GET)
@@ -163,34 +172,6 @@ public class ComponentController extends Controller {
 		return new LastGoodState(searchResultState.clientId, searchResultState.state);
 	}
 	
-//	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-//	@ExceptionHandler(RestException.class)
-//	@ResponseBody ResponseEntity<String> handleBadRequest(HttpServletRequest req, RestException restException) {
-//		
-//		logger.info("HideyHo!");
-//		
-//		restException.printStackTrace();
-//		
-//		ExceptionJSONInfo info = new ExceptionJSONInfo();
-//		info.errorCode = 6;
-//		info.systemMessage = "Foo";
-//		
-//		HttpHeaders headers = new HttpHeaders();
-//	    headers.setContentType(MediaType.APPLICATION_JSON);
-//	    
-//	    return new ResponseEntity<String>(gsonFactory.getInstance().toJson(info), headers, HttpStatus.INTERNAL_SERVER_ERROR);
-//	} 
-
-	public static class LastGoodState {
-		public String clientId;
-		public String stateJson;
-
-		public LastGoodState(String clientId, String stateJson) {
-			this.clientId = clientId;
-			this.stateJson = stateJson;
-		}
-	}
-
 	@RequestMapping(value = "/states/{stateClientId}", method = RequestMethod.POST)
 	@ResponseStatus(value = HttpStatus.OK)
 	public @ResponseBody String rollbackToState(@PathVariable String stateClientId, @RequestParam(value = "action", required = true) String action) {
@@ -237,5 +218,15 @@ public class ComponentController extends Controller {
 		public String diffBetweenOldAndNew;
 		public String clientId;
 		public String serverStartupTimestamp;
+	}
+	
+	public static class LastGoodState {
+		public String clientId;
+		public String stateJson;
+
+		public LastGoodState(String clientId, String stateJson) {
+			this.clientId = clientId;
+			this.stateJson = stateJson;
+		}
 	}
 }

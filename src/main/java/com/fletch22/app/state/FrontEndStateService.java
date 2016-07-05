@@ -86,6 +86,10 @@ public class FrontEndStateService {
 		return frontEndStateDao.getMostRecentHistorical();
 	}
 
+	public StateIndexInfo getEarliestState() {
+		return frontEndStateDao.getEarliestState();
+	}
+
 	public StateSearchResult determineLastGoodState(ClientIdsPackage clientIdsPackage) {
 		
 		StateSearchResult stateSearchResult = new StateSearchResult();

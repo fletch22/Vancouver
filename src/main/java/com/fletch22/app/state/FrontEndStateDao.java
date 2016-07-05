@@ -84,9 +84,9 @@ public class FrontEndStateDao {
 		stateIndexInfo.indexOfMaxElement = size - 1;
 		if (size > index) {
 			Orb orb = orbResultSet.orbList.get(index);
-			orb.getUserDefinedProperties();   
 			result = orb.getUserDefinedProperties().get(FrontEndState.ATTR_STATE);
 			stateIndexInfo.clientId = orb.getUserDefinedProperties().get(FrontEndState.ATTR_CLIENT_ID);
+			stateIndexInfo.indexOfReturnedState = index;
 		}
 		
 		logger.info("Getting element {}, when size: {}", index, size); 
@@ -111,6 +111,7 @@ public class FrontEndStateDao {
 			Orb orb = getState(stateIndexInfo.indexOfMaxElement);
 			stateIndexInfo.state = orb.getUserDefinedProperties().get(FrontEndState.ATTR_STATE);
 			stateIndexInfo.clientId = orb.getUserDefinedProperties().get(FrontEndState.ATTR_CLIENT_ID);
+			stateIndexInfo.indexOfReturnedState = 0;
 		}
 		
 		logger.debug("Getting element {}, when size {}", size); 
@@ -140,6 +141,17 @@ public class FrontEndStateDao {
 			
 			if (getSize() > 0) {
 				orb = this.orbResultSet.getOrbList().get(ORDINAL_MOST_RECENT); 
+			}
+			
+			return orb;
+		}
+		
+		public Orb getOrbOldest() {
+			Orb orb = null;
+			
+			int size = getSize();
+			if (size > 0) {
+				orb = this.orbResultSet.getOrbList().get(size - 1); 
 			}
 			
 			return orb;
@@ -211,7 +223,7 @@ public class FrontEndStateDao {
 		int maxLoopCount = clientIdsList.size();
 		
 		if (resultSetSize == 0) {
-			stateSearchResult = getStateFromPreviousHistory();
+			stateSearchResult = getMostRecenState();
 		} else {
 			for (int i = 0; i < maxLoopCount; i++) {
 				if (i >= resultSetSize) {
@@ -237,7 +249,7 @@ public class FrontEndStateDao {
 		return stateSearchResult;
 	}
 
-	private StateSearchResult getStateFromPreviousHistory() {
+	private StateSearchResult getMostRecenState() {
 		StateSearchResult stateSearchResult = new StateSearchResult();
 		StateHistory stateHistory = new StateHistory();
 		
@@ -303,5 +315,23 @@ public class FrontEndStateDao {
 			logger.info("Removing state '{}'", orbFound.getOrbInternalId()); 
 			orbManager.deleteOrb(orbFound.getOrbInternalId(), true);
 		}
+	}
+
+	public StateIndexInfo getEarliestState() {
+		StateIndexInfo stateIndexInfo = new StateIndexInfo();
+		
+		StateHistory stateHistory = new StateHistory();
+		
+		if (stateHistory.hasARecentState()) {
+			Orb orb = stateHistory.getOrbOldest();
+			int size = stateHistory.getSize();
+			stateIndexInfo.indexOfMaxElement = size - 1;
+			stateIndexInfo.indexOfReturnedState = stateIndexInfo.indexOfMaxElement;
+			stateIndexInfo.isEarliestState = true;
+			stateIndexInfo.state = orb.getUserDefinedProperties().get(FrontEndState.ATTR_STATE);
+			stateIndexInfo.clientId = orb.getUserDefinedProperties().get(FrontEndState.ATTR_CLIENT_ID);
+		}
+				
+		return stateIndexInfo;
 	}
 }

@@ -152,8 +152,6 @@ public class OrbReference {
 	public List<DecomposedKey> convertToDecomposedKeys(String value) {
 		List<DecomposedKey> keys = new ArrayList<DecomposedKey>();
 		
-		logger.debug("CTDK: {}", value);	
-		
 		Set<String> referenceValues = referenceUtil.getComposedKeys(value);
 		for (String referenceValue: referenceValues) {
 			keys.add(referenceUtil.decomposeKey(referenceValue));

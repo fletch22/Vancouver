@@ -7,8 +7,6 @@ import com.fletch22.app.designer.Child;
 import com.fletch22.app.designer.DomainService;
 import com.fletch22.app.designer.ServiceFactory;
 import com.fletch22.app.designer.ServiceJunction;
-import com.fletch22.app.designer.app.App;
-import com.fletch22.app.designer.appContainer.AppContainerService;
 import com.fletch22.app.designer.util.DomainUtilDao;
 import com.fletch22.app.state.diff.AddedChild;
 

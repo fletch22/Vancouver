@@ -1,6 +1,7 @@
 package com.fletch22.orb.cache.local;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -24,6 +25,9 @@ import com.fletch22.orb.OrbManager;
 import com.fletch22.orb.OrbType;
 import com.fletch22.orb.OrbTypeManager;
 import com.fletch22.orb.TranDateGenerator;
+import com.fletch22.orb.cache.reference.DecomposedKey;
+import com.fletch22.orb.cache.reference.OrbReference;
+import com.fletch22.orb.cache.reference.ReferenceCollection;
 import com.fletch22.orb.cache.reference.ReferenceUtil;
 import com.fletch22.orb.command.orb.DeleteOrbCommand;
 import com.fletch22.orb.command.orbType.dto.AddOrbDto;
@@ -72,6 +76,12 @@ public class OrbManagerLocalCache implements OrbManager {
 	
 	@Autowired
 	ConstraintChecker constraintChecker;
+	
+	@Autowired
+	ReferenceCollection referenceCollection;
+
+	@Autowired
+	private OrbReference orbReference;
 	
 	@Override
 	@Loggable4Event
@@ -199,9 +209,22 @@ public class OrbManagerLocalCache implements OrbManager {
 		for (long orbInternalId : orbInternalIdSet) {
 			Set<String> attributeNameList = attributeReferenceMap.get(orbInternalId);
 			for (String attributeArrow: attributeNameList) {
-				setAttribute(orbInternalId, attributeArrow, null);
 				
-				throw new NotImplementedException("Should not use set attribute here. Should remove reference from ref list.");
+				String attributeValue = getAttribute(orbInternalId, attributeArrow);
+
+				List<DecomposedKey> keysToKeep = new ArrayList<DecomposedKey>(); 
+				List<DecomposedKey> keys = this.orbReference.convertToDecomposedKeys(attributeValue);
+				for (DecomposedKey decomposeKey: keys) {
+					if (decomposeKey.getOrbInternalId() != orb.getOrbInternalId()) {
+						keysToKeep.add(decomposeKey);
+					}
+				}
+				
+				attributeValue = this.referenceUtil.composeReferences(keysToKeep);
+				setAttribute(orbInternalId, attributeArrow, attributeValue);
+				
+//				setAttribute(orbInternalId, attributeArrow, null);
+//				throw new NotImplementedException("Should not use set attribute here. Should remove reference from ref list.");
 			}
 		}
 	}

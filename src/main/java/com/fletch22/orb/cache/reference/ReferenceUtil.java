@@ -2,6 +2,7 @@ package com.fletch22.orb.cache.reference;
 
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -21,6 +22,25 @@ public class ReferenceUtil {
 	
 	public String composeReference(long orbInternalId) {
 		return ReferenceCollection.REFERENCE_KEY_PREFIX + String.valueOf(orbInternalId);
+	}
+	
+	public String composeReference(DecomposedKey decomposedKey) {
+		String value = null;
+		if (decomposedKey.isKeyPointingToAttribute()) {
+			value = composeReference(decomposedKey.getOrbInternalId(), decomposedKey.getAttributeName());
+		} else {
+			value = composeReference(decomposedKey.getOrbInternalId());
+		}
+		
+		return value;
+	}
+	
+	public String composeReferences(List<DecomposedKey> decomposedKeyList) {
+		Set<String> refSet = new HashSet<String>();
+		for (DecomposedKey decomposedKey : decomposedKeyList) {
+			refSet.add(composeReference(decomposedKey));
+		}
+		return composeReferences(refSet).toString();
 	}
 
 	public StringBuffer composeReferences(Set<String> references) {
@@ -72,13 +92,9 @@ public class ReferenceUtil {
 	
 	public DecomposedKey decomposeKey(String composedKey) {
 		
-//		logger.info("Composed Key 1: {}", composedKey);
-		
 		composedKey = composedKey.substring(ReferenceCollection.REFERENCE_KEY_PREFIX.length());
 		
 		int index = composedKey.indexOf(ReferenceCollection.ID_ATTRIBUTE_NAME_SEPARATOR);
-		
-//		logger.info("Composed Key 2: {}", composedKey);
 		
 		DecomposedKey key = null;
 		if (index < 0) {

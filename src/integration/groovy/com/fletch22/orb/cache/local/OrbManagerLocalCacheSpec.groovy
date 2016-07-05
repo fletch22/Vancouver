@@ -231,6 +231,44 @@ class OrbManagerLocalCacheSpec extends Specification {
 		countTotalArrows == 2
 	}
 	
+	def 'test remove reference from ref list'() {
+		
+		given:
+		String attributeNameArrow = 'receivingArrow1'
+		
+		Set<String> customFields = new LinkedHashSet<String>()
+		customFields.add(attributeNameArrow)
+		
+		long orbInternalIdType = orbTypeManager.createOrbType("targetOrb", customFields)
+		
+		Orb orbTarget1 = orbManager.createOrb(orbInternalIdType)
+		Orb orbTarget2 = orbManager.createOrb(orbInternalIdType)
+		
+		Set<String> refs = new HashSet<String>();
+		
+		String ref1 = referenceUtil.composeReference(orbTarget1.orbInternalId, attributeNameArrow);
+		String ref2 = referenceUtil.composeReference(orbTarget2.orbInternalId, attributeNameArrow);
+		refs.add(ref1);
+		refs.add(ref2);
+		StringBuffer targetReferences = referenceUtil.composeReferences(refs);
+		
+		Orb orbArrow = orbManager.createOrb(orbInternalIdType)
+		orbManager.setAttribute(orbArrow.getOrbInternalId(), attributeNameArrow, targetReferences.toString())
+		
+		when:
+		OrbManagerLocalCache orbManagerLocalCache = (OrbManagerLocalCache) orbManager
+				
+		int countArrows1 = orbManagerLocalCache.cache.orbCollection.orbReference.referenceCollection.countArrowsPointingToTargetAttribute(orbTarget1.orbInternalId, attributeNameArrow)
+		
+		orbManagerLocalCache.deleteOrb(orbTarget2.orbInternalId, true);
+
+		int countArrows2 = orbManagerLocalCache.cache.orbCollection.orbReference.referenceCollection.countArrowsPointingToTargetAttribute(orbTarget2.orbInternalId, attributeNameArrow)
+		
+		then:
+		countArrows1 == 1
+		countArrows2 == 0
+	}
+	
 	def 'test add attribute and rollback'() {
 		
 		given:
