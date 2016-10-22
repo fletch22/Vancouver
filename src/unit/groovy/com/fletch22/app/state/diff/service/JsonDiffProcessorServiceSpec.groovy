@@ -26,7 +26,7 @@ class JsonDiffProcessorServiceSpec extends Specification {
 		Gson gson = new Gson();
 		JsonArray pathInformation = gson.fromJson('["appContainer","children",0,"label"]', JsonArray.class)
 		
-		JsonElement jsonElement = gson.fromJson('{"dom":{"hasInitialStateBeenSaved":false,"modal":[],"view":{"appContainer":{"section":{"addNew":{"appLabel":""}}},"timeTravelNavBar":{"show":false}}},"model":{"appContainer":{"children":[{"label":"foo","typeLabel":"App","id":1041,"parentId":1040}],"id":1040,"typeLabel":"AppContainer"}},"serverStartupTimestamp":"1467562075340","hasInitialStateBeenSaved":true}', JsonElement.class)
+		JsonElement jsonElement = gson.fromJson('{"appContainer": {"children": [{"label": "foo","typeLabel": "App","id": 1041,"parentId": 1040}],"id": 1040,"typeLabel": "AppContainer"}}', JsonElement.class)
 		
 		logger.info(pathInformation.toString())
 		

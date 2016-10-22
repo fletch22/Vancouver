@@ -11,6 +11,7 @@ import spock.lang.Shared
 import spock.lang.Specification
 
 import com.fletch22.app.state.diff.service.AddChildService
+import com.fletch22.app.state.diff.service.DeleteService
 import com.fletch22.app.state.diff.service.JsonDiffProcessorService
 import com.fletch22.util.json.GsonFactory
 import com.google.gson.Gson
@@ -53,6 +54,9 @@ class JsonDiffTransformerSpec extends Specification {
 	@Shared
 	String addedObjectToArrayGoodDiff = '{"kind":"A","path":["tags"],"index":2,"item":{"kind":"N","rhs":{"parentId":43543,"id":"asdfhjkfhdjkahfjkdashfjkdas","typeLabel":"floober","hardness":"reallyHard","foo":"fum"}}}'
 	
+	@Shared
+	String editObjectInArrayGoodDiff = '{"kind":"A","path":["tags"],"index":2,"item":{"kind":"E","lhs":"yeah","rhs":"maybe"}}'
+	
 	@Shared 
 	String editPropertyGoodDiff2 = '{"kind":"E","path":["friends",1,"id"],"lhs":1,"rhs":4}'
 	
@@ -63,18 +67,23 @@ class JsonDiffTransformerSpec extends Specification {
 	String addedObjectToNonArrayBadDiff = '{"kind":"N","path":["brickleberry"],"rhs":{"id":525,"type":"berry","weather":"sunshine","temp":70,"arm":{"id":534,"type":"appendage","hand":{"id":435,"type":"manipulator","finger":[{"id":63,"type":"gripper","scissors":"fiskers"}]}}}}'
 	
 	@Shared
-	String jsonGood = '[' + deleteFromArrayGoodDiff + ',' + deletePropertyGoodDiff + ',' + editedPropertyGoodDiff1 + ',' + editPropertyGoodDiff2 + ',' + addedObjectToArrayGoodDiff + ']'
+	String jsonGood = '[' + deleteFromArrayGoodDiff + ',' + addedObjectToArrayGoodDiff + ']' // + ',' + deletePropertyGoodDiff + ',' + editedPropertyGoodDiff1 + ',' + editPropertyGoodDiff2 + ',' + addedObjectToArrayGoodDiff + ']'
 	
 	@Shared
-	AddChildService addedChildServiceOriginal	
+	AddChildService addedChildServiceOriginal
+	
+	@Shared
+	DeleteService deleteServiceOriginal
 	
 	def setup() {
 		this.addedChildServiceOriginal = this.jsonDiffProcessorService.addChildService
 		this.jsonDiffProcessorService.addChildService = Mock(AddChildService)
+		this.jsonDiffProcessorService.deleteService = Mock(DeleteService)
 	}
 	
 	def cleanup() {
-		this.jsonDiffProcessorService.addChildService = this.addedChildServiceOriginal 
+		this.jsonDiffProcessorService.addChildService = this.addedChildServiceOriginal
+		this.jsonDiffProcessorService.deleteService = this.deleteServiceOriginal
 	}
 		
 	def 'test all diffs processing'() {
@@ -164,27 +173,7 @@ class JsonDiffTransformerSpec extends Specification {
 		deletedChild.parentAndChild.childId == 56679
 		deletedChild.parentAndChild.parentId == 43543
 	}
-	
-	def 'test get edited info'() {
 		
-		given:
-		Gson gson = gsonFactory.getInstance()
-		
-		JsonObject diff = gson.fromJson(editedPropertyGoodDiff1, JsonObject.class)
-		JsonArray pathInformation = diff.getAsJsonArray("path")
-		
-		JsonElement newValue = diff.get("rhs");
-				
-		when:
-		EditedProperty editPropertyInfo = jsonDiffProcessorService.getEditedPropertyInfo(stateModel, pathInformation, newValue)
-		
-		then:
-		noExceptionThrown()
-		editPropertyInfo.newValue == 'maybe'
-		editPropertyInfo.property == 'faithfulness'
-		editPropertyInfo.id == 777
-	}
-	
 	def 'test edit property did not recognize diff kind'() {
 		
 		given:

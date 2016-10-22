@@ -27,5 +27,4 @@ class GetOrbTypeFromLabelCommandSpec extends Specification {
 		then:
 		action.label == labelExpected
 	}
-
 }

@@ -15,4 +15,9 @@ public class RestException extends RuntimeException {
 		this.innerCause = new RuntimeException(String.format("Encountered problem: %s", errorCode.getMessage()));
 		this.errorCode = errorCode;
 	}
+	
+	@Override
+	public String toString() {
+		return "RestException [errorCode=" + errorCode + ", innerCause=" + innerCause + "]";
+	}
 }

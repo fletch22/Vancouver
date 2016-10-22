@@ -187,4 +187,9 @@ public class LogInMemDaoTest {
 		
 		assertEquals(LogActionDao.NO_TRANSACTION_FOUND, currentTranId);
 	}
+	
+	@Test 
+	public void testFoo() {
+		
+	}
 }

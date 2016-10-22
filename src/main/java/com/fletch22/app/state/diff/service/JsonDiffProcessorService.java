@@ -28,7 +28,7 @@ import com.google.gson.JsonPrimitive;
 
 @Component
 public class JsonDiffProcessorService {
-	
+
 	private static final String MODEL_NODE_NAME = "model";
 
 	private static final String PROPERTY_PARENT_ID = "parentId";
@@ -36,33 +36,32 @@ public class JsonDiffProcessorService {
 	private static final String PROPERTY_ID = "id";
 
 	Logger logger = LoggerFactory.getLogger(JsonDiffProcessorService.class);
-	
+
 	private static final String EX_MSG_NO_RECOGNIZE_DIFF_CODE = "Encountered problem. Did not recognize diff code: %s";
 	private static final String PROPERTY_TYPE_LABEL = "typeLabel";
 	private static final String EX_MSG_UNSUPPORTED_NEW_ADD = "Encountered problem while trying to process diff state - cannot add item outside of array object addition. Not yet implemented.";
 	private static final String EX_MSG_DIFF_KIND_UNSUPPORTED = "Encountered problem while trying to process diff state - diff kind is unsupported";
 
 	private static final long UNSET_PARENT_ID = -1;
-	
+
 	public enum FamilyMember {
-		Parent,
-		Child
+		Parent, Child
 	}
 
 	@Autowired
 	GsonFactory gsonFactory;
-	
+
 	@Autowired
 	AddChildService addChildService;
-	
+
 	@Autowired
 	DeleteService deleteService;
-	
+
 	private Gson gson = new Gson();
 
 	@Transactional
 	public ArrayList<StuntDoubleAndNewId> process(String state, String jsonArrayDiff) {
-		
+
 		JsonArray jsonArray = gson.fromJson(jsonArrayDiff, JsonArray.class);
 
 		ArrayList<StuntDoubleAndNewId> stuntDoubleAndNewIdList = new ArrayList<StuntDoubleAndNewId>();
@@ -90,100 +89,102 @@ public class JsonDiffProcessorService {
 
 	private ResultDiffProcessing processDiffKind(String state, JsonObject jsonObject, JsonArray pathInformation, DiffKind diffKind) {
 		ResultDiffProcessing resultDiffProcessing = new ResultDiffProcessing();
-		
+
 		logger.debug("processDiffKind: {}", diffKind.toString());
-		
+
 		switch (diffKind) {
-			case DELETED_PROPERTY:
-				JsonElement deletedChild = jsonObject.get("lhs");
-				processDeleteProperty(state, pathInformation, deletedChild);
-				break;
-			case EDITED_PROPERTY:
-				JsonElement newValue = jsonObject.get("rhs");
-				processEditedProperty(state, pathInformation, newValue);
-				break;
-			case ARRAY_CHANGE:
-				JsonElement item = jsonObject.get("item");
-				JsonElement index = jsonObject.get("index");
-				resultDiffProcessing = processChangedArray(state, pathInformation, index, item);
-				break;
-			case NEWLY_ADDED_PROPERTY:
-				throw new RuntimeException(EX_MSG_UNSUPPORTED_NEW_ADD);
-			default:
-				throw new RuntimeException(EX_MSG_DIFF_KIND_UNSUPPORTED);
+		case DELETED_PROPERTY:
+			JsonElement deletedChild = jsonObject.get("lhs");
+			processDeleteProperty(state, pathInformation, deletedChild);
+			break;
+		case EDITED_PROPERTY:
+			JsonElement newValue = jsonObject.get("rhs");
+			processEditedProperty(state, pathInformation, newValue);
+			break;
+		case ARRAY_CHANGE:
+			JsonElement item = jsonObject.get("item");
+			JsonElement index = jsonObject.get("index");
+			resultDiffProcessing = processChangedArray(state, pathInformation, index, item);
+			break;
+		case NEWLY_ADDED_PROPERTY:
+			throw new RuntimeException(EX_MSG_UNSUPPORTED_NEW_ADD);
+		default:
+			throw new RuntimeException(EX_MSG_DIFF_KIND_UNSUPPORTED);
 		}
 		return resultDiffProcessing;
 	}
 
 	private void processEditedProperty(String state, JsonArray pathInformation, JsonElement newValue) {
-		EditedProperty editPropertyInfo = getEditedPropertyInfo(state, pathInformation, newValue);
-	}
-	
-	protected void processDeleteProperty(String state, JsonArray pathInformation, JsonElement deletedChild) {
-		ParentAndChild parentAndChild = getDeletePropertyInfo(state, pathInformation, deletedChild);
-
 		throw new NotImplementedException("processDeleteProperty not implemented yet. (Set to null?)");
+//		EditedProperty editPropertyInfo = getEditedPropertyInfo(state, pathInformation, newValue);
+	}
+
+	protected void processDeleteProperty(String state, JsonArray pathInformation, JsonElement deletedChild) {
+		throw new NotImplementedException("processDeleteProperty not implemented yet. (Set to null?)");
+		//ParentAndChild parentAndChild = getDeletePropertyInfo(state, pathInformation, deletedChild);
 	}
 
 	private StuntDoubleAndNewId processAddedChild(JsonObject state, JsonArray pathInformation, long index, JsonElement jsonElementChild) {
-		
+
 		JsonElement parentElement = getParentDescribedByPath(pathInformation, state);
-		
+
 		Child child = getChild(jsonElementChild);
 		String temporaryId = child.props.remove(PROPERTY_ID);
 		long parentId = getId(parentElement);
-		
+
 		AddedChild addedChild = new AddedChild(parentId, child, temporaryId);
-		
+
 		long childNewId = addChildService.process(addedChild);
-		
+
 		return new StuntDoubleAndNewId(temporaryId, childNewId);
 	}
-	
+
 	private StuntDoubleAndNewId processAddedChildNew(JsonArray pathInformation, long index, JsonElement jsonElementChild) {
-		
+
 		Child child = getChild(jsonElementChild);
 		String temporaryId = child.props.remove(PROPERTY_ID);
 		long parentId = child.parentId;
-		
+
 		AddedChild addedChild = new AddedChild(parentId, child, temporaryId);
-		
+
 		long childNewId = addChildService.process(addedChild);
-		
+
 		return new StuntDoubleAndNewId(temporaryId, childNewId);
 	}
-	
+
 	private void processDeletedChild(JsonObject state, JsonArray pathInformation, long index, JsonElement deletedChildElement) {
 		DeletedChild deletedChild = getDeletedChildInfo(state, pathInformation, index, deletedChildElement);
-		
+
 		deleteService.process(deletedChild.parentAndChild.childId);
 	}
-	
+
 	protected ResultDiffProcessing processChangedArray(String state, JsonArray pathInformation, JsonElement jsonElementIndex, JsonElement item) {
 		ResultDiffProcessing resultProcessChangedArray = new ResultDiffProcessing();
 		long index;
-		
+
 		JsonObject jsonObject = (JsonObject) item;
 		String letter = jsonObject.get("kind").getAsJsonPrimitive().getAsString();
 
 		Diff diff = new Diff();
 		diff.diffKind = getKind(letter);
-		
+
 		logger.debug("diff.diffKind: {}", diff.diffKind.toString());
 
 		switch (diff.diffKind) {
 		case DELETED_PROPERTY:
 			index = jsonElementIndex.getAsLong();
 			JsonElement deletedChild = jsonObject.get("lhs");
-			
+
 			Gson gson = new Gson();
-			JsonObject joState = gson.fromJson(state, JsonObject.class); 
+			JsonObject joState = gson.fromJson(state, JsonObject.class);
 			processDeletedChild(joState, pathInformation, index, deletedChild);
 			break;
 		case EDITED_PROPERTY:
-			throw new RuntimeException("Encountered problem while trying to process changed array. The changed array had an edited element. Handling this type of operation is not yet implemented.");
+			throw new RuntimeException(
+					"Encountered problem while trying to process changed array. The changed array had an edited element. Handling this type of operation is not yet implemented.");
 		case ARRAY_CHANGE:
-			throw new RuntimeException("Encountered problem while trying to process changed array. The changed array had an edited element. Handling this type of operation is not yet implemented.");
+			throw new RuntimeException(
+					"Encountered problem while trying to process changed array. The changed array had an edited element. Handling this type of operation is not yet implemented.");
 		case NEWLY_ADDED_PROPERTY:
 			index = jsonElementIndex.getAsLong();
 			JsonElement addedChild = jsonObject.get("rhs");
@@ -192,10 +193,10 @@ public class JsonDiffProcessorService {
 		default:
 			throw new RuntimeException(EX_MSG_DIFF_KIND_UNSUPPORTED);
 		}
-		
+
 		return resultProcessChangedArray;
 	}
-	
+
 	public class ResultDiffProcessing {
 		public StuntDoubleAndNewId stuntDoubleAndNewId;
 
@@ -203,17 +204,17 @@ public class JsonDiffProcessorService {
 			return this.stuntDoubleAndNewId != null;
 		}
 	}
-	
+
 	private EditedProperty getEditedPropertyInfo(String state, JsonArray pathInformation, JsonElement jsonElementNewValue) {
 		Gson gson = new Gson();
 		JsonElement parentElement = getModelNodeInState(state, gson);
-		
+
 		JsonElement childElement = getParentDescribedByPath(pathInformation, parentElement);
-		
+
 		long id = getId(childElement);
 		String property = getLastPathItemValue(pathInformation);
 		String newValue = jsonElementNewValue.getAsJsonPrimitive().getAsString();
-		
+
 		return new EditedProperty(id, property, newValue);
 	}
 
@@ -232,18 +233,19 @@ public class JsonDiffProcessorService {
 	}
 
 	private Child getChild(JsonElement jsonElementChild) {
-		
-//		logger.debug(jsonElementChild.toString());
-		
+
+		// logger.debug(jsonElementChild.toString());
+
 		String key = null;
 		Map<String, String> properties = new HashMap<String, String>();
-		
+
 		if (!jsonElementChild.isJsonObject()) {
-			throw new RuntimeException("Encountered problem while trying to get the properties from a newly added object. Was expecting an object. Found something else. This is not allowed.");
+			throw new RuntimeException(
+					"Encountered problem while trying to get the properties from a newly added object. Was expecting an object. Found something else. This is not allowed.");
 		}
-		
+
 		long parentId = UNSET_PARENT_ID;
-		
+
 		for (Entry<String, JsonElement> entry : jsonElementChild.getAsJsonObject().entrySet()) {
 			key = entry.getKey();
 			JsonElement jsonElement = entry.getValue();
@@ -255,51 +257,50 @@ public class JsonDiffProcessorService {
 					if (key.equals(PROPERTY_PARENT_ID)) {
 						parentId = jsonPrimitive.getAsLong();
 					} else {
-						throw new RuntimeException(String.format("Encountered problem while trying to get the propery '%s' from a newly added object. Encountered an object property whose value was not a string. This is not allowed. Added objects must only have string valued properties.", key));
+						throw new RuntimeException(
+								String.format(
+										"Encountered problem while trying to get the propery '%s' from a newly added object. Encountered an object property whose value was not a string. This is not allowed. Added objects must only have string valued properties.",
+										key));
 					}
 				}
 			} else {
-				throw new RuntimeException("Encountered problem while trying to get the properties from a newly added object. Encountered an object property whose value was not a primitive. This is not allowed. Added objects must only have string valued properties.");
+				throw new RuntimeException(
+						"Encountered problem while trying to get the properties from a newly added object. Encountered an object property whose value was not a primitive. This is not allowed. Added objects must only have string valued properties.");
 			}
 		}
 		String type = properties.remove(PROPERTY_TYPE_LABEL);
-		
+
 		if (parentId == UNSET_PARENT_ID) {
 			throw new RuntimeException("Encountered problem with diff node. Changed section did not have a parent ID.");
 		}
-		
+
 		return new Child(type, properties, parentId);
 	}
-	
+
 	private DeletedChild getDeletedChildInfo(JsonObject state, JsonArray pathInformation, long index, JsonElement deletedChildElement) {
-		
+
 		DeletedChild deletedChild = new DeletedChild();
-		
+
 		long parentId = deletedChildElement.getAsJsonObject().get(PROPERTY_PARENT_ID).getAsLong();
 		long childId = deletedChildElement.getAsJsonObject().get(PROPERTY_ID).getAsLong();
-		
+
 		deletedChild.parentAndChild = new ParentAndChild(parentId, childId);
 		deletedChild.index = index;
-		
+
 		return deletedChild;
 	}
-	
+
 	private JsonElement getParentDescribedByPath(JsonArray pathInformation, JsonElement element) {
 		return getNodeDescribedByPath(pathInformation, element, FamilyMember.Parent);
 	}
-	
+
 	private JsonElement getChildDescribedByPath(JsonArray pathInformation, JsonElement element) {
 		return getNodeDescribedByPath(pathInformation, element, FamilyMember.Child);
 	}
 
 	private JsonElement getNodeDescribedByPath(JsonArray pathInformation, JsonElement jsonElement, FamilyMember familyMember) {
-		
-		logger.info("pathInformation: {}", pathInformation.toString());
-		logger.info("jsonElement: {}", jsonElement.toString());
-		logger.info("familyMember: {}", familyMember);
-		
 		int depthOfTraversal = getDepthOfPathTraversal(pathInformation, familyMember);
-		
+
 		for (int i = 0; i < depthOfTraversal; i++) {
 			JsonElement pathElement = pathInformation.get(i);
 
@@ -308,43 +309,28 @@ public class JsonDiffProcessorService {
 				if (jsonPrimitive.isNumber()) {
 					jsonElement = jsonElement.getAsJsonArray().get(jsonPrimitive.getAsInt());
 				} else {
-					if (jsonPrimitive.isJsonArray()) {
-						
-					}
-					
-					logger.info("jsonPrimitive: " + jsonPrimitive.toString());
-					logger.info("isJsonArray: " + jsonPrimitive.isJsonArray());
-					logger.info("jsonElement is jsonArray? " + jsonElement.isJsonArray());
-					
 					String memberName = jsonPrimitive.getAsString();
-					
-					logger.info("memberName: {}", memberName);
-					
 					jsonElement = jsonElement.getAsJsonObject().get(memberName);
-					
-//					jsonElement = jsonElement.getAsJsonArray().get(memberName);
-					
-					logger.info("is jsonElement null?, {}", jsonElement == null);
 				}
 			} else {
 				throw new RuntimeException("Encountered problem reading diff array. Encountered an array item that was not a primitive -- inconceivable!");
 			}
 		}
-		
+
 		return jsonElement;
 	}
 
 	private int getDepthOfPathTraversal(JsonArray pathInformation, FamilyMember familyMember) {
 		int depthOfTraversal = 0;
-		switch (familyMember) { 
-			case Parent:
-				depthOfTraversal = pathInformation.size() - 1;
-				break;
-			case Child:
-				depthOfTraversal = pathInformation.size();
-				break;
-			default:
-				throw new RuntimeException("Encoutered problem processing type of family member to search through path information.");
+		switch (familyMember) {
+		case Parent:
+			depthOfTraversal = pathInformation.size() - 1;
+			break;
+		case Child:
+			depthOfTraversal = pathInformation.size();
+			break;
+		default:
+			throw new RuntimeException("Encoutered problem processing type of family member to search through path information.");
 		}
 		return depthOfTraversal;
 	}
@@ -387,14 +373,15 @@ public class JsonDiffProcessorService {
 		}
 		return diffKind;
 	}
-	
+
 	public String getLastPathItemValue(JsonArray pathInformation) {
-		
+
 		JsonPrimitive jsonPrimitive = pathInformation.get(pathInformation.size() - 1).getAsJsonPrimitive();
 		if (jsonPrimitive.isNumber()) {
-			throw new RuntimeException("Encountered problem while trying to get the last item in the path. Unable to process element that is not a string. Feature not yet implemented.");
+			throw new RuntimeException(
+					"Encountered problem while trying to get the last item in the path. Unable to process element that is not a string. Feature not yet implemented.");
 		}
-		
+
 		return jsonPrimitive.getAsString();
 	}
 }
