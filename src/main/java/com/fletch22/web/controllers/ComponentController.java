@@ -27,6 +27,7 @@ import com.fletch22.app.state.FrontEndState;
 import com.fletch22.app.state.FrontEndStateDao.StateSearchResult;
 import com.fletch22.app.state.FrontEndStateService;
 import com.fletch22.app.state.StateIndexInfo;
+import com.fletch22.orb.IntegrationSystemInitializer;
 import com.fletch22.orb.query.QueryManager;
 import com.fletch22.util.json.GsonFactory;
 import com.fletch22.web.controllers.exception.ErrorCode;
@@ -61,6 +62,9 @@ public class ComponentController extends Controller {
 	@Autowired
 	QueryManager queryManager;
 
+	@Autowired
+	IntegrationSystemInitializer integrationSystemInitializer;
+
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	public @ResponseBody Object getComponent(@PathVariable long id) {
 		return componentFactory.getInstance(id);
@@ -94,22 +98,22 @@ public class ComponentController extends Controller {
 	public @ResponseBody String saveStatePallet(@RequestBody StatePallet statePallet) {
 
 		String message = "Items saved: " + statePallet.statePackages.size();
-		
+
 		if (statePallet.statePackages.get(0).state.contains("x")) {
 			throw new RuntimeException("CONTAINS X");
 		}
-		
+
 		frontEndStateService.save(statePallet.statePackages);
 
 		logger.info(message);
 
 		return JSON_SUCCESS;
 	}
-	
+
 	@RequestMapping(value = "/statePackage", method = RequestMethod.PUT, consumes = { MediaType.APPLICATION_JSON_VALUE })
 	@ResponseStatus(value = HttpStatus.OK)
 	public @ResponseBody String saveStatePackage(@RequestBody StatePackage statePackage) {
-		
+
 		String result = null;
 		try {
 			result = frontEndStateService.saveStatePackage(statePackage);
@@ -119,11 +123,11 @@ public class ComponentController extends Controller {
 
 		return result;
 	}
-	
+
 	@RequestMapping(value = "/states", method = RequestMethod.POST)
 	@ResponseStatus(value = HttpStatus.OK)
 	public @ResponseBody StateIndexInfo getEarliestState() {
-		
+
 		logger.info("Got to get earliest state");
 
 		return frontEndStateService.getEarliestState();
@@ -154,9 +158,9 @@ public class ComponentController extends Controller {
 
 		logger.info("Size of clientIds: {}", idPackages.size());
 
-		int numberPreviousStates = queryManager.executeQuery(FrontEndState.QUERY_GET_STATES).orbList.size(); 
+		int numberPreviousStates = queryManager.executeQuery(FrontEndState.QUERY_GET_STATES).orbList.size();
 		logger.info("Size of state list: {}", numberPreviousStates);
-		
+
 		if (numberPreviousStates == 0) {
 			throw new RestException(ErrorCode.NO_PREVIOUS_ERROR_STATES);
 		}
@@ -171,7 +175,7 @@ public class ComponentController extends Controller {
 
 		return new LastGoodState(searchResultState.clientId, searchResultState.state);
 	}
-	
+
 	@RequestMapping(value = "/states/{stateClientId}", method = RequestMethod.POST)
 	@ResponseStatus(value = HttpStatus.OK)
 	public @ResponseBody String rollbackToState(@PathVariable String stateClientId, @RequestParam(value = "action", required = true) String action) {
@@ -183,6 +187,15 @@ public class ComponentController extends Controller {
 		this.frontEndStateService.rollbackToState(stateClientId);
 
 		return JSON_SUCCESS;
+	}
+
+	@RequestMapping(value = "/nukeAndPave", method = RequestMethod.POST)
+	@ResponseStatus(value = HttpStatus.OK)
+	public @ResponseBody StateIndexInfo nukeAndPave() {
+
+		this.integrationSystemInitializer.nukeAndPaveAllIntegratedSystems();
+
+		return getMostRecentStateHistory();
 	}
 
 	public static class ClientIdsPackage {
@@ -219,7 +232,7 @@ public class ComponentController extends Controller {
 		public String clientId;
 		public String serverStartupTimestamp;
 	}
-	
+
 	public static class LastGoodState {
 		public String clientId;
 		public String stateJson;

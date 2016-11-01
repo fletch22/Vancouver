@@ -65,14 +65,21 @@ public class FrontEndStateService {
 		return statePackage.state;
 	}
 	
-	private String insertNewIdsIntoState(String state, ArrayList<StuntDoubleAndNewId> stuntDoubleAndNewIdList) {
+	private boolean replaceIds(String state, StuntDoubleAndNewId stuntDoubleAndNewId) {
+		int start = state.indexOf(stuntDoubleAndNewId.temporaryId) - 1;
+		int end = start + stuntDoubleAndNewId.temporaryId.length() + 2;
 		
-		for (StuntDoubleAndNewId stuntDoubleAndNewId : stuntDoubleAndNewIdList) {
-			
-			int start = state.indexOf(stuntDoubleAndNewId.temporaryId) - 1;
-			int end = start + stuntDoubleAndNewId.temporaryId.length() + 2;
-			
+		boolean wasFound = (start != -1);
+		if (wasFound) {
 			state = state.substring(0, start) + String.valueOf(stuntDoubleAndNewId.idNew) + state.substring(end, state.length());
+		}
+		
+		return wasFound;
+	}
+	
+	private String insertNewIdsIntoState(String state, ArrayList<StuntDoubleAndNewId> stuntDoubleAndNewIdList) {
+		for (StuntDoubleAndNewId stuntDoubleAndNewId : stuntDoubleAndNewIdList) {
+			state = state.replace(stuntDoubleAndNewId.temporaryId, String.valueOf(stuntDoubleAndNewId.idNew));
 		}
 		
 		return state;

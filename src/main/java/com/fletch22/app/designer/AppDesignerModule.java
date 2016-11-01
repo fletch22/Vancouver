@@ -32,107 +32,107 @@ import com.fletch22.orb.query.sort.SortInfo.SortDirection;
 
 @Component
 public class AppDesignerModule implements OrbSystemModule {
-	
+
 	Logger logger = LoggerFactory.getLogger(AppDesignerModule.class);
-	
+
 	public static final String DEFAULT_APP_CONTAINER_NAME = "DefaultAppContainer";
-	
+
 	@Autowired
 	OrbManager orbManager;
 
 	@Autowired
 	OrbTypeManager orbTypeManager;
-	
+
 	@Autowired
 	QueryManager queryManager;
-	
+
 	@Autowired
 	AppContainerService appContainerService;
-	
+
 	@Autowired
 	AppService appService;
-	
+
 	@Autowired
 	ComponentConstrainer componentConstrainer;
-	
+
 	@Override
 	public void initialize() {
-		
+
 		createTypes();
 		createInstances();
 	}
 
 	private void createInstances() {
 		logger.info("Creating instances....");
-		
+
 		AppContainer appContainer = appContainerService.createInstance(DEFAULT_APP_CONTAINER_NAME);
-		
+
 		App app = appService.createInstance("HelloWorldApp");
 		appContainerService.addToParent(appContainer, app);
 	}
 
 	private void createTypes() {
-		long orbTypeInternalId = orbTypeManager.createOrbType(AppContainer.TYPE_LABEL, AppContainer.ATTRIBUTE_LIST); 
+		long orbTypeInternalId = orbTypeManager.createOrbType(AppContainer.TYPE_LABEL, AppContainer.ATTRIBUTE_LIST);
 		primeQueryIndex(orbTypeInternalId, AppContainer.ATTR_LABEL);
 		componentConstrainer.addNotAmongstUniqueConstraintOnField(orbTypeInternalId, AppContainer.ATTR_LABEL);
-		
+
 		orbTypeInternalId = orbTypeManager.createOrbType(App.TYPE_LABEL, App.ATTRIBUTE_LIST);
 		componentConstrainer.addNotAmongstUniqueConstraintOnField(orbTypeInternalId, App.ATTR_LABEL);
 		primeQueryIndex(orbTypeInternalId, App.ATTR_LABEL);
-		
+
 		orbTypeInternalId = orbTypeManager.createOrbType(Website.TYPE_LABEL, Website.ATTRIBUTE_LIST);
 		componentConstrainer.addNotAmongstUniqueConstraintOnField(orbTypeInternalId, Website.ATTR_LABEL);
 		primeQueryIndex(orbTypeInternalId, Website.ATTR_LABEL);
-		
+
 		orbTypeInternalId = orbTypeManager.createOrbType(WebFolder.TYPE_LABEL, WebFolder.ATTRIBUTE_LIST);
 		componentConstrainer.addNotAmongstUniqueConstraintOnField(orbTypeInternalId, WebFolder.ATTR_LABEL);
 		primeQueryIndex(orbTypeInternalId, WebFolder.ATTR_LABEL);
-		
+
 		orbTypeInternalId = orbTypeManager.createOrbType(Page.TYPE_LABEL, Page.ATTRIBUTE_LIST);
 		componentConstrainer.addNotAmongstUniqueConstraintOnField(orbTypeInternalId, Page.ATTR_PAGE_NAME);
 		primeQueryIndex(orbTypeInternalId, Page.ATTR_PAGE_NAME);
-		
+
 		orbTypeInternalId = orbTypeManager.createOrbType(Head.TYPE_LABEL, Head.ATTRIBUTE_LIST);
 		componentConstrainer.addNotAmongstUniqueConstraintOnField(orbTypeInternalId, Head.ATTR_LABEL);
 		primeQueryIndex(orbTypeInternalId, Head.ATTR_LABEL);
-		
+
 		orbTypeInternalId = orbTypeManager.createOrbType(Body.TYPE_LABEL, Body.ATTRIBUTE_LIST);
 		componentConstrainer.addNotAmongstUniqueConstraintOnField(orbTypeInternalId, Body.ATTR_LABEL);
 		primeQueryIndex(orbTypeInternalId, Body.ATTR_LABEL);
-		
+
 		orbTypeInternalId = orbTypeManager.createOrbType(Div.TYPE_LABEL, Div.ATTRIBUTE_LIST);
 		componentConstrainer.addNotAmongstUniqueConstraintOnField(orbTypeInternalId, Div.ATTR_LABEL);
 		primeQueryIndex(orbTypeInternalId, Div.ATTR_LABEL);
-		
+
 		orbTypeInternalId = orbTypeManager.createOrbType(Form.TYPE_LABEL, Form.ATTRIBUTE_LIST);
 		componentConstrainer.addNotAmongstUniqueConstraintOnField(orbTypeInternalId, Form.ATTR_LABEL);
 		primeQueryIndex(orbTypeInternalId, Form.ATTR_LABEL);
-		
+
 		createType(AppModuleImpl.FrontEndState);
 	}
-	
+
 	public void createType(AppModule appModule) {
 		long orbTypeInternalId = orbTypeManager.createOrbType(appModule.getTypeLabel(), appModule.getAttributes());
-		
+
 		String randomAttributeName = appModule.getAttributes().iterator().next();
 		primeQueryIndex(orbTypeInternalId, randomAttributeName);
-		
+
 		createFrontEndStateQueryGetStates();
 	}
 
 	private void createFrontEndStateQueryGetStates() {
 		OrbType orbType = orbTypeManager.getOrbType(FrontEndState.TYPE_LABEL);
 		Criteria criteria = new CriteriaStandard(orbType.id, FrontEndState.QUERY_GET_STATES);
-		
+
 		CriteriaSortInfo criteriaSortInfo = new CriteriaSortInfo();
 		criteriaSortInfo.sortDirection = SortDirection.DESC;
 		criteriaSortInfo.sortAttributeName = FrontEndState.ATTR_ASSOCIATED_TRANSACTION_ID;
-		
+
 		criteria.setSortOrder(criteriaSortInfo);
-		
+
 		this.queryManager.addToCollection(criteria);
 	}
-	
+
 	private void primeQueryIndex(long orbTypeInternalId, String attributeName) {
 		Orb orb = orbManager.createOrb(orbTypeInternalId);
 		orbManager.deleteOrb(orb.getOrbInternalId(), false);
