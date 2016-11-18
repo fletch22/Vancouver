@@ -9,7 +9,7 @@ public class WebFolder extends Parent implements WebFolderChild {
 	
 	public static final String TYPE_LABEL = "WebSection";
 	public static final String ATTR_LABEL = "label";
-	public static LinkedHashSet<String> ATTRIBUTE_LIST = new LinkedHashSet<String>(Arrays.asList(ATTR_LABEL, ATTR_CHILDREN));
+	public static LinkedHashSet<String> ATTRIBUTE_LIST = new LinkedHashSet<String>(Arrays.asList(ATTR_PARENT, ATTR_LABEL, ATTR_CHILDREN));
 
 	public String label;
 	

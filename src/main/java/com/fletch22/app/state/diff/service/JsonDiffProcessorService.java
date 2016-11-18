@@ -90,7 +90,7 @@ public class JsonDiffProcessorService {
 	private ResultDiffProcessing processDiffKind(String state, JsonObject jsonObject, JsonArray pathInformation, DiffKind diffKind) {
 		ResultDiffProcessing resultDiffProcessing = new ResultDiffProcessing();
 
-		logger.debug("processDiffKind: {}", diffKind.toString());
+		logger.info("processDiffKind: {}", jsonObject.toString());
 
 		switch (diffKind) {
 		case DELETED_PROPERTY:

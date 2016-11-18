@@ -2,7 +2,6 @@ package com.fletch22.app.designer.website;
 
 import java.util.Map;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -37,6 +36,17 @@ public class WebsiteService extends DomainService<Website, WebFolderChild> {
 		
 	@Override
 	public Website createInstance(Map<String, String> properties) {
-		throw new NotImplementedException("Not yet finished developing");
+		validatePropertiesSimple(properties, Website.ATTRIBUTE_LIST);
+		
+		return createInstance(properties.get(Website.ATTR_LABEL));
+	}
+	
+	public Website update(long id, Map<String, String> properties) {
+		validatePropertiesSimple(properties, Website.ATTRIBUTE_LIST);
+		
+		Website website = get(id);
+		website.label = properties.get(Website.ATTR_LABEL);
+		
+		return website;
 	}
 }

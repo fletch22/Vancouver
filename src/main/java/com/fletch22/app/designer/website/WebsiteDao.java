@@ -19,9 +19,10 @@ public class WebsiteDao extends AppDesignerDao<Website, WebsiteTransformer> {
 
 	@Override
 	public void create(Website website) {
-
 		OrbType orbType = this.orbTypeManager.getOrbType(Website.TYPE_LABEL);
 		
+		if (orbType == null) throw new RuntimeException("Type does not exist in database yet.");
+				
 		create(website, orbType);
 	}
 	
