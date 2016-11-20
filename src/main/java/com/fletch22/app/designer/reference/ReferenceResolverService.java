@@ -15,13 +15,14 @@ import com.fletch22.app.designer.app.App;
 import com.fletch22.app.designer.app.AppService;
 import com.fletch22.app.designer.appContainer.AppContainer;
 import com.fletch22.app.designer.appContainer.AppContainerService;
+import com.fletch22.app.designer.website.Website;
+import com.fletch22.app.designer.website.WebsiteService;
 import com.fletch22.orb.Orb;
 import com.fletch22.orb.OrbManager;
 import com.fletch22.orb.OrbType;
 import com.fletch22.orb.OrbTypeManager;
 import com.fletch22.orb.cache.reference.DecomposedKey;
 import com.fletch22.orb.cache.reference.ReferenceUtil;
-import com.fletch22.util.StopWatch;
 
 @Component
 public class ReferenceResolverService {
@@ -39,6 +40,9 @@ public class ReferenceResolverService {
 	
 	@Autowired
 	AppService appService;
+	
+	@Autowired
+	WebsiteService websiteService;
 	
 	public OrbType getAndCacheOrbType(Map<Long, OrbType> cachedOrbTypes, Orb orb) {
 		OrbType orbType = null;
@@ -116,6 +120,9 @@ public class ReferenceResolverService {
 				break;
 			case App.TYPE_LABEL:
 				orbBaseComponentChild = appService.get(childId);
+				break;
+			case Website.TYPE_LABEL:
+				orbBaseComponentChild = websiteService.get(childId);
 				break;
 			default:
 				throw new RuntimeException("Encountered problem trying to determine type while resolving children.");
