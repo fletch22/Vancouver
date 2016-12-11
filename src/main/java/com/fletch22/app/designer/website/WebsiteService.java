@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fletch22.app.designer.DomainService;
+import com.fletch22.app.designer.webFolder.WebFolder;
 import com.fletch22.app.designer.webFolder.WebFolderChild;
 
 @Component
@@ -41,11 +42,12 @@ public class WebsiteService extends DomainService<Website, WebFolderChild> {
 		return createInstance(properties.get(Website.ATTR_LABEL));
 	}
 	
+	@Override
 	public Website update(long id, Map<String, String> properties) {
 		validatePropertiesSimple(properties, Website.ATTRIBUTE_LIST);
 		
 		Website website = get(id);
-		website.label = properties.get(Website.ATTR_LABEL);
+		if (properties.containsKey(Website.ATTR_LABEL)) website.label = properties.get(Website.ATTR_LABEL);
 		
 		return website;
 	}

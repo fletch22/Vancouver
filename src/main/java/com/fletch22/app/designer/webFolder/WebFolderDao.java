@@ -18,7 +18,6 @@ public class WebFolderDao extends AppDesignerDao<WebFolder, WebFolderTransformer
 	WebFolderTransformer webFolderTransformer;
 
 	public void create(WebFolder webFolder) {
-
 		throw new NotImplementedException("Ensure unique child in parent and handle children");
 //		OrbType orbType = ensureInstanceUnique(WebSection.TYPE_LABEL, WebSection.ATTR_LABEL, webFolder.label);
 //		

@@ -11,14 +11,19 @@ import com.fletch22.orb.query.criteria.Criteria;
 import com.fletch22.orb.query.criteria.CriteriaAggregate;
 import com.googlecode.cqengine.query.Query;
 
-public class ConstraintDetailsAggregate extends ConstraintDetails {
+public class ConstraintDetailsAggregate extends ConstraintDet {
 	
 	public RelationshipOperator relationshipOperator;
 	public Aggregate aggregate;
 	public CriteriaAggregate criteriaForAggregation;
+	public String[] attributeNames;
 	
 	public ConstraintDetailsAggregate() {
-		super();
+		super(); 
+	}
+	
+	public String[] getAttributeNames() {
+		return attributeNames;
 	}
 	
 	@Override
@@ -29,11 +34,6 @@ public class ConstraintDetailsAggregate extends ConstraintDetails {
 		constraintArray[0] = this;
 		
 		return constraintArray;
-	}
-
-	@Override
-	public String getAttributeName() {
-		return this.attributeName;
 	}
 	
 	@Override
@@ -70,14 +70,14 @@ public class ConstraintDetailsAggregate extends ConstraintDetails {
 	public boolean acceptCollectCriteriaWithAttributeVisitor(CollectCriteriaWithAttributeVisitor visitor) {
 		return visitor.visit(this);
 	}
-
+	
 	@Override
 	public StringBuffer getDescription(StringBuffer description) {
 		
 		description.append(StringUtils.SPACE);
-		description.append("the value for attribute '");
-		description.append(this.attributeName);
-		description.append("' ");
+		description.append("the value(s) for attribute(s) [");
+		description.append(String.join(",", this.attributeNames));
+		description.append("] ");
 		description.append(this.relationshipOperator.toString());
 		description.append(StringUtils.SPACE);
 		description.append(this.aggregate.toString());

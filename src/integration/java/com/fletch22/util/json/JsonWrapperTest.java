@@ -10,6 +10,8 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 
 import org.apache.commons.lang3.time.StopWatch;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -19,6 +21,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.fletch22.aop.QueryThing;
+import com.fletch22.orb.IntegrationSystemInitializer;
 import com.fletch22.orb.OrbType;
 import com.fletch22.orb.command.MethodCallCommand;
 import com.fletch22.orb.command.orbType.dto.MethodCallDto;
@@ -43,6 +46,19 @@ public class JsonWrapperTest {
 
 	@Autowired
 	QueryMother queryMother;
+	
+	@Autowired
+	IntegrationSystemInitializer integrationSystemInitializer;
+	
+	@Before
+	public void before() {
+		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems();
+	}
+	
+	@After
+	public void after() {
+		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems();
+	}
 
 	@SuppressWarnings("unused")
 	@Test
@@ -287,6 +303,8 @@ public class JsonWrapperTest {
 
 	@Test
 	public void testConstraintDetailsAggregate() {
+		
+		
 
 		Criteria criteria = queryMother.getSimpleAggregateQuery();
 
@@ -298,12 +316,12 @@ public class JsonWrapperTest {
 
 		Criteria reconstituted = (Criteria) jsonWrapper2.object;
 
-		logger.debug("jsonWrapper: {}", jsonWrapper.toJson());
+		logger.info("jsonWrapper: {}", jsonWrapper.toJson());
 	}
 	
 	@Test
 	public void testCriteriaDetailsAgg() {
-		String json = "{\"type\":\"com.fletch22.orb.query.constraint.ConstraintDetailsAggregate\",\"properties\":{\"relationshipOperator\":\"IS\",\"aggregate\":\"UNIQUE\",\"criteriaForAggregation\":{\"fieldOfInterest\":\"bar\",\"criteriaId\":1010,\"orbType\":{\"id\":1008,\"label\":\"foo\",\"tranDate\":1450399111696.0000000001,\"customFields\":[\"bar\"]},\"label\":\"agg\",\"hasIdBeenSet\":true,\"sortInfoList\":[],\"criteriaIdParent\":1009},\"attributeName\":\"bar\"}}";
+		String json = "{\"type\":\"com.fletch22.orb.query.constraint.ConstraintDetailsAggregate\",\"properties\":{\"relationshipOperator\":\"ARE\",\"aggregate\":\"UNIQUE\",\"criteriaForAggregation\":{\"fieldOfInterest\":[\"bar\"],\"criteriaId\":1010,\"orbType\":{\"id\":1008,\"label\":\"foo\",\"tranDate\":1450399111696.0000000001,\"customFields\":[\"bar\"]},\"label\":\"agg\",\"hasIdBeenSet\":true,\"sortInfoList\":[],\"criteriaIdParent\":1009},\"attributeName\":\"bar\"}}";
 		
 		Gson gson = gsonFactory.getInstance();
 		
@@ -314,9 +332,10 @@ public class JsonWrapperTest {
 
 	@Test
 	public void testCriteriaDeserialization() {
-		String json = "{\"criteriaId\":1009,\"orbType\":{\"id\":1008,\"label\":\"foo\",\"tranDate\":1450399111696.0000000001,\"customFields\":[\"bar\"]},\"label\":\"fuzzyThings\",\"hasIdBeenSet\":true,\"sortInfoList\":[],\"criteriaIdParent\":-1,\"logicalConstraint\":{\"logicalOperator\":\"AND\",\"constraintList\":[{\"type\":\"com.fletch22.orb.query.constraint.ConstraintDetailsAggregate\",\"properties\":{\"relationshipOperator\":\"IS\",\"aggregate\":\"UNIQUE\",\"criteriaForAggregation\":{\"fieldOfInterest\":\"bar\",\"criteriaId\":1010,\"orbType\":{\"id\":1008,\"label\":\"foo\",\"tranDate\":1450399111696.0000000001,\"customFields\":[\"bar\"]},\"label\":\"agg\",\"hasIdBeenSet\":true,\"sortInfoList\":[],\"criteriaIdParent\":1009},\"attributeName\":\"bar\"}}]}}";
-		
+		String json = "{\"criteriaId\":1009,\"orbType\":{\"id\":1008,\"label\":\"foo\",\"tranDate\":1450399111696.0000000001,\"customFields\":[\"bar\"]},\"label\":\"fuzzyThings\",\"hasIdBeenSet\":true,\"sortInfoList\":[],\"criteriaIdParent\":-1,\"logicalConstraint\":{\"logicalOperator\":\"AND\",\"constraintList\":[{\"type\":\"com.fletch22.orb.query.constraint.ConstraintDetailsAggregate\",\"properties\":{\"relationshipOperator\":\"ARE\",\"aggregate\":\"UNIQUE\",\"criteriaForAggregation\":{\"fieldOfInterest\":[\"bar\"],\"criteriaId\":1010,\"orbType\":{\"id\":1008,\"label\":\"foo\",\"tranDate\":1450399111696.0000000001,\"customFields\":[\"bar\"]},\"label\":\"agg\",\"hasIdBeenSet\":true,\"sortInfoList\":[],\"criteriaIdParent\":1009},\"attributeName\":\"bar\"}}]}}";
 		Gson gson = gsonFactory.getInstance();
+		
+		logger.info(json);
 		
 		CriteriaStandard criteriaStandard = gson.fromJson(json, com.fletch22.orb.query.criteria.CriteriaStandard.class);
 		
@@ -325,7 +344,7 @@ public class JsonWrapperTest {
 
 	@Test
 	public void testMethodCallAttach() {
-		String json = "{\"command\":{\"methodCall\":{\"className\":\"com.fletch22.orb.query.QueryManager\"},\"methodName\":\"attach\",\"methodParameters\":[{\"parameterTypeName\":\"class com.fletch22.orb.query.criteria.Criteria\", \"argument\":{\"clazzName\":\"com.fletch22.orb.query.criteria.CriteriaStandard\",\"objectValueAsJson\":\"{\\\"criteriaId\\\":1002,\\\"orbType\\\":{\\\"id\\\":1001,\\\"label\\\":\\\"foo\\\",\\\"tranDate\\\":1450397912218.0000000000,\\\"customFields\\\":[\\\"bar\\\"]},\\\"label\\\":\\\"fuzzyThings\\\",\\\"hasIdBeenSet\\\":true,\\\"sortInfoList\\\":[],\\\"criteriaIdParent\\\":-1,\\\"logicalConstraint\\\":{\\\"logicalOperator\\\":\\\"AND\\\",\\\"constraintList\\\":[{\\\"type\\\":\\\"com.fletch22.orb.query.constraint.ConstraintDetailsAggregate\\\",\\\"properties\\\":{\\\"relationshipOperator\\\":\\\"IS\\\",\\\"aggregate\\\":\\\"UNIQUE\\\",\\\"criteriaForAggregation\\\":{\\\"fieldOfInterest\\\":\\\"bar\\\",\\\"criteriaId\\\":1003,\\\"orbType\\\":{\\\"id\\\":1001,\\\"label\\\":\\\"foo\\\",\\\"tranDate\\\":1450397912218.0000000000,\\\"customFields\\\":[\\\"bar\\\"]},\\\"label\\\":\\\"agg\\\",\\\"hasIdBeenSet\\\":true,\\\"sortInfoList\\\":[],\\\"criteriaIdParent\\\":1002},\\\"attributeName\\\":\\\"bar\\\"}}]}}\"}}]}}";
+		String json = "{\"command\":{\"methodCall\":{\"className\":\"com.fletch22.orb.query.QueryManager\"},\"methodName\":\"attach\",\"methodParameters\":[{\"parameterTypeName\":\"class com.fletch22.orb.query.criteria.Criteria\", \"argument\":{\"clazzName\":\"com.fletch22.orb.query.criteria.CriteriaStandard\",\"objectValueAsJson\":\"{\\\"criteriaId\\\":1002,\\\"orbType\\\":{\\\"id\\\":1001,\\\"label\\\":\\\"foo\\\",\\\"tranDate\\\":1450397912218.0000000000,\\\"customFields\\\":[\\\"bar\\\"]},\\\"label\\\":\\\"fuzzyThings\\\",\\\"hasIdBeenSet\\\":true,\\\"sortInfoList\\\":[],\\\"criteriaIdParent\\\":-1,\\\"logicalConstraint\\\":{\\\"logicalOperator\\\":\\\"AND\\\",\\\"constraintList\\\":[{\\\"type\\\":\\\"com.fletch22.orb.query.constraint.ConstraintDetailsAggregate\\\",\\\"properties\\\":{\\\"relationshipOperator\\\":\\\"ARE\\\",\\\"aggregate\\\":\\\"UNIQUE\\\",\\\"criteriaForAggregation\\\":{\\\"fieldOfInterest\\\":[\\\"bar\\\"],\\\"criteriaId\\\":1003,\\\"orbType\\\":{\\\"id\\\":1001,\\\"label\\\":\\\"foo\\\",\\\"tranDate\\\":1450397912218.0000000000,\\\"customFields\\\":[\\\"bar\\\"]},\\\"label\\\":\\\"agg\\\",\\\"hasIdBeenSet\\\":true,\\\"sortInfoList\\\":[],\\\"criteriaIdParent\\\":1002},\\\"attributeName\\\":\\\"bar\\\"}}]}}\"}}]}}";
 
 		MethodCallCommand methodCallCommand = new MethodCallCommand();
 		methodCallCommand.setGsonFactory(gsonFactory);

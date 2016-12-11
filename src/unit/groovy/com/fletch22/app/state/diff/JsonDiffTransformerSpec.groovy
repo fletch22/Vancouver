@@ -66,7 +66,7 @@ class JsonDiffTransformerSpec extends Specification {
 	@Shared 
 	String addedObjectToNonArrayBadDiff = '{"kind":"N","path":["brickleberry"],"rhs":{"id":525,"type":"berry","weather":"sunshine","temp":70,"arm":{"id":534,"type":"appendage","hand":{"id":435,"type":"manipulator","finger":[{"id":63,"type":"gripper","scissors":"fiskers"}]}}}}'
 	
-	@Shared
+	@Shared 
 	String addedProperty = '{"kind":"N","path":["appContainer","children",0,"children"],"rhs":[{"parentId":1041,"id":"e36b5b90-ab86-11e6-9ce1-55b6e0e790ec","typeLabel":"Website"}]}'
 	
 	@Shared

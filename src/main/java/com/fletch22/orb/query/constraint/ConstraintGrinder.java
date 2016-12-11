@@ -26,22 +26,22 @@ import com.googlecode.cqengine.query.QueryFactory;
 import com.googlecode.cqengine.resultset.ResultSet;
 
 public class ConstraintGrinder {
-	
+
 	Logger logger = LoggerFactory.getLogger(ConstraintGrinder.class);
-	
+
 	Criteria criteria;
 	IndexedCollection<CacheEntry> indexedCollection;
 	long orbTypeInternalId;
-		
+
 	Query<CacheEntry> query = null;
 	ConstraintKitchen constraintKitchen;
 
 	private OrbTypeManager orbTypeManager;
-	
+
 	private OrbCollection orbCollection;
-	
+
 	private ConstraintProcessor constraintProcessor;
-	
+
 	public ConstraintGrinder(Criteria criteria, IndexedCollection<CacheEntry> indexedCollection) {
 		this.criteria = criteria;
 		this.indexedCollection = indexedCollection;
@@ -49,40 +49,40 @@ public class ConstraintGrinder {
 		this.constraintKitchen = (ConstraintKitchen) Fletch22ApplicationContext.getApplicationContext().getBean(ConstraintKitchen.class);
 		this.orbTypeManager = (OrbTypeManager) Fletch22ApplicationContext.getApplicationContext().getBean(OrbTypeManager.class);
 		this.orbCollection = (OrbCollection) Fletch22ApplicationContext.getApplicationContext().getBean(Cache.class).orbCollection;
-		this.constraintProcessor = (ConstraintProcessor) Fletch22ApplicationContext.getApplicationContext().getBean(ConstraintProcessor.class); 
-		
-		if (criteria.logicalConstraint == null)  {
+		this.constraintProcessor = (ConstraintProcessor) Fletch22ApplicationContext.getApplicationContext().getBean(ConstraintProcessor.class);
+
+		if (criteria.logicalConstraint == null) {
 			this.query = QueryFactory.all(CacheEntry.class);
 		} else {
 			this.query = processConstraint(criteria.logicalConstraint);
 		}
 	}
-	
+
 	public List<CacheEntry> listCacheEntries() {
-		
+
 		ResultSet<CacheEntry> resultSet = this.indexedCollection.retrieve(query);
-		
+
 		List<CacheEntry> cacheEntryList = new ArrayList<CacheEntry>();
 		for (CacheEntry cacheEntry : resultSet) {
 			cacheEntryList.add(cacheEntry);
 		}
-		
+
 		return cacheEntryList;
 	}
-	
+
 	public OrbResultSet list() {
-		
+
 		ResultSet<CacheEntry> resultSetCacheEntries = this.indexedCollection.retrieve(query);
-		
+
 		List<Orb> orbList = new ArrayList<Orb>(resultSetCacheEntries.size());
-		
+
 		for (CacheEntry cacheEntry : resultSetCacheEntries) {
 			Orb orb = orbCollection.get(cacheEntry.getId());
 			orbList.add(orb);
 		}
-		
+
 		if (criteria.hasSortCriteria()) {
-			
+
 			List<CriteriaSortInfo> criteriaSortInfoList = criteria.getSortInfoList();
 			List<GrinderSortInfo> grinderSortInfoList = new ArrayList<GrinderSortInfo>();
 			for (CriteriaSortInfo criteriaSortInfo : criteriaSortInfoList) {
@@ -92,15 +92,15 @@ public class ConstraintGrinder {
 				grinderSortInfo.sortIndex = orbTypeManager.getIndexOfAttribute(criteria.getOrbTypeInternalId(), criteriaSortInfo.sortAttributeName);
 				grinderSortInfoList.add(grinderSortInfo);
 			}
-			
+
 			OrbType orbType = orbTypeManager.getOrbType(this.orbTypeInternalId);
 			OrbComparator rowComparator = new OrbComparator(grinderSortInfoList, orbType);
 			Collections.sort(orbList, rowComparator);
 		}
-		
+
 		return new OrbResultSet(orbList);
 	}
-	
+
 	private Query<CacheEntry> processConstraint(LogicalConstraint logicalConstraint) {
 		return logicalConstraint.acceptConstraintProcessorVisitor(this.constraintProcessor, this.orbTypeInternalId);
 	}

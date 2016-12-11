@@ -22,18 +22,18 @@ public class CriteriaBuilder {
 		criteriaStandard = new CriteriaStandard(orbTypeInternalId, randomUtil.getRandomUuidString());
 	}
 	
-	public CriteriaBuilder addAmongstUniqueConstraint(long orbTypeInternalId, String attributeNameToBeUnique) {
+	public CriteriaBuilder addAmongstUniqueConstraint(long orbTypeInternalId, String[] attributeNameToBeUnique) {
 		
 		CriteriaAggregate criteriaForAggregation = new CriteriaAggregate(orbTypeInternalId, randomUtil.getRandomUuidString(), attributeNameToBeUnique);
-		criteriaStandard.addAnd(Constraint.is(attributeNameToBeUnique, Aggregate.AMONGST_UNIQUE, criteriaForAggregation));
+		criteriaStandard.addAnd(Constraint.are(attributeNameToBeUnique, Aggregate.AMONGST_UNIQUE, criteriaForAggregation));
 		
 		return this;
 	}
 	
-	public CriteriaBuilder addNotAmongstUniqueConstraint(long orbTypeInternalId, String attributeNameToBeUnique) {
+	public CriteriaBuilder addNotAmongstUniqueConstraint(long orbTypeInternalId, String[] attributeNameToBeUnique) {
 		
 		CriteriaAggregate criteriaForAggregation = new CriteriaAggregate(orbTypeInternalId, randomUtil.getRandomUuidString(), attributeNameToBeUnique);
-		criteriaStandard.addAnd(Constraint.is(attributeNameToBeUnique, Aggregate.NOT_AMONGST_UNIQUE, criteriaForAggregation));
+		criteriaStandard.addAnd(Constraint.are(attributeNameToBeUnique, Aggregate.NOT_AMONGST_UNIQUE, criteriaForAggregation));
 		
 		return this;
 	}

@@ -56,6 +56,9 @@ public class JsonDiffProcessorService {
 
 	@Autowired
 	DeleteService deleteService;
+	
+	@Autowired
+	EditObjectService editObjectService;
 
 	private Gson gson = new Gson();
 
@@ -115,13 +118,16 @@ public class JsonDiffProcessorService {
 	}
 
 	private void processEditedProperty(String state, JsonArray pathInformation, JsonElement newValue) {
-		throw new NotImplementedException("processDeleteProperty not implemented yet. (Set to null?)");
-//		EditedProperty editPropertyInfo = getEditedPropertyInfo(state, pathInformation, newValue);
+		// throw new NotImplementedException("processDeleteProperty not implemented yet. (Set to null?)");
+		EditedProperty editPropertyInfo = getEditedPropertyInfo(state, pathInformation, newValue);
+		
+		editObjectService.process(editPropertyInfo);
 	}
 
 	protected void processDeleteProperty(String state, JsonArray pathInformation, JsonElement deletedChild) {
 		throw new NotImplementedException("processDeleteProperty not implemented yet. (Set to null?)");
-		//ParentAndChild parentAndChild = getDeletePropertyInfo(state, pathInformation, deletedChild);
+		// ParentAndChild parentAndChild = getDeletePropertyInfo(state,
+		// pathInformation, deletedChild);
 	}
 
 	private StuntDoubleAndNewId processAddedChild(JsonObject state, JsonArray pathInformation, long index, JsonElement jsonElementChild) {
@@ -249,6 +255,9 @@ public class JsonDiffProcessorService {
 		for (Entry<String, JsonElement> entry : jsonElementChild.getAsJsonObject().entrySet()) {
 			key = entry.getKey();
 			JsonElement jsonElement = entry.getValue();
+			
+			logger.info("JSON Element: " + jsonElement.toString());
+			
 			if (jsonElement.isJsonPrimitive()) {
 				JsonPrimitive jsonPrimitive = jsonElement.getAsJsonPrimitive();
 				if (jsonPrimitive.isString()) {
@@ -263,9 +272,14 @@ public class JsonDiffProcessorService {
 										key));
 					}
 				}
+			} else if (jsonElement.isJsonArray()) {
+				JsonArray jsonArray = jsonElement.getAsJsonArray();
+				if (jsonArray.size() > 0) {
+					throw new RuntimeException(String.format("Encountered problem while trying to get propert '%s' from newly added object. Property was detected as array type but was not empty. This is not allowed on this type of operation."));
+				}
 			} else {
 				throw new RuntimeException(
-						"Encountered problem while trying to get the properties from a newly added object. Encountered an object property whose value was not a primitive. This is not allowed. Added objects must only have string valued properties.");
+						"Encountered problem while trying to get the properties from a newly added object. Encountered an object property whose value was not a primitive. This is not allowed. Added objects must only have string valued properties or empty arrays..");
 			}
 		}
 		String type = properties.remove(PROPERTY_TYPE_LABEL);

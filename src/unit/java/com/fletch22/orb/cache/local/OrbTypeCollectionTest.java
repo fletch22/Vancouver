@@ -73,7 +73,7 @@ public class OrbTypeCollectionTest {
 		stopWatch.stop();
 		
 		seconds = (double)stopWatch.getNanoTime() / 1000000000.0;
-		logger.debug("CG Time: {}", seconds);
+		logger.info("Collection Get Time: {}", seconds);
 		logger.debug("Nano time: {}", stopWatch.getNanoTime());
 		assertTrue(stopWatch.getNanoTime() < 45000); 
 	}

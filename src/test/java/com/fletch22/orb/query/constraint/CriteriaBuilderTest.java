@@ -58,8 +58,9 @@ public class CriteriaBuilderTest {
 		String attributeNameToBeUnique = "foo";
 		
 		// Act
+		String[] attributeNames = { attributeNameToBeUnique };
 		Criteria criteria = new CriteriaBuilder(orbTypeInternalId)
-			.addAmongstUniqueConstraint(orbTypeInternalId, attributeNameToBeUnique)
+			.addAmongstUniqueConstraint(orbTypeInternalId, attributeNames)
 			.build();
 		
 		// Assert

@@ -33,9 +33,10 @@ public class QueryMother {
 		String queryLabel = "fuzzyThings";
 		Criteria criteria = new CriteriaStandard(orbTypeInternalId, queryLabel);
 		
-		CriteriaAggregate criteriaAgg = new CriteriaAggregate(orbTypeInternalId, "agg", attributeName);
+		String[] attributeNames = { attributeName };
+		CriteriaAggregate criteriaAgg = new CriteriaAggregate(orbTypeInternalId, "agg", attributeNames);
 		
-		criteria.addAnd(Constraint.is(attributeName, Aggregate.AMONGST_UNIQUE, criteriaAgg));
+		criteria.addAnd(Constraint.are(attributeNames, Aggregate.AMONGST_UNIQUE, criteriaAgg));
 		
 		queryManager.addToCollection(criteria);
 		
@@ -54,9 +55,10 @@ public class QueryMother {
 		String queryLabel = "fuzzyThings";
 		Criteria criteria = new CriteriaStandard(orbTypeInternalId, queryLabel);
 		
-		CriteriaAggregate criteriaAgg = new CriteriaAggregate(orbTypeInternalId, "agg", attributeName2);
+		String[] attributeNames = { attributeName2 };
+		CriteriaAggregate criteriaAgg = new CriteriaAggregate(orbTypeInternalId, "agg", attributeNames);
 		
-		criteria.addAnd(Constraint.is(attributeName, Aggregate.AMONGST_UNIQUE, criteriaAgg));
+		criteria.addAnd(Constraint.are(attributeNames, Aggregate.AMONGST_UNIQUE, criteriaAgg));
 		
 		queryManager.addToCollection(criteria);
 		

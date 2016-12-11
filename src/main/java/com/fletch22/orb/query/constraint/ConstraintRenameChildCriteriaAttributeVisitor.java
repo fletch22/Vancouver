@@ -43,9 +43,19 @@ public class ConstraintRenameChildCriteriaAttributeVisitor {
 		}
 	}
 	
+	public void renameAttribute(ConstraintDetailsAggregate constraintDetailsAggregate) {
+		for (int i = 0 ; i < constraintDetailsAggregate.attributeNames.length; i++) {
+			if (constraintDetailsAggregate.attributeNames[i].equals(oldAttributeName)) {
+				constraintDetailsAggregate.attributeNames[i] = newAttributeName;
+			}
+		}
+	}
+	
 	public void renameFieldOfInterest(CriteriaAggregate criteriaAggregate) {
-		if (criteriaAggregate.fieldOfInterest.equals(oldAttributeName)) {
-			criteriaAggregate.fieldOfInterest = newAttributeName;
+		for (int i = 0 ; i < criteriaAggregate.fieldOfInterest.length; i++) {
+			if (criteriaAggregate.fieldOfInterest[i].equals(oldAttributeName)) {
+				criteriaAggregate.fieldOfInterest[i] = newAttributeName;
+			}
 		}
 	}
 }

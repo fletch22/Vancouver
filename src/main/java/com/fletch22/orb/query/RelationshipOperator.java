@@ -4,6 +4,7 @@ public enum RelationshipOperator {
 	EQUALS,
 	NOT_EQUALS,
 	IN,
-	IS, 
+	IS,
+	ARE,
 	GREATER_THAN
 }

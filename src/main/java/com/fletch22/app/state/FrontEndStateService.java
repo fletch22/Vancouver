@@ -79,14 +79,14 @@ public class FrontEndStateService {
 	
 	private String insertNewIdsIntoState(String state, ArrayList<StuntDoubleAndNewId> stuntDoubleAndNewIdList) {
 		for (StuntDoubleAndNewId stuntDoubleAndNewId : stuntDoubleAndNewIdList) {
-			state = state.replace(stuntDoubleAndNewId.temporaryId, String.valueOf(stuntDoubleAndNewId.idNew));
+			state = state.replace("\"" + stuntDoubleAndNewId.temporaryId + "\"", String.valueOf(stuntDoubleAndNewId.idNew));
 		}
 		
 		return state;
 	}
 
 	public StateIndexInfo getHistorical(int index) {
-		return frontEndStateDao.getHistorical(index);
+		return frontEndStateDao.getHistorical(index);  
 	}
 
 	public StateIndexInfo getMostRecentHistorical() {

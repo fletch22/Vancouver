@@ -175,7 +175,7 @@ class QueryManagerSpec extends Specification {
 		criteriaAgg = queryManager.get(criteriaAgg.getCriteriaId());
 		
 		then:
-		criteriaAgg.fieldOfInterest == "foo"
+		criteriaAgg.fieldOfInterest == ["foo"]
 	}
 
 	private Criteria createSampleQuery() {

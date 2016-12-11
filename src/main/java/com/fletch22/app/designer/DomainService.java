@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fletch22.app.designer.reference.ReferenceResolverService;
-import com.fletch22.util.StopWatch;
 
 public abstract class DomainService<T extends Parent, U extends Child> {
 	
@@ -53,4 +52,5 @@ public abstract class DomainService<T extends Parent, U extends Child> {
 	
 	public abstract T createInstance(Map<String, String> props);
 	
+	public abstract T update(long id, Map<String, String> properties);
 }

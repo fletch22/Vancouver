@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import com.fletch22.app.designer.AppDesignerModule;
 import com.fletch22.app.designer.DomainService;
 import com.fletch22.app.designer.app.App;
+import com.fletch22.app.designer.website.Website;
 
 @Component
 public class AppContainerService extends DomainService<AppContainer, App> {
@@ -58,5 +59,15 @@ public class AppContainerService extends DomainService<AppContainer, App> {
 	
 	public AppContainer getDefault() {
 		return this.findByLabel(AppDesignerModule.DEFAULT_APP_CONTAINER_NAME);
+	}
+	
+	@Override
+	public AppContainer update(long id, Map<String, String> properties) {
+		validatePropertiesSimple(properties, AppContainer.ATTRIBUTE_LIST);
+		
+		AppContainer appContainer = get(id);
+		if (properties.containsKey(AppContainer.ATTR_LABEL)) appContainer.label = properties.get(AppContainer.ATTR_LABEL);
+		
+		return appContainer;
 	}
 }

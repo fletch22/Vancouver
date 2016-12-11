@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fletch22.app.designer.DomainService;
-import com.fletch22.app.designer.page.Page;
+import com.fletch22.app.designer.website.Website;
 
 @Component
 public class WebFolderService extends DomainService<WebFolder, WebFolderChild> {
@@ -32,6 +32,18 @@ public class WebFolderService extends DomainService<WebFolder, WebFolderChild> {
 	
 	@Override
 	public WebFolder createInstance(Map<String, String> properties) {
-		throw new NotImplementedException("Not yet finished developing");
+		validatePropertiesSimple(properties, WebFolder.ATTRIBUTE_LIST);
+		
+		return createInstance(properties.get(WebFolder.ATTR_LABEL));
+	}
+	
+	@Override
+	public WebFolder update(long id, Map<String, String> properties) {
+		validatePropertiesSimple(properties, Website.ATTRIBUTE_LIST);
+		
+		WebFolder webFolder = get(id);
+		if (properties.containsKey(WebFolder.ATTR_LABEL)) webFolder.label = properties.get(WebFolder.ATTR_LABEL);
+		
+		return webFolder;
 	}
 }

@@ -1,5 +1,7 @@
 package com.fletch22.orb.query.constraint;
 
+import java.util.Arrays;
+
 import com.fletch22.orb.query.LogicalConstraint;
 import com.fletch22.orb.query.criteria.CriteriaAggregate;
 import com.fletch22.orb.query.criteria.CriteriaCollector;
@@ -29,7 +31,7 @@ public class CollectCriteriaWithAttributeVisitor {
 		boolean result = false;
 		CriteriaAggregate criteriaAgg = constraintDetailsAggregate.criteriaForAggregation;
 
-		if (doesConstraintDetailsHaveAttribute(constraintDetailsAggregate) || criteriaAgg.fieldOfInterest.equals(attributeToFind)) {
+		if (doesConstraintDetailsAggregateHaveAttribute(constraintDetailsAggregate) || Arrays.asList(criteriaAgg.fieldOfInterest).contains(attributeToFind)) {
 			result = true;
 		}
 
@@ -46,6 +48,14 @@ public class CollectCriteriaWithAttributeVisitor {
 
 	public boolean visit(ConstraintDetailsSingleValue constraintDetailsSingleValue) {
 		return doesConstraintDetailsHaveAttribute(constraintDetailsSingleValue);
+	}
+	
+	public boolean doesConstraintDetailsAggregateHaveAttribute(ConstraintDetailsAggregate constraintDetailsAggregate) {
+		boolean result = false;
+		if (Arrays.asList(constraintDetailsAggregate.attributeNames).contains(this.attributeToFind)) {
+			result = true;
+		}
+		return result;
 	}
 
 	public boolean doesConstraintDetailsHaveAttribute(ConstraintDetails constraintDetails) {

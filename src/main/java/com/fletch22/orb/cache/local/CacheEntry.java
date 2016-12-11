@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Set;
 
 import com.fletch22.orb.Orb;
+import com.fletch22.orb.query.compositing.Compositor;
 import com.googlecode.cqengine.attribute.SimpleAttribute;
 import com.googlecode.cqengine.query.option.QueryOptions;
 
@@ -43,6 +44,15 @@ public class CacheEntry {
 		int i = Integer.parseInt(index);
 		
 		return (this.attributes.size() > i) ? attributes.get(i) : null;
+	}
+	
+	public String getCompositeValues(String indexes) {
+		String[] nthElements = indexes.split(",");
+		String[] values = new String[nthElements.length];
+		for (int i = 0; i < nthElements.length; i++) {
+			values[i] = this.getValue(nthElements[i]);
+		}
+		return Compositor.getCompositeValue(values);
 	}
 	
 	public ArrayList<String> getAttributes() {

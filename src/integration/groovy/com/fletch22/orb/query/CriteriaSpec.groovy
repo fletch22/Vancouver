@@ -188,8 +188,11 @@ class CriteriaSpec extends Specification {
 		given:
 		Criteria criteria = new CriteriaStandard(orbType.id, "foo")
 		
-		CriteriaAggregate criteriaForAggregation = new CriteriaAggregate(orbType.id, "asdfdsaf", ATTRIBUTE_COLOR)
-		criteria.addAnd(Constraint.is(ATTRIBUTE_COLOR, Aggregate.AMONGST_UNIQUE, criteriaForAggregation))
+		String[] fieldsOfInterest = new String[1]
+		fieldsOfInterest[0] = ATTRIBUTE_COLOR
+		CriteriaAggregate criteriaForAggregation = new CriteriaAggregate(orbType.id, "asdfdsaf", fieldsOfInterest)
+		
+		criteria.addAnd(Constraint.are(fieldsOfInterest, Aggregate.AMONGST_UNIQUE, criteriaForAggregation))
 		
 		when:
 		StopWatch stopWatch = new StopWatch()

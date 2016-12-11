@@ -67,6 +67,6 @@ class LogicalConstraintSpec extends Specification {
 		then:
 		description != null
 		print description.toString()
-		description.toString() == "AND the value for attribute 'foo' IS AMONGST_UNIQUE for Orb Type 'bar's field 'foo' "
+		description.toString() == "AND the value(s) for attribute(s) [foo] ARE AMONGST_UNIQUE for Orb Type [bar]'s attribute(s) [foo] "
 	}
 }
