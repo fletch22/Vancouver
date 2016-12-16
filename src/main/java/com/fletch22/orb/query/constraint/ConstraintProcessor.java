@@ -161,8 +161,8 @@ public class ConstraintProcessor implements ConstraintProcessVisitor {
 	
 	private SimpleNullableAttribute<CacheEntry, String> createSimpleNullableAtttribute(long orbTypeInternalId, ConstraintDetailsAggregate constraintDetailsAggregate) {
 		
-		Arrays.sort(constraintDetailsAggregate.criteriaForAggregation.fieldOfInterest);
-		Class<? extends SimpleNullableAttribute<CacheEntry, String>> clazz = getClazzFactory(constraintDetailsAggregate.criteriaForAggregation.fieldOfInterest, orbTypeInternalId);
+		Arrays.sort(constraintDetailsAggregate.criteriaForAggregation.fieldsOfInterest);
+		Class<? extends SimpleNullableAttribute<CacheEntry, String>> clazz = getClazzFactory(constraintDetailsAggregate.criteriaForAggregation.fieldsOfInterest, orbTypeInternalId);
 
 		SimpleNullableAttribute<CacheEntry, String> simpleNullableAttribute = null;
 		try {
@@ -200,16 +200,16 @@ public class ConstraintProcessor implements ConstraintProcessVisitor {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private Class<? extends SimpleNullableAttribute<CacheEntry, String>> getClazzFactory(String[] attributeName, long orbTypeInternalId) {
+	private Class<? extends SimpleNullableAttribute<CacheEntry, String>> getClazzFactory(String[] attributeNames, long orbTypeInternalId) {
 		
 		Class<? extends SimpleNullableAttribute<CacheEntry, String>> clazz = null;
 		try {
 			String compositeKey = StringUtils.EMPTY;
-			int[] indexesOfAttributes = new int[attributeName.length];
+			int[] indexesOfAttributes = new int[attributeNames.length];
 			
-			for (int i = 0; i < attributeName.length; i++) {
-				indexesOfAttributes[i] = this.orbTypeManager.getIndexOfAttribute(orbTypeInternalId, attributeName[i]);
-				compositeKey += Compositor.UNIQUEIFIER + SimpleNullableAttribute.class.getName() + "_" + String.valueOf(orbTypeInternalId) + "_" + String.valueOf(indexesOfAttributes[i]) + "_" + attributeName[i];
+			for (int i = 0; i < attributeNames.length; i++) {
+				indexesOfAttributes[i] = this.orbTypeManager.getIndexOfAttribute(orbTypeInternalId, attributeNames[i]);
+				compositeKey += Compositor.UNIQUEIFIER + SimpleNullableAttribute.class.getName() + "_" + String.valueOf(orbTypeInternalId) + "_" + String.valueOf(indexesOfAttributes[i]) + "_" + attributeNames[i];
 			}
 			
 			if (hasBespokeAttributeClassBeenRegistered(compositeKey)) {
@@ -244,14 +244,14 @@ public class ConstraintProcessor implements ConstraintProcessVisitor {
 		map.put(key, clazz);
 	}
 	
-	private String getCompositeIndexValue(Orb orb, String[] fieldOfInterest) {
+	private String getCompositeIndexValue(Orb orb, String[] fieldsOfInterest) {
 		
 		// Note: This is a trick that works. When composing a multi-key index, accidental dupes are a risk. Simply adding the two values together
 		// might create a dupe where none was found. For example "foo"+"bar" would yield the same key as "fo"+"obar";
-		Arrays.sort(fieldOfInterest);
-		String[] values = new String[fieldOfInterest.length];
-		for (int i = 0; i < fieldOfInterest.length; i++) {
-			values[i] = orb.getUserDefinedProperties().get(fieldOfInterest[i]);
+		Arrays.sort(fieldsOfInterest);
+		String[] values = new String[fieldsOfInterest.length];
+		for (int i = 0; i < fieldsOfInterest.length; i++) {
+			values[i] = orb.getUserDefinedProperties().get(fieldsOfInterest[i]);
 		}
 		
 		return Compositor.getCompositeValue(values);
@@ -261,7 +261,7 @@ public class ConstraintProcessor implements ConstraintProcessVisitor {
 		Map<String, Integer> aggregateColumnValues = new HashMap<String, Integer>();
 				
 		for (Orb orb : orbResultSet.orbList) {
-			String value = getCompositeIndexValue(orb, constraintDetailsAggregate.criteriaForAggregation.fieldOfInterest);
+			String value = getCompositeIndexValue(orb, constraintDetailsAggregate.criteriaForAggregation.fieldsOfInterest);
 			
 			Integer frequency = aggregateColumnValues.get(value);
 			frequency = (frequency == null) ? 1: frequency + 1;

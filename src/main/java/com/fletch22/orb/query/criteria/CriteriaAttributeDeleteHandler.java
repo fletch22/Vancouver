@@ -6,10 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fletch22.orb.cache.query.CriteriaCollection;
 import com.fletch22.orb.query.LogicalConstraint;
-import com.fletch22.orb.query.constraint.Constraint;
-import com.fletch22.orb.query.constraint.ConstraintDetails;
-import com.fletch22.orb.query.constraint.ConstraintDetailsList;
-import com.fletch22.orb.query.constraint.ConstraintDetailsSingleValue;
 
 public abstract class CriteriaAttributeDeleteHandler {
 
@@ -30,6 +26,7 @@ public abstract class CriteriaAttributeDeleteHandler {
 		}
 	}
 
+	// NOTE: If an attribute is deleted then then all the criteria associated with it is deleted.
 	protected void handleAttributeDeletion(LogicalConstraint logicalConstraint, long queryOrbInternalId, String attributeName, boolean isDeleteDependencies) {
 		if (isDeleteDependencies) {
 			if (getCriteriaManager().doesCriteriaExist(queryOrbInternalId)) {

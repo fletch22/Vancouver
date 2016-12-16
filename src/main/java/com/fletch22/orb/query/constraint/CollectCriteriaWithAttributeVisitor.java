@@ -31,7 +31,7 @@ public class CollectCriteriaWithAttributeVisitor {
 		boolean result = false;
 		CriteriaAggregate criteriaAgg = constraintDetailsAggregate.criteriaForAggregation;
 
-		if (doesConstraintDetailsAggregateHaveAttribute(constraintDetailsAggregate) || Arrays.asList(criteriaAgg.fieldOfInterest).contains(attributeToFind)) {
+		if (doesConstraintDetailsAggregateHaveAttribute(constraintDetailsAggregate) || Arrays.asList(criteriaAgg.fieldsOfInterest).contains(attributeToFind)) {
 			result = true;
 		}
 

@@ -52,9 +52,9 @@ public class ConstraintRenameChildCriteriaAttributeVisitor {
 	}
 	
 	public void renameFieldOfInterest(CriteriaAggregate criteriaAggregate) {
-		for (int i = 0 ; i < criteriaAggregate.fieldOfInterest.length; i++) {
-			if (criteriaAggregate.fieldOfInterest[i].equals(oldAttributeName)) {
-				criteriaAggregate.fieldOfInterest[i] = newAttributeName;
+		for (int i = 0 ; i < criteriaAggregate.fieldsOfInterest.length; i++) {
+			if (criteriaAggregate.fieldsOfInterest[i].equals(oldAttributeName)) {
+				criteriaAggregate.fieldsOfInterest[i] = newAttributeName;
 			}
 		}
 	}

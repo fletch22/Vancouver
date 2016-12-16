@@ -22,18 +22,16 @@ public class CriteriaBuilder {
 		criteriaStandard = new CriteriaStandard(orbTypeInternalId, randomUtil.getRandomUuidString());
 	}
 	
-	public CriteriaBuilder addAmongstUniqueConstraint(long orbTypeInternalId, String[] attributeNameToBeUnique) {
-		
-		CriteriaAggregate criteriaForAggregation = new CriteriaAggregate(orbTypeInternalId, randomUtil.getRandomUuidString(), attributeNameToBeUnique);
-		criteriaStandard.addAnd(Constraint.are(attributeNameToBeUnique, Aggregate.AMONGST_UNIQUE, criteriaForAggregation));
+	public CriteriaBuilder addAmongstUniqueConstraint(long orbTypeInternalId, String[] attributeNamesToBeUnique) {
+		CriteriaAggregate criteriaForAggregation = new CriteriaAggregate(orbTypeInternalId, randomUtil.getRandomUuidString(), attributeNamesToBeUnique);
+		criteriaStandard.addAnd(Constraint.are(attributeNamesToBeUnique, Aggregate.AMONGST_UNIQUE, criteriaForAggregation));
 		
 		return this;
 	}
 	
-	public CriteriaBuilder addNotAmongstUniqueConstraint(long orbTypeInternalId, String[] attributeNameToBeUnique) {
-		
-		CriteriaAggregate criteriaForAggregation = new CriteriaAggregate(orbTypeInternalId, randomUtil.getRandomUuidString(), attributeNameToBeUnique);
-		criteriaStandard.addAnd(Constraint.are(attributeNameToBeUnique, Aggregate.NOT_AMONGST_UNIQUE, criteriaForAggregation));
+	public CriteriaBuilder addNotAmongstUniqueConstraint(long orbTypeInternalId, String[] attributeNamesToBeUnique) {
+		CriteriaAggregate criteriaForAggregation = new CriteriaAggregate(orbTypeInternalId, randomUtil.getRandomUuidString(), attributeNamesToBeUnique);
+		criteriaStandard.addAnd(Constraint.are(attributeNamesToBeUnique, Aggregate.NOT_AMONGST_UNIQUE, criteriaForAggregation));
 		
 		return this;
 	}

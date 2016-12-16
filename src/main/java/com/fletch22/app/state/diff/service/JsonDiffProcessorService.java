@@ -93,8 +93,6 @@ public class JsonDiffProcessorService {
 	private ResultDiffProcessing processDiffKind(String state, JsonObject jsonObject, JsonArray pathInformation, DiffKind diffKind) {
 		ResultDiffProcessing resultDiffProcessing = new ResultDiffProcessing();
 
-		logger.info("processDiffKind: {}", jsonObject.toString());
-
 		switch (diffKind) {
 		case DELETED_PROPERTY:
 			JsonElement deletedChild = jsonObject.get("lhs");
@@ -174,8 +172,6 @@ public class JsonDiffProcessorService {
 		Diff diff = new Diff();
 		diff.diffKind = getKind(letter);
 
-		logger.debug("diff.diffKind: {}", diff.diffKind.toString());
-
 		switch (diff.diffKind) {
 		case DELETED_PROPERTY:
 			index = jsonElementIndex.getAsLong();
@@ -240,8 +236,6 @@ public class JsonDiffProcessorService {
 
 	private Child getChild(JsonElement jsonElementChild) {
 
-		// logger.debug(jsonElementChild.toString());
-
 		String key = null;
 		Map<String, String> properties = new HashMap<String, String>();
 
@@ -255,8 +249,6 @@ public class JsonDiffProcessorService {
 		for (Entry<String, JsonElement> entry : jsonElementChild.getAsJsonObject().entrySet()) {
 			key = entry.getKey();
 			JsonElement jsonElement = entry.getValue();
-			
-			logger.info("JSON Element: " + jsonElement.toString());
 			
 			if (jsonElement.isJsonPrimitive()) {
 				JsonPrimitive jsonPrimitive = jsonElement.getAsJsonPrimitive();

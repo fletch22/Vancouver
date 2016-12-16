@@ -9,12 +9,12 @@ import com.fletch22.orb.OrbTypeManager;
 
 public class CriteriaAggregate extends Criteria {
 	
-	public String[] fieldOfInterest;
+	public String[] fieldsOfInterest;
 	
 	public CriteriaAggregate(long orbTypeInternalId, String label, String[] fieldOfInterest) {
 		this.orbTypeInternalId = orbTypeInternalId;
 		this.label = label;
-		this.fieldOfInterest = fieldOfInterest;
+		this.fieldsOfInterest = fieldOfInterest;
 	}
 
 	public StringBuffer getDescription() {
@@ -24,7 +24,7 @@ public class CriteriaAggregate extends Criteria {
 		
 		OrbType orbType = getOrbTypeManager().getOrbType(orbTypeInternalId);
 		
-		description.append(String.format("Orb Type [%s]'s attribute(s) [%s] ", orbType.label, String.join(",", this.fieldOfInterest)));
+		description.append(String.format("Orb Type [%s]'s attribute(s) [%s] ", orbType.label, String.join(",", this.fieldsOfInterest)));
 		
 		return description;
 	}

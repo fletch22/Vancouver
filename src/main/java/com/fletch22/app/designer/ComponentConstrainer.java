@@ -14,15 +14,21 @@ public class ComponentConstrainer {
 	DefLimitationManager defLimitationManager;
 
 	public void addAmongstUniqueConstraintOnField(long orbTypeInternalId, String attributeName) {
-		
 		String[] attributeNames = { attributeName };
+		addAmongstUniqueConstraintOnField(orbTypeInternalId, attributeNames);
+	}
+	
+	public void addAmongstUniqueConstraintOnField(long orbTypeInternalId, String[] attributeNames) {
 		Criteria criteria = new CriteriaBuilder(orbTypeInternalId).addAmongstUniqueConstraint(orbTypeInternalId, attributeNames).build();
 		defLimitationManager.addToCollection(criteria);
 	}
 	
 	public void addNotAmongstUniqueConstraintOnField(long orbTypeInternalId, String attributeName) {
-		
 		String[] attributeNames = { attributeName };
+		addNotAmongstUniqueConstraintOnField(orbTypeInternalId, attributeNames);
+	}
+	
+	public void addNotAmongstUniqueConstraintOnField(long orbTypeInternalId, String[] attributeNames) {
 		Criteria criteria = new CriteriaBuilder(orbTypeInternalId).addNotAmongstUniqueConstraint(orbTypeInternalId, attributeNames).build();
 		defLimitationManager.addToCollection(criteria);
 	}
