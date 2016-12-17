@@ -29,7 +29,6 @@ import com.fletch22.orb.cache.indexcollection.IndexedCollectionFactory;
 import com.fletch22.orb.cache.local.Cache;
 import com.fletch22.orb.cache.local.CacheEntry;
 import com.fletch22.orb.limitation.DefLimitationManager;
-import com.fletch22.orb.query.constraint.Constraint;
 import com.fletch22.orb.query.constraint.ConstraintGrinder;
 import com.fletch22.orb.query.constraint.CriteriaBuilder;
 import com.fletch22.orb.query.criteria.Criteria;

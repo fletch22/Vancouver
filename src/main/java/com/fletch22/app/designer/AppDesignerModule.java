@@ -57,13 +57,12 @@ public class AppDesignerModule implements OrbSystemModule {
 
 	@Override
 	public void initialize() {
-
 		createTypes();
 		createInstances();
 	}
 
 	private void createInstances() {
-		logger.info("Creating instances....");
+		logger.debug("Creating instances....");
 
 		AppContainer appContainer = appContainerService.createInstance(DEFAULT_APP_CONTAINER_NAME);
 
@@ -81,23 +80,28 @@ public class AppDesignerModule implements OrbSystemModule {
 		primeQueryIndex(orbTypeInternalId, App.ATTR_LABEL);
 
 		orbTypeInternalId = orbTypeManager.createOrbType(Website.TYPE_LABEL, Website.ATTRIBUTE_LIST);
-		componentConstrainer.addNotAmongstUniqueConstraintOnField(orbTypeInternalId, Website.ATTR_LABEL);
+		String[] websiteCompositeUniqueContraint = { Website.ATTR_LABEL, Website.ATTR_PARENT };
+		componentConstrainer.addNotAmongstUniqueConstraintOnField(orbTypeInternalId, websiteCompositeUniqueContraint);
 		primeQueryIndex(orbTypeInternalId, Website.ATTR_LABEL);
 
 		orbTypeInternalId = orbTypeManager.createOrbType(WebFolder.TYPE_LABEL, WebFolder.ATTRIBUTE_LIST);
-		componentConstrainer.addNotAmongstUniqueConstraintOnField(orbTypeInternalId, WebFolder.ATTR_LABEL);
+		String[] webfolderCompositeUniqueContraint = { WebFolder.ATTR_LABEL, WebFolder.ATTR_PARENT };
+		componentConstrainer.addNotAmongstUniqueConstraintOnField(orbTypeInternalId, webfolderCompositeUniqueContraint);
 		primeQueryIndex(orbTypeInternalId, WebFolder.ATTR_LABEL);
 
 		orbTypeInternalId = orbTypeManager.createOrbType(Page.TYPE_LABEL, Page.ATTRIBUTE_LIST);
-		componentConstrainer.addNotAmongstUniqueConstraintOnField(orbTypeInternalId, Page.ATTR_PAGE_NAME);
+		String[] pageCompositeUniqueContraint = { Page.ATTR_PAGE_NAME, Page.ATTR_PARENT };
+		componentConstrainer.addNotAmongstUniqueConstraintOnField(orbTypeInternalId, pageCompositeUniqueContraint);
 		primeQueryIndex(orbTypeInternalId, Page.ATTR_PAGE_NAME);
 
 		orbTypeInternalId = orbTypeManager.createOrbType(Head.TYPE_LABEL, Head.ATTRIBUTE_LIST);
-		componentConstrainer.addNotAmongstUniqueConstraintOnField(orbTypeInternalId, Head.ATTR_LABEL);
+		String[] headCompositeUniqueContraint = { Head.ATTR_LABEL, Head.ATTR_PARENT };
+		componentConstrainer.addNotAmongstUniqueConstraintOnField(orbTypeInternalId, headCompositeUniqueContraint);
 		primeQueryIndex(orbTypeInternalId, Head.ATTR_LABEL);
 
 		orbTypeInternalId = orbTypeManager.createOrbType(Body.TYPE_LABEL, Body.ATTRIBUTE_LIST);
-		componentConstrainer.addNotAmongstUniqueConstraintOnField(orbTypeInternalId, Body.ATTR_LABEL);
+		String[] bodyCompositeUniqueContraint = { Body.ATTR_LABEL, Body.ATTR_PARENT };
+		componentConstrainer.addNotAmongstUniqueConstraintOnField(orbTypeInternalId, bodyCompositeUniqueContraint);
 		primeQueryIndex(orbTypeInternalId, Body.ATTR_LABEL);
 
 		orbTypeInternalId = orbTypeManager.createOrbType(Div.TYPE_LABEL, Div.ATTRIBUTE_LIST);

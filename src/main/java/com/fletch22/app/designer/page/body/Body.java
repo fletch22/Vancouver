@@ -10,7 +10,7 @@ public class Body extends Parent implements PageChild {
 
 	public static final String TYPE_LABEL = "Body";
 	public static final String ATTR_LABEL = "label";
-	public static LinkedHashSet<String> ATTRIBUTE_LIST = new LinkedHashSet<String>(Arrays.asList(ATTR_LABEL, ATTR_CHILDREN));
+	public static LinkedHashSet<String> ATTRIBUTE_LIST = new LinkedHashSet<String>(Arrays.asList(Body.ATTR_PARENT, ATTR_LABEL, ATTR_CHILDREN));
 	
 	@Override
 	public String getTypeLabel() {

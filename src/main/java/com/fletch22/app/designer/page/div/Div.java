@@ -9,7 +9,7 @@ public class Div extends Parent {
 
 	public static final String TYPE_LABEL = "Div";
 	public static final String ATTR_LABEL = "label";
-	public static LinkedHashSet<String> ATTRIBUTE_LIST = new LinkedHashSet<String>(Arrays.asList(ATTR_LABEL, ATTR_CHILDREN));
+	public static LinkedHashSet<String> ATTRIBUTE_LIST = new LinkedHashSet<String>(Arrays.asList(Div.ATTR_PARENT, ATTR_LABEL, ATTR_CHILDREN));
 	
 	@Override
 	public String getTypeLabel() {
