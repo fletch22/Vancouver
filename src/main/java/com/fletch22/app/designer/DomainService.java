@@ -45,7 +45,7 @@ public abstract class DomainService<T extends Parent, U extends Child> {
 			String property = entry.getKey();
 			boolean doesContainerProperty = attributeSet.contains(property);
 			if (!doesContainerProperty) {
-				throw new RuntimeException(String.format("Encountered problem updating domain properties. Encountered unrecognized property '%'.", property));
+				throw new RuntimeException(String.format("Encountered problem updating domain properties. Encountered unrecognized property '%s'.", property));
 			}
 		}
 	}

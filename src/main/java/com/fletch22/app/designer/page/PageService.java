@@ -2,12 +2,10 @@ package com.fletch22.app.designer.page;
 
 import java.util.Map;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fletch22.app.designer.DomainService;
-import com.fletch22.app.designer.appContainer.AppContainer;
 import com.fletch22.app.designer.website.Website;
 
 @Component
@@ -33,12 +31,14 @@ public class PageService extends DomainService<Page, PageChild> {
 	
 	@Override
 	public Page createInstance(Map<String, String> properties) {
-		throw new NotImplementedException("Not yet finished developing");
+		validatePropertiesSimple(properties, Page.ATTRIBUTE_LIST);
+		
+		return createInstance(properties.get(Page.ATTR_PAGE_NAME));
 	}
 	
 	@Override
 	public Page update(long id, Map<String, String> properties) {
-		validatePropertiesSimple(properties, Website.ATTRIBUTE_LIST);
+		validatePropertiesSimple(properties, Page.ATTRIBUTE_LIST);
 		
 		Page page = get(id);
 		if (properties.containsKey(Page.ATTR_PAGE_NAME)) page.pageName = properties.get(Page.ATTR_PAGE_NAME);

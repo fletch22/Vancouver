@@ -19,9 +19,10 @@ public class PageDao extends AppDesignerDao<Page, PageTransformer> {
 
 	@Override
 	protected void create(Page page) {
-		
 		OrbType orbType = this.orbTypeManager.getOrbType(Page.TYPE_LABEL);
 
+		if (orbType == null) throw new RuntimeException("Type does not exist in database yet.");
+		
 		create(page, orbType);
 	}
 
