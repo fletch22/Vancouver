@@ -27,7 +27,7 @@ public abstract class DomainService<T extends Parent, U extends Child> {
 	public abstract T get(long id);
 	
 	public void clearAndResolveAllDescendents(Parent orbBasedComponent) {
-		referenceResolver.clearAResolveAllDescendents(orbBasedComponent);
+		referenceResolver.clearAndResolveAllDescendents(orbBasedComponent);
 	}
 	
 	public void clearAndResolveNextGeneration(Parent orbBasedComponent) {

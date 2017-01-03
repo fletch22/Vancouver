@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +17,10 @@ import com.fletch22.app.designer.app.App;
 import com.fletch22.app.designer.app.AppService;
 import com.fletch22.app.designer.appContainer.AppContainer;
 import com.fletch22.app.designer.appContainer.AppContainerService;
+import com.fletch22.app.designer.page.Page;
+import com.fletch22.app.designer.page.PageService;
+import com.fletch22.app.designer.webFolder.WebFolder;
+import com.fletch22.app.designer.webFolder.WebFolderService;
 import com.fletch22.app.designer.website.Website;
 import com.fletch22.app.designer.website.WebsiteService;
 import com.fletch22.orb.Orb;
@@ -26,6 +32,9 @@ import com.fletch22.orb.cache.reference.ReferenceUtil;
 
 @Component
 public class ReferenceResolverService {
+	
+	Logger logger = LoggerFactory.getLogger(ReferenceResolverService.class);
+	
 	@Autowired
 	OrbTypeManager orbTypeManager;
 	
@@ -43,6 +52,12 @@ public class ReferenceResolverService {
 	
 	@Autowired
 	WebsiteService websiteService;
+	
+	@Autowired
+	WebFolderService webFolderService;
+	
+	@Autowired
+	PageService pageService;
 	
 	public OrbType getAndCacheOrbType(Map<Long, OrbType> cachedOrbTypes, Orb orb) {
 		OrbType orbType = null;
@@ -62,10 +77,19 @@ public class ReferenceResolverService {
 		
 		for (Child child : orbBasedComponentParent.getChildren().getList()) {
 			if (child instanceof Parent) {
-				clearAndResolveNextGeneration((Parent) child);
+				clearAndResolveAllDescendents((Parent) child);
 			}
-		}
+		}  
 	}
+	
+	public void clearAndResolveAllDescendents(Parent orbBasedComponentParent) {
+		
+		orbBasedComponentParent.getChildren().clear();
+		String childReferences = orbBasedComponentParent.getOrbOriginal().getUserDefinedProperties().get(Parent.ATTR_CHILDREN);
+		if (childReferences != null) {
+			clearAndResolveAllDescendents(orbBasedComponentParent, childReferences);
+		} 
+	}  
 	
 	private void clearAndResolveNextGeneration(Parent orbBasedComponentParent, String childReferences) {
 
@@ -91,19 +115,11 @@ public class ReferenceResolverService {
 		}
 	}
 	
-	public void clearAResolveAllDescendents(Parent orbBasedComponentParent) {
-		
-		orbBasedComponentParent.getChildren().clear();
-		String childReferences = orbBasedComponentParent.getOrbOriginal().getUserDefinedProperties().get(Parent.ATTR_CHILDREN);
-		if (childReferences != null) {
-			clearAndResolveAllDescendents(orbBasedComponentParent, childReferences);
-		}
-	}
-	
 	public void clearAndResolveNextGeneration(Parent orbBasedComponentParent) {
 		
 		orbBasedComponentParent.getChildren().clear();
 		String childReferences = orbBasedComponentParent.getOrbOriginal().getUserDefinedProperties().get(Parent.ATTR_CHILDREN);
+		logger.info("Children : {}", childReferences);
 		if (childReferences != null) {
 			clearAndResolveNextGeneration(orbBasedComponentParent, childReferences);
 		}
@@ -123,6 +139,12 @@ public class ReferenceResolverService {
 				break;
 			case Website.TYPE_LABEL:
 				orbBaseComponentChild = websiteService.get(childId);
+				break;
+			case WebFolder.TYPE_LABEL:
+				orbBaseComponentChild = webFolderService.get(childId);
+				break;
+			case Page.TYPE_LABEL:
+				orbBaseComponentChild = pageService.get(childId);
 				break;
 			default:
 				throw new RuntimeException("Encountered problem trying to determine type while resolving children.");

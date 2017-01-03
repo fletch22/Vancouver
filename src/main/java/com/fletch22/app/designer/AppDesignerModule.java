@@ -12,12 +12,14 @@ import com.fletch22.app.designer.app.AppService;
 import com.fletch22.app.designer.appContainer.AppContainer;
 import com.fletch22.app.designer.appContainer.AppContainerService;
 import com.fletch22.app.designer.page.Page;
+import com.fletch22.app.designer.page.PageService;
 import com.fletch22.app.designer.page.body.Body;
 import com.fletch22.app.designer.page.div.Div;
 import com.fletch22.app.designer.page.form.Form;
 import com.fletch22.app.designer.page.head.Head;
 import com.fletch22.app.designer.webFolder.WebFolder;
 import com.fletch22.app.designer.website.Website;
+import com.fletch22.app.designer.website.WebsiteService;
 import com.fletch22.app.state.FrontEndState;
 import com.fletch22.orb.Orb;
 import com.fletch22.orb.OrbManager;
@@ -51,6 +53,12 @@ public class AppDesignerModule implements OrbSystemModule {
 
 	@Autowired
 	AppService appService;
+	
+	@Autowired
+	WebsiteService websiteService;
+	
+	@Autowired
+	PageService pageService;
 
 	@Autowired
 	ComponentConstrainer componentConstrainer;
@@ -68,6 +76,12 @@ public class AppDesignerModule implements OrbSystemModule {
 
 		App app = appService.createInstance("HelloWorldApp");
 		appContainerService.addToParent(appContainer, app);
+		
+		Website website = websiteService.createInstance("website1");
+		appService.addToParent(app, website);
+		
+		Page page = pageService.createInstance("page1");
+		websiteService.addToParent(website, page);
 	}
 
 	private void createTypes() {
