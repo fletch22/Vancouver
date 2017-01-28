@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 import com.fletch22.app.designer.app.AppService;
 import com.fletch22.app.designer.appContainer.AppContainerService;
+import com.fletch22.app.designer.layout.LayoutService;
 import com.fletch22.app.designer.page.PageService;
 import com.fletch22.app.designer.webFolder.WebFolderService;
 import com.fletch22.app.designer.website.WebsiteService;
@@ -26,6 +27,9 @@ public class ServiceJunction {
 	
 	@Autowired
 	public PageService pageService;
+	
+	@Autowired
+	public LayoutService layoutService;
 	
 //	@Autowired
 //	HeadService headService;

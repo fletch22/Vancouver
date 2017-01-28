@@ -8,6 +8,7 @@ import com.fletch22.app.designer.appContainer.AppContainer;
 import com.fletch22.app.designer.page.Page;
 import com.fletch22.app.designer.webFolder.WebFolder;
 import com.fletch22.app.designer.website.Website;
+import com.fletch22.app.designer.layout.Layout;
 
 @Component
 public class ServiceFactory {
@@ -15,6 +16,7 @@ public class ServiceFactory {
 	@Autowired
 	ServiceJunction serviceJunction;
 	
+	@SuppressWarnings("rawtypes")
 	public DomainService getServiceFromTypeLabel(String typeLabel) {
 		
 		DomainService domainService = null;
@@ -33,6 +35,9 @@ public class ServiceFactory {
 				break;
 			case Page.TYPE_LABEL:
 				domainService = serviceJunction.pageService;
+				break;
+			case Layout.TYPE_LABEL:
+				domainService = serviceJunction.layoutService;
 				break;
 			default:
 				throw new RuntimeException("Could not determine the type of service from the label '" + typeLabel + "'");

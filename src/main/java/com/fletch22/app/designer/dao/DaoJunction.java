@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 import com.fletch22.app.designer.app.AppDao;
 import com.fletch22.app.designer.appContainer.AppContainerDao;
+import com.fletch22.app.designer.layout.LayoutDao;
 import com.fletch22.app.designer.page.PageDao;
 import com.fletch22.app.designer.webFolder.WebFolderDao;
 import com.fletch22.app.designer.website.WebsiteDao;
@@ -26,4 +27,7 @@ public class DaoJunction {
 	
 	@Autowired
 	public PageDao pageDao;
+	
+	@Autowired
+	public LayoutDao layoutDao;
 }
