@@ -16,6 +16,7 @@ import com.fletch22.app.designer.Parent;
 import com.fletch22.app.designer.app.App;
 import com.fletch22.app.designer.appContainer.AppContainer;
 import com.fletch22.app.designer.layout.Layout;
+import com.fletch22.app.designer.layoutMinion.LayoutMinion;
 import com.fletch22.app.designer.page.Page;
 import com.fletch22.app.designer.webFolder.WebFolder;
 import com.fletch22.app.designer.website.Website;
@@ -121,6 +122,9 @@ public abstract class AppDesignerDao<T extends OrbBasedComponent, U extends Doma
 					break;
 				case Layout.TYPE_LABEL:
 					daoJunction.layoutDao.update((Layout) orbBasedComponentChild);
+					break;
+				case LayoutMinion.TYPE_LABEL:
+					daoJunction.layoutMinionDao.update((LayoutMinion) orbBasedComponentChild);
 					break;
 				default:
 					throw new RuntimeException("Encountered problem while processing children for update. Found an unrecognized type.");

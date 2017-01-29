@@ -12,6 +12,7 @@ import com.fletch22.app.designer.app.AppService;
 import com.fletch22.app.designer.appContainer.AppContainer;
 import com.fletch22.app.designer.appContainer.AppContainerService;
 import com.fletch22.app.designer.layout.Layout;
+import com.fletch22.app.designer.layoutMinion.LayoutMinion;
 import com.fletch22.app.designer.page.Page;
 import com.fletch22.app.designer.page.PageService;
 import com.fletch22.app.designer.page.body.Body;
@@ -119,7 +120,9 @@ public class AppDesignerModule implements OrbSystemModule {
 		componentConstrainer.addNotAmongstUniqueConstraintOnField(orbTypeInternalId, bodyCompositeUniqueContraint);
 		primeQueryIndex(orbTypeInternalId, Body.ATTR_LABEL);
 		
-		orbTypeInternalId = orbTypeManager.createOrbType(Layout.TYPE_LABEL, Layout.ATTRIBUTE_LIST);
+		orbTypeManager.createOrbType(Layout.TYPE_LABEL, Layout.ATTRIBUTE_LIST);
+		
+		orbTypeManager.createOrbType(LayoutMinion.TYPE_LABEL, LayoutMinion.ATTRIBUTE_LIST);
 
 		orbTypeInternalId = orbTypeManager.createOrbType(Div.TYPE_LABEL, Div.ATTRIBUTE_LIST);
 		componentConstrainer.addNotAmongstUniqueConstraintOnField(orbTypeInternalId, Div.ATTR_LABEL);

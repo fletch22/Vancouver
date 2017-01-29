@@ -19,6 +19,8 @@ import com.fletch22.app.designer.appContainer.AppContainer;
 import com.fletch22.app.designer.appContainer.AppContainerService;
 import com.fletch22.app.designer.layout.Layout;
 import com.fletch22.app.designer.layout.LayoutService;
+import com.fletch22.app.designer.layoutMinion.LayoutMinion;
+import com.fletch22.app.designer.layoutMinion.LayoutMinionService;
 import com.fletch22.app.designer.page.Page;
 import com.fletch22.app.designer.page.PageService;
 import com.fletch22.app.designer.webFolder.WebFolder;
@@ -60,6 +62,9 @@ public class ReferenceResolverService {
 	
 	@Autowired
 	LayoutService layoutService;
+	
+	@Autowired
+	LayoutMinionService layoutMinionService;
 	
 	@Autowired
 	PageService pageService;
@@ -153,6 +158,9 @@ public class ReferenceResolverService {
 				break;
 			case Layout.TYPE_LABEL:
 				orbBaseComponentChild = layoutService.get(childId);
+				break;
+			case LayoutMinion.TYPE_LABEL:
+				orbBaseComponentChild = layoutMinionService.get(childId);
 				break;
 			default:
 				throw new RuntimeException("Encountered problem trying to determine type while resolving children.");
