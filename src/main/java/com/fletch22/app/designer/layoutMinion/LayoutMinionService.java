@@ -13,13 +13,14 @@ public class LayoutMinionService extends DomainService<LayoutMinion, LayoutMinio
 	@Autowired
 	LayoutMinionDao layoutDao;
 
-	public LayoutMinion createInstance(String height, String width, String x, String y, String key) {
+	public LayoutMinion createInstance(String height, String width, String x, String y, String key, String style) {
 		LayoutMinion layout = new LayoutMinion();
 		layout.height = height;
 		layout.width = width;
 		layout.x = x;
 		layout.y = y;
 		layout.key = key;
+		layout.style = style;
 		
 		save(layout);
 		return layout;
@@ -38,7 +39,7 @@ public class LayoutMinionService extends DomainService<LayoutMinion, LayoutMinio
 		validatePropertiesSimple(properties, LayoutMinion.ATTRIBUTE_LIST);
 		
 		return createInstance(properties.get(LayoutMinion.ATTR_WIDTH), properties.get(LayoutMinion.ATTR_HEIGHT), properties.get(LayoutMinion.ATTR_X), 
-				properties.get(LayoutMinion.ATTR_Y), properties.get(LayoutMinion.ATTR_KEY));
+				properties.get(LayoutMinion.ATTR_Y), properties.get(LayoutMinion.ATTR_KEY), properties.get(LayoutMinion.ATTR_STYLE));
 	}
 	
 	@Override
@@ -51,6 +52,7 @@ public class LayoutMinionService extends DomainService<LayoutMinion, LayoutMinio
 		if (properties.containsKey(LayoutMinion.ATTR_X)) layoutMinion.x = properties.get(LayoutMinion.ATTR_X);
 		if (properties.containsKey(LayoutMinion.ATTR_Y)) layoutMinion.y = properties.get(LayoutMinion.ATTR_Y);
 		if (properties.containsKey(LayoutMinion.ATTR_KEY)) layoutMinion.key = properties.get(LayoutMinion.ATTR_KEY);
+		if (properties.containsKey(LayoutMinion.ATTR_STYLE)) layoutMinion.style = properties.get(LayoutMinion.ATTR_STYLE);
 		
 		return get(id);
 	}

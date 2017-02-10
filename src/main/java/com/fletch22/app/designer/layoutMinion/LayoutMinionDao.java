@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fletch22.app.designer.dao.AppDesignerDao;
-import com.fletch22.app.designer.page.Page;
 import com.fletch22.orb.Orb;
 import com.fletch22.orb.OrbType;
 
@@ -39,6 +38,8 @@ public class LayoutMinionDao extends AppDesignerDao<LayoutMinion, LayoutMinionTr
 		orb.getUserDefinedProperties().put(LayoutMinion.ATTR_X, layoutMinion.x);
 		orb.getUserDefinedProperties().put(LayoutMinion.ATTR_Y, layoutMinion.y);
 		orb.getUserDefinedProperties().put(LayoutMinion.ATTR_KEY, layoutMinion.key);
+		orb.getUserDefinedProperties().put(LayoutMinion.ATTR_STYLE, layoutMinion.style);
 	}
 }
+
 

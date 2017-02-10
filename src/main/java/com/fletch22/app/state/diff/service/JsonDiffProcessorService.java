@@ -56,7 +56,7 @@ public class JsonDiffProcessorService {
 
 	@Autowired
 	DeleteService deleteService;
-	
+
 	@Autowired
 	EditObjectService editObjectService;
 
@@ -116,9 +116,10 @@ public class JsonDiffProcessorService {
 	}
 
 	private void processEditedProperty(String state, JsonArray pathInformation, JsonElement newValue) {
-		// throw new NotImplementedException("processDeleteProperty not implemented yet. (Set to null?)");
+		// throw new
+		// NotImplementedException("processDeleteProperty not implemented yet. (Set to null?)");
 		EditedProperty editPropertyInfo = getEditedPropertyInfo(state, pathInformation, newValue);
-		
+
 		editObjectService.process(editPropertyInfo);
 	}
 
@@ -249,7 +250,7 @@ public class JsonDiffProcessorService {
 		for (Entry<String, JsonElement> entry : jsonElementChild.getAsJsonObject().entrySet()) {
 			key = entry.getKey();
 			JsonElement jsonElement = entry.getValue();
-			
+
 			if (jsonElement.isJsonPrimitive()) {
 				JsonPrimitive jsonPrimitive = jsonElement.getAsJsonPrimitive();
 				if (jsonPrimitive.isString()) {
@@ -267,7 +268,8 @@ public class JsonDiffProcessorService {
 			} else if (jsonElement.isJsonArray()) {
 				JsonArray jsonArray = jsonElement.getAsJsonArray();
 				if (jsonArray.size() > 0) {
-					throw new RuntimeException(String.format("Encountered problem while trying to get propert '%s' from newly added object. Property was detected as array type but was not empty. This is not allowed on this type of operation."));
+					throw new RuntimeException(
+							String.format("Encountered problem while trying to get propert '%s' from newly added object. Property was detected as array type but was not empty. This is not allowed on this type of operation."));
 				}
 			} else {
 				throw new RuntimeException(

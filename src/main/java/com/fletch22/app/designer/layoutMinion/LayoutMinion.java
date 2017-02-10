@@ -14,13 +14,15 @@ public class LayoutMinion extends Parent implements LayoutMinionChild {
 	public static final String ATTR_X = "x";
 	public static final String ATTR_Y = "y";
 	public static final String ATTR_KEY = "key";
-	public static LinkedHashSet<String> ATTRIBUTE_LIST = new LinkedHashSet<String>(Arrays.asList(Page.ATTR_PARENT, ATTR_HEIGHT, ATTR_WIDTH, ATTR_X, ATTR_Y, ATTR_KEY, ATTR_CHILDREN));
+	public static final String ATTR_STYLE = "style";
+	public static LinkedHashSet<String> ATTRIBUTE_LIST = new LinkedHashSet<String>(Arrays.asList(Page.ATTR_PARENT, ATTR_HEIGHT, ATTR_WIDTH, ATTR_X, ATTR_Y, ATTR_KEY, ATTR_STYLE, ATTR_CHILDREN));
 	
 	public String height;
 	public String width;
 	public String x;
 	public String y;
 	public String key;
+	public String style;
 	
 	@Override
 	public String getTypeLabel() {

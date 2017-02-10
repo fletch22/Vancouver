@@ -18,6 +18,7 @@ public class LayoutMinionTransformer extends DomainTransformer<LayoutMinion> {
 		layout.x = orb.getUserDefinedProperties().get(LayoutMinion.ATTR_X);
 		layout.y = orb.getUserDefinedProperties().get(LayoutMinion.ATTR_Y);
 		layout.key = orb.getUserDefinedProperties().get(LayoutMinion.ATTR_KEY);
+		layout.style = orb.getUserDefinedProperties().get(LayoutMinion.ATTR_STYLE);
 		
 		return layout;
 	}

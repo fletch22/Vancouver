@@ -98,11 +98,7 @@ public class ComponentController extends Controller {
 	public @ResponseBody String saveStatePallet(@RequestBody StatePallet statePallet) {
 
 		String message = "Items saved: " + statePallet.statePackages.size();
-
-		if (statePallet.statePackages.get(0).state.contains("x")) {
-			throw new RuntimeException("CONTAINS X");
-		}
-
+		
 		frontEndStateService.save(statePallet.statePackages);
 
 		logger.info(message);

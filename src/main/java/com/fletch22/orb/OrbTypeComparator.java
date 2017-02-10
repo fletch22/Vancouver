@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 
 import com.fletch22.orb.cache.local.CacheDifferenceReasons;
 import com.fletch22.orb.cache.local.ComparisonResult;
-import com.google.gson.Gson;
 
 @Component
 public class OrbTypeComparator {

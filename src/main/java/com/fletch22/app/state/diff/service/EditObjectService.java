@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.fletch22.app.designer.Child;
 import com.fletch22.app.designer.DomainService;
 import com.fletch22.app.designer.ServiceFactory;
 import com.fletch22.app.designer.ServiceJunction;

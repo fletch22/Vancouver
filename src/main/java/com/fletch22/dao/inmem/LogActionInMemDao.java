@@ -11,7 +11,6 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.h2.jdbcx.JdbcConnectionPool;
 import org.slf4j.Logger;
