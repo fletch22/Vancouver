@@ -11,12 +11,14 @@ import com.fletch22.app.designer.app.App;
 import com.fletch22.app.designer.app.AppService;
 import com.fletch22.app.designer.appContainer.AppContainer;
 import com.fletch22.app.designer.appContainer.AppContainerService;
+import com.fletch22.app.designer.ddl.DropDownListbox;
+import com.fletch22.app.designer.ddl.DropDownListboxService;
+import com.fletch22.app.designer.div.Div;
 import com.fletch22.app.designer.layout.Layout;
 import com.fletch22.app.designer.layoutMinion.LayoutMinion;
 import com.fletch22.app.designer.page.Page;
 import com.fletch22.app.designer.page.PageService;
 import com.fletch22.app.designer.page.body.Body;
-import com.fletch22.app.designer.page.div.Div;
 import com.fletch22.app.designer.page.form.Form;
 import com.fletch22.app.designer.page.head.Head;
 import com.fletch22.app.designer.webFolder.WebFolder;
@@ -61,6 +63,9 @@ public class AppDesignerModule implements OrbSystemModule {
 	
 	@Autowired
 	PageService pageService;
+	
+	@Autowired
+	DropDownListboxService dropDownListboxService;
 
 	@Autowired
 	ComponentConstrainer componentConstrainer;
@@ -125,13 +130,13 @@ public class AppDesignerModule implements OrbSystemModule {
 		orbTypeManager.createOrbType(LayoutMinion.TYPE_LABEL, LayoutMinion.ATTRIBUTE_LIST);
 
 		orbTypeInternalId = orbTypeManager.createOrbType(Div.TYPE_LABEL, Div.ATTRIBUTE_LIST);
-		componentConstrainer.addNotAmongstUniqueConstraintOnField(orbTypeInternalId, Div.ATTR_LABEL);
-		primeQueryIndex(orbTypeInternalId, Div.ATTR_LABEL);
+		
+		orbTypeInternalId = orbTypeManager.createOrbType(DropDownListbox.TYPE_LABEL, DropDownListbox.ATTRIBUTE_LIST);
 
 		orbTypeInternalId = orbTypeManager.createOrbType(Form.TYPE_LABEL, Form.ATTRIBUTE_LIST);
 		componentConstrainer.addNotAmongstUniqueConstraintOnField(orbTypeInternalId, Form.ATTR_LABEL);
 		primeQueryIndex(orbTypeInternalId, Form.ATTR_LABEL);
-
+		
 		createType(AppModuleImpl.FrontEndState);
 	}
 

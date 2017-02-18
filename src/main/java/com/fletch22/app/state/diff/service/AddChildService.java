@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import com.fletch22.app.designer.Child;
 import com.fletch22.app.designer.DomainService;
+import com.fletch22.app.designer.DomainServiceBase;
 import com.fletch22.app.designer.ServiceFactory;
 import com.fletch22.app.designer.ServiceJunction;
 import com.fletch22.app.designer.util.DomainUtilDao;
@@ -30,15 +31,15 @@ public class AddChildService {
 	public long process(AddedChild addedChild) {
 		String typeLabel = addedChild.child.typeLabel;
 		
-		logger.info("Type label: " + typeLabel);
+		logger.info("Type label: " + typeLabel);;
 
-		DomainService domainService = serviceFactory.getServiceFromTypeLabel(typeLabel);
-		Child child = domainService.createInstance(addedChild.child.props);
+		DomainServiceBase domainServiceBase = serviceFactory.getBaseServiceFromTypeLabel(typeLabel);
+		Child child = domainServiceBase.createInstance(addedChild.child.props);
 		
 		logger.info("Par ID: " + addedChild.parentId);
 		
 		String typeLabelParent = domainUtilDao.getTypeLabelFromId(addedChild.parentId);
-		domainService = serviceFactory.getServiceFromTypeLabel(typeLabelParent);
+		DomainService domainService = serviceFactory.getServiceFromTypeLabel(typeLabelParent);
 		domainService.addToParent(domainService.get(addedChild.parentId), child); 
 		
 		return child.getId();

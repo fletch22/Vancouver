@@ -88,6 +88,8 @@ dependencies {
 	
 	compile 'org.apache.commons:commons-dbcp2:2.1.1'
 	compile 'com.h2database:h2:1.4.190'
+	compile 'com.graphql-java:graphql-java:2.3.0'
+	compile 'com.google.guava:guava:21.0'
 	
 	providedCompile 'javax.servlet:servlet-api:2.5'
 

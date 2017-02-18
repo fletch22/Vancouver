@@ -5,6 +5,8 @@ import org.springframework.stereotype.Component;
 
 import com.fletch22.app.designer.app.AppService;
 import com.fletch22.app.designer.appContainer.AppContainerService;
+import com.fletch22.app.designer.ddl.DropDownListboxService;
+import com.fletch22.app.designer.div.DivService;
 import com.fletch22.app.designer.layout.LayoutService;
 import com.fletch22.app.designer.layoutMinion.LayoutMinionService;
 import com.fletch22.app.designer.page.PageService;
@@ -35,9 +37,9 @@ public class ServiceJunction {
 	@Autowired
 	public LayoutMinionService layoutMinionService;
 	
-//	@Autowired
-//	HeadService headService;
+	@Autowired
+	public DivService divService;
 	
-//	@Autowired
-//	BodyService bodyService;
+	@Autowired
+	public DropDownListboxService dropDownListboxService;
 }

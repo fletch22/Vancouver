@@ -66,5 +66,8 @@ public class CriteriaBuilderTest {
 		// Assert
 		assertNotNull(criteria); 
 	}
+	
+	
+	
 
 }

@@ -250,21 +250,23 @@ public class JsonDiffProcessorService {
 		for (Entry<String, JsonElement> entry : jsonElementChild.getAsJsonObject().entrySet()) {
 			key = entry.getKey();
 			JsonElement jsonElement = entry.getValue();
-
-			if (jsonElement.isJsonPrimitive()) {
-				JsonPrimitive jsonPrimitive = jsonElement.getAsJsonPrimitive();
-				if (jsonPrimitive.isString()) {
-					properties.put(key, jsonPrimitive.getAsString());
-				} else {
-					if (key.equals(PROPERTY_PARENT_ID)) {
-						parentId = jsonPrimitive.getAsLong();
+			
+			if (jsonElement.isJsonNull()) {
+				properties.put(key, null); 
+			} else if (jsonElement == null || jsonElement.isJsonPrimitive()) {
+					JsonPrimitive jsonPrimitive = jsonElement.getAsJsonPrimitive();
+					if (jsonPrimitive.isString()) {
+						properties.put(key, jsonPrimitive.getAsString());
 					} else {
-						throw new RuntimeException(
-								String.format(
-										"Encountered problem while trying to get the propery '%s' from a newly added object. Encountered an object property whose value was not a string. This is not allowed. Added objects must only have string valued properties.",
-										key));
+						if (key.equals(PROPERTY_PARENT_ID)) {
+							parentId = jsonPrimitive.getAsLong();
+						} else {
+							throw new RuntimeException(
+									String.format(
+											"Encountered problem while trying to get the propery '%s' from a newly added object. Encountered an object property whose value was not a string. This is not allowed. Added objects must only have string valued properties.",
+											key));
+						}
 					}
-				}
 			} else if (jsonElement.isJsonArray()) {
 				JsonArray jsonArray = jsonElement.getAsJsonArray();
 				if (jsonArray.size() > 0) {

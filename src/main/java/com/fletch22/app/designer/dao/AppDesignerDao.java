@@ -15,6 +15,8 @@ import com.fletch22.app.designer.OrbBasedComponent;
 import com.fletch22.app.designer.Parent;
 import com.fletch22.app.designer.app.App;
 import com.fletch22.app.designer.appContainer.AppContainer;
+import com.fletch22.app.designer.ddl.DropDownListbox;
+import com.fletch22.app.designer.div.Div;
 import com.fletch22.app.designer.layout.Layout;
 import com.fletch22.app.designer.layoutMinion.LayoutMinion;
 import com.fletch22.app.designer.page.Page;
@@ -125,6 +127,12 @@ public abstract class AppDesignerDao<T extends OrbBasedComponent, U extends Doma
 					break;
 				case LayoutMinion.TYPE_LABEL:
 					daoJunction.layoutMinionDao.update((LayoutMinion) orbBasedComponentChild);
+					break;
+				case Div.TYPE_LABEL:
+					daoJunction.divDao.update((Div) orbBasedComponentChild);
+					break;
+				case DropDownListbox.TYPE_LABEL:
+					daoJunction.dropDownListboxDao.update((DropDownListbox) orbBasedComponentChild);
 					break;
 				default:
 					throw new RuntimeException("Encountered problem while processing children for update. Found an unrecognized type.");

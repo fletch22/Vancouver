@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fletch22.app.designer.app.App;
+import com.fletch22.app.designer.app.AppService;
 import com.fletch22.app.designer.appContainer.AppContainerService;
 import com.fletch22.app.designer.util.DomainUtilDao;
 import com.fletch22.app.designer.viewmodel.AllModels;
@@ -26,6 +27,7 @@ public class ComponentSaveFromMapService {
 	@Autowired
 	ServiceFactory serviceFactory;
 
+	@SuppressWarnings("rawtypes")
 	public OrbBasedComponent save(Map<String, String> map) {
 		String typeLabel = map.get(AllModels.TYPE_LABEL);
 
@@ -37,7 +39,7 @@ public class ComponentSaveFromMapService {
 				
 				long parentId = app.getParentId();
 				String typeLabelParent = domainServiceUtil.getTypeLabelFromId(parentId);
-				DomainService domainService = (AppContainerService) serviceFactory.getServiceFromTypeLabel(typeLabelParent);
+				DomainService domainService = serviceFactory.getServiceFromTypeLabel(typeLabelParent);
 				domainService.addToParent(domainService.get(parentId), app);
 				
 				savedObject = app;

@@ -17,6 +17,9 @@ import com.fletch22.app.designer.app.App;
 import com.fletch22.app.designer.app.AppService;
 import com.fletch22.app.designer.appContainer.AppContainer;
 import com.fletch22.app.designer.appContainer.AppContainerService;
+import com.fletch22.app.designer.ddl.DropDownListbox;
+import com.fletch22.app.designer.ddl.DropDownListboxService;
+import com.fletch22.app.designer.div.Div;
 import com.fletch22.app.designer.layout.Layout;
 import com.fletch22.app.designer.layout.LayoutService;
 import com.fletch22.app.designer.layoutMinion.LayoutMinion;
@@ -61,13 +64,19 @@ public class ReferenceResolverService {
 	WebFolderService webFolderService;
 	
 	@Autowired
+	PageService pageService;
+	
+	@Autowired
 	LayoutService layoutService;
 	
 	@Autowired
 	LayoutMinionService layoutMinionService;
 	
 	@Autowired
-	PageService pageService;
+	LayoutMinionService divService;
+	
+	@Autowired
+	DropDownListboxService dropDownListboxService;
 	
 	public OrbType getAndCacheOrbType(Map<Long, OrbType> cachedOrbTypes, Orb orb) {
 		OrbType orbType = null;
@@ -161,6 +170,12 @@ public class ReferenceResolverService {
 				break;
 			case LayoutMinion.TYPE_LABEL:
 				orbBaseComponentChild = layoutMinionService.get(childId);
+				break;
+			case Div.TYPE_LABEL:
+				orbBaseComponentChild = divService.get(childId);
+				break;
+			case DropDownListbox.TYPE_LABEL:
+				orbBaseComponentChild = dropDownListboxService.get(childId);
 				break;
 			default:
 				throw new RuntimeException("Encountered problem trying to determine type while resolving children.");

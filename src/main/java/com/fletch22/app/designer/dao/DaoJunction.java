@@ -5,6 +5,8 @@ import org.springframework.stereotype.Component;
 
 import com.fletch22.app.designer.app.AppDao;
 import com.fletch22.app.designer.appContainer.AppContainerDao;
+import com.fletch22.app.designer.ddl.DropDownListboxDao;
+import com.fletch22.app.designer.div.DivDao;
 import com.fletch22.app.designer.layout.LayoutDao;
 import com.fletch22.app.designer.layoutMinion.LayoutMinionDao;
 import com.fletch22.app.designer.page.PageDao;
@@ -34,4 +36,10 @@ public class DaoJunction {
 	
 	@Autowired
 	public LayoutMinionDao layoutMinionDao;
+	
+	@Autowired
+	public DivDao divDao;
+	
+	@Autowired
+	public DropDownListboxDao dropDownListboxDao;
 }
