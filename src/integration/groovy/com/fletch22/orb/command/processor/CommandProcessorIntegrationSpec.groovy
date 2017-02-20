@@ -70,11 +70,11 @@ class CommandProcessorIntegrationSpec extends Specification {
 	IntegrationSystemInitializer integrationSystemInitializer
 	
 	def setup() {
-		initializer.nukeAndPaveAllIntegratedSystems();
+		initializer.nukePaveAndInitializeAllIntegratedSystems();
 	}
 	
 	def tearDown() {
-		initializer.nukeAndPaveAllIntegratedSystems();
+		initializer.nukePaveAndInitializeAllIntegratedSystems();
 	}
 
 	@Test

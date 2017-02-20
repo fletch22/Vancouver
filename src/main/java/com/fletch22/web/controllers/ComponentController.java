@@ -193,7 +193,7 @@ public class ComponentController extends Controller {
 	@ResponseStatus(value = HttpStatus.OK)
 	public @ResponseBody StateIndexInfo nukeAndPave() {
 
-		this.integrationSystemInitializer.nukeAndPaveAllIntegratedSystems();
+		this.integrationSystemInitializer.nukePaveAndInitializeAllIntegratedSystems();
 
 		return getMostRecentStateHistory();
 	}
@@ -203,6 +203,15 @@ public class ComponentController extends Controller {
 	public @ResponseBody boolean persistToDisk() {
 
 		logBackupAndRestore.persistToDisk();
+		
+		return false;
+	}
+	
+	@RequestMapping(value = "/restoreFromDisk", method = RequestMethod.POST)
+	@ResponseStatus(value = HttpStatus.OK)
+	public @ResponseBody boolean restoreFromDisk() {
+
+		logBackupAndRestore.restoreFromDisk();
 		
 		return false;
 	}

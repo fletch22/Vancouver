@@ -39,11 +39,11 @@ class RollbackServiceSpec extends Specification {
 	BeginTransactionService beginTransactionService
 	
 	def setup() {
-		this.initializer.nukeAndPaveAllIntegratedSystems()
+		this.initializer.nukePaveAndInitializeAllIntegratedSystems()
 	}
 	
 	def cleanup() {
-		this.initializer.nukeAndPaveAllIntegratedSystems()
+		this.initializer.nukePaveAndInitializeAllIntegratedSystems()
 	}
 
 	@Test

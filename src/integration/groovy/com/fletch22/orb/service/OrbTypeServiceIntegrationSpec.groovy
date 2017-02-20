@@ -30,11 +30,11 @@ class OrbTypeServiceIntegrationSpec extends Specification {
 	IntegrationSystemInitializer integrationSystemInitializer;
 	
 	def setup() {
-		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems();
+		integrationSystemInitializer.nukePaveAndInitializeAllIntegratedSystems();
 	}
 	
 	def cleanup() {
-		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems();
+		integrationSystemInitializer.nukePaveAndInitializeAllIntegratedSystems();
 	}
 
 	def 'test create orb type'() {

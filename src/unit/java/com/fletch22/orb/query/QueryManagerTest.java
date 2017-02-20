@@ -62,12 +62,12 @@ public class QueryManagerTest {
 	
 	@Before
 	public void before() {
-		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems();
+		integrationSystemInitializer.nukePaveAndInitializeAllIntegratedSystems();
 	}
 	
 	@After
 	public void after() {
-		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems();
+		integrationSystemInitializer.nukePaveAndInitializeAllIntegratedSystems();
 	}
 
 	@Test

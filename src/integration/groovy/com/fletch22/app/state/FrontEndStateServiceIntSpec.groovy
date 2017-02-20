@@ -52,12 +52,12 @@ class FrontEndStateServiceIntSpec extends Specification {
 	
 	def setup() {
 		initializer.addOrbSystemModule(appDesignerModule)
-		initializer.nukeAndPaveAllIntegratedSystems()
+		initializer.nukePaveAndInitializeAllIntegratedSystems()
 	}
 	
 	def cleanup() {
 		initializer.removeOrbSystemModules()
-		initializer.nukeAndPaveAllIntegratedSystems()
+		initializer.nukePaveAndInitializeAllIntegratedSystems()
 	}
 	
 	def 'test save'() {
@@ -77,8 +77,6 @@ class FrontEndStateServiceIntSpec extends Specification {
 		frontEndStateService.save(statePackageList)
 		
 		OrbType orbType = orbTypeManager.getOrbType(FrontEndState.TYPE_LABEL)
-		
-		logger.info("OrbType ID: {}", orbType.id)
 		
 		List<Orb> orbs = orbManager.getOrbsOfType(orbType.id)
 		

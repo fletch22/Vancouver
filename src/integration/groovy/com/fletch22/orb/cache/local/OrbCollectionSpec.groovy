@@ -84,13 +84,13 @@ class OrbCollectionSpec extends Specification {
 	ReferenceUtil referenceUtil
 	
 	def setup() {
-		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems()
+		integrationSystemInitializer.nukePaveAndInitializeAllIntegratedSystems()
 		orbCollection = cache.orbCollection;
 		orbTypeCollection = cache.orbTypeCollection;
 	}
 	
 	def cleanup() {
-		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems()
+		integrationSystemInitializer.nukePaveAndInitializeAllIntegratedSystems()
 	}
 	
 	def 'testQuery'() {

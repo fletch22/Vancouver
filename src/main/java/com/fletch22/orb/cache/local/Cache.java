@@ -1,5 +1,7 @@
 package com.fletch22.orb.cache.local;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -12,6 +14,8 @@ import com.fletch22.orb.query.QueryManager;
 
 @Component
 public class Cache {
+	
+	private static final Logger logger = LoggerFactory.getLogger(Cache.class);
 
 	@Autowired
 	public OrbCollection orbCollection;

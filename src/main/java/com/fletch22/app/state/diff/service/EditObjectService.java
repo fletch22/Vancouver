@@ -32,8 +32,6 @@ public class EditObjectService {
 	public void process(EditedProperty editedProperty) {
 		String typeLabel = domainUtilDao.getTypeLabelFromId(editedProperty.id);
 		
-		logger.info("Type label: " + typeLabel);
-
 		DomainServiceBase domainServiceBase = serviceFactory.getBaseServiceFromTypeLabel(typeLabel);
 		
 		Map<String, String> map = new HashMap<String, String>();

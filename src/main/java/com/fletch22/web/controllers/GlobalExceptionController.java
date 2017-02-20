@@ -63,12 +63,10 @@ public class GlobalExceptionController {
 
 	private ExceptionJSONInfo getUsefulInformation(String requestUrl, RestException restException) {
 		
-		logger.info("Got this far.");
-		
 		ExceptionJSONInfo excpetionJSONInfo = new ExceptionJSONInfo();
 		ExceptionInfo exceptionInfo = isOriginatedByConstraintViolation(restException);
 
-		logger.info("Got this far.");
+		logger.error("Rest Exception.", restException);
 		
 		if (exceptionInfo.isConstraintException) {
 			excpetionJSONInfo.url = requestUrl;

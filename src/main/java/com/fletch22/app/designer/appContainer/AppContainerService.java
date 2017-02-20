@@ -21,7 +21,7 @@ public class AppContainerService extends DomainService<AppContainer, App> {
 	AppContainerDao appContainerDao;
 	
 	public AppContainerService() {
-		logger.info("Loading appContainerService.");
+		logger.debug("Loading appContainerService.");
 	}
 
 	public boolean flag = false;

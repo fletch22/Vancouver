@@ -72,13 +72,13 @@ public class AppContainerDaoTest {
 	@Before
 	public void before() {
 		integrationSystemInitializer.addOrbSystemModule(appDesignerModule);
-		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems();
+		integrationSystemInitializer.nukePaveAndInitializeAllIntegratedSystems();
 	}
 
 	@After
 	public void after() {
 		integrationSystemInitializer.removeOrbSystemModules();
-		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems();
+		integrationSystemInitializer.nukePaveAndInitializeAllIntegratedSystems();
 	}
 
 	@Test

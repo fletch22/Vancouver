@@ -46,7 +46,7 @@ class CommandProcessorSpec extends Specification {
 	IntegrationSystemInitializer integrationSystemInitializer
 	
 	def setup() {
-		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems()
+		integrationSystemInitializer.nukePaveAndInitializeAllIntegratedSystems()
 		
 		this.commandProcessor = new CommandProcessor()
 
@@ -91,7 +91,7 @@ class CommandProcessorSpec extends Specification {
 	}
 	
 	def cleanup() {
-		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems()
+		integrationSystemInitializer.nukePaveAndInitializeAllIntegratedSystems()
 	}
 
 	@Unroll

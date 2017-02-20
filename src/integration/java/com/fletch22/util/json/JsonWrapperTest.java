@@ -52,12 +52,12 @@ public class JsonWrapperTest {
 	
 	@Before
 	public void before() {
-		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems();
+		integrationSystemInitializer.nukePaveAndInitializeAllIntegratedSystems();
 	}
 	
 	@After
 	public void after() {
-		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems();
+		integrationSystemInitializer.nukePaveAndInitializeAllIntegratedSystems();
 	}
 
 	@SuppressWarnings("unused")

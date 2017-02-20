@@ -59,12 +59,12 @@ class OrbReferenceSpec extends Specification {
 	EventLogCommandProcessPackageHolder eventLogCommandProcessPackageHolder
 	
 	def setup() {
-		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems()
+		integrationSystemInitializer.nukePaveAndInitializeAllIntegratedSystems()
 		this.orbReference = cache.orbCollection.orbReference
 	}
 	
 	def teardown() {
-		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems()
+		integrationSystemInitializer.nukePaveAndInitializeAllIntegratedSystems()
 	}
 
 	def 'test Decomposition'() {

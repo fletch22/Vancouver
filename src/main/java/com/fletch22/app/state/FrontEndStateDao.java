@@ -89,8 +89,6 @@ public class FrontEndStateDao {
 			stateIndexInfo.indexOfReturnedState = index;
 		}
 		
-		logger.info("Getting element {}, when size: {}", index, size); 
-		
 		stateIndexInfo.state = result;
 		if (size > 0) {
 			stateIndexInfo.isEarliestState = (size <= index); 
@@ -176,8 +174,6 @@ public class FrontEndStateDao {
 		
 		criteria.setSortOrder(criteriaSortInfo);
 		
-		logger.info("Number of client IDs {}", clientIds.size());
-		
 		criteria.addAnd(Constraint.in(FrontEndState.ATTR_CLIENT_ID, clientIds));
 		
 		return criteria;
@@ -196,7 +192,7 @@ public class FrontEndStateDao {
 		
 		int size = orbResultSet.orbList.size();
 		
-		logger.info("Found number of states from passed in from client: {}", size);
+		logger.debug("Found number of states from passed in from client: {}", size);
 		
 		// All IDs present in result set. That means none were lost during the error state. 
 		// We can infer that the last item in the result is the lexicographically
@@ -284,14 +280,12 @@ public class FrontEndStateDao {
 	}
 
 	public void rollbackToState(String stateClientId) {
-		logger.info("In rollbackToSte method.");
-		
 		OrbType orbType = this.orbTypeManager.getOrbType(FrontEndState.TYPE_LABEL);
 		Orb orb = this.queryManager.findByAttribute(orbType.id, FrontEndState.ATTR_CLIENT_ID, stateClientId).uniqueResult();
 		
 		BigDecimal tranId = new BigDecimal(orb.getUserDefinedProperties().get(FrontEndState.ATTR_ASSOCIATED_TRANSACTION_ID));
 		
-		logger.info("Attempting to rollback to tranID {}", tranId);
+		logger.error("Attempting to rollback to tranID {}", tranId);
 		this.transactionService.rollbackToSpecificTransaction(tranId);
 		
 		// Remove client Ids above this one.
@@ -308,11 +302,11 @@ public class FrontEndStateDao {
 		OrbResultSet orbResultSet = this.queryManager.executeQuery(criteria);
 		
 		if (orbResultSet.orbList.size() == 0) {
-			logger.info("There were no states to rollback.");
+			logger.error("There were no states to rollback.");
 		}
 		
 		for (Orb orbFound : orbResultSet.orbList) {
-			logger.info("Removing state '{}'", orbFound.getOrbInternalId()); 
+			logger.error("Removing state '{}'", orbFound.getOrbInternalId()); 
 			orbManager.deleteOrb(orbFound.getOrbInternalId(), true);
 		}
 	}

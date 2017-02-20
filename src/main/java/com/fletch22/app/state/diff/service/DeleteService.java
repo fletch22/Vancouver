@@ -29,7 +29,7 @@ public class DeleteService {
 
 	public void process(long id) {
 		
-		logger.info("Attempting to delete the item.");
+		logger.debug("Attempting to delete the item.");
 		
 		baseDao.delete(id);
 	}

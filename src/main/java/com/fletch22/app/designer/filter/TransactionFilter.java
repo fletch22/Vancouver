@@ -35,12 +35,12 @@ public class TransactionFilter implements Filter {
 		try {
 			chain.doFilter(request, response);	
 		} catch (Exception e) {
-			logger.info("Encountered exception in filter chain.");
+			logger.error("Encountered exception in filter chain.");
 			logger.error(e.getMessage(), e);
 			throw new RuntimeException(e.getMessage(), e);
 		} finally {
 			if (transactionService.isTransactionInFlight()) {
-				logger.info("Found open transaction while finishing processing HTTP request. Auto-rolling back transaction.");
+				logger.error("Found open transaction while finishing processing HTTP request. Auto-rolling back transaction.");
 				transactionService.rollbackCurrentTransaction();
 			}
 		}

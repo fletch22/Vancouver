@@ -65,12 +65,12 @@ class LogActionServiceSpec extends Specification {
 	OrbTypeService orbTypeService
 	
 	def setup() {
-		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems()
+		integrationSystemInitializer.nukePaveAndInitializeAllIntegratedSystems()
 	}
 	
 	def cleanup() {
 		transactionService.rollbackCurrentTransaction()
-		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems()
+		integrationSystemInitializer.nukePaveAndInitializeAllIntegratedSystems()
 	}
 
 	@Unroll

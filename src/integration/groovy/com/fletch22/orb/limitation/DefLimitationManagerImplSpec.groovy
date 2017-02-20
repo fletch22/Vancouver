@@ -44,11 +44,11 @@ class DefLimitationManagerImplSpec extends Specification {
 	IntegrationSystemInitializer integrationSystemInitializer
 
 	def setup() {
-		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems()
+		integrationSystemInitializer.nukePaveAndInitializeAllIntegratedSystems()
 	}
 
 	def cleanup() {
-		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems()
+		integrationSystemInitializer.nukePaveAndInitializeAllIntegratedSystems()
 	}
 
 	def 'test add default criteria success'() {

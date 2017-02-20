@@ -54,13 +54,13 @@ class CriteriaSpec extends Specification {
 	def orbType
 
 	def setup() {
-		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems()
+		integrationSystemInitializer.nukePaveAndInitializeAllIntegratedSystems()
 		def orbTypeInternalId = loadTestData()
 		orbType = orbTypeManager.getOrbType(orbTypeInternalId)
 	}
 
 	def cleanup() {
-		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems()
+		integrationSystemInitializer.nukePaveAndInitializeAllIntegratedSystems()
 	}
 
 	def 'test criteria search for green'() {

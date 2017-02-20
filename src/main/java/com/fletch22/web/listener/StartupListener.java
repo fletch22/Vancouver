@@ -20,7 +20,7 @@ public class StartupListener implements ApplicationListener<ContextRefreshedEven
 
 		AppDesignerModule appDesignerModule = (AppDesignerModule) getBean(AppDesignerModule.class);
 		integrationSystemInitializer.addOrbSystemModule(appDesignerModule);
-		integrationSystemInitializer.initializeSystem();
+		integrationSystemInitializer.nukePaveAndInitializeAllIntegratedSystems();
 	}
 
 	public Object getBean(Class<?> clazz) {

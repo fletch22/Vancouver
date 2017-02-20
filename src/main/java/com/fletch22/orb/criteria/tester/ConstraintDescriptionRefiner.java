@@ -15,8 +15,6 @@ public class ConstraintDescriptionRefiner {
 		
 		String comparison = description.toString().trim();
 		
-		logger.info("Where is AND: {}", comparison.toLowerCase().indexOf(token));
-		
 		if (comparison.toLowerCase().indexOf(token) == 0) {
 			comparison = description.delete(0, token.length()).toString().trim();
 			description = new StringBuffer(comparison);

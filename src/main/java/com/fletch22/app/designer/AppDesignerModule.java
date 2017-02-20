@@ -72,6 +72,7 @@ public class AppDesignerModule implements OrbSystemModule {
 
 	@Override
 	public void initialize() {
+		logger.info("Creating application types and instances.");
 		createTypes();
 		createInstances();
 	}

@@ -38,7 +38,6 @@ public class ConstraintRegistrationVisitor {
 		
 		LogicalConstraint logicalConstraint = child.logicalConstraint;
 		if (logicalConstraint != null) {
-			logger.info("Visiting aggy.");
 			visit(logicalConstraint);
 		}
 	}

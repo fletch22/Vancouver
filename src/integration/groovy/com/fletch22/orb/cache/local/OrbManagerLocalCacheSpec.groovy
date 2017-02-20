@@ -68,11 +68,11 @@ class OrbManagerLocalCacheSpec extends Specification {
 	ReferenceUtil referenceUtil
 
 	def setup()  {
-		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems()
+		integrationSystemInitializer.nukePaveAndInitializeAllIntegratedSystems()
 	}
 
 	def tearDown() {
-		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems()
+		integrationSystemInitializer.nukePaveAndInitializeAllIntegratedSystems()
 	}
 
 	def 'testAddIllegalAttributeValue'() {

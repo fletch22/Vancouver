@@ -62,7 +62,7 @@ public class MethodCallService {
 				}
 			}
 		} catch (Exception ex) {
-			logger.info("Reflection message: {}", ex);
+			logger.debug("Reflection message: {}", ex);
 			throw new RuntimeException("Encountered problem while invoking method by reflection.", ex);
 		}
 		

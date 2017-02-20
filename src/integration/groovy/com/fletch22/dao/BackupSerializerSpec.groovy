@@ -38,13 +38,42 @@ class BackupSerializerSpec extends Specification {
 		
 		then:
 		sb != null
-		sb.toString() == '{"action":{"someAction": true}, "undoAction":{"someUndoAction": 1234}, "tranDate":"1000000.000000012", "tranId":"1000000.000002342355"}'
+		sb.toString() == '{"action":{"someAction":true},"undoAction":{"someUndoAction":1234},"tranDate":"1000000.000000012","tranId":"1000000.000002342355"}'
+	}
+	
+	@Test
+	def 'test deserialize'() {
+		
+		given:
+		ActionUndoInfo actionUndoInfoExpected = getActionUndoInfo1();
+		StringBuilder record = backupSerializer.serializeRecord(actionUndoInfoExpected)
+		
+		logger.info("Record: {}", record);
+		
+		def backupFileCoderMock = Mock(BackupFileCoder)
+		backupSerializer.backupFileCoder = backupFileCoderMock
+		backupSerializer.backupFileCoder.decode(_) >> { StringBuilder e -> 
+			return e
+		}
+		
+		backupSerializer.backupFileCoder.encode(_) >> { StringBuilder e ->
+			return e
+		}
+		
+		logger.info('bs null? {}', backupSerializer == null)
+		
+		when:
+		def actionUndoInfoActual = backupSerializer.deserializeRecord(record)
+		
+		then:
+		actionUndoInfoActual != null
+		actionUndoInfoExpected.action.toString() == actionUndoInfoActual.action.toString();
 	}
 
 	private ActionUndoInfo getActionUndoInfo1() {
 		ActionUndoInfo actionUndoInfo = new ActionUndoInfo()
-		actionUndoInfo.action = new StringBuilder('{"someAction": true}')
-		actionUndoInfo.undoAction = new StringBuilder('{"someUndoAction": 1234}')
+		actionUndoInfo.action = new StringBuilder('{"someAction":true}')
+		actionUndoInfo.undoAction = new StringBuilder('{"someUndoAction":1234}')
 		actionUndoInfo.tranDate = new BigDecimal('1000000.000000012')
 		actionUndoInfo.tranId = new BigDecimal('1000000.000002342355')
 		return actionUndoInfo

@@ -46,13 +46,13 @@ class TransactionServiceSpec extends Specification {
 	Cache cache;
 	
 	def setup() {
-		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems();
+		integrationSystemInitializer.nukePaveAndInitializeAllIntegratedSystems();
 		transactionService.@transactionIdInFlight == TransactionService.NO_TRANSACTION_IN_FLIGHT
 	}
 	
 	def cleanup() {
 		this.transactionService.rollbackCurrentTransaction();
-		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems();
+		integrationSystemInitializer.nukePaveAndInitializeAllIntegratedSystems();
 	}
 
 	@Test

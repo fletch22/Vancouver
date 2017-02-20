@@ -47,17 +47,22 @@ public class BackupFileOperations {
 	public String getDefaultMainBackupFilename() {
 		return BACKUP_FILE_NAME + "." + BACKUP_FILE_EXT;
 	}
-
-	public String getBackupFilepath() {
-		// Verify parent folder exists;
+	
+	public File getDefaultMainBackupFile() {
 		String parentFolderPath = getParentFolderPath();
 
 		String filename = getDefaultMainBackupFilename();
-		File f = new File(parentFolderPath, filename);
+		return new File(parentFolderPath, filename);
+	}
+
+	public String getBackupFilepath() {
+		File f = getDefaultMainBackupFile();
+		
+		String filename = f.getName();
 
 		if (f.isDirectory()) {
 			String message = String
-					.format("Encountered problem trying to create backup file. Backup file name \'%s\' is the name of a directory. \'%s\' should not be a directory name. Process is aborting.",
+					.format("Encountered problem trying to get backup file. Backup file name \'%s\' is the name of a directory. \'%s\' should not be a directory name. Process is aborting.",
 							filename);
 			throw new RuntimeException(message);
 		}
@@ -65,7 +70,8 @@ public class BackupFileOperations {
 		int count = 1;
 		while (f.exists()) {
 			filename = BACKUP_FILE_NAME + "-" + String.valueOf(count) + "." + BACKUP_FILE_EXT;
-			f = new File(parentFolderPath, filename);
+			Path parentPath = f.toPath().getParent();
+			f = new File(parentPath.toFile().getAbsolutePath(), filename);
 		}
 
 		return f.getAbsolutePath();

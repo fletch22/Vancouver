@@ -37,11 +37,11 @@ class ComponentConstrainerSpec extends Specification {
 	
 	def setup() {
 		integrationSystemInitializer.addOrbSystemModule(appDesignerModule);
-		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems();
+		integrationSystemInitializer.nukePaveAndInitializeAllIntegratedSystems();
 	}
 
 	def teardown() {
 		integrationSystemInitializer.removeOrbSystemModules();
-		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems();
+		integrationSystemInitializer.nukePaveAndInitializeAllIntegratedSystems();
 	}
 }

@@ -37,12 +37,12 @@ class ReferenceResolverSpec extends Specification {
 	
 	def setup() {
 		initializer.addOrbSystemModule(appDesignerModule)
-		initializer.nukeAndPaveAllIntegratedSystems()
+		initializer.nukePaveAndInitializeAllIntegratedSystems()
 	}
 	
 	def cleanup() {
 		initializer.removeOrbSystemModules()
-		initializer.nukeAndPaveAllIntegratedSystems()
+		initializer.nukePaveAndInitializeAllIntegratedSystems()
 	}
 	
 	def 'test resolve'() {

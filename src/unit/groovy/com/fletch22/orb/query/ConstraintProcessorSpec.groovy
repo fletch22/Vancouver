@@ -53,7 +53,7 @@ class ConstraintProcessorSpec extends Specification {
 	OrbType orbType
 	
 	def setup() {
-		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems()
+		integrationSystemInitializer.nukePaveAndInitializeAllIntegratedSystems()
 		def orbTypeInternalId = queryTestData.loadTestData()
 		
 		logger.info("OITID: " + orbTypeInternalId)
@@ -62,7 +62,7 @@ class ConstraintProcessorSpec extends Specification {
 	}
 
 	def cleanup() {
-		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems()
+		integrationSystemInitializer.nukePaveAndInitializeAllIntegratedSystems()
 	}
 
 	def 'test getAttributeValuesByFrequency when only one key'() {

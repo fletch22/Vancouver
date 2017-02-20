@@ -64,11 +64,11 @@ class OrbTypeManagerLocalCacheSpec extends Specification {
 	QueryManager queryManager
 	
 	def setup() {
-		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems();
+		integrationSystemInitializer.nukePaveAndInitializeAllIntegratedSystems();
 	}
 	
 	def cleanup() {
-		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems();
+		integrationSystemInitializer.nukePaveAndInitializeAllIntegratedSystems();
 	}
 	
 	def 'test delete type orb'() {

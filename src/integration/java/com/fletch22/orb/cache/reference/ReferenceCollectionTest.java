@@ -49,12 +49,12 @@ public class ReferenceCollectionTest {
 	
 	@Before
 	public void before() {
-		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems();
+		integrationSystemInitializer.nukePaveAndInitializeAllIntegratedSystems();
 	}
 	
 	@After
 	public void cleanup() {
-		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems();
+		integrationSystemInitializer.nukePaveAndInitializeAllIntegratedSystems();
 	}
 	
 	@Test

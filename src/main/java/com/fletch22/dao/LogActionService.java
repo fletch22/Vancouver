@@ -60,6 +60,7 @@ public class LogActionService {
 		
 		for (ActionInfo actionInfo: actionInfoList) {
 			CommandProcessActionPackage commandProcessActionPackage = this.commandProcessActionPackageFactory.getInstanceForRestoreMode(actionInfo.action, actionInfo.tranDate);
+			
 			OperationResult operationResult = commandProcessor.processAction(commandProcessActionPackage);
 			
 			if (operationResult.opResult.equals(OpResult.FAILURE)) {

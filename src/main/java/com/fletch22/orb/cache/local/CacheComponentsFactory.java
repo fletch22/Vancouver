@@ -16,7 +16,7 @@ public class CacheComponentsFactory {
 	
 	public CacheComponentsDto getInstance() {
 		
-		logger.info("Creating copy of cache.");
+		logger.debug("Creating copy of cache.");
 		
 		CacheComponentsDto cacheComponentsDto = new CacheComponentsDto();
 		cacheComponentsDto.orbTypeCollection = (OrbTypeCollection) getApplicationContext().getBean(OrbTypeCollection.class);

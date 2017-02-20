@@ -186,7 +186,7 @@ public class AttributeReferenceCollection {
 				
 				if (target == null) {
 					Target test = targetLineup.targets.get(attributeNameNew);
-					logger.info("Test target is null? {}", test == null);
+					logger.debug("Test target is null? {}", test == null);
 				}
 				
 				Set<Long> arrowSet = target.arrowClusterCollection.keySet();

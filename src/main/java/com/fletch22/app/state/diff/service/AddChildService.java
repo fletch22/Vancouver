@@ -31,12 +31,8 @@ public class AddChildService {
 	public long process(AddedChild addedChild) {
 		String typeLabel = addedChild.child.typeLabel;
 		
-		logger.info("Type label: " + typeLabel);;
-
 		DomainServiceBase domainServiceBase = serviceFactory.getBaseServiceFromTypeLabel(typeLabel);
 		Child child = domainServiceBase.createInstance(addedChild.child.props);
-		
-		logger.info("Par ID: " + addedChild.parentId);
 		
 		String typeLabelParent = domainUtilDao.getTypeLabelFromId(addedChild.parentId);
 		DomainService domainService = serviceFactory.getServiceFromTypeLabel(typeLabelParent);

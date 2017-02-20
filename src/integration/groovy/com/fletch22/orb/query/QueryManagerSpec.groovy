@@ -57,11 +57,11 @@ class QueryManagerSpec extends Specification {
 	QueryMother queryMother
 	
 	def setup() {
-		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems();
+		integrationSystemInitializer.nukePaveAndInitializeAllIntegratedSystems();
 	}
 	
 	def after() {
-		integrationSystemInitializer.nukeAndPaveAllIntegratedSystems();
+		integrationSystemInitializer.nukePaveAndInitializeAllIntegratedSystems();
 	}
 	
 	def 'test handle type simple delete event'() {
