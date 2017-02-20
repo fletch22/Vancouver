@@ -27,6 +27,7 @@ import com.fletch22.app.state.FrontEndState;
 import com.fletch22.app.state.FrontEndStateDao.StateSearchResult;
 import com.fletch22.app.state.FrontEndStateService;
 import com.fletch22.app.state.StateIndexInfo;
+import com.fletch22.dao.LogBackupAndRestore;
 import com.fletch22.orb.IntegrationSystemInitializer;
 import com.fletch22.orb.query.QueryManager;
 import com.fletch22.util.json.GsonFactory;
@@ -64,6 +65,9 @@ public class ComponentController extends Controller {
 
 	@Autowired
 	IntegrationSystemInitializer integrationSystemInitializer;
+	
+	@Autowired
+	LogBackupAndRestore logBackupAndRestore;
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	public @ResponseBody Object getComponent(@PathVariable long id) {
@@ -192,6 +196,15 @@ public class ComponentController extends Controller {
 		this.integrationSystemInitializer.nukeAndPaveAllIntegratedSystems();
 
 		return getMostRecentStateHistory();
+	}
+	
+	@RequestMapping(value = "/persistToDisk", method = RequestMethod.POST)
+	@ResponseStatus(value = HttpStatus.OK)
+	public @ResponseBody boolean persistToDisk() {
+
+		logBackupAndRestore.persistToDisk();
+		
+		return false;
 	}
 
 	public static class ClientIdsPackage {

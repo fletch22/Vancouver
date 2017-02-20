@@ -162,4 +162,23 @@ class LogActionDaoSpec extends Specification {
 		transactionSearchResult.wasTransactionFound() == true
 		transactionSearchResult.tranId == tranId2
 	}
+	
+	@Test
+	def 'test get all actions an undos'() {
+		given:
+		this.orbTypeManager.createOrbType("foo", null)
+		
+		when:
+		List<ActionUndoInfo> allActionsAndUndos = logActionDao.getAllActionsWithAssociatedUndos();
+		
+		logger.info('Size: {}', allActionsAndUndos.size)
+		
+		then:
+		allActionsAndUndos.size == 1
+		def actionUndoInfo = allActionsAndUndos[0]
+		logger.info(actionUndoInfo.action.toString());
+		logger.info(actionUndoInfo.undoAction.toString());
+		actionUndoInfo.action.length() > 0
+		actionUndoInfo.undoAction.length() > 0
+	}
 }

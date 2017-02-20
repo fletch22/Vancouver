@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
+import com.fletch22.dao.ActionUndoInfo;
 import com.fletch22.dao.LogActionDao;
 import com.fletch22.orb.rollback.UndoActionBundle;
 
@@ -423,5 +424,29 @@ public class LogActionInMemDao extends LogActionDao {
 		}
 		
 		return transactionSearchResult;
+	}
+
+	@Override
+	public List<ActionUndoInfo> getAllActionsWithAssociatedUndos() {
+		String getLogSql = sqlStatementStore.getFullActionAndUndoLog();
+
+		Connection connection = null;
+		List<ActionUndoInfo> actionInfoList = new ArrayList<ActionUndoInfo>();
+		try {
+
+			connection = this.getConnection();
+			connection.setAutoCommit(false);
+
+			PreparedStatement preparedStatement = connection.prepareStatement(getLogSql);
+			ResultSet resultSet = preparedStatement.executeQuery();
+
+			actionInfoList = transformActionsAndUndos(resultSet);
+
+		} catch (Exception e) {
+			throw new RuntimeException("Encountered error while trying to get Undos.", e);
+		} finally {
+			cleanUpConnectionAfterSqlOperation(connection);
+		}
+		return actionInfoList;
 	}
 }

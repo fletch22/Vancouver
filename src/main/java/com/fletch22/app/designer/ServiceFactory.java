@@ -21,8 +21,16 @@ public class ServiceFactory {
 	
 	@SuppressWarnings("rawtypes")
 	public DomainService getServiceFromTypeLabel(String typeLabel) {
+		DomainService domainService = getDomainServiceForParents(typeLabel);
+		if (domainService == null) {
+			throw new RuntimeException("Could not determine the type of service from the label '" + typeLabel + "'");
+		}
+		return domainService;
+	}
+	
+	DomainService getDomainServiceForParents(String parentTypeLabel) {
 		DomainService domainService = null;
-		switch (typeLabel) {
+		switch (parentTypeLabel) {
 			case AppContainer.TYPE_LABEL:
 				domainService = serviceJunction.appContainerService;
 				break;
@@ -48,44 +56,22 @@ public class ServiceFactory {
 				domainService = serviceJunction.divService;
 				break;
 			default:
-				throw new RuntimeException("Could not determine the type of service from the label '" + typeLabel + "'");
+				// Do nothing
 		}
 		return domainService;
 	}
 	
 	@SuppressWarnings("rawtypes")
 	public DomainServiceBase getBaseServiceFromTypeLabel(String typeLabel) {
-		DomainServiceBase domainServiceBase = null;
-		switch (typeLabel) {
-			case AppContainer.TYPE_LABEL:
-				domainServiceBase = serviceJunction.appContainerService;
-				break;
-			case App.TYPE_LABEL:
-				domainServiceBase = serviceJunction.appService;
-				break;
-			case Website.TYPE_LABEL:
-				domainServiceBase = serviceJunction.websiteService;
-				break;
-			case WebFolder.TYPE_LABEL:
-				domainServiceBase = serviceJunction.webFolderService;
-				break;
-			case Page.TYPE_LABEL:
-				domainServiceBase = serviceJunction.pageService;
-				break;
-			case Layout.TYPE_LABEL:
-				domainServiceBase = serviceJunction.layoutService;
-				break;
-			case LayoutMinion.TYPE_LABEL:
-				domainServiceBase = serviceJunction.layoutMinionService;
-				break;
-			case Div.TYPE_LABEL:
-				domainServiceBase = serviceJunction.divService;
-				break;
-			case DropDownListbox.TYPE_LABEL:
-				domainServiceBase = serviceJunction.dropDownListboxService;
-				break;
-			default:
-				throw new RuntimeException("Could not determine the type of service from the label '" + typeLabel + "'");
+		DomainServiceBase domainServiceBase = getDomainServiceForParents(typeLabel);
+		if (domainServiceBase == null) {
+			switch (typeLabel) {
+				case DropDownListbox.TYPE_LABEL:
+					domainServiceBase = serviceJunction.dropDownListboxService;
+					break;
+				default:
+					throw new RuntimeException("Could not determine the type of service from the label '" + typeLabel + "'");
+			}
 		}
 		return domainServiceBase;
 	}

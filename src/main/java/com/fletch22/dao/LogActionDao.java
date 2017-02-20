@@ -44,6 +44,8 @@ public abstract class LogActionDao {
 	public abstract int countCommands();
 
 	public abstract List<ActionInfo> getAllActions();
+	
+	public abstract List<ActionUndoInfo> getAllActionsWithAssociatedUndos();
 
 	public abstract void rollbackToBeforeSpecificTransaction(BigDecimal tranId);
 	
@@ -115,12 +117,25 @@ public abstract class LogActionDao {
 		}
 		return actions;
 	}
+	
+	public List<ActionUndoInfo> transformActionsAndUndos(ResultSet resultSet) throws SQLException {
+		List<ActionUndoInfo> actions = new ArrayList<ActionUndoInfo>();
+		while (resultSet.next()) {
+			ActionUndoInfo actionUndoInfo = new ActionUndoInfo();
+			actionUndoInfo.action = new StringBuilder(resultSet.getString("action"));
+			actionUndoInfo.undoAction = new StringBuilder(resultSet.getString("undoAction"));
+			actionUndoInfo.tranId = resultSet.getBigDecimal("tranId");
+			actionUndoInfo.tranDate = resultSet.getBigDecimal("tranDate");
+			actions.add(actionUndoInfo);
+		}
+		return actions;
+	}
 
 	public class ActionInfo {
 		public StringBuilder action;
 		public BigDecimal tranDate;
 	}
-
+	
 	public static DataSource getDataSource(String connectURI) {
 		//
 		// First, we'll create a ConnectionFactory that the

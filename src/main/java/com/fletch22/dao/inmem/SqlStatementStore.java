@@ -12,15 +12,15 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
 
 public class SqlStatementStore {
-	
+
 	@Value("${h2.database.rootScriptPath}")
 	private String rootScriptPath;
-	
+
 	Map<String, StringBuilder> sqlScripts = new HashMap<String, StringBuilder>();
 
 	public String[] getSqlLines(String filePath) {
-		
-		filePath = this.rootScriptPath + "/" + filePath; 
+
+		filePath = this.rootScriptPath + "/" + filePath;
 
 		StringBuilder sb = null;
 		if (sqlScripts.containsKey(filePath)) {
@@ -30,11 +30,12 @@ public class SqlStatementStore {
 			sqlScripts.put(filePath, sb);
 		}
 
-		// Note: Here is our splitter! We use ";" as a delimiter for each request
+		// Note: Here is our splitter! We use ";" as a delimiter for each
+		// request
 		// then we are sure to have well formed statements
 		return sb.toString().split(";");
 	}
-	
+
 	private StringBuilder getScriptLines(String filePath) {
 
 		StringBuilder sb = new StringBuilder();
@@ -72,7 +73,7 @@ public class SqlStatementStore {
 		}
 		return sb;
 	}
-	
+
 	public String getSingleLineFromFile(String filePath) {
 		String[] sqlLines = getSqlLines(filePath);
 
@@ -90,27 +91,27 @@ public class SqlStatementStore {
 	public String getInsertIntoUndoActionLog() {
 		return getSingleLineFromFile("logAction5_insertIntoUndoActionLog.sql");
 	}
-	
+
 	public String getSelectTransactionAndSubsequentUndosSql() {
 		return getSingleLineFromFile("getTransactionAndSubsequentUndos2.sql");
 	}
-	
+
 	public String getSelectSubsequentUndosSql() {
 		return getSingleLineFromFile("getSubsequentUndos.sql");
 	}
-	
+
 	public String[] getInitializeDatabaseSql() {
 		return getSqlLines("initializeDatabase.sql");
 	}
-	
+
 	public String[] getClearOutDatabaseSql() {
 		return getSqlLines("blowAwayActionTable5.sql");
 	}
-	
+
 	public String getAnyOrphanedTransactionsSql() {
 		return getSingleLineFromFile("getAnyOrphanedTransactions2.sql");
 	}
-	
+
 	public String getCountLogItemsSql() {
 		return getSingleLineFromFile("countLogItems.sql");
 	}
@@ -118,11 +119,11 @@ public class SqlStatementStore {
 	public String getLogSql() {
 		return getSingleLineFromFile("getLog.sql");
 	}
-	
+
 	public String getDeleteUndoLogSql() {
 		return getSingleLineFromFile("removeTransactionAndAllAfter6_UndoActionLog.sql");
 	}
-	
+
 	public String getDeleteActionLogSql() {
 		return getSingleLineFromFile("removeTransactionAndAllAfter6_ActionLog.sql");
 	}
@@ -130,16 +131,20 @@ public class SqlStatementStore {
 	public String getResetCurrenTransaction() {
 		return getSingleLineFromFile("resetCurrentTransaction.sql");
 	}
-	
+
 	public String getGetCurrentTransactionSql() {
 		return getSingleLineFromFile("getCurrentTransaction.sql");
 	}
-	
+
 	public String getGetRecordTransactionStartSql() {
 		return getSingleLineFromFile("recordTransactionStart3.sql");
 	}
 
 	public String getSubsequentTranIdIfAny() {
-		 return getSingleLineFromFile("getSubsequentTranIdIfAny.sql");
+		return getSingleLineFromFile("getSubsequentTranIdIfAny.sql");
+	}
+	
+	public String getFullActionAndUndoLog() {
+		return getSingleLineFromFile("getFullActionAndUndoLog.sql");
 	}
 }

@@ -289,4 +289,27 @@ public class LogActionDaoImpl extends LogActionDao {
 		}
 		return transactionSearchResult;
 	}
+
+	@Override
+	public List<ActionUndoInfo> getAllActionsWithAssociatedUndos() {
+		
+		List<ActionUndoInfo> actions = new ArrayList<ActionUndoInfo>();
+		PreparedStatement pstmt = null;
+		try {
+			this.connection = getConnection();
+
+			String transactionAndSubsequentUndo = "{call getFullActionAndUndoLog()}";
+
+			pstmt = this.connection.prepareStatement(transactionAndSubsequentUndo);
+			ResultSet resultSet = pstmt.executeQuery();
+
+			actions = transformActionsAndUndos(resultSet);
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage(), e);
+		} finally {
+			try { if (pstmt != null) pstmt.close(); } catch(Exception e) { }
+			closeConnection();
+		}
+		return actions;
+	}
 }
