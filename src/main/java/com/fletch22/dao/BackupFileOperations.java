@@ -72,6 +72,7 @@ public class BackupFileOperations {
 			filename = BACKUP_FILE_NAME + "-" + String.valueOf(count) + "." + BACKUP_FILE_EXT;
 			Path parentPath = f.toPath().getParent();
 			f = new File(parentPath.toFile().getAbsolutePath(), filename);
+			count++;
 		}
 
 		return f.getAbsolutePath();

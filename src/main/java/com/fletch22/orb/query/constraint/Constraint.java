@@ -45,11 +45,11 @@ public abstract class Constraint {
 		return constraint;
 	}
 		
-	public static Constraint are(String[] attributeName, Aggregate aggregate, CriteriaAggregate criteriaForAggregation) {
+	public static Constraint are(String[] attributeNames, Aggregate aggregate, CriteriaAggregate criteriaForAggregation) {
 		ConstraintDetailsAggregate constraintDetailsAggregate = new ConstraintDetailsAggregate();
 		
 		constraintDetailsAggregate.relationshipOperator = RelationshipOperator.ARE;
-		constraintDetailsAggregate.attributeNames = attributeName;
+		constraintDetailsAggregate.attributeNames = attributeNames;
 		constraintDetailsAggregate.aggregate = aggregate;
 		constraintDetailsAggregate.criteriaForAggregation = criteriaForAggregation;
 		

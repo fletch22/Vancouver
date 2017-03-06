@@ -13,10 +13,16 @@ import org.springframework.stereotype.Component;
 import com.fletch22.app.designer.Child;
 import com.fletch22.app.designer.OrbBasedComponent;
 import com.fletch22.app.designer.Parent;
+import com.fletch22.app.designer.DataField.DataField;
+import com.fletch22.app.designer.DataField.DataFieldService;
+import com.fletch22.app.designer.DataModel.DataModel;
+import com.fletch22.app.designer.DataModel.DataModelService;
 import com.fletch22.app.designer.app.App;
 import com.fletch22.app.designer.app.AppService;
 import com.fletch22.app.designer.appContainer.AppContainer;
 import com.fletch22.app.designer.appContainer.AppContainerService;
+import com.fletch22.app.designer.datastore.Datastore;
+import com.fletch22.app.designer.datastore.DatastoreService;
 import com.fletch22.app.designer.ddl.DropDownListbox;
 import com.fletch22.app.designer.ddl.DropDownListboxService;
 import com.fletch22.app.designer.div.Div;
@@ -77,6 +83,15 @@ public class ReferenceResolverService {
 	
 	@Autowired
 	DropDownListboxService dropDownListboxService;
+	
+	@Autowired
+	DatastoreService datastoreService;
+	
+	@Autowired
+	DataModelService dataModelService;
+	
+	@Autowired
+	DataFieldService dataFieldService;
 	
 	public OrbType getAndCacheOrbType(Map<Long, OrbType> cachedOrbTypes, Orb orb) {
 		OrbType orbType = null;
@@ -175,6 +190,15 @@ public class ReferenceResolverService {
 				break;
 			case DropDownListbox.TYPE_LABEL:
 				orbBaseComponentChild = dropDownListboxService.get(childId);
+				break;
+			case Datastore.TYPE_LABEL:
+				orbBaseComponentChild = datastoreService.get(childId);
+				break;
+			case DataModel.TYPE_LABEL:
+				orbBaseComponentChild = dataModelService.get(childId);
+				break;
+			case DataField.TYPE_LABEL:
+				orbBaseComponentChild = dataFieldService.get(childId);
 				break;
 			default:
 				throw new RuntimeException("Encountered problem trying to determine type while resolving children.");

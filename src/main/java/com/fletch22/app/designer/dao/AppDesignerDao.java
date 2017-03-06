@@ -13,8 +13,11 @@ import com.fletch22.app.designer.ComponentChildren;
 import com.fletch22.app.designer.DomainTransformer;
 import com.fletch22.app.designer.OrbBasedComponent;
 import com.fletch22.app.designer.Parent;
+import com.fletch22.app.designer.DataField.DataField;
+import com.fletch22.app.designer.DataModel.DataModel;
 import com.fletch22.app.designer.app.App;
 import com.fletch22.app.designer.appContainer.AppContainer;
+import com.fletch22.app.designer.datastore.Datastore;
 import com.fletch22.app.designer.ddl.DropDownListbox;
 import com.fletch22.app.designer.div.Div;
 import com.fletch22.app.designer.layout.Layout;
@@ -133,6 +136,15 @@ public abstract class AppDesignerDao<T extends OrbBasedComponent, U extends Doma
 					break;
 				case DropDownListbox.TYPE_LABEL:
 					daoJunction.dropDownListboxDao.update((DropDownListbox) orbBasedComponentChild);
+					break;
+				case Datastore.TYPE_LABEL:
+					daoJunction.datastoreDao.update((Datastore) orbBasedComponentChild);
+					break;
+				case DataModel.TYPE_LABEL:
+					daoJunction.dataModelDao.update((DataModel) orbBasedComponentChild);
+					break;
+				case DataField.TYPE_LABEL:
+					daoJunction.dataFieldDao.update((DataField) orbBasedComponentChild);
 					break;
 				default:
 					throw new RuntimeException("Encountered problem while processing children for update. Found an unrecognized type.");

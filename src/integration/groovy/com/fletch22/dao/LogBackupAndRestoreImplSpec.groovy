@@ -48,7 +48,8 @@ class LogBackupAndRestoreImplSpec extends Specification {
 		this.backupSerializerOriginal = this.logBackupAndRestoreImpl.backupSerializer
 	}
 	
-	def teardown() {
+	def cleanup() {
+		logger.info('XXXX TEAR DOWN')
 		this.logBackupAndRestoreImpl.logActionDao = this.logActionDaoOriginal
 		this.logBackupAndRestoreImpl.backupFileOperations = this.backupFileOperationsOriginal
 		this.logBackupAndRestoreImpl.backupSerializer = this.backupSerializerOriginal
@@ -67,20 +68,18 @@ class LogBackupAndRestoreImplSpec extends Specification {
 		auiList.add(aui)
 		this.logBackupAndRestoreImpl.logActionDao.getAllActionsWithAssociatedUndos() >> auiList
 		
+		def fileWriterMock = Mock(FileWriter)
+		def backupFileWriter = new BackupFileWriter(fileWriterMock, null)
+		
 		def backupFileOperationsMock = Mock(BackupFileOperations)
 		this.logBackupAndRestoreImpl.backupFileOperations = backupFileOperationsMock
-		
-		def backupFileWriter = new BackupFileWriter(null, null)
-		this.logBackupAndRestoreImpl.backupFileOperations.getBackupFileWriter() >> backupFileWriter
-		
-		def fileWriterMock = Mock(FileWriter)
-		backupFileWriter.fileWriter = fileWriterMock
+		backupFileOperationsMock.getBackupFileWriter() >> backupFileWriter
 		
 		def backupSerializerMock = Mock(BackupSerializer)
 		this.logBackupAndRestoreImpl.backupSerializer = backupSerializerMock
-				
+		
 		StringBuilder test = new StringBuilder("foo")
-		backupSerializerMock.serializeRecord(_, _) >> test
+		backupSerializerMock.serializeRecord(_) >> test
 
 		when:
 		this.logBackupAndRestoreImpl.persistToDisk();
@@ -91,6 +90,7 @@ class LogBackupAndRestoreImplSpec extends Specification {
 		1 * fileWriterMock.write('\r\n')
 	}
 	
+	@Test
 	def 'test integration with file system'() {
 		
 		given:

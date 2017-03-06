@@ -7,10 +7,14 @@ import org.springframework.stereotype.Component;
 
 import com.fletch22.app.AppModule;
 import com.fletch22.app.AppModuleImpl;
+import com.fletch22.app.designer.DataField.DataField;
+import com.fletch22.app.designer.DataModel.DataModel;
 import com.fletch22.app.designer.app.App;
 import com.fletch22.app.designer.app.AppService;
 import com.fletch22.app.designer.appContainer.AppContainer;
 import com.fletch22.app.designer.appContainer.AppContainerService;
+import com.fletch22.app.designer.datastore.Datastore;
+import com.fletch22.app.designer.datastore.DatastoreService;
 import com.fletch22.app.designer.ddl.DropDownListbox;
 import com.fletch22.app.designer.ddl.DropDownListboxService;
 import com.fletch22.app.designer.div.Div;
@@ -57,18 +61,21 @@ public class AppDesignerModule implements OrbSystemModule {
 
 	@Autowired
 	AppService appService;
-	
+
 	@Autowired
 	WebsiteService websiteService;
-	
+
 	@Autowired
 	PageService pageService;
-	
+
 	@Autowired
 	DropDownListboxService dropDownListboxService;
 
 	@Autowired
 	ComponentConstrainer componentConstrainer;
+
+	@Autowired
+	DatastoreService datastoreService;
 
 	@Override
 	public void initialize() {
@@ -84,10 +91,13 @@ public class AppDesignerModule implements OrbSystemModule {
 
 		App app = appService.createInstance("HelloWorldApp");
 		appContainerService.addToParent(appContainer, app);
-		
+
+		Datastore datastore = datastoreService.createInstance("default");
+		appContainerService.addToParent(appContainer, datastore);
+
 		Website website = websiteService.createInstance("website1");
 		appService.addToParent(app, website);
-		
+
 		Page page = pageService.createInstance("page1");
 		websiteService.addToParent(website, page);
 	}
@@ -97,7 +107,23 @@ public class AppDesignerModule implements OrbSystemModule {
 		primeQueryIndex(orbTypeInternalId, AppContainer.ATTR_LABEL);
 		componentConstrainer.addNotAmongstUniqueConstraintOnField(orbTypeInternalId, AppContainer.ATTR_LABEL);
 
+		orbTypeInternalId = orbTypeManager.createOrbType(Datastore.TYPE_LABEL, Datastore.ATTRIBUTE_LIST);
+		componentConstrainer.addNotAmongstUniqueConstraintOnField(orbTypeInternalId, Datastore.ATTR_LABEL);
+		primeQueryIndex(orbTypeInternalId, Datastore.ATTR_LABEL);
+
+		orbTypeInternalId = orbTypeManager.createOrbType(DataModel.TYPE_LABEL, DataModel.ATTRIBUTE_LIST);
+		String[] compositeUniqueConstraintDataModel = { DataModel.ATTR_LABEL, DataModel.ATTR_PARENT };
+		componentConstrainer.addNotAmongstUniqueConstraintOnField(orbTypeInternalId, compositeUniqueConstraintDataModel);
+//		componentConstrainer.addNotAmongstUniqueConstraintOnField(orbTypeInternalId, DataModel.ATTR_LABEL);
+		primeQueryIndex(orbTypeInternalId, DataModel.ATTR_LABEL);
+
+		orbTypeInternalId = orbTypeManager.createOrbType(DataField.TYPE_LABEL, DataField.ATTRIBUTE_LIST);
+		String[] compositeUniqueConstraintDataField = { DataField.ATTR_LABEL, DataField.ATTR_PARENT };
+		componentConstrainer.addNotAmongstUniqueConstraintOnField(orbTypeInternalId, compositeUniqueConstraintDataField);
+		primeQueryIndex(orbTypeInternalId, DataField.ATTR_LABEL);
+
 		orbTypeInternalId = orbTypeManager.createOrbType(App.TYPE_LABEL, App.ATTRIBUTE_LIST);
+
 		componentConstrainer.addNotAmongstUniqueConstraintOnField(orbTypeInternalId, App.ATTR_LABEL);
 		primeQueryIndex(orbTypeInternalId, App.ATTR_LABEL);
 
@@ -125,19 +151,19 @@ public class AppDesignerModule implements OrbSystemModule {
 		String[] bodyCompositeUniqueContraint = { Body.ATTR_LABEL, Body.ATTR_PARENT };
 		componentConstrainer.addNotAmongstUniqueConstraintOnField(orbTypeInternalId, bodyCompositeUniqueContraint);
 		primeQueryIndex(orbTypeInternalId, Body.ATTR_LABEL);
-		
+
 		orbTypeManager.createOrbType(Layout.TYPE_LABEL, Layout.ATTRIBUTE_LIST);
-		
+
 		orbTypeManager.createOrbType(LayoutMinion.TYPE_LABEL, LayoutMinion.ATTRIBUTE_LIST);
 
 		orbTypeInternalId = orbTypeManager.createOrbType(Div.TYPE_LABEL, Div.ATTRIBUTE_LIST);
-		
+
 		orbTypeInternalId = orbTypeManager.createOrbType(DropDownListbox.TYPE_LABEL, DropDownListbox.ATTRIBUTE_LIST);
 
 		orbTypeInternalId = orbTypeManager.createOrbType(Form.TYPE_LABEL, Form.ATTRIBUTE_LIST);
 		componentConstrainer.addNotAmongstUniqueConstraintOnField(orbTypeInternalId, Form.ATTR_LABEL);
 		primeQueryIndex(orbTypeInternalId, Form.ATTR_LABEL);
-		
+
 		createType(AppModuleImpl.FrontEndState);
 	}
 

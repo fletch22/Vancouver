@@ -63,7 +63,7 @@ class OrbReferenceSpec extends Specification {
 		this.orbReference = cache.orbCollection.orbReference
 	}
 	
-	def teardown() {
+	def cleanup() {
 		integrationSystemInitializer.nukePaveAndInitializeAllIntegratedSystems()
 	}
 

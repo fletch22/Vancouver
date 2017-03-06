@@ -3,8 +3,11 @@ package com.fletch22.app.designer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.fletch22.app.designer.DataField.DataField;
+import com.fletch22.app.designer.DataModel.DataModel;
 import com.fletch22.app.designer.app.App;
 import com.fletch22.app.designer.appContainer.AppContainer;
+import com.fletch22.app.designer.datastore.Datastore;
 import com.fletch22.app.designer.ddl.DropDownListbox;
 import com.fletch22.app.designer.div.Div;
 import com.fletch22.app.designer.layout.Layout;
@@ -37,6 +40,12 @@ public class ServiceFactory {
 			case App.TYPE_LABEL:
 				domainService = serviceJunction.appService;
 				break;
+			case Datastore.TYPE_LABEL:
+				domainService = serviceJunction.datastoreService;
+				break;
+			case DataModel.TYPE_LABEL:
+				domainService = serviceJunction.dataModelService;
+				break;
 			case Website.TYPE_LABEL:
 				domainService = serviceJunction.websiteService;
 				break;
@@ -68,6 +77,9 @@ public class ServiceFactory {
 			switch (typeLabel) {
 				case DropDownListbox.TYPE_LABEL:
 					domainServiceBase = serviceJunction.dropDownListboxService;
+					break;
+				case DataField.TYPE_LABEL:
+					domainServiceBase = serviceJunction.dataFieldService;
 					break;
 				default:
 					throw new RuntimeException("Could not determine the type of service from the label '" + typeLabel + "'");

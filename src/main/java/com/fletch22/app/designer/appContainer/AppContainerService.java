@@ -10,10 +10,9 @@ import org.springframework.stereotype.Component;
 
 import com.fletch22.app.designer.AppDesignerModule;
 import com.fletch22.app.designer.DomainService;
-import com.fletch22.app.designer.app.App;
 
 @Component
-public class AppContainerService extends DomainService<AppContainer, App> {
+public class AppContainerService extends DomainService<AppContainer, AppContainerChild> {
 	
 	Logger logger = LoggerFactory.getLogger(AppContainerService.class);
 	
@@ -26,8 +25,8 @@ public class AppContainerService extends DomainService<AppContainer, App> {
 
 	public boolean flag = false;
 	
-	public void addToParent(AppContainer appContainer, App app) {
-		connectParentAndChild(appContainer, app);
+	public void addToParent(AppContainer appContainer, AppContainerChild appContainerChild) {
+		connectParentAndChild(appContainer, appContainerChild);
 		save(appContainer);
 	}
 	

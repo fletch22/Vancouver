@@ -4,8 +4,9 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 
 import com.fletch22.app.designer.Parent;
+import com.fletch22.app.designer.appContainer.AppContainerChild;
 
-public class App extends Parent {
+public class App extends Parent implements AppContainerChild {
 	
 	public static final String TYPE_LABEL = "App";
 	public static final String ATTR_LABEL = "label";

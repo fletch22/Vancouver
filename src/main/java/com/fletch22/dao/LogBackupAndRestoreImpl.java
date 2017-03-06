@@ -44,9 +44,10 @@ public class LogBackupAndRestoreImpl implements LogBackupAndRestore {
 
 		BackupFileWriter backupFileWriter = null;
 		try {
-			backupFileWriter = backupFileOperations.getBackupFileWriter();
+			backupFileWriter = this.backupFileOperations.getBackupFileWriter();
+			
 			for (ActionUndoInfo actionUndoInfo : list) {
-				StringBuilder sb = backupSerializer.serializeRecord(actionUndoInfo);
+				StringBuilder sb = this.backupSerializer.serializeRecord(actionUndoInfo);
 				backupFileWriter.fileWriter.write(sb.toString());
 				backupFileWriter.fileWriter.write("\r\n");
 			}

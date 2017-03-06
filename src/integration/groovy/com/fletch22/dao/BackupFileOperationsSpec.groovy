@@ -24,21 +24,6 @@ class BackupFileOperationsSpec extends Specification {
 	BackupFileOperations backupFileOperations
 
 	@Test
-	def 'test get backup file path'() {
-		
-		given:
-		def expectedFilepath = 'C:\\Windows\\Temp'
-		backupFileOperations.backupParentFolder = expectedFilepath
-		
-		when:
-		def backupFilepath = backupFileOperations.getBackupFilepath() 
-		
-		then:
-		backupFileOperations.backupParentFolder != null
-		backupFilepath == expectedFilepath + "\\backup.txt"
-	}
-	
-	@Test
 	def 'test get parent folder path'() {
 		
 		given:
@@ -51,5 +36,27 @@ class BackupFileOperationsSpec extends Specification {
 		then:
 		backupFileOperations.backupParentFolder != null
 		parentFolderPath == expectedFilepath
+	}
+	
+	@Test
+	def 'test get backup file path'() {
+		
+		given:
+		when:
+		def path = backupFileOperations.getBackupFilepath()
+		
+		then:
+		path.length() > 0
+	}
+	
+	@Test
+	def 'get default main backup file'() {
+
+		given:
+		when:
+		def file = backupFileOperations.getDefaultMainBackupFile()
+		
+		then:
+		file != null
 	}
 }

@@ -71,7 +71,7 @@ class OrbManagerLocalCacheSpec extends Specification {
 		integrationSystemInitializer.nukePaveAndInitializeAllIntegratedSystems()
 	}
 
-	def tearDown() {
+	def cleanup() {
 		integrationSystemInitializer.nukePaveAndInitializeAllIntegratedSystems()
 	}
 

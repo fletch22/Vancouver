@@ -33,7 +33,7 @@ public class GlobalExceptionController {
 	@ResponseBody
 	public String handleBadRequest(HttpServletRequest req, Exception exception) {
 		
-		logger.info("Handling exception");
+		logger.info("Handling exception {}", exception);
 
 		ExceptionJSONInfo info;
 		info = new ExceptionJSONInfo();

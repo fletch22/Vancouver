@@ -40,7 +40,7 @@ class ComponentConstrainerSpec extends Specification {
 		integrationSystemInitializer.nukePaveAndInitializeAllIntegratedSystems();
 	}
 
-	def teardown() {
+	def cleanup() {
 		integrationSystemInitializer.removeOrbSystemModules();
 		integrationSystemInitializer.nukePaveAndInitializeAllIntegratedSystems();
 	}

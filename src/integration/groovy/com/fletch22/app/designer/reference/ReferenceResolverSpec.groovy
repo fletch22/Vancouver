@@ -57,4 +57,17 @@ class ReferenceResolverSpec extends Specification {
 		then:
 		appContainer.getChildren().isHaveChildrenBeenResolved()
 	}
+	
+	def 'test add dupes'() {
+		
+		given:
+		when:
+		AppContainer appContainer = appContainerService.createInstance("foo")
+		
+		App app = appService.createInstance("fooAppChild")
+		appContainerService.addToParent(appContainer, app)
+		
+		then:
+		appContainer.getChildren().isHaveChildrenBeenResolved()
+	}
 }

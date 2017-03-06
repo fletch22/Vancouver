@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
 
+import spock.lang.Shared
 import spock.lang.Specification
 
 import com.fletch22.orb.IntegrationTests
@@ -20,6 +21,17 @@ class BackupSerializerSpec extends Specification {
 	
 	@Autowired
 	BackupSerializer backupSerializer
+	
+	@Shared
+	BackupFileCoder backupFileCoderOriginal
+	
+	def setup() {
+		this.backupFileCoderOriginal = this.backupSerializer.backupFileCoder
+	}
+	
+	def cleanup() {
+		this.backupSerializer.backupFileCoder = this.backupFileCoderOriginal
+	}
 
 	@Test
 	def 'test serialize'() {

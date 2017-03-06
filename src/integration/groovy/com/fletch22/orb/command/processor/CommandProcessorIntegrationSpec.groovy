@@ -73,7 +73,7 @@ class CommandProcessorIntegrationSpec extends Specification {
 		initializer.nukePaveAndInitializeAllIntegratedSystems();
 	}
 	
-	def tearDown() {
+	def cleanup() {
 		initializer.nukePaveAndInitializeAllIntegratedSystems();
 	}
 
