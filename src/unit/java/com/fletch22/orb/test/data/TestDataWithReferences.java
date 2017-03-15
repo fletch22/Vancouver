@@ -64,7 +64,7 @@ public class TestDataWithReferences {
 		this.orbTypeInternalId = orbTypeManager.createOrbType("foo", customFields);
 		
 		Orb orbTarget = orbManager.createOrb(orbTypeInternalId);
-		orbManager.setAttribute(orbTarget.getOrbInternalId(), ATTRIBUTE_COLOR, "green");
+		orbManager.setAttributeWithCheckConstraints(orbTarget.getOrbInternalId(), ATTRIBUTE_COLOR, "green");
 		
 		String reference = referenceUtil.composeReference(orbTarget.getOrbInternalId(), ATTRIBUTE_COLOR);
 		
@@ -72,7 +72,7 @@ public class TestDataWithReferences {
 		
 		for (int i = 0; i < numberOfInstances; i++) {
 			Orb orb = orbManager.createOrb(orbTypeInternalId);
-			orbManager.setAttribute(orb.getOrbInternalId(), ATTRIBUTE_COLOR, reference);
+			orbManager.setAttributeWithCheckConstraints(orb.getOrbInternalId(), ATTRIBUTE_COLOR, reference);
 		}
 		
 		return orbTarget;

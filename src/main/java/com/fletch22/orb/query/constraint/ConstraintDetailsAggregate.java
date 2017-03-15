@@ -42,8 +42,8 @@ public class ConstraintDetailsAggregate extends ConstraintDet {
 	}
 
 	@Override
-	public Query<CacheEntry> acceptConstraintProcessorVisitor(ConstraintProcessVisitor constraintVisitor, long orbTypeInternalId) {
-		return constraintVisitor.visit(this, orbTypeInternalId);
+	public Query<CacheEntry> acceptConstraintProcessorVisitor(ConstraintProcessVisitor constraintVisitor, ConstraintShaper constraintShaper) {
+		return constraintVisitor.visit(this, constraintShaper);
 	}
 	
 	@Override

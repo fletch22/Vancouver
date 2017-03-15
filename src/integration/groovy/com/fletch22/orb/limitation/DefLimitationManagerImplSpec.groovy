@@ -105,11 +105,11 @@ class DefLimitationManagerImplSpec extends Specification {
 		defLimitationManager.addToCollection(criteria);
 
 		Orb orb = orbManager.createOrb(orbTypeInternalId)
-		orbManager.setAttribute(orb.getOrbInternalId(), attrColorName, "red");
+		orbManager.setAttributeNoCheckConstraints(orb.getOrbInternalId(), attrColorName, "red");
 		
 		when:
 		orb = orbManager.createOrb(orbTypeInternalId)
-		orbManager.setAttribute(orb.getOrbInternalId(), attrColorName, "red");
+		orbManager.setAttributeNoCheckConstraints(orb.getOrbInternalId(), attrColorName, "red");
 
 		then:
 		thrown Exception
@@ -125,13 +125,13 @@ class DefLimitationManagerImplSpec extends Specification {
 		OrbType orbType = orbTypeManager.getOrbType(orbTypeInternalId)
 		
 		Orb orb = orbManager.createOrb(orbTypeInternalId)
-		orbManager.setAttribute(orb.getOrbInternalId(), attrColorName, "red");
+		orbManager.setAttributeNoCheckConstraints(orb.getOrbInternalId(), attrColorName, "red");
 
 		orb = orbManager.createOrb(orbTypeInternalId)
-		orbManager.setAttribute(orb.getOrbInternalId(), attrColorName, "red");
+		orbManager.setAttributeNoCheckConstraints(orb.getOrbInternalId(), attrColorName, "red");
 		
 		orb = orbManager.createOrb(orbTypeInternalId)
-		orbManager.setAttribute(orb.getOrbInternalId(), attrColorName, "orange");
+		orbManager.setAttributeNoCheckConstraints(orb.getOrbInternalId(), attrColorName, "orange");
 
 		Criteria criteria = new CriteriaStandard(orbType.id, "foo1")
 

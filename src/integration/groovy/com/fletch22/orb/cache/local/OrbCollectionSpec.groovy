@@ -170,7 +170,7 @@ class OrbCollectionSpec extends Specification {
 		numberOrbs.times {
 			Orb orb = orbManager.createOrb(orbTypeInternalId)
 			def referenceValue = referenceUtil.composeReference(orbToTarget.getOrbInternalId(), "foo");
-			orbManager.setAttribute(orb.getOrbInternalId(), attributeName, referenceValue);
+			orbManager.setAttributeNoCheckConstraints(orb.getOrbInternalId(), attributeName, referenceValue);
 		}
 		
 		Assert.assertEquals numberOrbs, orbReference.@referenceCollection.countArrows()
@@ -210,13 +210,13 @@ class OrbCollectionSpec extends Specification {
 		
 		Orb orb2 = orbManager.createOrb(orbTypeInternalId)
 		def referenceValue = referenceUtil.composeReference(orb1.getOrbInternalId(), "foo")
-		orbManager.setAttribute(orb2.getOrbInternalId(), attributeName, referenceValue)
+		orbManager.setAttributeNoCheckConstraints(orb2.getOrbInternalId(), attributeName, referenceValue)
 
 		Orb orb3 = orbManager.createOrb(orbTypeInternalId)
 		referenceValue = referenceUtil.composeReference(orb2.getOrbInternalId(), "foo")
 		
 		when:
-		orbManager.setAttribute(orb1.getOrbInternalId(), attributeName, referenceValue)
+		orbManager.setAttributeNoCheckConstraints(orb1.getOrbInternalId(), attributeName, referenceValue)
 		
 		then:
 		thrown Exception

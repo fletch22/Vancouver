@@ -49,7 +49,6 @@ class LogBackupAndRestoreImplSpec extends Specification {
 	}
 	
 	def cleanup() {
-		logger.info('XXXX TEAR DOWN')
 		this.logBackupAndRestoreImpl.logActionDao = this.logActionDaoOriginal
 		this.logBackupAndRestoreImpl.backupFileOperations = this.backupFileOperationsOriginal
 		this.logBackupAndRestoreImpl.backupSerializer = this.backupSerializerOriginal

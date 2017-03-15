@@ -131,7 +131,6 @@ public class OrbCollection {
 	}
 
 	public Orb delete(OrbType orbType, long orbInternalId) {
-		
 		Orb orb = quickLookup.get(orbInternalId).orb;
 
 		orbReference.ensureOrbsArrowsRemoved(orb);

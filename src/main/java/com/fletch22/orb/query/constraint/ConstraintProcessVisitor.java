@@ -6,8 +6,8 @@ import com.googlecode.cqengine.query.Query;
 
 public interface ConstraintProcessVisitor {
 
-	public Query<CacheEntry> visit(LogicalConstraint logicalConstraint, long orbTypeInternalId);
-	public Query<CacheEntry> visit(ConstraintDetailsList constraintDetailsList, long orbTypeInternalId);
-	public Query<CacheEntry> visit(ConstraintDetailsSingleValue constraintDetailsSingleValue, long orbTypeInternalId);
-	public Query<CacheEntry> visit(ConstraintDetailsAggregate constraintDetailsAggregate, long orbTypeInternalId);
+	public Query<CacheEntry> visit(LogicalConstraint logicalConstraint, ConstraintShaper constraintShaper);
+	public Query<CacheEntry> visit(ConstraintDetailsList constraintDetailsList, ConstraintShaper constraintShaper);
+	public Query<CacheEntry> visit(ConstraintDetailsSingleValue constraintDetailsSingleValue, ConstraintShaper constraintShaper);
+	public Query<CacheEntry> visit(ConstraintDetailsAggregate constraintDetailsAggregate, ConstraintShaper constraintShaper);
 }

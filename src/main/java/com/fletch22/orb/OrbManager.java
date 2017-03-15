@@ -49,7 +49,9 @@ public interface OrbManager {
 
 	public void resetAllReferencesPointingToOrb(Orb orb);
 
-	public void setAttribute(long orbInternalId, String attributeName, String value);
+	public void setAttributeNoCheckConstraints(long orbInternalId, String attributeName, String value);
+	
+	public void setAttributeWithCheckConstraints(long orbInternalId, String attributeName, String value);
 
 	void updateOrb(Orb orb);
 	

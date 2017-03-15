@@ -88,7 +88,7 @@ class OrbManagerLocalCacheSpec extends Specification {
 		Orb orb = orbManager.createOrb(orbTypeInternalId)
 
 		when:
-		orbManager.setAttribute(orb.getOrbInternalId(), attributeName, ReferenceCollection.REFERENCE_KEY_PREFIX)
+		orbManager.setAttributeNoCheckConstraints(orb.getOrbInternalId(), attributeName, ReferenceCollection.REFERENCE_KEY_PREFIX)
 
 		then:
 		final Exception exception = thrown()
@@ -106,7 +106,7 @@ class OrbManagerLocalCacheSpec extends Specification {
 
 		Orb orb = orbManager.createOrb(orbTypeInternalId)
 
-		orbManager.setAttribute(orb.getOrbInternalId(), attributeName, "bar")
+		orbManager.setAttributeNoCheckConstraints(orb.getOrbInternalId(), attributeName, "bar")
 
 		when:
 		orbManager.deleteOrb(orb.orbInternalId, true)
@@ -132,7 +132,7 @@ class OrbManagerLocalCacheSpec extends Specification {
 		String referenceValue = createReferences(orbType, 100)
 
 		Orb orb = orbManager.createOrb(orbTypeInternalId)
-		orbManager.setAttribute(orb.getOrbInternalId(), attributeName, referenceValue)
+		orbManager.setAttributeNoCheckConstraints(orb.getOrbInternalId(), attributeName, referenceValue)
 		
 		orbManager.deleteOrb(orb.orbInternalId, true)
 		
@@ -150,7 +150,7 @@ class OrbManagerLocalCacheSpec extends Specification {
 		List<String> referenceList = []
 		numberOfReference.times {
 		Orb orb = orbManager.createOrb(orbType.id)
-		orbManager.setAttribute(orb.orbInternalId, "foo", "bar")
+		orbManager.setAttributeNoCheckConstraints(orb.orbInternalId, "foo", "bar")
 			referenceList << referenceUtil.composeReference(orb.orbInternalId, "foo")
 		}
 		
@@ -189,7 +189,7 @@ class OrbManagerLocalCacheSpec extends Specification {
 			index++
 			def setToUse = index % 2 > 0 ? set1: set2 
 			
-			orbManager.setAttribute(orb.getOrbInternalId(), attributeName, setToUse)
+			orbManager.setAttributeNoCheckConstraints(orb.getOrbInternalId(), attributeName, setToUse)
 		}
 		stopWatch.stop()
 		
@@ -216,7 +216,7 @@ class OrbManagerLocalCacheSpec extends Specification {
 		String targetRef = referenceUtil.composeReference(orbTarget.orbInternalId, 'foo')
 		
 		Orb orbArrow = orbManager.createOrb(orbInternalIdType)
-		orbManager.setAttribute(orbArrow.getOrbInternalId(), attributeNameArrow, targetRef)
+		orbManager.setAttributeNoCheckConstraints(orbArrow.getOrbInternalId(), attributeNameArrow, targetRef)
 		
 		when:
 		OrbManagerLocalCache orbManagerLocalCache = (OrbManagerLocalCache) orbManager
@@ -253,7 +253,7 @@ class OrbManagerLocalCacheSpec extends Specification {
 		StringBuffer targetReferences = referenceUtil.composeReferences(refs);
 		
 		Orb orbArrow = orbManager.createOrb(orbInternalIdType)
-		orbManager.setAttribute(orbArrow.getOrbInternalId(), attributeNameArrow, targetReferences.toString())
+		orbManager.setAttributeNoCheckConstraints(orbArrow.getOrbInternalId(), attributeNameArrow, targetReferences.toString())
 		
 		when:
 		OrbManagerLocalCache orbManagerLocalCache = (OrbManagerLocalCache) orbManager

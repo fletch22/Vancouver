@@ -66,7 +66,7 @@ public abstract class Constraint {
 		return constraintDetails;
 	}
 	
-	public abstract Query<CacheEntry> acceptConstraintProcessorVisitor(ConstraintProcessVisitor visitor, long orbTypeInternalId);
+	public abstract Query<CacheEntry> acceptConstraintProcessorVisitor(ConstraintProcessVisitor visitor, ConstraintShaper constraintShaper);
 	
 	public abstract void acceptConstraintRegistrationVisitor(ConstraintRegistrationVisitor constraintVisitor);
 	

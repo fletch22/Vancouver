@@ -52,7 +52,7 @@ public class QueryTestData {
 	private setNumberInstancesToColor(int numInstances, long orbTypeInternalId, color) {
 		numInstances.times {
 			Orb orb = orbManager.createOrb(orbTypeInternalId)
-			orbManager.setAttribute(orb.orbInternalId, ATTRIBUTE_COLOR, color);
+			orbManager.setAttributeNoCheckConstraints(orb.orbInternalId, ATTRIBUTE_COLOR, color);
 		}
 	}
 }

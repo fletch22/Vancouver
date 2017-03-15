@@ -78,7 +78,7 @@ public class TestDataSimple {
 		for (int i = 0; i < numInstances; i++) {
 			
 			Orb orb = orbManager.createOrb(orbTypeInternalId);
-			orbManager.setAttribute(orb.getOrbInternalId(), ATTRIBUTE_COLOR, color);
+			orbManager.setAttributeWithCheckConstraints(orb.getOrbInternalId(), ATTRIBUTE_COLOR, color);
 		}
 	}
 }

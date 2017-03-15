@@ -66,8 +66,8 @@ public class Log4EventAspect {
 		// NOTE: 10-24-2015: This ensures that while in restore mode, calls are not logged again.
 		// Also this ensure that only entry point calls are logged and rolled back. Since calls can 
 		// be nested we accumulate a log before persisting.
-		// The first outer call enters the first 'if' section. Nest logged calls are directed to 
-		// the second if section. When processing exists the first outer call, we log it.
+		// The first outer call enters the first 'if' section. Nested logged calls are directed to 
+		// the second 'if' section. When processing exists the first outer call, we log it.
 		if (!packageHolder.hasInitialCommandActionBeenAdded() && !isInRestoreMode) {
 			StringBuilder methodCallSerialized = convertCall(proceedingJoinPoint);
 			

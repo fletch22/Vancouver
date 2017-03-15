@@ -53,47 +53,48 @@ public class ConstraintProcessor implements ConstraintProcessVisitor {
 	Cache cache;
 
 	@Override
-	public Query<CacheEntry> visit(ConstraintDetailsList constraintDetailsList, long orbTypeInternalId) {
+	public Query<CacheEntry> visit(ConstraintDetailsList constraintDetailsList, ConstraintShaper constraintShaper) {
 		Query<CacheEntry> queryLocal = null;	
 		
-		SimpleNullableAttribute<CacheEntry, String> simpleNullableAttribute = createSimpleNullableAtttribute(orbTypeInternalId, constraintDetailsList);
+		SimpleNullableAttribute<CacheEntry, String> simpleNullableAttribute = createSimpleNullableAtttribute(constraintShaper.getOrbTypeInternalId(), constraintDetailsList);
 
 		if (constraintDetailsList.getRelationshipOperator() == RelationshipOperator.IN) {
 			queryLocal = in(simpleNullableAttribute, constraintDetailsList.operativeValueList.toArray(new String[constraintDetailsList.operativeValueList.size()]));
 		} else {
-			throw new NotImplementedException("Encountered problem processing aggregate constrinat. Relationship '" + constraintDetailsList.getRelationshipOperator() + "' not recognized.");
+			throw new NotImplementedException("Encountered problem processing aggregate constraint. Relationship '" + constraintDetailsList.getRelationshipOperator() + "' not recognized.");
 		}
 		
 		return queryLocal;
 	}
 
 	@Override
-	public Query<CacheEntry> visit(ConstraintDetailsSingleValue constraintDetailsSingleValue, long orbTypeInternalId) {
+	public Query<CacheEntry> visit(ConstraintDetailsSingleValue constraintDetailsSingleValue, ConstraintShaper constraintShaper) {
 		Query<CacheEntry> queryLocal = null;	
 		
-		SimpleNullableAttribute<CacheEntry, String> simpleNullableAttribute = createSimpleNullableAtttribute(orbTypeInternalId, constraintDetailsSingleValue);
+		SimpleNullableAttribute<CacheEntry, String> simpleNullableAttribute = createSimpleNullableAtttribute(constraintShaper.getOrbTypeInternalId(), constraintDetailsSingleValue);
 
 		if (constraintDetailsSingleValue.getRelationshipOperator() == RelationshipOperator.EQUALS) {
 			queryLocal = equal(simpleNullableAttribute, constraintDetailsSingleValue.operativeValue);
 		} else if (constraintDetailsSingleValue.getRelationshipOperator() == RelationshipOperator.GREATER_THAN) {
 			queryLocal = greaterThan(simpleNullableAttribute, constraintDetailsSingleValue.operativeValue);
 		} else {
-			throw new NotImplementedException("Encountered problem processing aggregate constrinat. Relationship '" + constraintDetailsSingleValue.getRelationshipOperator() + "' not recognized.");
+			throw new NotImplementedException("Encountered problem processing aggregate constraint. Relationship '" + constraintDetailsSingleValue.getRelationshipOperator() + "' not recognized.");
 		}
 		
 		return queryLocal;
 	}
 
 	@Override
-	public Query<CacheEntry> visit(ConstraintDetailsAggregate constraintDetailsAggregate, long orbTypeInternalId) {
-		Query<CacheEntry> queryLocal = null;	
+	public Query<CacheEntry> visit(ConstraintDetailsAggregate constraintDetailsAggregate, ConstraintShaper constraintShaper) {
+		Query<CacheEntry> queryLocal = null;
 		
-		SimpleNullableAttribute<CacheEntry, String> simpleNullableAttribute = createSimpleNullableAtttribute(orbTypeInternalId, constraintDetailsAggregate);
+		SimpleNullableAttribute<CacheEntry, String> simpleNullableAttribute = createSimpleNullableAtttribute(constraintShaper.getOrbTypeInternalId(), constraintDetailsAggregate);
 		
 		logger.debug("Go this far in ConstraintProcessor");
 		if (constraintDetailsAggregate.getRelationshipOperator() == RelationshipOperator.ARE) {
 			
 			OrbResultSet orbResultSet = cache.orbCollection.executeQuery(constraintDetailsAggregate.criteriaForAggregation);
+			orbResultSet = excludeIfNecessary(orbResultSet, constraintShaper);
 						
 			logger.debug("Orb result set from query: {}", orbResultSet.orbList.size());
 			
@@ -120,14 +121,37 @@ public class ConstraintProcessor implements ConstraintProcessVisitor {
 		
 		return queryLocal;
 	}
+	
+	private OrbResultSet excludeIfNecessary(OrbResultSet orbResultSet, ConstraintShaper constraintShaper) {
+		List<Orb> exclusion = constraintShaper.getAggregateResultExclusionCollection();
+		int aggExclusionSize = exclusion.size();
+		if (aggExclusionSize == 1) {
+			List<Orb> orblist = orbResultSet.getOrbList();
+			Orb orbToExclude = exclusion.get(0);
+			Orb orbFound = null;
+			for (Orb orb : orblist) {
+				if (orb.getOrbInternalId() == orbToExclude.getOrbInternalId()) {
+					orbFound = orb;
+					break;
+				}
+			}
+			if (orbFound != null) {
+				logger.debug("About to remove orb from agg result set...");
+				orblist.remove(orbFound);
+			}
+		} else if (aggExclusionSize > 1) {
+			throw new RuntimeException("Multiple agg orb exclusion not yet support.");
+		}
+		return orbResultSet;
+	}
 
 	@Override
-	public Query<CacheEntry> visit(LogicalConstraint logicalConstraint, long orbTypeInternalId) {
+	public Query<CacheEntry> visit(LogicalConstraint logicalConstraint, ConstraintShaper constraintShaper) {
 		List<Constraint> constraintList = logicalConstraint.constraintList;
 		
 		List<Query<CacheEntry>> queries = new ArrayList<Query<CacheEntry>>();
-		for (Constraint constraintInner: constraintList) {	
-			Query<CacheEntry> queryLocal = constraintInner.acceptConstraintProcessorVisitor(this, orbTypeInternalId);
+		for (Constraint constraintInner: constraintList) {
+			Query<CacheEntry> queryLocal = constraintInner.acceptConstraintProcessorVisitor(this, constraintShaper);
 			
 			queries.add(queryLocal);
 		}

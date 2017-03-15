@@ -114,7 +114,6 @@ public class AppDesignerModule implements OrbSystemModule {
 		orbTypeInternalId = orbTypeManager.createOrbType(DataModel.TYPE_LABEL, DataModel.ATTRIBUTE_LIST);
 		String[] compositeUniqueConstraintDataModel = { DataModel.ATTR_LABEL, DataModel.ATTR_PARENT };
 		componentConstrainer.addNotAmongstUniqueConstraintOnField(orbTypeInternalId, compositeUniqueConstraintDataModel);
-//		componentConstrainer.addNotAmongstUniqueConstraintOnField(orbTypeInternalId, DataModel.ATTR_LABEL);
 		primeQueryIndex(orbTypeInternalId, DataModel.ATTR_LABEL);
 
 		orbTypeInternalId = orbTypeManager.createOrbType(DataField.TYPE_LABEL, DataField.ATTRIBUTE_LIST);
@@ -128,7 +127,7 @@ public class AppDesignerModule implements OrbSystemModule {
 		primeQueryIndex(orbTypeInternalId, App.ATTR_LABEL);
 
 		orbTypeInternalId = orbTypeManager.createOrbType(Website.TYPE_LABEL, Website.ATTRIBUTE_LIST);
-		String[] websiteCompositeUniqueContraint = { Website.ATTR_LABEL, Website.ATTR_PARENT };
+		String[] websiteCompositeUniqueContraint = { Website.ATTR_PARENT, Website.ATTR_LABEL };
 		componentConstrainer.addNotAmongstUniqueConstraintOnField(orbTypeInternalId, websiteCompositeUniqueContraint);
 		primeQueryIndex(orbTypeInternalId, Website.ATTR_LABEL);
 

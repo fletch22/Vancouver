@@ -146,11 +146,11 @@ class CacheClonerSpec extends Specification {
 		orbType.customFields.add("water")
 		
 		Orb orb = orbManager.createOrb(orbType.id)
-		orbManager.setAttribute(orb.getOrbInternalId(), "fire", "hot");
+		orbManager.setAttributeNoCheckConstraints(orb.getOrbInternalId(), "fire", "hot");
 		
 		CacheComponentsDto cacheComponentsDtoOriginal = cacheCloner.clone(cacheComponentsDto)
 		
-		orbManager.setAttribute(orb.getOrbInternalId(), "fire", "not-so-hot");
+		orbManager.setAttributeNoCheckConstraints(orb.getOrbInternalId(), "fire", "not-so-hot");
 
 		CacheComponentsDto cacheComponentsDtoUpdated = cacheCloner.clone(cacheComponentsDto)
 		when:

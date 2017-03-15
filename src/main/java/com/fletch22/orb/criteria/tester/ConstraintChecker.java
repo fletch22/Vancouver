@@ -37,7 +37,7 @@ public class ConstraintChecker {
 		CacheEntry cacheEntry = new CacheEntry(orb);
 		getIndexedCollection().add(cacheEntry);
 
-		ConstraintGrinder criteriaGrinder = new ConstraintGrinder(criteria, indexedCollection);
+		ConstraintGrinder criteriaGrinder = new ConstraintGrinder(criteria, indexedCollection, orb);
 		
 		if (criteriaGrinder.listCacheEntries().size() == 0) {
 			StringBuffer description = this.constraintDescriptionRefiner.refine(criteria.getDescription());

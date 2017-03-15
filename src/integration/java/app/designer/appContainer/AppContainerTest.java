@@ -1,4 +1,4 @@
-package com.fletch22.app.designer;
+package app.designer.appContainer;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.fletch22.app.designer.AppDesignerModule;
 import com.fletch22.app.designer.app.App;
 import com.fletch22.app.designer.app.AppService;
 import com.fletch22.app.designer.appContainer.AppContainer;
@@ -38,9 +39,9 @@ import com.googlecode.cqengine.IndexedCollection;
 @Slf4j
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/springContext-test.xml")
-public class AppContainerDaoTest {
+public class AppContainerTest {
 
-	static Logger logger = LoggerFactory.getLogger(AppContainerDaoTest.class);
+	static Logger logger = LoggerFactory.getLogger(AppContainerTest.class);
 
 	@Autowired
 	AppDesignerModule appDesignerInitialization;
@@ -113,7 +114,7 @@ public class AppContainerDaoTest {
 		// Act
 		StopWatch stopWatch = new StopWatch();
 	
-		AppContainer appContainer = appContainerService.createInstance("foo");
+		AppContainer appContainer = appContainerService.createInstance("foo1");
 		appContainerService.createInstance("foo2");
 		appContainerService.createInstance("foo3");
 
@@ -143,48 +144,49 @@ public class AppContainerDaoTest {
 		assertEquals("Should have returned 1 result indicating not amongst unique labels. In other words, this synthetic orb would be unique if it was inserted.", cacheEntryList.size(), 1);
 	}
 	
-//	@Test
-//	public void testUniqueConstraintWithWhereClauseSuccess() {
-//
-//		// Arrange
-//		// Act
-//		StopWatch stopWatch = new StopWatch();
-//
-//		AppContainer appContainer = appContainerService.createInstance("foo1");
-//		appContainer = appContainerService.createInstance("foo2");
-//		
-//		String parentIdFoo2 = String.valueOf(appContainer.getId());
-//		logger.info("Id: {}; ParentId: {}", parentIdFoo2, appContainer.getParentId());
-//		
-//		appContainerService.createInstance("foo3");
-//
-//		long orbTypeInternalId = appContainer.getOrbOriginal().getOrbTypeInternalId();
-//		
-//		Criteria criteria = new CriteriaBuilder(orbTypeInternalId)
-//		.addNotAmongstUniqueConstraint(orbTypeInternalId, AppContainer.ATTR_LABEL)
-//		.addNotAmongstUniqueConstraint(orbTypeInternalId, AppContainer.ATTR_PARENT)
-//		.build();
-//				
-//		IndexedCollection<CacheEntry> indexedCollection = indexedCollectionFactory.createInstance();
-//		
-//		LinkedHashMap<String, String> lhm = new LinkedHashMap<String, String>();
-//		lhm.put(AppContainer.ATTR_PARENT, parentIdFoo2);
-//		lhm.put(AppContainer.ATTR_CHILDREN, "fooTTT");
-//		lhm.put(AppContainer.ATTR_LABEL, "foo2");
-//		
-//		Orb orb = new Orb(213, orbTypeInternalId, lhm);
-//		
-//		CacheEntry cacheEntry = new CacheEntry(orb);
-//		indexedCollection.add(cacheEntry);
-//		
-//		logger.info("About to grind results.");
-//		ConstraintGrinder constraintGrinder = new ConstraintGrinder(criteria, indexedCollection);
-//
-//		List<CacheEntry> cacheEntryList = constraintGrinder.listCacheEntries();
-//		
-//		logger.info("orbResultSet: {}", cacheEntryList.size());
-//		assertEquals("Should have returned 1 result indicating not amongst unique labels. In other words, this synthetic orb would be unique if it was inserted.", 1, cacheEntryList.size());
-//	}
+	@Test
+	public void testUniqueConstraintWithWhereClauseSuccess() {
+
+		// Arrange
+		// Act
+		StopWatch stopWatch = new StopWatch();
+
+		AppContainer appContainer = appContainerService.createInstance("foo1");
+		appContainer = appContainerService.createInstance("foo2");
+		
+		String parentIdFoo2 = String.valueOf(appContainer.getId());
+		logger.info("Id: {}; ParentId: {}", parentIdFoo2, appContainer.getParentId());
+		
+		appContainerService.createInstance("foo3");
+
+		long orbTypeInternalId = appContainer.getOrbOriginal().getOrbTypeInternalId();
+		
+		String[] uniqueFields = { AppContainer.ATTR_LABEL, AppContainer.ATTR_PARENT };
+		
+		Criteria criteria = new CriteriaBuilder(orbTypeInternalId)
+		.addNotAmongstUniqueConstraint(orbTypeInternalId, uniqueFields)
+		.build();
+				
+		IndexedCollection<CacheEntry> indexedCollection = indexedCollectionFactory.createInstance();
+		
+		LinkedHashMap<String, String> lhm = new LinkedHashMap<String, String>();
+		lhm.put(AppContainer.ATTR_PARENT, parentIdFoo2);
+		lhm.put(AppContainer.ATTR_CHILDREN, "fooTTT");
+		lhm.put(AppContainer.ATTR_LABEL, "foo4");
+		
+		Orb orb = new Orb(213, orbTypeInternalId, lhm);
+		
+		CacheEntry cacheEntry = new CacheEntry(orb);
+		indexedCollection.add(cacheEntry);
+		
+		logger.info("About to grind results.");
+		ConstraintGrinder constraintGrinder = new ConstraintGrinder(criteria, indexedCollection);
+
+		List<CacheEntry> cacheEntryList = constraintGrinder.listCacheEntries();
+		
+		logger.info("orbResultSet: {}", cacheEntryList.size());
+		assertEquals("Should have returned 1 result indicating not amongst unique labels. In other words, this synthetic orb would be unique if it was inserted.", 1, cacheEntryList.size());
+	}
 	
 	@Test
 	public void testUniqueConstraintOnLabelFails() {
@@ -200,6 +202,7 @@ public class AppContainerDaoTest {
 		try {
 			appContainerService.createInstance("foo");
 		} catch (Exception e) {
+			logger.info("Encountered problem: {}", e);
 			wasExceptionThrown = true;
 		}
 

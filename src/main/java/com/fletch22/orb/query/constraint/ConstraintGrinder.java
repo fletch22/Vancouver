@@ -14,7 +14,6 @@ import com.fletch22.orb.OrbTypeManager;
 import com.fletch22.orb.cache.local.Cache;
 import com.fletch22.orb.cache.local.CacheEntry;
 import com.fletch22.orb.cache.local.OrbCollection;
-import com.fletch22.orb.query.LogicalConstraint;
 import com.fletch22.orb.query.OrbResultSet;
 import com.fletch22.orb.query.criteria.Criteria;
 import com.fletch22.orb.query.sort.CriteriaSortInfo;
@@ -43,6 +42,18 @@ public class ConstraintGrinder {
 	private ConstraintProcessor constraintProcessor;
 
 	public ConstraintGrinder(Criteria criteria, IndexedCollection<CacheEntry> indexedCollection) {
+		this.init(criteria, indexedCollection);
+		
+		processConstraint(new ConstraintShaper(this.orbTypeInternalId));
+	}
+	
+	public ConstraintGrinder(Criteria criteria, IndexedCollection<CacheEntry> indexedCollection, Orb aggregateExlude) {
+		this.init(criteria, indexedCollection);
+		
+		processConstraint(new ConstraintShaper(this.orbTypeInternalId, aggregateExlude));
+	}
+	
+	private void init(Criteria criteria, IndexedCollection<CacheEntry> indexedCollection) {
 		this.criteria = criteria;
 		this.indexedCollection = indexedCollection;
 		this.orbTypeInternalId = criteria.getOrbTypeInternalId();
@@ -50,12 +61,6 @@ public class ConstraintGrinder {
 		this.orbTypeManager = (OrbTypeManager) Fletch22ApplicationContext.getApplicationContext().getBean(OrbTypeManager.class);
 		this.orbCollection = (OrbCollection) Fletch22ApplicationContext.getApplicationContext().getBean(Cache.class).orbCollection;
 		this.constraintProcessor = (ConstraintProcessor) Fletch22ApplicationContext.getApplicationContext().getBean(ConstraintProcessor.class);
-
-		if (criteria.logicalConstraint == null) {
-			this.query = QueryFactory.all(CacheEntry.class);
-		} else {
-			this.query = processConstraint(criteria.logicalConstraint);
-		}
 	}
 
 	public List<CacheEntry> listCacheEntries() {
@@ -101,7 +106,11 @@ public class ConstraintGrinder {
 		return new OrbResultSet(orbList);
 	}
 
-	private Query<CacheEntry> processConstraint(LogicalConstraint logicalConstraint) {
-		return logicalConstraint.acceptConstraintProcessorVisitor(this.constraintProcessor, this.orbTypeInternalId);
+	private void processConstraint(ConstraintShaper constraintShaper) {
+		if (criteria.logicalConstraint == null) {
+			this.query = QueryFactory.all(CacheEntry.class);
+		} else {
+			this.query = this.criteria.logicalConstraint.acceptConstraintProcessorVisitor(this.constraintProcessor, constraintShaper);
+		}
 	}
 }
