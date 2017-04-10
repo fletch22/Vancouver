@@ -42,6 +42,8 @@ public class PageService extends DomainService<Page, PageChild> {
 		Page page = get(id);
 		if (properties.containsKey(Page.ATTR_PAGE_NAME)) page.pageName = properties.get(Page.ATTR_PAGE_NAME);
 		
+		this.save(page);
+		
 		return page;
 	}
 }

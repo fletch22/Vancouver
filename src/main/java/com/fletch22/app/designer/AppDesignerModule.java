@@ -7,12 +7,12 @@ import org.springframework.stereotype.Component;
 
 import com.fletch22.app.AppModule;
 import com.fletch22.app.AppModuleImpl;
-import com.fletch22.app.designer.DataField.DataField;
-import com.fletch22.app.designer.DataModel.DataModel;
 import com.fletch22.app.designer.app.App;
 import com.fletch22.app.designer.app.AppService;
 import com.fletch22.app.designer.appContainer.AppContainer;
 import com.fletch22.app.designer.appContainer.AppContainerService;
+import com.fletch22.app.designer.dataField.DataField;
+import com.fletch22.app.designer.dataModel.DataModel;
 import com.fletch22.app.designer.datastore.Datastore;
 import com.fletch22.app.designer.datastore.DatastoreService;
 import com.fletch22.app.designer.ddl.DropDownListbox;

@@ -1,12 +1,13 @@
-package com.fletch22.app.designer.DataModel;
+package com.fletch22.app.designer.dataModel;
 
 import java.util.Map;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fletch22.app.designer.DomainService;
-import com.fletch22.app.designer.DataField.DataField;
+import com.fletch22.app.designer.dataField.DataField;
 
 @Component
 public class DataModelService extends DomainService<DataModel, DataField> {
@@ -22,8 +23,8 @@ public class DataModelService extends DomainService<DataModel, DataField> {
 		return dataModel;
 	}
 	
-	public void save(DataModel layout) {
-		dataModelDao.save(layout);
+	public void save(DataModel dataModel) {
+		dataModelDao.save(dataModel);
 	}
 
 	public DataModel get(long orbInternalId) {
@@ -44,6 +45,13 @@ public class DataModelService extends DomainService<DataModel, DataField> {
 		DataModel dataModel = get(id);
 		if (properties.containsKey(DataModel.ATTR_LABEL)) dataModel.label = properties.get(DataModel.ATTR_LABEL);
 		
+		this.save(dataModel);
+		
 		return get(id);
+	}
+
+	public void delete(long id) {
+		// TODO: Create logic to delete UserDataType and all instances.
+		throw new NotImplementedException("Not implemented yet.");
 	}
 }

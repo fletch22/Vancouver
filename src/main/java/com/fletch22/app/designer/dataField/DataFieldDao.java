@@ -1,4 +1,4 @@
-package com.fletch22.app.designer.DataField;
+package com.fletch22.app.designer.dataField;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

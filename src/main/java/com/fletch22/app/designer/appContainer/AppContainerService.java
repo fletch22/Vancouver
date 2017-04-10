@@ -66,6 +66,8 @@ public class AppContainerService extends DomainService<AppContainer, AppContaine
 		AppContainer appContainer = get(id);
 		if (properties.containsKey(AppContainer.ATTR_LABEL)) appContainer.label = properties.get(AppContainer.ATTR_LABEL);
 		
+		this.save(appContainer);
+		
 		return appContainer;
 	}
 }

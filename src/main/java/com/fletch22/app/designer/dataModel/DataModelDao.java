@@ -1,4 +1,4 @@
-package com.fletch22.app.designer.DataModel;
+package com.fletch22.app.designer.dataModel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

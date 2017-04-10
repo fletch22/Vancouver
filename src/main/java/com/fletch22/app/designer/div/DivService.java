@@ -44,6 +44,8 @@ public class DivService extends DomainService<Div, Child> {
 		Div div = get(id);
 		if (properties.containsKey(Div.ATTR_STYLE)) div.style = properties.get(Div.ATTR_STYLE);
 		
+		this.save(div);
+		
 		return get(id);
 	}
 }

@@ -116,8 +116,6 @@ public class JsonDiffProcessorService {
 	}
 
 	private void processEditedProperty(String state, JsonArray pathInformation, JsonElement newValue) {
-		// throw new
-		// NotImplementedException("processDeleteProperty not implemented yet. (Set to null?)");
 		EditedProperty editPropertyInfo = getEditedPropertyInfo(state, pathInformation, newValue);
 
 		editObjectService.process(editPropertyInfo);
@@ -160,7 +158,7 @@ public class JsonDiffProcessorService {
 	private void processDeletedChild(JsonObject state, JsonArray pathInformation, long index, JsonElement deletedChildElement) {
 		DeletedChild deletedChild = getDeletedChildInfo(state, pathInformation, index, deletedChildElement);
 
-		deleteService.process(deletedChild.parentAndChild.childId);
+		deleteService.delete(deletedChild.parentAndChild.childId);
 	}
 
 	protected ResultDiffProcessing processChangedArray(String state, JsonArray pathInformation, JsonElement jsonElementIndex, JsonElement item) {

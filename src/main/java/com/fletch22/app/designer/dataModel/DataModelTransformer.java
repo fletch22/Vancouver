@@ -1,4 +1,4 @@
-package com.fletch22.app.designer.DataModel;
+package com.fletch22.app.designer.dataModel;
 
 import org.springframework.stereotype.Component;
 

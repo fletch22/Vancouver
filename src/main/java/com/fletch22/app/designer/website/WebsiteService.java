@@ -48,6 +48,8 @@ public class WebsiteService extends DomainService<Website, WebFolderChild> {
 		Website website = get(id);
 		if (properties.containsKey(Website.ATTR_LABEL)) website.label = properties.get(Website.ATTR_LABEL);
 		
+		this.save(website);
+		
 		return website;
 	}
 }

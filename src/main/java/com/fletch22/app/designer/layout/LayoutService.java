@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fletch22.app.designer.DomainService;
+import com.fletch22.app.designer.layoutMinion.LayoutMinion;
 
 @Component
 public class LayoutService extends DomainService<Layout, LayoutChild> {
@@ -37,6 +38,9 @@ public class LayoutService extends DomainService<Layout, LayoutChild> {
 	@Override
 	public Layout update(long id, Map<String, String> properties) {
 		validatePropertiesSimple(properties, Layout.ATTRIBUTE_LIST);
+		
+		Layout layout = get(id);
+		this.save(layout);
 		
 		return get(id);
 	}

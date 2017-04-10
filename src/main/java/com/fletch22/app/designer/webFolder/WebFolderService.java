@@ -43,6 +43,8 @@ public class WebFolderService extends DomainService<WebFolder, WebFolderChild> {
 		WebFolder webFolder = get(id);
 		if (properties.containsKey(WebFolder.ATTR_LABEL)) webFolder.label = properties.get(WebFolder.ATTR_LABEL);
 		
+		this.save(webFolder);
+		
 		return webFolder;
 	}
 }

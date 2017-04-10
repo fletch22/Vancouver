@@ -49,6 +49,8 @@ public class DropDownListboxService extends DomainServiceBase<DropDownListbox> {
 		if (properties.containsKey(DropDownListbox.ATTR_NAME)) ddl.name = properties.get(DropDownListbox.ATTR_NAME);
 		if (properties.containsKey(DropDownListbox.ATTR_DATA_SOURCE_NAME)) ddl.dataSourceName = properties.get(DropDownListbox.ATTR_DATA_SOURCE_NAME);
 		
+		this.save(ddl);
+		
 		return get(id);
 	}
 }

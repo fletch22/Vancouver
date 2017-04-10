@@ -40,6 +40,8 @@ public class AppService extends DomainService<App, Website> {
 		App app = get(id);
 		app.label = properties.get(App.ATTR_LABEL);
 		
+		this.save(app);
+		
 		return app;
 	}
 	

@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fletch22.app.designer.DomainService;
-import com.fletch22.app.designer.DataModel.DataModel;
+import com.fletch22.app.designer.dataModel.DataModel;
 
 @Component
 public class DatastoreService extends DomainService<Datastore, DataModel> {
@@ -42,6 +42,8 @@ public class DatastoreService extends DomainService<Datastore, DataModel> {
 		
 		Datastore datastore = get(id);
 		if (properties.containsKey(Datastore.ATTR_LABEL)) datastore.label = properties.get(Datastore.ATTR_LABEL);
+		
+		this.save(datastore);
 		
 		return datastore;
 	}

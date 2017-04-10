@@ -54,6 +54,8 @@ public class LayoutMinionService extends DomainService<LayoutMinion, LayoutMinio
 		if (properties.containsKey(LayoutMinion.ATTR_KEY)) layoutMinion.key = properties.get(LayoutMinion.ATTR_KEY);
 		if (properties.containsKey(LayoutMinion.ATTR_STYLE)) layoutMinion.style = properties.get(LayoutMinion.ATTR_STYLE);
 		
+		this.save(layoutMinion);
+		
 		return get(id);
 	}
 }
