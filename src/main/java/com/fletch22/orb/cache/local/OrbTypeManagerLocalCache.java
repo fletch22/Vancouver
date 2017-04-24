@@ -2,6 +2,7 @@ package com.fletch22.orb.cache.local;
 
 import java.math.BigDecimal;
 import java.util.LinkedHashSet;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -263,5 +264,11 @@ public class OrbTypeManagerLocalCache implements OrbTypeManager {
 	@Override
 	public boolean doesOrbTypeExist(long orbTypeInternalId) {
 		return cache.orbTypeCollection.get(orbTypeInternalId) != null;
+	}
+	
+	@Override
+	public boolean doesOrbTypeExist(String typeLabel) {
+		Optional<OrbType> optional = cache.orbTypeCollection.getFromLabelOptional(typeLabel);
+		return optional.isPresent();
 	}
 }

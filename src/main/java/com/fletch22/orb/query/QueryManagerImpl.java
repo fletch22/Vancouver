@@ -60,4 +60,12 @@ public class QueryManagerImpl extends AbstractCriteriaManager implements QueryMa
 	public CriteriaAttributeDeleteHandler getCriteriaAttributeDeleteHandler() {
 		return this.queryAttributeDeleteHandler;
 	}
+
+	@Override
+	public OrbResultSet findAll(long orbTypeInternalId) {
+		OrbType orbType = orbTypeManager.getOrbType(orbTypeInternalId);
+		Criteria criteria = new CriteriaStandard(orbType.id, "findAll");
+
+		return executeQuery(criteria);
+	}
 }

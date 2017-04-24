@@ -5,6 +5,7 @@ import static com.googlecode.cqengine.query.QueryFactory.equal;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -109,8 +110,16 @@ public class OrbTypeCollection {
 	}
 
 	public OrbType getFromLabel(String label) {
-		
 		ResultSet<OrbType> resultSet = findTypeByLabel(label);
 		return resultSet.uniqueResult();
+	}
+	
+	public Optional<OrbType> getFromLabelOptional(String label) {
+		OrbType orbType = null;
+		ResultSet<OrbType> resultSet = findTypeByLabel(label);
+		if (resultSet.size() > 0) {
+			orbType = resultSet.uniqueResult();
+		}
+		return Optional.ofNullable(orbType); 
 	}
 }

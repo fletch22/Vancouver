@@ -8,12 +8,16 @@ import org.springframework.stereotype.Component;
 
 import com.fletch22.app.designer.DomainService;
 import com.fletch22.app.designer.dataField.DataField;
+import com.fletch22.app.designer.userData.ModelToUserDataTranslator;
 
 @Component
 public class DataModelService extends DomainService<DataModel, DataField> {
 	
 	@Autowired
 	DataModelDao dataModelDao;
+	
+	@Autowired
+	ModelToUserDataTranslator modelToUserDataTranslator;
 
 	public DataModel createInstance(String label) {
 		DataModel dataModel = new DataModel();
@@ -25,6 +29,7 @@ public class DataModelService extends DomainService<DataModel, DataField> {
 	
 	public void save(DataModel dataModel) {
 		dataModelDao.save(dataModel);
+		modelToUserDataTranslator.syncWithUserData(dataModel);
 	}
 
 	public DataModel get(long orbInternalId) {

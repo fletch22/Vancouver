@@ -12,5 +12,7 @@ public interface QueryManager extends CriteriaManager {
 	
 	public OrbResultSet findByAttribute(long orbTypeInternalId, String attributeName, String attributeValueToFind);
 	
+	public OrbResultSet findAll(long orbTypeInternalId);
+	
 	public CriteriaCollection getCriteriaCollection();
 }

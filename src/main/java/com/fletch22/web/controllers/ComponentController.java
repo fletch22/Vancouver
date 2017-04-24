@@ -69,7 +69,7 @@ public class ComponentController extends Controller {
 	@Autowired
 	LogBackupAndRestore logBackupAndRestore;
 
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	@RequestMapping(value = "/collections/{id}", method = RequestMethod.GET)
 	public @ResponseBody Object getComponent(@PathVariable long id) {
 		return componentFactory.getInstance(id);
 	}

@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.fletch22.app.designer.Root;
 import com.fletch22.orb.Orb;
 import com.fletch22.orb.OrbManager;
 import com.fletch22.orb.OrbType;
@@ -42,6 +43,9 @@ public class FrontEndStateDao {
 	
 	@Autowired
 	RandomUtil randomUtil;
+	
+	@Autowired
+	Root root;
 
 	public void save(String state, String clientId) {
 		OrbType orbType = this.orbTypeManager
@@ -94,6 +98,8 @@ public class FrontEndStateDao {
 			stateIndexInfo.isEarliestState = (size <= index); 
 		}
 		
+		stateIndexInfo.startupTimestamp = root.startupTimestamp;
+		
 		return stateIndexInfo;
 	}
 
@@ -117,6 +123,8 @@ public class FrontEndStateDao {
 		if (size > 0) {
 			stateIndexInfo.isEarliestState = (size <= stateIndexInfo.indexOfMaxElement); 
 		}
+		
+		stateIndexInfo.startupTimestamp = root.startupTimestamp;
 		
 		return stateIndexInfo;
 	}
@@ -325,6 +333,8 @@ public class FrontEndStateDao {
 			stateIndexInfo.state = orb.getUserDefinedProperties().get(FrontEndState.ATTR_STATE);
 			stateIndexInfo.clientId = orb.getUserDefinedProperties().get(FrontEndState.ATTR_CLIENT_ID);
 		}
+		
+		stateIndexInfo.startupTimestamp = root.startupTimestamp;
 				
 		return stateIndexInfo;
 	}

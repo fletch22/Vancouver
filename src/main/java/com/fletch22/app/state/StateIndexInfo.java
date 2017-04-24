@@ -7,5 +7,6 @@ public class StateIndexInfo {
 	public int indexOfReturnedState = -1;
 	public int indexOfMaxElement = -1;
 	public String clientId;
+	public String startupTimestamp;
 }
 
