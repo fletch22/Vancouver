@@ -15,10 +15,12 @@ public class RichOrbResult implements GsonSerializable {
 	
 	private static final Logger logger = LoggerFactory.getLogger(RichOrbResult.class);
 	
+	public long orbTypeInternalId;
 	public List<Orb> orbList;
 	public ArrayList<String> fields = new ArrayList<>();
 	
 	public RichOrbResult(List<Orb> orbList, OrbType orbParent) {
+		this.orbTypeInternalId = orbParent.id;
 		LinkedHashSet<String> customFields = orbParent.customFields;
 		logger.info("Size of customFields: {}", orbParent.customFields.size());
 		for (String custField : customFields) {

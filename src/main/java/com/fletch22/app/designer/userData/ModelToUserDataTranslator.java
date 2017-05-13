@@ -131,7 +131,6 @@ public class ModelToUserDataTranslator {
 		for (String attributeName : deleteList) {
 			orbTypeManager.deleteAttribute(orbTypeUserData.id, attributeName, true);
 		}
-		;
 	}
 
 	private List<String> getDeleteList(DataModel dataModel, LinkedHashSet<String> customFields, ArrayList<Child> children) {
