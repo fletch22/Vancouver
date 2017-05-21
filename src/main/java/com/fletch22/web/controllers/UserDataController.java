@@ -83,19 +83,20 @@ public class UserDataController extends Controller {
 	@Autowired
 	DataModelService dataModelService;
 
-	@RequestMapping(value = "/collections/{id}", method = RequestMethod.GET)
-	public @ResponseBody RichOrbResult getComponent(@PathVariable long id) {
-		DataModel dataModel = dataModelService.get(id);
+	@RequestMapping(value = "/collections/{orbTypeInternalId}", method = RequestMethod.GET)
+	public @ResponseBody RichOrbResult getComponent(@PathVariable long orbTypeInternalId) {
+		OrbType orbType = orbTypeManager.getOrbType(orbTypeInternalId);
 		
-		OrbType orbType = modelToUserDataTranslator.getUserDataType(dataModel);
+		OrbResultSet orbResultSet = queryManager.findAll(orbTypeInternalId);
 		
-		OrbResultSet orbResultSet = queryManager.findAll(orbType.id);
+		logger.info(String.format("Found %s orbs", orbResultSet.orbList.size()));
 		
 		return new RichOrbResult(orbResultSet.orbList, orbType);
 	}
 	
 	@RequestMapping(value = "/collections/", method = RequestMethod.POST)
 	public @ResponseBody String persistOrb(@RequestBody String body) {
+		Orb orbPersisted = null;
 		
 		logger.info(body);
 		
@@ -103,26 +104,35 @@ public class UserDataController extends Controller {
 		
 		if (persistOrbInfo.orbInternalId.isPresent()) {
 			// Update
+			logger.info("Updating...");
+			orbPersisted = orbManager.getOrb(persistOrbInfo.orbInternalId.get());
+			setOrbAttributes(persistOrbInfo, orbPersisted);
 		} else {
 			// Save
-			Orb orb = new Orb();
-			orb.setOrbTypeInternalId(persistOrbInfo.orbTypeInternalId);
+			logger.info("Saving orb...");
+			orbPersisted = new Orb();
+			orbPersisted.setOrbTypeInternalId(persistOrbInfo.orbTypeInternalId);
 			
-			Map<String, String> attributeMap = persistOrbInfo.attributes;
-			Set<String> attributeKeys = attributeMap.keySet();
-			for (String key : attributeKeys) {
-				OrbType orbType = orbTypeManager.getOrbType(persistOrbInfo.orbTypeInternalId);
-				
-				LinkedHashSet<String> customFields = orbType.customFields;
-				if (!customFields.contains(key)) {
-					throw new RuntimeException(String.format("When saving orb, did not recogize attribute %s.", key));
-				}
-				orb.getUserDefinedProperties().put(key, attributeMap.get(key));
-			}
-			orbManager.createOrb(orb);
+			setOrbAttributes(persistOrbInfo, orbPersisted);
+			orbPersisted = orbManager.createOrb(orbPersisted);
 		}
 				
-		return JSON_SUCCESS;
+		return String.format("{ \"result\": \"Success\", \"orbInternalId\": %s }", orbPersisted.getOrbInternalId());
+	}
+
+	private void setOrbAttributes(PersistOrbInfo persistOrbInfo, Orb orb) {
+		Map<String, String> attributeMap = persistOrbInfo.attributes;
+		Set<String> attributeKeys = attributeMap.keySet();
+		for (String key : attributeKeys) {
+			OrbType orbType = orbTypeManager.getOrbType(persistOrbInfo.orbTypeInternalId);
+			
+			LinkedHashSet<String> customFields = orbType.customFields;
+			if (!customFields.contains(key)) {
+				throw new RuntimeException(String.format("When saving orb, did not recogize attribute %s.", key));
+			}
+			logger.info(String.format("Setting property %s: value: %s", key, attributeMap.get(key)));
+			orb.getUserDefinedProperties().put(key, attributeMap.get(key));
+		}
 	}
 	
 	public PersistOrbInfo parseJsonPersistOrbInfo(String jsonPersistOrbInfo) {
