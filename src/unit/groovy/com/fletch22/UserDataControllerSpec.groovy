@@ -11,7 +11,7 @@ import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 
 import com.fletch22.web.controllers.UserDataController
-import com.fletch22.web.controllers.UserDataController.PersistOrbInfo
+import com.fletch22.web.controllers.UserDataController.PersistOrbCollectionInfo
 
 @ContextConfiguration(locations = 'classpath:/springContext-test.xml')
 class UserDataControllerSpec extends Specification {
@@ -24,14 +24,15 @@ class UserDataControllerSpec extends Specification {
 	@Test
 	def 'test persist (save) orb parser'() {
 		given:
-		def json = '{"collectionId":1176,"row":{"id":"-","attributes":{"f1":"asdf","f2":"sfdg"}}}'
+		def json = '{"collectionId":1176,"rows":[{"id":"-","attributes":{"f1":"asdf","f2":"sfdg"}}]}'
 
 		when:
-		PersistOrbInfo persistOrbInfo = userDataController.parseJsonPersistOrbInfo(json)
+		PersistOrbCollectionInfo persistOrbCollectionInfo = userDataController.parseJsonPersistOrbInfo(json)
 		
 		then:
 		userDataController != null
-		persistOrbInfo.orbTypeInternalId == 1176
+		persistOrbCollectionInfo.orbTypeInternalId == 1176
+		def persistOrbInfo = persistOrbCollectionInfo.persistOrbList.get(0)
 		persistOrbInfo.orbInternalId == Optional.empty()
 		persistOrbInfo.attributes.get("f1") == "asdf"
 		persistOrbInfo.attributes.get("f2") == "sfdg"

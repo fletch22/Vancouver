@@ -1,7 +1,9 @@
 package com.fletch22.web.controllers;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -19,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fletch22.app.designer.ComponentFactory;
 import com.fletch22.app.designer.ComponentSaveFromMapService;
 import com.fletch22.app.designer.appContainer.AppContainerService;
-import com.fletch22.app.designer.dataModel.DataModel;
 import com.fletch22.app.designer.dataModel.DataModelService;
 import com.fletch22.app.designer.userData.ModelToUserDataTranslator;
 import com.fletch22.app.state.FrontEndStateService;
@@ -35,6 +36,7 @@ import com.fletch22.orb.query.QueryManager;
 import com.fletch22.orb.query.RichOrbResult;
 import com.fletch22.util.json.GsonFactory;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -100,31 +102,34 @@ public class UserDataController extends Controller {
 		
 		logger.info(body);
 		
-		PersistOrbInfo persistOrbInfo = parseJsonPersistOrbInfo(body);
+		PersistOrbCollectionInfo persistOrbCollectionInfo = parseJsonPersistOrbInfo(body);
 		
-		if (persistOrbInfo.orbInternalId.isPresent()) {
-			// Update
-			logger.info("Updating...");
-			orbPersisted = orbManager.getOrb(persistOrbInfo.orbInternalId.get());
-			setOrbAttributes(persistOrbInfo, orbPersisted);
-		} else {
-			// Save
-			logger.info("Saving orb...");
-			orbPersisted = new Orb();
-			orbPersisted.setOrbTypeInternalId(persistOrbInfo.orbTypeInternalId);
-			
-			setOrbAttributes(persistOrbInfo, orbPersisted);
-			orbPersisted = orbManager.createOrb(orbPersisted);
+		List<Long> persistedIds = new ArrayList<>();
+		for (PersistOrb persistOrb : persistOrbCollectionInfo.persistOrbList) {
+			if (persistOrb.orbInternalId.isPresent()) {
+				// Update
+				logger.info("Updating...");
+				orbPersisted = orbManager.getOrb(persistOrb.orbInternalId.get());
+				setOrbAttributes(persistOrb.attributes, orbPersisted);
+			} else {
+				// Save
+				logger.info("Saving orb...");
+				orbPersisted = new Orb();
+				orbPersisted.setOrbTypeInternalId(persistOrbCollectionInfo.orbTypeInternalId);
+				
+				setOrbAttributes(persistOrb.attributes, orbPersisted);
+				orbPersisted = orbManager.createOrb(orbPersisted);
+			}
+			persistedIds.add(orbPersisted.getOrbInternalId());
 		}
 				
-		return String.format("{ \"result\": \"Success\", \"orbInternalId\": %s }", orbPersisted.getOrbInternalId());
+		return String.format("{ \"result\": \"Success\", \"persistedIds\": %s }", persistedIds);
 	}
 
-	private void setOrbAttributes(PersistOrbInfo persistOrbInfo, Orb orb) {
-		Map<String, String> attributeMap = persistOrbInfo.attributes;
+	private void setOrbAttributes(Map<String, String> attributeMap, Orb orb) {
 		Set<String> attributeKeys = attributeMap.keySet();
 		for (String key : attributeKeys) {
-			OrbType orbType = orbTypeManager.getOrbType(persistOrbInfo.orbTypeInternalId);
+			OrbType orbType = orbTypeManager.getOrbType(orb.getOrbTypeInternalId());
 			
 			LinkedHashSet<String> customFields = orbType.customFields;
 			if (!customFields.contains(key)) {
@@ -135,35 +140,49 @@ public class UserDataController extends Controller {
 		}
 	}
 	
-	public PersistOrbInfo parseJsonPersistOrbInfo(String jsonPersistOrbInfo) {
+	public PersistOrbCollectionInfo parseJsonPersistOrbInfo(String jsonPersistOrbInfo) {
 		Gson gson = gsonFactory.getInstance();
 		JsonObject jsonObject = gson.fromJson(jsonPersistOrbInfo, JsonObject.class);
 		
 		long collectionId = jsonObject.get("collectionId").getAsLong();
 
-		PersistOrbInfo persistOrbInfo = new PersistOrbInfo();
-		persistOrbInfo.orbTypeInternalId = collectionId;
-
-		JsonObject row = jsonObject.getAsJsonObject("row");
-		String strId = row.get("id").getAsString();
-		if (tryParseLong(strId)) {
-			long id = Long.parseLong(strId);
-			persistOrbInfo.orbInternalId = Optional.of(id);
+		PersistOrbCollectionInfo persistOrbCollectionInfo = new PersistOrbCollectionInfo();
+		persistOrbCollectionInfo.orbTypeInternalId = collectionId;
+		
+		JsonArray rows = jsonObject.getAsJsonArray("rows");
+		for (int i = 0; i < rows.size(); i++) {
+			PersistOrb persistOrb = new PersistOrb();
+			JsonElement jsonElement = rows.get(i);
+			
+			JsonObject row = jsonElement.getAsJsonObject();
+			logger.info(row.toString());
+					
+			String strId = row.get("id").getAsString();
+			if (tryParseLong(strId)) {
+				long id = Long.parseLong(strId);
+				persistOrb.orbInternalId = Optional.of(id);
+			}
+			
+			JsonObject joAttributes = row.getAsJsonObject("attributes");
+			Set<Map.Entry<String, JsonElement>> keyValues = joAttributes.entrySet();
+			for (Map.Entry<String, JsonElement> keyVal : keyValues) {
+				String property = keyVal.getKey();
+				String value = keyVal.getValue().getAsString();
+				persistOrb.attributes.put(property, value);
+			}
+			
+			persistOrbCollectionInfo.persistOrbList.add(persistOrb);
 		}
 		
-		JsonObject joAttributes = row.getAsJsonObject("attributes");
-		Set<Map.Entry<String, JsonElement>> keyValues = joAttributes.entrySet();
-		for (Map.Entry<String, JsonElement> keyVal : keyValues) {
-			String property = keyVal.getKey();
-			String value = keyVal.getValue().getAsString();
-			persistOrbInfo.attributes.put(property, value);
-		}
-		
-		return persistOrbInfo;
+		return persistOrbCollectionInfo;
 	}
 	
-	public static class PersistOrbInfo {
+	public static class PersistOrbCollectionInfo {
 		long orbTypeInternalId;
+		List<PersistOrb> persistOrbList = new ArrayList<>();
+	}
+	
+	public static class PersistOrb {
 		Optional<Long> orbInternalId = Optional.empty();
 		Map<String, String> attributes = new HashMap<>();
 	}
