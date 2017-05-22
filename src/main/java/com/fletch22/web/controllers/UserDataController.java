@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fletch22.aop.Transactional;
 import com.fletch22.app.designer.ComponentFactory;
 import com.fletch22.app.designer.ComponentSaveFromMapService;
 import com.fletch22.app.designer.appContainer.AppContainerService;
@@ -96,11 +97,35 @@ public class UserDataController extends Controller {
 		return new RichOrbResult(orbResultSet.orbList, orbType);
 	}
 	
+	@RequestMapping(value = "/collections/deleteSome", method = RequestMethod.POST)
+	@Transactional
+	public @ResponseBody String deleteSomeOrbs(@RequestBody String body) {
+		List<Long> ids = convertJsonList(body);
+		
+		for (long id : ids) {
+			orbManager.deleteOrb(id, false);
+		}
+		
+		return JSON_SUCCESS;
+	}
+	
+	private List<Long> convertJsonList(String json) {
+		Gson gson = gsonFactory.getInstance();
+		JsonArray jsonArray = gson.fromJson(json, JsonArray.class);
+		
+		List<Long> ids = new ArrayList<>();
+		for (int i = 0; i < jsonArray.size(); i++) {
+			long id = jsonArray.get(i).getAsLong();
+			ids.add(id);
+		}
+		
+		return ids;
+	}
+	
 	@RequestMapping(value = "/collections/", method = RequestMethod.POST)
+	@Transactional
 	public @ResponseBody String persistOrb(@RequestBody String body) {
 		Orb orbPersisted = null;
-		
-		logger.info(body);
 		
 		PersistOrbCollectionInfo persistOrbCollectionInfo = parseJsonPersistOrbInfo(body);
 		
