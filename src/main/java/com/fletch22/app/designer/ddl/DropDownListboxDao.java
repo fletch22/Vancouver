@@ -34,7 +34,7 @@ public class DropDownListboxDao extends AppDesignerDao<DropDownListbox, DropDown
 	protected void setNonChildrenAttributes(DropDownListbox div, Orb orb) {
 		orb.getUserDefinedProperties().put(DropDownListbox.ATTR_STYLE, div.style);
 		orb.getUserDefinedProperties().put(DropDownListbox.ATTR_NAME, div.name);
-		orb.getUserDefinedProperties().put(DropDownListbox.ATTR_DATA_SOURCE_NAME, div.dataSourceName);
+		orb.getUserDefinedProperties().put(DropDownListbox.ATTR_DATA_SOURCE_ID, div.dataSourceId);
 	}
 }
 
