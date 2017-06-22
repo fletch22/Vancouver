@@ -18,7 +18,6 @@ import com.fletch22.app.designer.dataField.DataField;
 import com.fletch22.app.designer.dataField.NameChangeInfo;
 import com.fletch22.app.designer.dataModel.DataModel;
 import com.fletch22.app.designer.dataModel.DataModelService;
-import com.fletch22.orb.Orb;
 import com.fletch22.orb.OrbManager;
 import com.fletch22.orb.OrbType;
 import com.fletch22.orb.OrbTypeManager;

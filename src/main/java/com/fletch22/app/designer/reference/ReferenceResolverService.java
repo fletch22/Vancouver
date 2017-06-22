@@ -21,6 +21,8 @@ import com.fletch22.app.designer.dataField.DataField;
 import com.fletch22.app.designer.dataField.DataFieldService;
 import com.fletch22.app.designer.dataModel.DataModel;
 import com.fletch22.app.designer.dataModel.DataModelService;
+import com.fletch22.app.designer.dataUniverse.DataUniverse;
+import com.fletch22.app.designer.dataUniverse.DataUniverseService;
 import com.fletch22.app.designer.datastore.Datastore;
 import com.fletch22.app.designer.datastore.DatastoreService;
 import com.fletch22.app.designer.ddl.DropDownListbox;
@@ -83,6 +85,9 @@ public class ReferenceResolverService {
 	
 	@Autowired
 	DropDownListboxService dropDownListboxService;
+	
+	@Autowired
+	DataUniverseService dataUniverseService;
 	
 	@Autowired
 	DatastoreService datastoreService;
@@ -190,6 +195,9 @@ public class ReferenceResolverService {
 				break;
 			case DropDownListbox.TYPE_LABEL:
 				orbBaseComponentChild = dropDownListboxService.get(childId);
+				break;
+			case DataUniverse.TYPE_LABEL:
+				orbBaseComponentChild = dataUniverseService.get(childId);
 				break;
 			case Datastore.TYPE_LABEL:
 				orbBaseComponentChild = datastoreService.get(childId);

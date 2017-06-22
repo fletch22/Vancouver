@@ -7,6 +7,7 @@ import com.fletch22.app.designer.app.AppDao;
 import com.fletch22.app.designer.appContainer.AppContainerDao;
 import com.fletch22.app.designer.dataField.DataFieldDao;
 import com.fletch22.app.designer.dataModel.DataModelDao;
+import com.fletch22.app.designer.dataUniverse.DataUniverseDao;
 import com.fletch22.app.designer.datastore.DatastoreDao;
 import com.fletch22.app.designer.ddl.DropDownListboxDao;
 import com.fletch22.app.designer.div.DivDao;
@@ -45,6 +46,9 @@ public class DaoJunction {
 	
 	@Autowired
 	public DropDownListboxDao dropDownListboxDao;
+	
+	@Autowired
+	public DataUniverseDao dataUniverseDao;
 	
 	@Autowired
 	public DatastoreDao datastoreDao;

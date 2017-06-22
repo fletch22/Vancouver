@@ -22,9 +22,7 @@ import com.fletch22.orb.IntegrationSystemInitializer;
 import com.fletch22.orb.OrbManager;
 import com.fletch22.orb.OrbType;
 import com.fletch22.orb.OrbTypeManager;
-import com.fletch22.orb.query.OrbResultSet;
 import com.fletch22.orb.query.QueryManager;
-import com.fletch22.orb.query.RichOrbResult;
 import com.fletch22.util.json.GsonFactory;
 
 @RestController

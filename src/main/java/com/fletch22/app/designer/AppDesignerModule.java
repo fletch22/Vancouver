@@ -13,6 +13,8 @@ import com.fletch22.app.designer.appContainer.AppContainer;
 import com.fletch22.app.designer.appContainer.AppContainerService;
 import com.fletch22.app.designer.dataField.DataField;
 import com.fletch22.app.designer.dataModel.DataModel;
+import com.fletch22.app.designer.dataUniverse.DataUniverse;
+import com.fletch22.app.designer.dataUniverse.DataUniverseService;
 import com.fletch22.app.designer.datastore.Datastore;
 import com.fletch22.app.designer.datastore.DatastoreService;
 import com.fletch22.app.designer.ddl.DropDownListbox;
@@ -76,6 +78,9 @@ public class AppDesignerModule implements OrbSystemModule {
 
 	@Autowired
 	DatastoreService datastoreService;
+	
+	@Autowired
+	DataUniverseService dataUniverseService;
 
 	@Override
 	public void initialize() {
@@ -84,28 +89,14 @@ public class AppDesignerModule implements OrbSystemModule {
 		createInstances();
 	}
 
-	private void createInstances() {
-		logger.debug("Creating instances....");
-
-		AppContainer appContainer = appContainerService.createInstance(DEFAULT_APP_CONTAINER_NAME);
-
-		App app = appService.createInstance("HelloWorldApp");
-		appContainerService.addToParent(appContainer, app);
-
-		Datastore datastore = datastoreService.createInstance("default");
-		appContainerService.addToParent(appContainer, datastore);
-
-		Website website = websiteService.createInstance("website1");
-		appService.addToParent(app, website);
-
-		Page page = pageService.createInstance("page1");
-		websiteService.addToParent(website, page);
-	}
-
 	private void createTypes() {
 		long orbTypeInternalId = orbTypeManager.createOrbType(AppContainer.TYPE_LABEL, AppContainer.ATTRIBUTE_LIST);
 		primeQueryIndex(orbTypeInternalId, AppContainer.ATTR_LABEL);
 		componentConstrainer.addNotAmongstUniqueConstraintOnField(orbTypeInternalId, AppContainer.ATTR_LABEL);
+		
+		orbTypeInternalId = orbTypeManager.createOrbType(DataUniverse.TYPE_LABEL, DataUniverse.ATTRIBUTE_LIST);
+		componentConstrainer.addNotAmongstUniqueConstraintOnField(orbTypeInternalId, DataUniverse.ATTR_LABEL);
+		primeQueryIndex(orbTypeInternalId, DataUniverse.ATTR_LABEL);
 
 		orbTypeInternalId = orbTypeManager.createOrbType(Datastore.TYPE_LABEL, Datastore.ATTRIBUTE_LIST);
 		componentConstrainer.addNotAmongstUniqueConstraintOnField(orbTypeInternalId, Datastore.ATTR_LABEL);
@@ -164,6 +155,27 @@ public class AppDesignerModule implements OrbSystemModule {
 		primeQueryIndex(orbTypeInternalId, Form.ATTR_LABEL);
 
 		createType(AppModuleImpl.FrontEndState);
+	}
+	
+	private void createInstances() {
+		logger.debug("Creating instances....");
+
+		AppContainer appContainer = appContainerService.createInstance(DEFAULT_APP_CONTAINER_NAME);
+
+		App app = appService.createInstance("HelloWorldApp");
+		appContainerService.addToParent(appContainer, app);
+		
+		DataUniverse dataUniverse = dataUniverseService.createInstance("default");
+		appContainerService.addToParent(appContainer, dataUniverse);
+
+		Datastore datastore = datastoreService.createInstance("default");
+		dataUniverseService.addToParent(dataUniverse, datastore);
+
+		Website website = websiteService.createInstance("website1");
+		appService.addToParent(app, website);
+
+		Page page = pageService.createInstance("page1");
+		websiteService.addToParent(website, page);
 	}
 
 	public void createType(AppModule appModule) {

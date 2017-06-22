@@ -235,7 +235,7 @@ Test criteria aggregate working with custom IndexCollection like the defaultLimi
 Status: Done
 
 Startup Doesn't allow clean orb system module initialization; seems to get duplicate IDs -- fix.
-Status: Not done.
+Status: Done.
 
 Add Single Threading access. (CommandProcessing?)
 Status: Done.

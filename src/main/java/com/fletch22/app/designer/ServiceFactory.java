@@ -7,6 +7,7 @@ import com.fletch22.app.designer.app.App;
 import com.fletch22.app.designer.appContainer.AppContainer;
 import com.fletch22.app.designer.dataField.DataField;
 import com.fletch22.app.designer.dataModel.DataModel;
+import com.fletch22.app.designer.dataUniverse.DataUniverse;
 import com.fletch22.app.designer.datastore.Datastore;
 import com.fletch22.app.designer.ddl.DropDownListbox;
 import com.fletch22.app.designer.div.Div;
@@ -39,6 +40,9 @@ public class ServiceFactory {
 				break;
 			case App.TYPE_LABEL:
 				domainService = serviceJunction.appService;
+				break;
+			case DataUniverse.TYPE_LABEL:
+				domainService = serviceJunction.dataUniverseService;
 				break;
 			case Datastore.TYPE_LABEL:
 				domainService = serviceJunction.datastoreService;

@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fletch22.app.designer.DomainService;
-import com.fletch22.app.designer.layoutMinion.LayoutMinion;
 
 @Component
 public class LayoutService extends DomainService<Layout, LayoutChild> {

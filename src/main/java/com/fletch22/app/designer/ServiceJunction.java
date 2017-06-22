@@ -7,6 +7,7 @@ import com.fletch22.app.designer.app.AppService;
 import com.fletch22.app.designer.appContainer.AppContainerService;
 import com.fletch22.app.designer.dataField.DataFieldService;
 import com.fletch22.app.designer.dataModel.DataModelService;
+import com.fletch22.app.designer.dataUniverse.DataUniverseService;
 import com.fletch22.app.designer.datastore.DatastoreService;
 import com.fletch22.app.designer.ddl.DropDownListboxService;
 import com.fletch22.app.designer.div.DivService;
@@ -45,6 +46,9 @@ public class ServiceJunction {
 	
 	@Autowired
 	public DropDownListboxService dropDownListboxService;
+	
+	@Autowired
+	public DataUniverseService dataUniverseService;
 	
 	@Autowired
 	public DatastoreService datastoreService;

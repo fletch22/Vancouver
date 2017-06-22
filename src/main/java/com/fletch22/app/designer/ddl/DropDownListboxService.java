@@ -17,7 +17,7 @@ public class DropDownListboxService extends DomainServiceBase<DropDownListbox> {
 		DropDownListbox dropDownListbox = new DropDownListbox();
 		dropDownListbox.style = style;
 		dropDownListbox.name = label;
-		dropDownListbox.dataSourceId = dataSourceName;
+		dropDownListbox.dataStoreId = dataSourceName;
 		
 		save(dropDownListbox);
 		return dropDownListbox;
@@ -37,7 +37,7 @@ public class DropDownListboxService extends DomainServiceBase<DropDownListbox> {
 		
 		return createInstance(properties.get(DropDownListbox.ATTR_STYLE),
 				properties.get(DropDownListbox.ATTR_NAME),
-				properties.get(DropDownListbox.ATTR_DATA_SOURCE_ID));
+				properties.get(DropDownListbox.ATTR_DATASTORE_ID));
 	}
 	
 	@Override
@@ -47,7 +47,7 @@ public class DropDownListboxService extends DomainServiceBase<DropDownListbox> {
 		DropDownListbox ddl = get(id);
 		if (properties.containsKey(DropDownListbox.ATTR_STYLE)) ddl.style = properties.get(DropDownListbox.ATTR_STYLE);
 		if (properties.containsKey(DropDownListbox.ATTR_NAME)) ddl.name = properties.get(DropDownListbox.ATTR_NAME);
-		if (properties.containsKey(DropDownListbox.ATTR_DATA_SOURCE_ID)) ddl.dataSourceId = properties.get(DropDownListbox.ATTR_DATA_SOURCE_ID);
+		if (properties.containsKey(DropDownListbox.ATTR_DATASTORE_ID)) ddl.dataStoreId = properties.get(DropDownListbox.ATTR_DATASTORE_ID);
 		
 		this.save(ddl);
 		

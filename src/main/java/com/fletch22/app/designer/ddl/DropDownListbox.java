@@ -10,12 +10,14 @@ public class DropDownListbox extends OrbBasedComponent implements DropDownListbo
 	public static final String TYPE_LABEL = "DropDownListbox";
 	public static final String ATTR_STYLE = "style";
 	public static final String ATTR_NAME = "name";
-	public static final String ATTR_DATA_SOURCE_ID = "dataSourceId";
-	public static LinkedHashSet<String> ATTRIBUTE_LIST = new LinkedHashSet<String>(Arrays.asList(DropDownListbox.ATTR_PARENT, ATTR_NAME, ATTR_DATA_SOURCE_ID, ATTR_STYLE));
+	public static final String ATTR_DATASTORE_ID = "dataStoreId";
+	public static final String ATTR_VALUE_FIELD_NAME = "valueFieldName";
+	public static final String ATTR_TEXT_FIELD_NAME = "textFieldName";
+	public static LinkedHashSet<String> ATTRIBUTE_LIST = new LinkedHashSet<String>(Arrays.asList(DropDownListbox.ATTR_PARENT, ATTR_NAME, ATTR_DATASTORE_ID, ATTR_STYLE));
 	
 	public String style;
 	public String name;
-	public String dataSourceId;
+	public String dataStoreId;
 	
 	@Override
 	public String getTypeLabel() {
