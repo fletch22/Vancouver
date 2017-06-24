@@ -13,11 +13,14 @@ public class DropDownListboxService extends DomainServiceBase<DropDownListbox> {
 	@Autowired
 	DropDownListboxDao dropDownListboxDao;
 
-	public DropDownListbox createInstance(String style, String label, String dataSourceName) {
+	public DropDownListbox createInstance(String style, String label, String dataStoreId, String dataModelId, String dataValueId, String dataTextId) {
 		DropDownListbox dropDownListbox = new DropDownListbox();
 		dropDownListbox.style = style;
 		dropDownListbox.name = label;
-		dropDownListbox.dataStoreId = dataSourceName;
+		dropDownListbox.dataStoreId = dataStoreId;
+		dropDownListbox.dataModelId = dataModelId;
+		dropDownListbox.dataValueId = dataValueId;
+		dropDownListbox.dataTextId = dataTextId;
 		
 		save(dropDownListbox);
 		return dropDownListbox;
@@ -37,7 +40,10 @@ public class DropDownListboxService extends DomainServiceBase<DropDownListbox> {
 		
 		return createInstance(properties.get(DropDownListbox.ATTR_STYLE),
 				properties.get(DropDownListbox.ATTR_NAME),
-				properties.get(DropDownListbox.ATTR_DATASTORE_ID));
+				properties.get(DropDownListbox.ATTR_DATASTORE_ID),
+				properties.get(DropDownListbox.ATTR_DATAMODEL_ID),
+				properties.get(DropDownListbox.ATTR_VALUE_FIELD_NAME),
+				properties.get(DropDownListbox.ATTR_TEXT_FIELD_NAME));
 	}
 	
 	@Override

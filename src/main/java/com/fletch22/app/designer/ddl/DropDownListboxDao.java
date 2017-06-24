@@ -31,10 +31,14 @@ public class DropDownListboxDao extends AppDesignerDao<DropDownListbox, DropDown
 	}
 	
 	@Override
-	protected void setNonChildrenAttributes(DropDownListbox div, Orb orb) {
-		orb.getUserDefinedProperties().put(DropDownListbox.ATTR_STYLE, div.style);
-		orb.getUserDefinedProperties().put(DropDownListbox.ATTR_NAME, div.name);
-		orb.getUserDefinedProperties().put(DropDownListbox.ATTR_DATASTORE_ID, div.dataStoreId);
+	protected void setNonChildrenAttributes(DropDownListbox ddl, Orb orb) {
+		orb.getUserDefinedProperties().put(DropDownListbox.ATTR_STYLE, ddl.style);
+		orb.getUserDefinedProperties().put(DropDownListbox.ATTR_NAME, ddl.name);
+		orb.getUserDefinedProperties().put(DropDownListbox.ATTR_DATASTORE_ID, ddl.dataStoreId);
+		orb.getUserDefinedProperties().put(DropDownListbox.ATTR_DATAMODEL_ID, ddl.dataModelId);
+		orb.getUserDefinedProperties().put(DropDownListbox.ATTR_VALUE_FIELD_NAME, ddl.dataValueId);
+		orb.getUserDefinedProperties().put(DropDownListbox.ATTR_TEXT_FIELD_NAME, ddl.dataTextId);
+		
 	}
 }
 
