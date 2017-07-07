@@ -24,6 +24,7 @@ import com.fletch22.app.designer.div.Div;
 import com.fletch22.app.designer.layout.Layout;
 import com.fletch22.app.designer.layoutMinion.LayoutMinion;
 import com.fletch22.app.designer.page.Page;
+import com.fletch22.app.designer.submit.ButtonSubmit;
 import com.fletch22.app.designer.webFolder.WebFolder;
 import com.fletch22.app.designer.website.Website;
 import com.fletch22.orb.Orb;
@@ -116,6 +117,9 @@ public abstract class AppDesignerDao<T extends OrbBasedComponent, U extends Doma
 					break;
 				case App.TYPE_LABEL:
 					daoJunction.appDao.update((App) orbBasedComponentChild);
+					break;
+				case ButtonSubmit.TYPE_LABEL:
+					daoJunction.buttonSubmitDao.update((ButtonSubmit) orbBasedComponentChild);
 					break;
 				case Website.TYPE_LABEL:
 					daoJunction.websiteDao.update((Website) orbBasedComponentChild);

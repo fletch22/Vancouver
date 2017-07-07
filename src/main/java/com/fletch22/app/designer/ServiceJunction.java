@@ -14,6 +14,7 @@ import com.fletch22.app.designer.div.DivService;
 import com.fletch22.app.designer.layout.LayoutService;
 import com.fletch22.app.designer.layoutMinion.LayoutMinionService;
 import com.fletch22.app.designer.page.PageService;
+import com.fletch22.app.designer.submit.ButtonSubmitService;
 import com.fletch22.app.designer.webFolder.WebFolderService;
 import com.fletch22.app.designer.website.WebsiteService;
 
@@ -58,4 +59,7 @@ public class ServiceJunction {
 	
 	@Autowired
 	public DataFieldService dataFieldService;
+	
+	@Autowired
+	public ButtonSubmitService buttonSubmitService;
 }

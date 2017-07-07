@@ -27,6 +27,7 @@ import com.fletch22.app.designer.page.PageService;
 import com.fletch22.app.designer.page.body.Body;
 import com.fletch22.app.designer.page.form.Form;
 import com.fletch22.app.designer.page.head.Head;
+import com.fletch22.app.designer.submit.ButtonSubmit;
 import com.fletch22.app.designer.webFolder.WebFolder;
 import com.fletch22.app.designer.website.Website;
 import com.fletch22.app.designer.website.WebsiteService;
@@ -153,6 +154,8 @@ public class AppDesignerModule implements OrbSystemModule {
 		orbTypeInternalId = orbTypeManager.createOrbType(Form.TYPE_LABEL, Form.ATTRIBUTE_LIST);
 		componentConstrainer.addNotAmongstUniqueConstraintOnField(orbTypeInternalId, Form.ATTR_LABEL);
 		primeQueryIndex(orbTypeInternalId, Form.ATTR_LABEL);
+		
+		orbTypeInternalId = orbTypeManager.createOrbType(ButtonSubmit.TYPE_LABEL, ButtonSubmit.ATTRIBUTE_LIST);
 
 		createType(AppModuleImpl.FrontEndState);
 	}

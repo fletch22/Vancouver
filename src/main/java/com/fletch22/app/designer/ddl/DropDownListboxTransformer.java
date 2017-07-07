@@ -14,7 +14,7 @@ public class DropDownListboxTransformer extends DomainTransformer<DropDownListbo
 		
 		this.setBaseAttributes(orb, ddl);
 		ddl.style = orb.getUserDefinedProperties().get(DropDownListbox.ATTR_STYLE);
-		ddl.name = orb.getUserDefinedProperties().get(DropDownListbox.ATTR_NAME);
+		ddl.elementId = orb.getUserDefinedProperties().get(DropDownListbox.ATTR_ELEMENT_ID);
 		ddl.dataStoreId = orb.getUserDefinedProperties().get(DropDownListbox.ATTR_DATASTORE_ID);
 		ddl.dataModelId = orb.getUserDefinedProperties().get(DropDownListbox.ATTR_DATAMODEL_ID);
 		ddl.dataValueId = orb.getUserDefinedProperties().get(DropDownListbox.ATTR_VALUE_FIELD_NAME);

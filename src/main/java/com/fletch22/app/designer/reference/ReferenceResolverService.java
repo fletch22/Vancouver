@@ -34,6 +34,8 @@ import com.fletch22.app.designer.layoutMinion.LayoutMinion;
 import com.fletch22.app.designer.layoutMinion.LayoutMinionService;
 import com.fletch22.app.designer.page.Page;
 import com.fletch22.app.designer.page.PageService;
+import com.fletch22.app.designer.submit.ButtonSubmit;
+import com.fletch22.app.designer.submit.ButtonSubmitService;
 import com.fletch22.app.designer.webFolder.WebFolder;
 import com.fletch22.app.designer.webFolder.WebFolderService;
 import com.fletch22.app.designer.website.Website;
@@ -64,6 +66,9 @@ public class ReferenceResolverService {
 	
 	@Autowired
 	AppService appService;
+	
+	@Autowired
+	ButtonSubmitService buttonSubmitService;
 	
 	@Autowired
 	WebsiteService websiteService;
@@ -174,6 +179,9 @@ public class ReferenceResolverService {
 				break;
 			case App.TYPE_LABEL:
 				orbBaseComponentChild = appService.get(childId);
+				break;
+			case ButtonSubmit.TYPE_LABEL:
+				orbBaseComponentChild = buttonSubmitService.get(childId);
 				break;
 			case Website.TYPE_LABEL:
 				orbBaseComponentChild = websiteService.get(childId);

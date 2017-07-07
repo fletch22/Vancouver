@@ -14,6 +14,7 @@ import com.fletch22.app.designer.div.Div;
 import com.fletch22.app.designer.layout.Layout;
 import com.fletch22.app.designer.layoutMinion.LayoutMinion;
 import com.fletch22.app.designer.page.Page;
+import com.fletch22.app.designer.submit.ButtonSubmit;
 import com.fletch22.app.designer.webFolder.WebFolder;
 import com.fletch22.app.designer.website.Website;
 
@@ -40,6 +41,9 @@ public class ServiceFactory {
 				break;
 			case App.TYPE_LABEL:
 				domainService = serviceJunction.appService;
+				break;
+			case ButtonSubmit.TYPE_LABEL:
+				domainService = serviceJunction.buttonSubmitService;
 				break;
 			case DataUniverse.TYPE_LABEL:
 				domainService = serviceJunction.dataUniverseService;
