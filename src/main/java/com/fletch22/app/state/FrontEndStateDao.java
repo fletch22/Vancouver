@@ -14,6 +14,7 @@ import com.fletch22.orb.Orb;
 import com.fletch22.orb.OrbManager;
 import com.fletch22.orb.OrbType;
 import com.fletch22.orb.OrbTypeManager;
+import com.fletch22.orb.command.transaction.RollbackTransactionService;
 import com.fletch22.orb.command.transaction.TransactionService;
 import com.fletch22.orb.query.OrbResultSet;
 import com.fletch22.orb.query.QueryManager;
@@ -37,6 +38,9 @@ public class FrontEndStateDao {
 
 	@Autowired
 	TransactionService transactionService;
+	
+	@Autowired
+	RollbackTransactionService rollbackTransactionService;
 
 	@Autowired
 	QueryManager queryManager;
@@ -293,8 +297,8 @@ public class FrontEndStateDao {
 		
 		BigDecimal tranId = new BigDecimal(orb.getUserDefinedProperties().get(FrontEndState.ATTR_ASSOCIATED_TRANSACTION_ID));
 		
-		logger.error("Attempting to rollback to tranID {}", tranId);
-		this.transactionService.rollbackToSpecificTransaction(tranId);
+		logger.error("Attempting to rollback to tranID {} ...", tranId);
+		rollbackTransactionService.rollbackToSpecificTransaction(tranId);
 		
 		// Remove client Ids above this one.
 		Criteria criteria = new CriteriaStandard(orbType.id, randomUtil.getRandomUuidString());
