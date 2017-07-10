@@ -9,12 +9,12 @@ public class ButtonSubmit extends Parent {
 
 	public static final String TYPE_LABEL = "ButtonSubmit";
 	public static final String ATTR_STYLE = "style";
-	public static final String ATTR_NAME = "name";
+	public static final String ATTR_ELEMENT_ID = "elementId";
 	public static final String ATTR_LABEL = "label";
-	public static LinkedHashSet<String> ATTRIBUTE_LIST = new LinkedHashSet<String>(Arrays.asList(ButtonSubmit.ATTR_PARENT, ATTR_NAME, ATTR_LABEL, ATTR_STYLE));
+	public static LinkedHashSet<String> ATTRIBUTE_LIST = new LinkedHashSet<String>(Arrays.asList(ButtonSubmit.ATTR_PARENT, ATTR_ELEMENT_ID, ATTR_LABEL, ATTR_STYLE));
 
 	public String style;
-	public String name;
+	public String elementId;
 	public String label;
 
 	@Override

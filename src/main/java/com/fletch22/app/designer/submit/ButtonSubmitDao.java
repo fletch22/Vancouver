@@ -33,7 +33,7 @@ public class ButtonSubmitDao extends AppDesignerDao<ButtonSubmit, ButtonSubmitTr
 	@Override
 	protected void setNonChildrenAttributes(ButtonSubmit ddl, Orb orb) {
 		orb.getUserDefinedProperties().put(ButtonSubmit.ATTR_STYLE, ddl.style);
-		orb.getUserDefinedProperties().put(ButtonSubmit.ATTR_NAME, ddl.name);
+		orb.getUserDefinedProperties().put(ButtonSubmit.ATTR_ELEMENT_ID, ddl.elementId);  
 		orb.getUserDefinedProperties().put(ButtonSubmit.ATTR_LABEL, ddl.label);
 	}
 }

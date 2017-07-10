@@ -14,10 +14,10 @@ public class ButtonSubmitService extends DomainService<ButtonSubmit, Child> {
 	@Autowired
 	ButtonSubmitDao dropDownListboxDao;
 
-	public ButtonSubmit createInstance(String style, String name, String label) {
+	public ButtonSubmit createInstance(String style, String elementId, String label) {
 		ButtonSubmit dropDownListbox = new ButtonSubmit();
 		dropDownListbox.style = style;
-		dropDownListbox.name = name;
+		dropDownListbox.elementId = elementId;
 		dropDownListbox.label = label;
 		
 		save(dropDownListbox);
@@ -37,7 +37,7 @@ public class ButtonSubmitService extends DomainService<ButtonSubmit, Child> {
 		validatePropertiesSimple(properties, ButtonSubmit.ATTRIBUTE_LIST);
 		
 		return createInstance(properties.get(ButtonSubmit.ATTR_STYLE),
-				properties.get(ButtonSubmit.ATTR_NAME),
+				properties.get(ButtonSubmit.ATTR_ELEMENT_ID),
 				properties.get(ButtonSubmit.ATTR_LABEL));
 	}
 	
@@ -47,8 +47,8 @@ public class ButtonSubmitService extends DomainService<ButtonSubmit, Child> {
 		
 		ButtonSubmit ddl = get(id);
 		if (properties.containsKey(ButtonSubmit.ATTR_STYLE)) ddl.style = properties.get(ButtonSubmit.ATTR_STYLE);
-		if (properties.containsKey(ButtonSubmit.ATTR_NAME)) ddl.name = properties.get(ButtonSubmit.ATTR_NAME);
-		if (properties.containsKey(ButtonSubmit.ATTR_LABEL)) ddl.name = properties.get(ButtonSubmit.ATTR_LABEL);
+		if (properties.containsKey(ButtonSubmit.ATTR_ELEMENT_ID)) ddl.elementId = properties.get(ButtonSubmit.ATTR_ELEMENT_ID);
+		if (properties.containsKey(ButtonSubmit.ATTR_LABEL)) ddl.elementId = properties.get(ButtonSubmit.ATTR_LABEL);
 		
 		this.save(ddl);
 		
