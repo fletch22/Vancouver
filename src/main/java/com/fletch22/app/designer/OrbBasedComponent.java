@@ -14,6 +14,7 @@ public abstract class OrbBasedComponent implements Child {
 	private Orb orbOriginal;
 	private long id = UNSET_ID;
 	private long parentId = UNSET_ID;
+	public static final String ATTR_LIVE_PREFIX = "fea";
 
 	public long getId() {
 		return this.id;

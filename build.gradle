@@ -90,6 +90,7 @@ dependencies {
 	compile 'com.h2database:h2:1.4.190'
 	compile 'com.graphql-java:graphql-java:2.3.0'
 	compile 'com.google.guava:guava:21.0'
+	compile 'org.reflections:reflections:0.9.11'
 	
 	providedCompile 'javax.servlet:servlet-api:2.5'
 
