@@ -34,8 +34,7 @@ public class TransactionalAspect {
 		
 
 		try {
-			logger.info("Current counter {}", String.valueOf(transactionCounter));
-			logger.info("Current counter {}", transactionCounter);
+			logger.debug("Current counter {}", transactionCounter);
 			if (transactionCounter == 0) {
 				logger.info("beginning tran.");
 				getTransactionService().beginTransaction();

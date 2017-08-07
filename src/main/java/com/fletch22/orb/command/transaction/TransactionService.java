@@ -1,6 +1,7 @@
 package com.fletch22.orb.command.transaction;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 import org.joda.time.DateTime;
 import org.joda.time.Seconds;
@@ -103,13 +104,23 @@ public class TransactionService {
 	public BigDecimal getCurrentTransactionId() {
 		return this.transactionIdInFlight;
 	}
-
+	
+	public Optional<BigDecimal> getSubsequantTransaction(BigDecimal tranId) {
+		TransactionSearchResult transactionSearchResult = this.logActionDao.getSubsequentTransactionIfAny(tranId);
+		
+		Optional<BigDecimal> optional = Optional.empty();
+		if (transactionSearchResult.wasTransactionFound()) {
+			optional = Optional.of(transactionSearchResult.tranId);
+		}
+		return optional;
+	}
+	
 	public void rollbackToSpecificTransaction(BigDecimal tranId) {
 		
 		// NOTE: This technique is not pure but reduces some store proc creation work.
 		TransactionSearchResult transactionSearchResult = this.logActionDao.getSubsequentTransactionIfAny(tranId);
 		if (transactionSearchResult.wasTransactionFound()) {
-			this.logActionDao.rollbackToBeforeSpecificTransaction(transactionSearchResult.tranId);
+			this.rollbackToBeforeSpecificTransaction(transactionSearchResult.tranId); 
 		}
 	}
 }

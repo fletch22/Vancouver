@@ -3,6 +3,7 @@ package com.fletch22.app.state;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -293,15 +294,45 @@ public class FrontEndStateDao {
 
 	public void rollbackToState(String stateClientId) {
 		OrbType orbType = this.orbTypeManager.getOrbType(FrontEndState.TYPE_LABEL);
-		Orb orb = this.queryManager.findByAttribute(orbType.id, FrontEndState.ATTR_CLIENT_ID, stateClientId).uniqueResult();
 		
-		BigDecimal tranId = new BigDecimal(orb.getUserDefinedProperties().get(FrontEndState.ATTR_ASSOCIATED_TRANSACTION_ID));
+		Optional<BigDecimal> optionalTranId = this.getSubsequentState(orbType.id, stateClientId);
 		
-		logger.error("Attempting to rollback to tranID {} ...", tranId);
-		rollbackTransactionService.rollbackToSpecificTransaction(tranId);
+		if (optionalTranId.isPresent()) {
+			BigDecimal tranIdSubsequent = optionalTranId.get();
+			logger.error("Attempting to rollback to tranID {} ...", tranIdSubsequent);
+			rollbackTransactionService.rollbackToSpecificTransaction(tranIdSubsequent);
+			
+			// Remove client Ids above this one.
+			Criteria criteria = new CriteriaStandard(orbType.id, randomUtil.getRandomUuidString());
+			
+			CriteriaSortInfo criteriaSortInfo = new CriteriaSortInfo();
+			criteriaSortInfo.sortDirection = SortDirection.DESC;
+			criteriaSortInfo.sortAttributeName = FrontEndState.ATTR_CLIENT_ID;
+			
+			criteria.setSortOrder(criteriaSortInfo);
+			
+			criteria.addAnd(Constraint.gt(FrontEndState.ATTR_CLIENT_ID, stateClientId));
+			
+			OrbResultSet orbResultSet = this.queryManager.executeQuery(criteria);
+			
+			if (orbResultSet.orbList.size() == 0) {
+				logger.error("There were no states to rollback.");
+			}
+			
+			for (Orb orbFound : orbResultSet.orbList) {
+				String clientId = orbFound.getUserDefinedProperties().get(FrontEndState.ATTR_CLIENT_ID);
+				logger.error("Removing item {} with state clientID '{}'", orbFound.getOrbInternalId(), clientId); 
+				orbManager.deleteOrb(orbFound.getOrbInternalId(), true);
+			}
+		}
+	}
+
+	private Optional<BigDecimal> getSubsequentState(long orbTypeInternalId, String stateClientId) {
+		Orb orbOrginal = this.queryManager.findByAttribute(orbTypeInternalId, FrontEndState.ATTR_CLIENT_ID, stateClientId).uniqueResult();
 		
-		// Remove client Ids above this one.
-		Criteria criteria = new CriteriaStandard(orbType.id, randomUtil.getRandomUuidString());
+		BigDecimal tranId = new BigDecimal(orbOrginal.getUserDefinedProperties().get(FrontEndState.ATTR_ASSOCIATED_TRANSACTION_ID));
+		
+		Criteria criteria = new CriteriaStandard(orbTypeInternalId, randomUtil.getRandomUuidString());
 		
 		CriteriaSortInfo criteriaSortInfo = new CriteriaSortInfo();
 		criteriaSortInfo.sortDirection = SortDirection.DESC;
@@ -313,14 +344,15 @@ public class FrontEndStateDao {
 		
 		OrbResultSet orbResultSet = this.queryManager.executeQuery(criteria);
 		
+		Optional<BigDecimal> optional = Optional.empty();
 		if (orbResultSet.orbList.size() == 0) {
-			logger.error("There were no states to rollback.");
+			logger.error("There were no subsequent states.");
+		} else {
+			Orb orbSubsequent = orbResultSet.getOrbList().get(0);
+			BigDecimal tranIdSubsequent = new BigDecimal(orbSubsequent.getUserDefinedProperties().get(FrontEndState.ATTR_ASSOCIATED_TRANSACTION_ID));
+			optional = Optional.of(tranIdSubsequent);
 		}
-		
-		for (Orb orbFound : orbResultSet.orbList) {
-			logger.error("Removing state '{}'", orbFound.getOrbInternalId()); 
-			orbManager.deleteOrb(orbFound.getOrbInternalId(), true);
-		}
+		return optional;
 	}
 
 	public StateIndexInfo getEarliestState() {

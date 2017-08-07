@@ -138,7 +138,7 @@ public class ComponentController extends Controller {
 	public @ResponseBody StateIndexInfo stateHistory(@PathVariable int index) {
 
 		StateIndexInfo stateIndexInfo = frontEndStateService.getHistorical(index);
-		logger.info("Getting {} state : {}: isEarliest: {}", index, stateIndexInfo.state, stateIndexInfo.isEarliestState);
+		logger.info("Getting {} : clientId: {}, state : {}: isEarliest: {}", index, stateIndexInfo.clientId, stateIndexInfo.state, stateIndexInfo.isEarliestState);
 
 		return stateIndexInfo;
 	}

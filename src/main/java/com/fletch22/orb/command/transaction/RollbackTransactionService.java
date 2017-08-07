@@ -2,6 +2,7 @@ package com.fletch22.orb.command.transaction;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,14 +49,25 @@ public class RollbackTransactionService {
 		eventLogCommandProcessPackageHolder.cleanup();
 	}
 	
-public void rollbackToSpecificTransaction(BigDecimal tranId) {
-		List<UndoActionBundle> undoActionBundleList = logActionService.getUndoActionsForTransactionsAndSubsequent(tranId);
+	public void rollbackToSpecificTransaction(BigDecimal tranId) {
 		
-		executeUndoActions(undoActionBundleList);
+		Optional<BigDecimal> optionalSubTranId = this.transactionService.getSubsequantTransaction(tranId);
 		
-		this.transactionService.rollbackToSpecificTransaction(tranId);
-		
-		eventLogCommandProcessPackageHolder.cleanup();
+		if (optionalSubTranId.isPresent()) {
+			BigDecimal subsequentTranId = optionalSubTranId.get();
+						
+			List<UndoActionBundle> undoActionBundleList = logActionService.getUndoActionsForTransactionsAndSubsequent(subsequentTranId);
+			logger.info("Number of undos: {}", undoActionBundleList.size());
+			for (UndoActionBundle uab: undoActionBundleList) { 
+				logger.info(uab.toJson().toString());
+			}
+			
+			executeUndoActions(undoActionBundleList);
+			
+			logger.info("TranID to roll back before to: {}", subsequentTranId);	
+			this.transactionService.rollbackToBeforeSpecificTransaction(subsequentTranId);
+			eventLogCommandProcessPackageHolder.cleanup();
+		}
 	}
 	
 	private void executeUndoActions(List<UndoActionBundle> undoActionBundleList) {
