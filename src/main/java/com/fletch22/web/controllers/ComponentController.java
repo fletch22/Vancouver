@@ -27,6 +27,7 @@ import com.fletch22.app.state.FrontEndStateDao.StateSearchResult;
 import com.fletch22.app.state.FrontEndStateService;
 import com.fletch22.app.state.StateIndexInfo;
 import com.fletch22.app.state.diff.service.DeleteService;
+import com.fletch22.app.state.diff.service.MoveService;
 import com.fletch22.dao.LogBackupAndRestore;
 import com.fletch22.orb.IntegrationSystemInitializer;
 import com.fletch22.orb.query.QueryManager;
@@ -65,9 +66,12 @@ public class ComponentController extends Controller {
 
 	@Autowired
 	IntegrationSystemInitializer integrationSystemInitializer;
-	
+
 	@Autowired
 	LogBackupAndRestore logBackupAndRestore;
+
+	@Autowired
+	MoveService moveService;
 
 	@RequestMapping(value = "/collections/{id}", method = RequestMethod.GET)
 	public @ResponseBody Object getComponent(@PathVariable long id) {
@@ -102,7 +106,7 @@ public class ComponentController extends Controller {
 	public @ResponseBody String saveStatePallet(@RequestBody StatePallet statePallet) {
 
 		String message = "Items saved: " + statePallet.statePackages.size();
-		
+
 		frontEndStateService.save(statePallet.statePackages);
 
 		logger.info(message);
@@ -197,22 +201,22 @@ public class ComponentController extends Controller {
 
 		return getMostRecentStateHistory();
 	}
-	
+
 	@RequestMapping(value = "/persistToDisk", method = RequestMethod.POST)
 	@ResponseStatus(value = HttpStatus.OK)
 	public @ResponseBody boolean persistToDisk() {
 
 		logBackupAndRestore.persistToDisk();
-		
+
 		return false;
 	}
-	
+
 	@RequestMapping(value = "/restoreFromDisk", method = RequestMethod.POST)
 	@ResponseStatus(value = HttpStatus.OK)
 	public @ResponseBody boolean restoreFromDisk() {
 
 		logBackupAndRestore.restoreFromDisk();
-		
+
 		return false;
 	}
 
@@ -228,6 +232,14 @@ public class ComponentController extends Controller {
 	@ResponseStatus(value = HttpStatus.OK)
 	public @ResponseBody StateIndexInfo getExceptionForTesting() {
 		throw new RestException(new Exception("test test test"), ErrorCode.UKNOWN_ERROR);
+	}
+
+	@RequestMapping(value = "/move", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE })
+	@ResponseStatus(value = HttpStatus.OK)
+	public @ResponseBody String moveComponent(@RequestBody MoveCommand moveCommand) {
+		moveService.move(moveCommand);
+		
+		return JSON_SUCCESS;
 	}
 
 	public static class ExceptionJSONInfo {
@@ -259,5 +271,11 @@ public class ComponentController extends Controller {
 			this.clientId = clientId;
 			this.stateJson = stateJson;
 		}
+	}
+	
+	public static class MoveCommand {
+		public long sourceParentId;
+		public long destinationParentId;
+		public long childId;
 	}
 }

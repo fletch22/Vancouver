@@ -11,6 +11,7 @@ import com.fletch22.app.designer.ServiceJunction;
 import com.fletch22.app.designer.dao.BaseDao;
 import com.fletch22.app.designer.dataField.DataField;
 import com.fletch22.app.designer.dataModel.DataModel;
+import com.fletch22.app.designer.div.Div;
 import com.fletch22.app.designer.util.DomainUtilDao;
 import com.fletch22.orb.Orb;
 import com.fletch22.orb.OrbManager;
@@ -55,8 +56,10 @@ public class DeleteService {
 			case DataField.TYPE_LABEL:
 				serviceJunction.dataFieldService.delete(id);
 				break;
+//			case Div.TYPE_LABEL:
+//				serviceJunction.divService.delete(id);
 			default:
-				// Do nothing
+				throw new RuntimeException(String.format("Encountered error trying to delete component. Cannot yet delete component type '%s'", orbType.label));
 		}
 		
 		baseDao.delete(id);

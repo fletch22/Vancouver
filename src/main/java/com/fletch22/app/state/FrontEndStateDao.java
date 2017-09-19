@@ -117,13 +117,14 @@ public class FrontEndStateDao {
 		stateIndexInfo.indexOfMaxElement = 0;
 		
 		if (size > 0) {
-			Orb orb = getState(stateIndexInfo.indexOfMaxElement);
+//			Orb orb = getState(stateIndexInfo.indexOfMaxElement);
+			Orb orb = stateHistory.getOrbMostRecent();
 			stateIndexInfo.state = orb.getUserDefinedProperties().get(FrontEndState.ATTR_STATE);
 			stateIndexInfo.clientId = orb.getUserDefinedProperties().get(FrontEndState.ATTR_CLIENT_ID);
 			stateIndexInfo.indexOfReturnedState = 0;
 		}
 		
-		logger.debug("Getting element {}, when size {}", size); 
+		logger.info("Getting element {}, when size {}", stateIndexInfo.clientId, size); 
 		
 		if (size > 0) {
 			stateIndexInfo.isEarliestState = (size <= stateIndexInfo.indexOfMaxElement); 

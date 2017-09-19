@@ -86,7 +86,7 @@ public class JsonDiffProcessorService {
 		JsonArray pathInformation = jsonObject.get("path").getAsJsonArray();
 
 		DiffKind diffKind = getKind(letter);
-
+		
 		return processDiffKind(state, jsonObject, pathInformation, diffKind);
 	}
 
@@ -170,7 +170,9 @@ public class JsonDiffProcessorService {
 
 		Diff diff = new Diff();
 		diff.diffKind = getKind(letter);
-
+		
+		logger.info("DiffKind: {}", diff.diffKind);
+		
 		switch (diff.diffKind) {
 		case DELETED_PROPERTY:
 			index = jsonElementIndex.getAsLong();

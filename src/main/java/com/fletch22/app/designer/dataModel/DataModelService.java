@@ -55,7 +55,7 @@ public class DataModelService extends DomainService<DataModel, DataField> {
 		return get(id);
 	}
 
-	public void delete(long id) {
+	public DataField delete(long id) {
 		// TODO: Create logic to delete UserDataType and all instances.
 		throw new NotImplementedException("Not implemented yet.");
 	}

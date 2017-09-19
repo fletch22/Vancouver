@@ -25,6 +25,17 @@ public abstract class DomainService<T extends Parent, U extends Child> extends D
 		connectParentAndChild(parent, child);
 		save(parent);
 	}
+	
+	public Child removeChildFromParent(long parentId, long childId) {
+		T t = (T) this.get(parentId);
+		this.clearAndResolveNextGeneration(t);
+		ComponentChildren children = t.getChildren();
+		Child child = children.findChildById(childId);
+		children.removeChild(child);
+		save(t);
+		
+		return child;
+	}
 		
 	public void clearAndResolveAllDescendents(Parent orbBasedComponent) {
 		referenceResolver.clearAndResolveAllDescendents(orbBasedComponent);
@@ -43,4 +54,6 @@ public abstract class DomainService<T extends Parent, U extends Child> extends D
 	public abstract T createInstance(Map<String, String> props);
 	
 	public abstract T update(long id, Map<String, String> properties);
+	
+//	public abstract U move(long id);
 }

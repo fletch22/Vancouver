@@ -12,24 +12,24 @@ import com.fletch22.app.designer.DomainService;
 public class ButtonSubmitService extends DomainService<ButtonSubmit, Child> {
 	
 	@Autowired
-	ButtonSubmitDao dropDownListboxDao;
+	ButtonSubmitDao buttonSubmitDao;
 
 	public ButtonSubmit createInstance(String style, String elementId, String label) {
-		ButtonSubmit dropDownListbox = new ButtonSubmit();
-		dropDownListbox.style = style;
-		dropDownListbox.elementId = elementId;
-		dropDownListbox.label = label;
+		ButtonSubmit buttonSubmit = new ButtonSubmit();
+		buttonSubmit.style = style;
+		buttonSubmit.elementId = elementId;
+		buttonSubmit.label = label;
 		
-		save(dropDownListbox);
-		return dropDownListbox;
+		save(buttonSubmit);
+		return buttonSubmit;
 	}
 	
 	public void save(ButtonSubmit layout) {
-		dropDownListboxDao.save(layout);
+		buttonSubmitDao.save(layout);
 	}
 
 	public ButtonSubmit get(long orbInternalId) {
-		return dropDownListboxDao.read(orbInternalId);
+		return buttonSubmitDao.read(orbInternalId);
 	}
 	
 	@Override

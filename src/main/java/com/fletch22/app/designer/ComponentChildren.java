@@ -3,6 +3,8 @@ package com.fletch22.app.designer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class ComponentChildren {
 
@@ -27,6 +29,38 @@ public class ComponentChildren {
 	
 	public void clear() {
 		this.children.clear();
+	}
+	
+	public void removeChild(Child child) {
+		validateChildrenResolved();
+		
+		if (!this.children.contains(child)) {
+			throw new RuntimeException("Encountered problem while trying to remove child. Child is not in parent.");
+		}
+		
+		this.children.remove(child);
+	}
+	
+	public Child findChildById(long childId) {
+		validateChildrenResolved();
+		
+		Optional<Child> childFound = this.children.stream()
+		.filter(child -> (child.getId() == childId))
+		.collect(Collectors.reducing((a, b) -> {
+			throw new RuntimeException("Encountered problem while trying to remove child. More than one child with that ID found in parent.");
+		}));
+	
+		if (!childFound.isPresent()) {
+			throw new RuntimeException(String.format("Encountered problem while trying to find child. Child with id %s could not be found in parent.", childId)); 
+		}
+		
+		return childFound.get();
+	}
+	
+	public void validateChildrenResolved() {
+		if (!haveChildrenBeenResolved) {
+			throw new RuntimeException("Encountered problem while trying to remove child. Child is not in parent because children have not been 'resolved'. This is a programming error.");
+		}
 	}
 	
 	public void sort() {
