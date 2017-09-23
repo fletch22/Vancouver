@@ -3,7 +3,7 @@ apply plugin: 'maven'
 apply plugin: 'groovy'
 apply plugin: 'eclipse-wtp'
 apply plugin: 'war'
-apply from: 'https://raw.github.com/akhikhl/gretty/master/pluginScripts/gretty.plugin'
+apply from: './gretty.plugin.gradle'
 
 eclipse {
 	classpath {
