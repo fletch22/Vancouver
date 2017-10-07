@@ -22,45 +22,45 @@ import com.fletch22.web.controllers.ComponentController.MoveCommand;
 
 @Component
 public class MoveService {
-	
+
 	Logger logger = LoggerFactory.getLogger(MoveService.class);
-	
+
 	@Autowired
 	ServiceFactory serviceFactory;
-	
-	@Autowired 
+
+	@Autowired
 	ServiceJunction serviceJunction;
-	
+
 	@Autowired
 	DomainUtilDao domainUtilDao;
-	
-	@Autowired 
+
+	@Autowired
 	BaseDao baseDao;
-	
+
 	@Autowired
 	OrbManager orbManager;
-	
+
 	@Autowired
 	OrbTypeManager orbTypeManager;
-	
+
 	@Autowired
 	ReferenceResolverService referenceResolverService;
 
 	@Transactional
 	public void move(MoveCommand moveCommand) {
 		logger.debug("Attempting to move the item.");
-		
+
 		Orb movingChildParent = orbManager.getOrb(moveCommand.sourceParentId);
 		OrbType movingChildParentOrbType = orbTypeManager.getOrbType(movingChildParent.getOrbTypeInternalId());
-		
+
 		DomainService domainService = serviceFactory.getServiceFromTypeLabel(movingChildParentOrbType.label);
 		Child child = domainService.removeChildFromParent(moveCommand.sourceParentId, moveCommand.childId);
-		
+
 		logger.info("Destination: {}", moveCommand.destinationParentId);
-		
+
 		Orb destinationChildParent = orbManager.getOrb(moveCommand.destinationParentId);
 		OrbType destinationParentOrbType = orbTypeManager.getOrbType(destinationChildParent.getOrbTypeInternalId());
-		
+
 		domainService = serviceFactory.getServiceFromTypeLabel(destinationParentOrbType.label);
 		Parent parent = domainService.get(moveCommand.destinationParentId);
 		domainService.addToParent(parent, child);

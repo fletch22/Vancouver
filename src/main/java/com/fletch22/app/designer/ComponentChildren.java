@@ -6,7 +6,12 @@ import java.util.Comparator;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ComponentChildren {
+	
+	private static Logger logger = LoggerFactory.getLogger(ComponentChildren.class);
 
 	private ArrayList<Child> children = new ArrayList<Child>();
 	private boolean haveChildrenBeenResolved = false;
@@ -49,9 +54,9 @@ public class ComponentChildren {
 		.collect(Collectors.reducing((a, b) -> {
 			throw new RuntimeException("Encountered problem while trying to remove child. More than one child with that ID found in parent.");
 		}));
-	
+		
 		if (!childFound.isPresent()) {
-			throw new RuntimeException(String.format("Encountered problem while trying to find child. Child with id %s could not be found in parent.", childId)); 
+			throw new RuntimeException(String.format("Encountered problem while trying to find child. Child with id %s could not be found in parent", childId)); 
 		}
 		
 		return childFound.get();

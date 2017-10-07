@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fletch22.aop.Transactional;
 import com.fletch22.app.designer.ComponentFactory;
 import com.fletch22.app.designer.ComponentSaveFromMapService;
 import com.fletch22.app.designer.appContainer.AppContainerService;
@@ -234,12 +235,16 @@ public class ComponentController extends Controller {
 		throw new RestException(new Exception("test test test"), ErrorCode.UKNOWN_ERROR);
 	}
 
+	@Transactional
 	@RequestMapping(value = "/move", method = RequestMethod.POST, consumes = { MediaType.APPLICATION_JSON_VALUE })
 	@ResponseStatus(value = HttpStatus.OK)
 	public @ResponseBody String moveComponent(@RequestBody MoveCommand moveCommand) {
 		moveService.move(moveCommand);
 		
-		return JSON_SUCCESS;
+		StatePackage statePackage = moveCommand.statePackage;
+		frontEndStateService.save(statePackage.state, statePackage.clientId);
+		
+		return moveCommand.statePackage.state;
 	}
 
 	public static class ExceptionJSONInfo {
@@ -274,6 +279,7 @@ public class ComponentController extends Controller {
 	}
 	
 	public static class MoveCommand {
+		public StatePackage statePackage;
 		public long sourceParentId;
 		public long destinationParentId;
 		public long childId;

@@ -67,7 +67,6 @@ public class ModelToUserDataTranslator {
 
 		ComponentChildren componentChildren = dataModel.getChildren();
 		ArrayList<Child> children = componentChildren.getList();
-		logger.info("Children length: {}", children.size());
 
 		if (children != null && children.size() > 0) {
 			children.forEach((child) -> {
@@ -95,7 +94,6 @@ public class ModelToUserDataTranslator {
 	private void appendNewAttributesToUserData(DataModel dataModel, OrbType orbTypeUserData) {
 		ComponentChildren componentChildren = dataModel.getChildren();
 		ArrayList<Child> children = componentChildren.getList();
-		logger.info("Children length: {}", children.size());
 
 		if (children != null && children.size() > 0) {
 			LinkedHashSet<String> customFields = orbTypeUserData.customFields;

@@ -163,6 +163,7 @@ public class ReferenceResolverService {
 		
 		orbBasedComponentParent.getChildren().clear();
 		String childReferences = orbBasedComponentParent.getOrbOriginal().getUserDefinedProperties().get(Parent.ATTR_CHILDREN);
+		
 		if (childReferences != null) {
 			clearAndResolveNextGeneration(orbBasedComponentParent, childReferences);
 		}
