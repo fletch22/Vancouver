@@ -29,7 +29,7 @@ public class TransactionalAspectTest {
 		
 		@Transactional
 		public void manchu() {
-			logger.info("This is inside manchu.");
+			logger.debug("This is inside manchu.");
 			
 			Bar bar = new Bar();
 			
@@ -42,7 +42,7 @@ public class TransactionalAspectTest {
 		
 		@Transactional
 		public void banana() {
-			logger.info("This is inside banan method.");
+			logger.debug("This is inside banan method.");
 		}
 		
 	}

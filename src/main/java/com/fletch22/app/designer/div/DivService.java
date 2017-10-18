@@ -12,22 +12,22 @@ import com.fletch22.app.designer.DomainService;
 public class DivService extends DomainService<Div, Child> {
 	
 	@Autowired
-	DivDao layoutDao;
+	DivDao divDao;
 
 	public Div createInstance(String style) {
-		Div layout = new Div();
-		layout.style = style;
+		Div div = new Div();
+		div.style = style;
 		
-		save(layout);
-		return layout;
+		save(div);
+		return div;
 	}
 	
-	public void save(Div layout) {
-		layoutDao.save(layout);
+	public void save(Div div) {
+		divDao.save(div);
 	}
 
 	public Div get(long orbInternalId) {
-		return layoutDao.read(orbInternalId);
+		return divDao.read(orbInternalId);
 	}
 	
 	@Override

@@ -20,7 +20,7 @@ public class CriteriaCloner {
 		Gson gson = gsonFactory.getInstance();
 		
 		String json = gson.toJson(criteria, Criteria.class);
-		logger.info(json);
+		logger.debug(json);
 		
 		return gson.fromJson(json, Criteria.class);
 	}

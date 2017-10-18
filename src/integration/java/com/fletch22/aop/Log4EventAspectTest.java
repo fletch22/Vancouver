@@ -40,7 +40,7 @@ public class Log4EventAspectTest {
 		// Arrange
 		int numRuns = 100;
 		
-		logger.info("Is logger working?");
+		logger.debug("Is logger working?");
 		
 		// Act
 		StopWatch stopWatch = new StopWatch();
@@ -112,7 +112,7 @@ public class Log4EventAspectTest {
 		
 		@Loggable4Event
 		public void bark() {
-			logger.info("Inside the bark method.");
+			logger.debug("Inside the bark method.");
 		}
 		
 		@Loggable4Event

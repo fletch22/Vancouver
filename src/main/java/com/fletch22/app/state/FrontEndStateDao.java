@@ -59,6 +59,9 @@ public class FrontEndStateDao {
 		Orb orb = orbManager.createUnsavedInitializedOrb(orbType);
 
 		Map<String, String> properties = orb.getUserDefinedProperties();
+		
+		logger.debug("State saved: " + state);
+		
 		properties.put(FrontEndState.ATTR_STATE, state);
 		properties.put(FrontEndState.ATTR_CLIENT_ID, clientId);
 
@@ -117,7 +120,6 @@ public class FrontEndStateDao {
 		stateIndexInfo.indexOfMaxElement = 0;
 		
 		if (size > 0) {
-//			Orb orb = getState(stateIndexInfo.indexOfMaxElement);
 			Orb orb = stateHistory.getOrbMostRecent();
 			stateIndexInfo.state = orb.getUserDefinedProperties().get(FrontEndState.ATTR_STATE);
 			stateIndexInfo.clientId = orb.getUserDefinedProperties().get(FrontEndState.ATTR_CLIENT_ID);

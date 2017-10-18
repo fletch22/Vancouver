@@ -82,8 +82,10 @@ public class JsonDiffProcessorService {
 		JsonObject jsonObject = jsonElement.getAsJsonObject();
 
 		String letter = jsonObject.get("kind").getAsJsonPrimitive().getAsString();
-
+		
 		JsonArray pathInformation = jsonObject.get("path").getAsJsonArray();
+		logger.debug("Diff letter: {}", letter);
+		logger.debug("Path: {}", pathInformation.toString());
 
 		DiffKind diffKind = getKind(letter);
 		
@@ -123,24 +125,22 @@ public class JsonDiffProcessorService {
 
 	protected void processDeleteProperty(String state, JsonArray pathInformation, JsonElement deletedChild) {
 		throw new NotImplementedException("processDeleteProperty not implemented yet. (Set to null?)");
-		// ParentAndChild parentAndChild = getDeletePropertyInfo(state,
-		// pathInformation, deletedChild);
 	}
 
-	private StuntDoubleAndNewId processAddedChild(JsonObject state, JsonArray pathInformation, long index, JsonElement jsonElementChild) {
-
-		JsonElement parentElement = getParentDescribedByPath(pathInformation, state);
-
-		Child child = getChild(jsonElementChild);
-		String temporaryId = child.props.remove(PROPERTY_ID);
-		long parentId = getId(parentElement);
-
-		AddedChild addedChild = new AddedChild(parentId, child, temporaryId);
-
-		long childNewId = addChildService.process(addedChild);
-
-		return new StuntDoubleAndNewId(temporaryId, childNewId);
-	}
+//	private StuntDoubleAndNewId processAddedChild(JsonObject state, JsonArray pathInformation, long index, JsonElement jsonElementChild) {
+//
+//		JsonElement parentElement = getParentDescribedByPath(pathInformation, state);
+//
+//		Child child = getChild(jsonElementChild);
+//		String temporaryId = child.props.remove(PROPERTY_ID);
+//		long parentId = getId(parentElement);
+//
+//		AddedChild addedChild = new AddedChild(parentId, child, temporaryId);
+//
+//		long childNewId = addChildService.process(addedChild);
+//
+//		return new StuntDoubleAndNewId(temporaryId, childNewId);
+//	}
 
 	private StuntDoubleAndNewId processAddedChildNew(JsonArray pathInformation, long index, JsonElement jsonElementChild) {
 
@@ -171,7 +171,7 @@ public class JsonDiffProcessorService {
 		Diff diff = new Diff();
 		diff.diffKind = getKind(letter);
 		
-		logger.info("DiffKind: {}", diff.diffKind);
+		logger.debug("DiffKind: {}", diff.diffKind);
 		
 		switch (diff.diffKind) {
 		case DELETED_PROPERTY:

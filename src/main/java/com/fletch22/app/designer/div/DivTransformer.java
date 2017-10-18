@@ -9,7 +9,6 @@ import com.fletch22.orb.Orb;
 public class DivTransformer extends DomainTransformer<Div> {
 	
 	public Div transform(Orb orb) {
-		
 		Div div = new Div();
 		
 		this.setBaseAttributes(orb, div);

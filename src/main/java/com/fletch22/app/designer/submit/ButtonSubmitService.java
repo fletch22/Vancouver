@@ -10,7 +10,7 @@ import com.fletch22.app.designer.DomainService;
 
 @Component
 public class ButtonSubmitService extends DomainService<ButtonSubmit, Child> {
-	
+
 	@Autowired
 	ButtonSubmitDao buttonSubmitDao;
 
@@ -19,11 +19,11 @@ public class ButtonSubmitService extends DomainService<ButtonSubmit, Child> {
 		buttonSubmit.style = style;
 		buttonSubmit.elementId = elementId;
 		buttonSubmit.label = label;
-		
+
 		save(buttonSubmit);
 		return buttonSubmit;
 	}
-	
+
 	public void save(ButtonSubmit layout) {
 		buttonSubmitDao.save(layout);
 	}
@@ -31,27 +31,28 @@ public class ButtonSubmitService extends DomainService<ButtonSubmit, Child> {
 	public ButtonSubmit get(long orbInternalId) {
 		return buttonSubmitDao.read(orbInternalId);
 	}
-	
+
 	@Override
 	public ButtonSubmit createInstance(Map<String, String> properties) {
 		validatePropertiesSimple(properties, ButtonSubmit.ATTRIBUTE_LIST);
-		
-		return createInstance(properties.get(ButtonSubmit.ATTR_STYLE),
-				properties.get(ButtonSubmit.ATTR_ELEMENT_ID),
-				properties.get(ButtonSubmit.ATTR_LABEL));
+
+		return createInstance(properties.get(ButtonSubmit.ATTR_STYLE), properties.get(ButtonSubmit.ATTR_ELEMENT_ID), properties.get(ButtonSubmit.ATTR_LABEL));
 	}
-	
+
 	@Override
 	public ButtonSubmit update(long id, Map<String, String> properties) {
 		validatePropertiesSimple(properties, ButtonSubmit.ATTRIBUTE_LIST);
-		
+
 		ButtonSubmit ddl = get(id);
-		if (properties.containsKey(ButtonSubmit.ATTR_STYLE)) ddl.style = properties.get(ButtonSubmit.ATTR_STYLE);
-		if (properties.containsKey(ButtonSubmit.ATTR_ELEMENT_ID)) ddl.elementId = properties.get(ButtonSubmit.ATTR_ELEMENT_ID);
-		if (properties.containsKey(ButtonSubmit.ATTR_LABEL)) ddl.elementId = properties.get(ButtonSubmit.ATTR_LABEL);
-		
+		if (properties.containsKey(ButtonSubmit.ATTR_STYLE))
+			ddl.style = properties.get(ButtonSubmit.ATTR_STYLE);
+		if (properties.containsKey(ButtonSubmit.ATTR_ELEMENT_ID))
+			ddl.elementId = properties.get(ButtonSubmit.ATTR_ELEMENT_ID);
+		if (properties.containsKey(ButtonSubmit.ATTR_LABEL))
+			ddl.label = properties.get(ButtonSubmit.ATTR_LABEL);
+
 		this.save(ddl);
-		
+
 		return get(id);
 	}
 }

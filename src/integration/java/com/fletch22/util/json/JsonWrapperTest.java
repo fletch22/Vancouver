@@ -316,7 +316,7 @@ public class JsonWrapperTest {
 
 		Criteria reconstituted = (Criteria) jsonWrapper2.object;
 
-		logger.info("jsonWrapper: {}", jsonWrapper.toJson());
+		logger.debug("jsonWrapper: {}", jsonWrapper.toJson());
 	}
 	
 	@Test
@@ -335,7 +335,7 @@ public class JsonWrapperTest {
 		String json = "{\"criteriaId\":1009,\"orbType\":{\"id\":1008,\"label\":\"foo\",\"tranDate\":1450399111696.0000000001,\"customFields\":[\"bar\"]},\"label\":\"fuzzyThings\",\"hasIdBeenSet\":true,\"sortInfoList\":[],\"criteriaIdParent\":-1,\"logicalConstraint\":{\"logicalOperator\":\"AND\",\"constraintList\":[{\"type\":\"com.fletch22.orb.query.constraint.ConstraintDetailsAggregate\",\"properties\":{\"relationshipOperator\":\"ARE\",\"aggregate\":\"UNIQUE\",\"criteriaForAggregation\":{\"fieldOfInterest\":[\"bar\"],\"criteriaId\":1010,\"orbType\":{\"id\":1008,\"label\":\"foo\",\"tranDate\":1450399111696.0000000001,\"customFields\":[\"bar\"]},\"label\":\"agg\",\"hasIdBeenSet\":true,\"sortInfoList\":[],\"criteriaIdParent\":1009},\"attributeName\":\"bar\"}}]}}";
 		Gson gson = gsonFactory.getInstance();
 		
-		logger.info(json);
+		logger.debug(json);
 		
 		CriteriaStandard criteriaStandard = gson.fromJson(json, com.fletch22.orb.query.criteria.CriteriaStandard.class);
 		

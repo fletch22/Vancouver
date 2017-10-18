@@ -110,7 +110,7 @@ public class ComponentController extends Controller {
 
 		frontEndStateService.save(statePallet.statePackages);
 
-		logger.info(message);
+		logger.debug(message);
 
 		return JSON_SUCCESS;
 	}
@@ -161,10 +161,8 @@ public class ComponentController extends Controller {
 	@ResponseStatus(value = HttpStatus.OK)
 	public @ResponseBody LastGoodState determineLastGoodState(@RequestBody List<List<String>> idPackages) {
 
-		logger.info("Size of clientIds: {}", idPackages.size());
-
 		int numberPreviousStates = queryManager.executeQuery(FrontEndState.QUERY_GET_STATES).orbList.size();
-		logger.info("Size of state list: {}", numberPreviousStates);
+		logger.debug("Size of state list: {}", numberPreviousStates);
 
 		if (numberPreviousStates == 0) {
 			throw new RestException(ErrorCode.NO_PREVIOUS_ERROR_STATES);
@@ -240,10 +238,10 @@ public class ComponentController extends Controller {
 	@ResponseStatus(value = HttpStatus.OK)
 	public @ResponseBody String moveComponent(@RequestBody MoveCommand moveCommand) {
 		moveService.move(moveCommand);
-		
+
 		StatePackage statePackage = moveCommand.statePackage;
 		frontEndStateService.save(statePackage.state, statePackage.clientId);
-		
+
 		return moveCommand.statePackage.state;
 	}
 
@@ -277,7 +275,7 @@ public class ComponentController extends Controller {
 			this.stateJson = stateJson;
 		}
 	}
-	
+
 	public static class MoveCommand {
 		public StatePackage statePackage;
 		public long sourceParentId;

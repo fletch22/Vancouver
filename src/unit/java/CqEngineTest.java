@@ -102,7 +102,7 @@ public class CqEngineTest {
 		// Act
 		Query<Car> query1 = endsWith(Car.FIRST_CUSTOM_ATTRIBUTE, "Banana");
 		ResultSet<Car> resultSet = cars.retrieve(query1);
-		logger.info("Found: {} cars", resultSet.size());
+		logger.debug("Found: {} cars", resultSet.size());
 		for (Car car : resultSet) {
 			logger.debug("Card ID found: {}", car.id);
 		}

@@ -203,11 +203,11 @@ public class LogActionInMemDao extends LogActionDao {
 	}
 
 	private void logError(Exception e) {
-		logger.info("*** Error : " + e.toString());
-		logger.info("*** ");
-		logger.info("*** Error : ");
+		logger.error("*** Error : " + e.toString());
+		logger.error("*** ");
+		logger.error("*** Error : ");
 		e.printStackTrace();
-		logger.info("################################################");
+		logger.error("################################################");
 	}
 
 	@Override

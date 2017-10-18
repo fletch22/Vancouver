@@ -48,7 +48,7 @@ public class ComponentChildren {
 	
 	public Child findChildById(long childId) {
 		validateChildrenResolved();
-		
+				
 		Optional<Child> childFound = this.children.stream()
 		.filter(child -> (child.getId() == childId))
 		.collect(Collectors.reducing((a, b) -> {

@@ -148,7 +148,7 @@ public class AppContainerTest {
 
 		List<CacheEntry> cacheEntryList = constraintGrinder.listCacheEntries();
 
-		logger.info("orbResultSet: {}", cacheEntryList.size());
+		logger.debug("orbResultSet: {}", cacheEntryList.size());
 
 		assertEquals("Should have returned 1 result indicating not amongst unique labels. In other words, this synthetic orb would be unique if it was inserted.",
 				cacheEntryList.size(), 1);
@@ -165,7 +165,7 @@ public class AppContainerTest {
 		appContainer = appContainerService.createInstance("foo2");
 
 		String parentIdFoo2 = String.valueOf(appContainer.getId());
-		logger.info("Id: {}; ParentId: {}", parentIdFoo2, appContainer.getParentId());
+		logger.debug("Id: {}; ParentId: {}", parentIdFoo2, appContainer.getParentId());
 
 		appContainerService.createInstance("foo3");
 
@@ -187,12 +187,12 @@ public class AppContainerTest {
 		CacheEntry cacheEntry = new CacheEntry(orb);
 		indexedCollection.add(cacheEntry);
 
-		logger.info("About to grind results.");
+		logger.debug("About to grind results.");
 		ConstraintGrinder constraintGrinder = new ConstraintGrinder(criteria, indexedCollection);
 
 		List<CacheEntry> cacheEntryList = constraintGrinder.listCacheEntries();
 
-		logger.info("orbResultSet: {}", cacheEntryList.size());
+		logger.debug("orbResultSet: {}", cacheEntryList.size());
 		assertEquals("Should have returned 1 result indicating not amongst unique labels. In other words, this synthetic orb would be unique if it was inserted.", 1,
 				cacheEntryList.size());
 	}
@@ -203,7 +203,7 @@ public class AppContainerTest {
 		// Arrange
 		AppContainer appContainer = appContainerService.createInstance("foo");
 
-		logger.info("appContainer otid: {}", appContainer.getOrbOriginal().getOrbTypeInternalId());
+		logger.debug("appContainer otid: {}", appContainer.getOrbOriginal().getOrbTypeInternalId());
 
 		boolean wasExceptionThrown = false;
 
@@ -211,7 +211,7 @@ public class AppContainerTest {
 		try {
 			appContainerService.createInstance("foo");
 		} catch (Exception e) {
-			logger.info("Encountered problem: {}", e);
+			logger.debug("Encountered problem: {}", e);
 			wasExceptionThrown = true;
 		}
 
@@ -227,7 +227,7 @@ public class AppContainerTest {
 
 		AppContainer appContainer = appContainerService.createInstance("foo");
 
-		logger.info("appContainer otid: {}", appContainer.getOrbOriginal().getOrbTypeInternalId());
+		logger.debug("appContainer otid: {}", appContainer.getOrbOriginal().getOrbTypeInternalId());
 
 		boolean wasExceptionThrown = false;
 
@@ -237,7 +237,7 @@ public class AppContainerTest {
 		try {
 			appContainerService.createInstance("foo");
 		} catch (Exception e) {
-			logger.info("Encountered problem: {}", e);
+			logger.error("Encountered problem: {}", e);
 			wasExceptionThrown = true;
 		}
 

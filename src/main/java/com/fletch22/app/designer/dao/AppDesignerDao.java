@@ -21,8 +21,6 @@ import com.fletch22.app.designer.dataUniverse.DataUniverse;
 import com.fletch22.app.designer.datastore.Datastore;
 import com.fletch22.app.designer.ddl.DropDownListbox;
 import com.fletch22.app.designer.div.Div;
-import com.fletch22.app.designer.layout.Layout;
-import com.fletch22.app.designer.layoutMinion.LayoutMinion;
 import com.fletch22.app.designer.page.Page;
 import com.fletch22.app.designer.submit.ButtonSubmit;
 import com.fletch22.app.designer.webFolder.WebFolder;
@@ -99,7 +97,10 @@ public abstract class AppDesignerDao<T extends OrbBasedComponent, U extends Doma
 	}
 
 	protected void setOrbChildrenAttribute(Parent parent, Orb orbToUpdate) {
-		orbToUpdate.getUserDefinedProperties().put(Parent.ATTR_CHILDREN, convertToChildReferences(parent.getChildren()).toString());
+		ComponentChildren componentChildren = parent.getChildren();
+		if (componentChildren.isHaveChildrenBeenResolved()) {
+			orbToUpdate.getUserDefinedProperties().put(Parent.ATTR_CHILDREN, convertToChildReferences(componentChildren).toString());
+		}
 	}
 
 	protected abstract U getTransformer();
@@ -129,12 +130,6 @@ public abstract class AppDesignerDao<T extends OrbBasedComponent, U extends Doma
 					break;
 				case Page.TYPE_LABEL:
 					daoJunction.pageDao.update((Page) orbBasedComponentChild);
-					break;
-				case Layout.TYPE_LABEL:
-					daoJunction.layoutDao.update((Layout) orbBasedComponentChild);
-					break;
-				case LayoutMinion.TYPE_LABEL:
-					daoJunction.layoutMinionDao.update((LayoutMinion) orbBasedComponentChild);
 					break;
 				case Div.TYPE_LABEL:
 					daoJunction.divDao.update((Div) orbBasedComponentChild);
@@ -193,6 +188,9 @@ public abstract class AppDesignerDao<T extends OrbBasedComponent, U extends Doma
 		Orb orbToUpdate = orbCloner.cloneOrb(t.getOrbOriginal());
 
 		orbToUpdate.getUserDefinedProperties().put(OrbBasedComponent.ATTR_PARENT, String.valueOf(t.getParentId()));
+		if (t instanceof Parent) {
+			logger.debug("OrbToUpdate before mods: {}: childrenRefs: {}", orbToUpdate.getOrbInternalId(), orbToUpdate.getUserDefinedProperties().get(Parent.ATTR_CHILDREN));
+		}
 
 		setNonChildrenAttributes(t, orbToUpdate);
 
@@ -203,6 +201,9 @@ public abstract class AppDesignerDao<T extends OrbBasedComponent, U extends Doma
 		ComparisonResult comparisonResult = this.orbComparer.areSame(orbToUpdate, t.getOrbOriginal());
 
 		if (!comparisonResult.isSame) {
+			if (t instanceof Parent) {
+				logger.debug("OrbToUpdate: {}: childrenRefs: {}", orbToUpdate.getOrbInternalId(), orbToUpdate.getUserDefinedProperties().get(Parent.ATTR_CHILDREN));
+			}
 			orbManager.updateOrb(orbToUpdate);
 		}
 

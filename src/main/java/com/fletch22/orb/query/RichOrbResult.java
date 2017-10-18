@@ -23,9 +23,9 @@ public class RichOrbResult implements GsonSerializable {
 		this.orbList = orbList;
 		this.orbTypeInternalId = orbParent.id;
 		LinkedHashSet<String> customFields = orbParent.customFields;
-		logger.info("Size of customFields: {}", orbParent.customFields.size());
+		logger.debug("Size of customFields: {}", orbParent.customFields.size());
 		for (String custField : customFields) {
-			logger.info("Adding field {}", custField);
+			logger.debug("Adding field {}", custField);
 			this.fields.add(custField);
 		}
 	}

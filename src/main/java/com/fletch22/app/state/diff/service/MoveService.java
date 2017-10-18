@@ -55,14 +55,15 @@ public class MoveService {
 
 		DomainService domainService = serviceFactory.getServiceFromTypeLabel(movingChildParentOrbType.label);
 		Child child = domainService.removeChildFromParent(moveCommand.sourceParentId, moveCommand.childId);
-
-		logger.info("Destination: {}", moveCommand.destinationParentId);
+		
+		logger.debug("Destination: {}", moveCommand.destinationParentId);
 
 		Orb destinationChildParent = orbManager.getOrb(moveCommand.destinationParentId);
 		OrbType destinationParentOrbType = orbTypeManager.getOrbType(destinationChildParent.getOrbTypeInternalId());
 
 		domainService = serviceFactory.getServiceFromTypeLabel(destinationParentOrbType.label);
 		Parent parent = domainService.get(moveCommand.destinationParentId);
+				
 		domainService.addToParent(parent, child);
 	}
 }

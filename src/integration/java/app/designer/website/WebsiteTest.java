@@ -95,19 +95,19 @@ public class WebsiteTest {
 	
 	@Test
 	public void testSecondWebsiteToNewAppShouldSucceed() {
-		logger.info("Entering the race ...");
+		logger.debug("Entering the race ...");
 		
 		App app1 = appService.createInstance("app1");
 		
-		logger.info("About to create website ...");
+		logger.debug("About to create website ...");
 		
 		String labelExpected = "foo";
 		Website website1 = websiteService.createInstance(labelExpected);
-		logger.info("created website: {}", website1.getId());
+		logger.debug("created website: {}", website1.getId());
 		
 		appService.addToParent(app1, website1);
 		
-		logger.info("Website ID: {}", website1.getId());
+		logger.debug("Website ID: {}", website1.getId());
 		
 		App app2 = appService.createInstance("app2");
 		Website website2 = websiteService.createInstance(labelExpected);
@@ -124,11 +124,11 @@ public class WebsiteTest {
 	
 	@Test
 	public void testHeadFakeSecondWebsiteToNewAppShouldSucceed() {
-		logger.info("Entering the race ...");
+		logger.debug("Entering the race ...");
 		
 		App app1 = appService.createInstance("app1");
 		
-		logger.info("About to create website ...");
+		logger.debug("About to create website ...");
 		
 		String labelExpected = "foo";
 		Website website1 = websiteService.createInstance(labelExpected);
@@ -163,13 +163,13 @@ public class WebsiteTest {
 	
 	@Test
 	public void testSetAttributeWithCheckConstraintThrowsSuccessfully() {
-		logger.info("Entering the race ...");
+		logger.debug("Entering the race ...");
 		
 		App app1 = appService.createInstance("app1");
 		
 		String labelExpected = "foo";
 		Website website1 = websiteService.createInstance(labelExpected);
-		logger.info("created website: {}", website1.getId());
+		logger.debug("created website: {}", website1.getId());
 		
 		appService.addToParent(app1, website1);
 		
@@ -188,7 +188,7 @@ public class WebsiteTest {
 		Website websiteCopy = websiteService.get(website2.getId());
 		
 		assertTrue(wasExceptionThrown);
-		logger.info(websiteCopy.label);
+		logger.debug(websiteCopy.label);
 		
 		assertTrue(websiteCopy.label.equals(labelOriginal));
 	}
@@ -202,7 +202,7 @@ public class WebsiteTest {
 		Website website1 = websiteService.createInstance(labelExpected);
 		appService.addToParent(app1, website1);
 		
-		logger.info("Website ID: {}", website1.getId());
+		logger.debug("Website ID: {}", website1.getId());
 		
 		Website website2 = websiteService.createInstance(labelExpected);
 		

@@ -133,12 +133,12 @@ public class UserDataController extends Controller {
 		for (PersistOrb persistOrb : persistOrbCollectionInfo.persistOrbList) {
 			if (persistOrb.orbInternalId.isPresent()) {
 				// Update
-				logger.info("Updating...");
+				logger.debug("Updating...");
 				orbPersisted = orbManager.getOrb(persistOrb.orbInternalId.get());
 				setOrbAttributes(persistOrb.attributes, orbPersisted);
 			} else {
 				// Save
-				logger.info("Saving orb...");
+				logger.debug("Saving orb...");
 				orbPersisted = new Orb();
 				orbPersisted.setOrbTypeInternalId(persistOrbCollectionInfo.orbTypeInternalId);
 				

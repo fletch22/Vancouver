@@ -30,6 +30,8 @@ public abstract class DomainService<T extends Parent, U extends Child> extends D
 		T t = (T) this.get(parentId);
 		this.clearAndResolveNextGeneration(t);
 		ComponentChildren children = t.getChildren();
+		
+		logger.debug("Parent ID: {}", parentId);
 
 		Child child = children.findChildById(childId);
 		children.removeChild(child);
@@ -48,6 +50,7 @@ public abstract class DomainService<T extends Parent, U extends Child> extends D
 
 	protected void connectParentAndChild(T parent, U child) {
 		clearAndResolveNextGeneration(parent);
+		logger.debug("cpac: {}", parent.getChildren().isHaveChildrenBeenResolved());
 		child.setParentId(parent.getId());
 		parent.getChildren().addChild(child);
 	}
@@ -55,6 +58,4 @@ public abstract class DomainService<T extends Parent, U extends Child> extends D
 	public abstract T createInstance(Map<String, String> props);
 
 	public abstract T update(long id, Map<String, String> properties);
-
-	// public abstract U move(long id);
 }

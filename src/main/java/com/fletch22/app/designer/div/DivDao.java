@@ -15,7 +15,7 @@ public class DivDao extends AppDesignerDao<Div, DivTransformer> {
 	Logger logger = LoggerFactory.getLogger(DivDao.class);
 
 	@Autowired
-	DivTransformer layoutTransformer;
+	DivTransformer divTransformer;
 
 	@Override
 	protected void create(Div div) {
@@ -27,7 +27,7 @@ public class DivDao extends AppDesignerDao<Div, DivTransformer> {
 
 	@Override
 	protected DivTransformer getTransformer() {
-		return layoutTransformer;
+		return divTransformer;
 	}
 	
 	@Override
