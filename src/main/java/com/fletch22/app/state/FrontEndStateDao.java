@@ -39,46 +39,40 @@ public class FrontEndStateDao {
 
 	@Autowired
 	TransactionService transactionService;
-	
+
 	@Autowired
 	RollbackTransactionService rollbackTransactionService;
 
 	@Autowired
 	QueryManager queryManager;
-	
+
 	@Autowired
 	RandomUtil randomUtil;
-	
+
 	@Autowired
 	Root root;
 
 	public void save(String state, String clientId) {
-		OrbType orbType = this.orbTypeManager
-				.getOrbType(FrontEndState.TYPE_LABEL);
+		OrbType orbType = this.orbTypeManager.getOrbType(FrontEndState.TYPE_LABEL);
 
 		Orb orb = orbManager.createUnsavedInitializedOrb(orbType);
 
 		Map<String, String> properties = orb.getUserDefinedProperties();
-		
+
 		logger.debug("State saved: " + state);
-		
+
 		properties.put(FrontEndState.ATTR_STATE, state);
 		properties.put(FrontEndState.ATTR_CLIENT_ID, clientId);
 
-		BigDecimal currentTransactionId = transactionService
-				.getCurrentTransactionId();
+		BigDecimal currentTransactionId = transactionService.getCurrentTransactionId();
 
-		logger.debug("Current tranid: {} for type: {}", currentTransactionId,
-				orbType.id);
+		logger.debug("Current tranid: {} for type: {}", currentTransactionId, orbType.id);
 
 		if (currentTransactionId == TransactionService.NO_TRANSACTION_IN_FLIGHT) {
-			throw new RuntimeException(
-					"Attempted to save fron end state without a transaction number. This is not allowed. Wrap the call in a transaction.");
+			throw new RuntimeException("Attempted to save fron end state without a transaction number. This is not allowed. Wrap the call in a transaction.");
 		}
 
-		orb.getUserDefinedProperties().put(
-				FrontEndState.ATTR_ASSOCIATED_TRANSACTION_ID,
-				String.valueOf(currentTransactionId));
+		orb.getUserDefinedProperties().put(FrontEndState.ATTR_ASSOCIATED_TRANSACTION_ID, String.valueOf(currentTransactionId));
 
 		orbManager.createOrb(orb);
 	}
@@ -86,12 +80,12 @@ public class FrontEndStateDao {
 	public StateIndexInfo getHistorical(int index) {
 
 		OrbResultSet orbResultSet = this.queryManager.executeQuery(FrontEndState.QUERY_GET_STATES);
-		
+
 		index = Math.abs(index);
-		
+
 		String result = null;
 		int size = orbResultSet.orbList.size();
-		
+
 		StateIndexInfo stateIndexInfo = new StateIndexInfo();
 		stateIndexInfo.indexOfMaxElement = size - 1;
 		if (size > index) {
@@ -100,118 +94,120 @@ public class FrontEndStateDao {
 			stateIndexInfo.clientId = orb.getUserDefinedProperties().get(FrontEndState.ATTR_CLIENT_ID);
 			stateIndexInfo.indexOfReturnedState = index;
 		}
-		
+
 		stateIndexInfo.state = result;
 		if (size > 0) {
-			stateIndexInfo.isEarliestState = (size <= index); 
+			stateIndexInfo.isEarliestState = (size <= index);
 		}
-		
+
 		stateIndexInfo.startupTimestamp = root.startupTimestamp;
-		
+
 		return stateIndexInfo;
 	}
 
 	public StateIndexInfo getMostRecentHistorical() {
-		
+
 		StateHistory stateHistory = new StateHistory();
-		
+
 		int size = stateHistory.getSize();
 		StateIndexInfo stateIndexInfo = new StateIndexInfo();
 		stateIndexInfo.indexOfMaxElement = 0;
-		
+
 		if (size > 0) {
 			Orb orb = stateHistory.getOrbMostRecent();
 			stateIndexInfo.state = orb.getUserDefinedProperties().get(FrontEndState.ATTR_STATE);
 			stateIndexInfo.clientId = orb.getUserDefinedProperties().get(FrontEndState.ATTR_CLIENT_ID);
 			stateIndexInfo.indexOfReturnedState = 0;
 		}
-		
-		logger.info("Getting element {}, when size {}", stateIndexInfo.clientId, size); 
-		
+
+		logger.info("Getting element {}, when size {}", stateIndexInfo.clientId, size);
+
 		if (size > 0) {
-			stateIndexInfo.isEarliestState = (size <= stateIndexInfo.indexOfMaxElement); 
+			stateIndexInfo.isEarliestState = (size <= stateIndexInfo.indexOfMaxElement);
 		}
-		
+
 		stateIndexInfo.startupTimestamp = root.startupTimestamp;
-		
+
 		return stateIndexInfo;
 	}
-	
+
 	private Orb getState(int ordinal) {
 		OrbResultSet orbResultSet = this.queryManager.executeQuery(FrontEndState.QUERY_GET_STATES);
 		return orbResultSet.orbList.get(ordinal);
 	}
-	
+
 	public class StateHistory {
 		private static final int ORDINAL_MOST_RECENT = 0;
 		private OrbResultSet orbResultSet = null;
-		
+
 		public StateHistory() {
 			this.orbResultSet = queryManager.executeQuery(FrontEndState.QUERY_GET_STATES);
 		}
-		
+
 		public Orb getOrbMostRecent() {
 			Orb orb = null;
-			
+
 			if (getSize() > 0) {
-				orb = this.orbResultSet.getOrbList().get(ORDINAL_MOST_RECENT); 
+				orb = this.orbResultSet.getOrbList().get(ORDINAL_MOST_RECENT);
 			}
-			
+
 			return orb;
 		}
-		
+
 		public Orb getOrbOldest() {
 			Orb orb = null;
-			
+
 			int size = getSize();
 			if (size > 0) {
-				orb = this.orbResultSet.getOrbList().get(size - 1); 
+				orb = this.orbResultSet.getOrbList().get(size - 1);
 			}
-			
+
 			return orb;
 		}
-		
+
 		public int getSize() {
 			return this.orbResultSet.getOrbList().size();
 		}
-		
+
 		public boolean hasARecentState() {
 			return (getSize() > 0);
 		}
 	}
-	
+
 	private Criteria createCriteriaFindByClientIds(List<String> clientIds) {
 		OrbType orbType = orbTypeManager.getOrbType(FrontEndState.TYPE_LABEL);
 		Criteria criteria = new CriteriaStandard(orbType.id, randomUtil.getRandomUuidString());
-		
+
 		CriteriaSortInfo criteriaSortInfo = new CriteriaSortInfo();
 		criteriaSortInfo.sortDirection = SortDirection.DESC;
 		criteriaSortInfo.sortAttributeName = FrontEndState.ATTR_CLIENT_ID;
-		
+
 		criteria.setSortOrder(criteriaSortInfo);
-		
+
 		criteria.addAnd(Constraint.in(FrontEndState.ATTR_CLIENT_ID, clientIds));
-		
+
 		return criteria;
 	}
-	
+
 	public StateSearchResult determineLastGoodState(List<String> clientIds) {
 		Criteria criteria = createCriteriaFindByClientIds(clientIds);
 		OrbResultSet orbResultSet = this.queryManager.executeQuery(criteria);
-		
+
 		return determineLastGoodStateFromSortedList(clientIds, orbResultSet);
 	}
 
 	private StateSearchResult determineLastGoodStateFromSortedList(List<String> clientIds, OrbResultSet orbResultSet) {
-		
+
 		StateSearchResult stateSearchResult = new StateSearchResult();
-		
+
 		int size = orbResultSet.orbList.size();
-		
+
 		logger.debug("Found number of states from passed in from client: {}", size);
-		
-		// All IDs present in result set. That means none were lost during the error state. 
-		// We can infer that the last item in the result is the lexicographically
+
+		// All IDs present in result set. That means none were lost during the
+		// error state.
+		// We can infer that the last item in the result is the
+		// lexicographically
 		// highest; therefore the most recent.
 		if (size == clientIds.size()) {
 			Orb orb = orbResultSet.orbList.get(clientIds.size() - 1);
@@ -220,20 +216,21 @@ public class FrontEndStateDao {
 		} else {
 			stateSearchResult = findLastGoodState(clientIds, orbResultSet);
 		}
-		
+
 		return stateSearchResult;
 	}
 
-	// Find missing state if it exists in this set. Once found then use the previous "good" state.
+	// Find missing state if it exists in this set. Once found then use the
+	// previous "good" state.
 	private StateSearchResult findLastGoodState(List<String> clientIdsList, OrbResultSet orbResultSet) {
-		
+
 		StateSearchResult stateSearchResult = new StateSearchResult();
-		
+
 		boolean isAtLeastOneClientIdFound = false;
 		Orb orb = null;
 		int resultSetSize = orbResultSet.getOrbList().size();
 		int maxLoopCount = clientIdsList.size();
-		
+
 		if (resultSetSize == 0) {
 			stateSearchResult = getMostRecenState();
 		} else {
@@ -242,38 +239,38 @@ public class FrontEndStateDao {
 					stateSearchResult.state = getPreviousOrbStateIfAvailable(orbResultSet, isAtLeastOneClientIdFound, i);
 					break;
 				}
-				
+
 				orb = orbResultSet.getOrbList().get(i);
-				
+
 				String clientIdFromClient = clientIdsList.get(i);
 				String clientIdFromOrbDb = orb.getUserDefinedProperties().get(FrontEndState.ATTR_CLIENT_ID);
-				
+
 				if (!clientIdFromClient.equals(clientIdFromOrbDb)) {
 					stateSearchResult.state = getPreviousOrbStateIfAvailable(orbResultSet, isAtLeastOneClientIdFound, i);
 					stateSearchResult.clientId = clientIdFromOrbDb;
 					break;
 				} else {
-					isAtLeastOneClientIdFound = true;	
+					isAtLeastOneClientIdFound = true;
 				}
 			}
 		}
-		
+
 		return stateSearchResult;
 	}
 
 	private StateSearchResult getMostRecenState() {
 		StateSearchResult stateSearchResult = new StateSearchResult();
 		StateHistory stateHistory = new StateHistory();
-		
+
 		logger.debug("Number states found: {}", stateHistory.getSize());
-		
+
 		if (stateHistory.hasARecentState()) {
 			Orb orbMostRecent = stateHistory.getOrbMostRecent();
-					
+
 			stateSearchResult.state = orbMostRecent.getUserDefinedProperties().get(FrontEndState.ATTR_STATE);
 			stateSearchResult.clientId = orbMostRecent.getUserDefinedProperties().get(FrontEndState.ATTR_CLIENT_ID);
 		}
-		
+
 		return stateSearchResult;
 	}
 
@@ -285,7 +282,7 @@ public class FrontEndStateDao {
 		}
 		return state;
 	}
-	
+
 	public static class StateSearchResult {
 		public String state = null;
 		public String clientId;
@@ -297,34 +294,34 @@ public class FrontEndStateDao {
 
 	public void rollbackToState(String stateClientId) {
 		OrbType orbType = this.orbTypeManager.getOrbType(FrontEndState.TYPE_LABEL);
-		
+
 		Optional<BigDecimal> optionalTranId = this.getSubsequentState(orbType.id, stateClientId);
-		
+
 		if (optionalTranId.isPresent()) {
 			BigDecimal tranIdSubsequent = optionalTranId.get();
 			logger.error("Attempting to rollback to tranID {} ...", tranIdSubsequent);
 			rollbackTransactionService.rollbackToSpecificTransaction(tranIdSubsequent);
-			
+
 			// Remove client Ids above this one.
 			Criteria criteria = new CriteriaStandard(orbType.id, randomUtil.getRandomUuidString());
-			
+
 			CriteriaSortInfo criteriaSortInfo = new CriteriaSortInfo();
 			criteriaSortInfo.sortDirection = SortDirection.DESC;
 			criteriaSortInfo.sortAttributeName = FrontEndState.ATTR_CLIENT_ID;
-			
+
 			criteria.setSortOrder(criteriaSortInfo);
-			
+
 			criteria.addAnd(Constraint.gt(FrontEndState.ATTR_CLIENT_ID, stateClientId));
-			
+
 			OrbResultSet orbResultSet = this.queryManager.executeQuery(criteria);
-			
+
 			if (orbResultSet.orbList.size() == 0) {
 				logger.error("There were no states to rollback.");
 			}
-			
+
 			for (Orb orbFound : orbResultSet.orbList) {
 				String clientId = orbFound.getUserDefinedProperties().get(FrontEndState.ATTR_CLIENT_ID);
-				logger.error("Removing item {} with state clientID '{}'", orbFound.getOrbInternalId(), clientId); 
+				logger.error("Removing item {} with state clientID '{}'", orbFound.getOrbInternalId(), clientId);
 				orbManager.deleteOrb(orbFound.getOrbInternalId(), true);
 			}
 		}
@@ -332,21 +329,21 @@ public class FrontEndStateDao {
 
 	private Optional<BigDecimal> getSubsequentState(long orbTypeInternalId, String stateClientId) {
 		Orb orbOrginal = this.queryManager.findByAttribute(orbTypeInternalId, FrontEndState.ATTR_CLIENT_ID, stateClientId).uniqueResult();
-		
+
 		BigDecimal tranId = new BigDecimal(orbOrginal.getUserDefinedProperties().get(FrontEndState.ATTR_ASSOCIATED_TRANSACTION_ID));
-		
+
 		Criteria criteria = new CriteriaStandard(orbTypeInternalId, randomUtil.getRandomUuidString());
-		
+
 		CriteriaSortInfo criteriaSortInfo = new CriteriaSortInfo();
 		criteriaSortInfo.sortDirection = SortDirection.DESC;
 		criteriaSortInfo.sortAttributeName = FrontEndState.ATTR_CLIENT_ID;
-		
+
 		criteria.setSortOrder(criteriaSortInfo);
-		
+
 		criteria.addAnd(Constraint.gt(FrontEndState.ATTR_CLIENT_ID, stateClientId));
-		
+
 		OrbResultSet orbResultSet = this.queryManager.executeQuery(criteria);
-		
+
 		Optional<BigDecimal> optional = Optional.empty();
 		if (orbResultSet.orbList.size() == 0) {
 			logger.error("There were no subsequent states.");
@@ -360,9 +357,9 @@ public class FrontEndStateDao {
 
 	public StateIndexInfo getEarliestState() {
 		StateIndexInfo stateIndexInfo = new StateIndexInfo();
-		
+
 		StateHistory stateHistory = new StateHistory();
-		
+
 		if (stateHistory.hasARecentState()) {
 			Orb orb = stateHistory.getOrbOldest();
 			int size = stateHistory.getSize();
@@ -372,9 +369,9 @@ public class FrontEndStateDao {
 			stateIndexInfo.state = orb.getUserDefinedProperties().get(FrontEndState.ATTR_STATE);
 			stateIndexInfo.clientId = orb.getUserDefinedProperties().get(FrontEndState.ATTR_CLIENT_ID);
 		}
-		
+
 		stateIndexInfo.startupTimestamp = root.startupTimestamp;
-				
+
 		return stateIndexInfo;
 	}
 }
