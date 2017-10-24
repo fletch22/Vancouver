@@ -14,7 +14,7 @@ public abstract class OrbBasedComponent implements Child {
 	private Orb orbOriginal;
 	private long id = UNSET_ID;
 	private long parentId = UNSET_ID;
-	public static final String ATTR_LIVE_PREFIX = "fea";
+	public String ordinal = Child.UNSET_ORDINAL;
 
 	public long getId() {
 		return this.id;
@@ -43,12 +43,26 @@ public abstract class OrbBasedComponent implements Child {
 	public boolean isNew() {
 		return this.getId() == UNSET_ID;
 	}
-	
+
 	public boolean hasParent() {
 		return this.getParentId() != UNSET_ID;
 	}
 
 	public boolean isCanHaveChildren() {
 		return false;
+	}
+	
+	public long getOrdinalAsNumber() {
+		String ordinal = (this.ordinal == null) ? OrbBasedComponent.UNSET_ORDINAL : this.ordinal;
+		return Long.parseLong(ordinal);
+	}
+
+	public String getOrdinal() {
+		String ordinal = (this.ordinal == null) ? OrbBasedComponent.UNSET_ORDINAL : this.ordinal;
+		return ordinal;
+	}
+
+	public void setOrdinal(String ordinal) {
+		this.ordinal = ordinal;
 	}
 }

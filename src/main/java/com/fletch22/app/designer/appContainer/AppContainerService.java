@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fletch22.app.designer.AppDesignerModule;
+import com.fletch22.app.designer.Child;
 import com.fletch22.app.designer.DomainService;
 
 @Component
@@ -26,7 +27,7 @@ public class AppContainerService extends DomainService<AppContainer, AppContaine
 	public boolean flag = false;
 	
 	public void addToParent(AppContainer appContainer, AppContainerChild appContainerChild) {
-		connectParentAndChild(appContainer, appContainerChild);
+		connectParentAndChild(appContainer, appContainerChild, Child.ORDINAL_LAST);
 		save(appContainer);
 	}
 	

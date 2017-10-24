@@ -9,7 +9,7 @@ public class DataModel extends Parent {
 
 	public static final String TYPE_LABEL = "DataModel";
 	public static final String ATTR_LABEL = "label";
-	public static LinkedHashSet<String> ATTRIBUTE_LIST = new LinkedHashSet<String>(Arrays.asList(DataModel.ATTR_PARENT, ATTR_LABEL, ATTR_CHILDREN));
+	public static LinkedHashSet<String> ATTRIBUTE_LIST = new LinkedHashSet<String>(Arrays.asList(DataModel.ATTR_PARENT, ATTR_LABEL, ATTR_ORDINAL, ATTR_CHILDREN));
 	
 	public String label;
 	

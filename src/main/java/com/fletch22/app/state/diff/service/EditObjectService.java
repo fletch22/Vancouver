@@ -35,6 +35,7 @@ public class EditObjectService {
 		DomainServiceBase domainServiceBase = serviceFactory.getBaseServiceFromTypeLabel(typeLabel);
 		
 		Map<String, String> map = new HashMap<String, String>();
+		logger.info("EditedProp {}", editedProperty.property);
 		map.put(editedProperty.property, editedProperty.newValue);
 		domainServiceBase.update(editedProperty.id, map);
 	}

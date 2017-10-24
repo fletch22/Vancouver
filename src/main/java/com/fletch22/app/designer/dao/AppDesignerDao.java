@@ -1,6 +1,5 @@
 package com.fletch22.app.designer.dao;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -33,6 +32,7 @@ import com.fletch22.orb.OrbTypeManager;
 import com.fletch22.orb.cache.local.ComparisonResult;
 import com.fletch22.orb.cache.reference.ReferenceUtil;
 import com.fletch22.orb.query.QueryManager;
+import com.google.common.collect.ImmutableList;
 
 public abstract class AppDesignerDao<T extends OrbBasedComponent, U extends DomainTransformer<T>> extends BaseDao {
 
@@ -77,7 +77,7 @@ public abstract class AppDesignerDao<T extends OrbBasedComponent, U extends Doma
 
 	public StringBuffer convertToChildReferences(ComponentChildren componentChildren) {
 
-		ArrayList<Child> list = componentChildren.getList();
+		ImmutableList<Child> list = componentChildren.getList();
 		Set<String> refSet = new HashSet<String>();
 		for (Child child : list) {
 			refSet.add(referenceUtil.composeReference(child.getId()));

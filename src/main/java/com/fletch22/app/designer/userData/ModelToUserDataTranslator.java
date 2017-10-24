@@ -21,6 +21,7 @@ import com.fletch22.app.designer.dataModel.DataModelService;
 import com.fletch22.orb.OrbManager;
 import com.fletch22.orb.OrbType;
 import com.fletch22.orb.OrbTypeManager;
+import com.google.common.collect.ImmutableList;
 
 @Component
 public class ModelToUserDataTranslator {
@@ -66,7 +67,7 @@ public class ModelToUserDataTranslator {
 		LinkedHashSet<String> customFields = new LinkedHashSet<>();
 
 		ComponentChildren componentChildren = dataModel.getChildren();
-		ArrayList<Child> children = componentChildren.getList();
+		ImmutableList<Child> children = componentChildren.getList();
 
 		if (children != null && children.size() > 0) {
 			children.forEach((child) -> {
@@ -93,7 +94,7 @@ public class ModelToUserDataTranslator {
 
 	private void appendNewAttributesToUserData(DataModel dataModel, OrbType orbTypeUserData) {
 		ComponentChildren componentChildren = dataModel.getChildren();
-		ArrayList<Child> children = componentChildren.getList();
+		ImmutableList<Child> children = componentChildren.getList();
 
 		if (children != null && children.size() > 0) {
 			LinkedHashSet<String> customFields = orbTypeUserData.customFields;
@@ -101,7 +102,7 @@ public class ModelToUserDataTranslator {
 		}
 	}
 
-	private void appendMissingAttr(DataModel dataModel, OrbType orbTypeUserData, ArrayList<Child> children, LinkedHashSet<String> customFields) {
+	private void appendMissingAttr(DataModel dataModel, OrbType orbTypeUserData, ImmutableList<Child> children, LinkedHashSet<String> customFields) {
 		children.forEach((child) -> {
 			if (child.getClass() == DataField.class) {
 				DataField dataField = (DataField) child;
@@ -119,7 +120,7 @@ public class ModelToUserDataTranslator {
 	private void deleteMissingAttributesFromUserData(DataModel dataModel, OrbType orbTypeUserData) {
 		LinkedHashSet<String> customFields = orbTypeUserData.customFields;
 		ComponentChildren componentChildren = dataModel.getChildren();
-		ArrayList<Child> children = componentChildren.getList();
+		ImmutableList<Child> children = componentChildren.getList();
 		List<String> deleteList = new ArrayList<>();
 		if (children != null && children.size() > 0) {
 			deleteList = getDeleteList(dataModel, customFields, children);
@@ -130,7 +131,7 @@ public class ModelToUserDataTranslator {
 		}
 	}
 
-	private List<String> getDeleteList(DataModel dataModel, LinkedHashSet<String> customFields, ArrayList<Child> children) {
+	private List<String> getDeleteList(DataModel dataModel, LinkedHashSet<String> customFields, ImmutableList<Child> children) {
 		List<String> deleteList = new ArrayList<>();
 
 		Map<String, Child> attributeMap = new HashMap<>();

@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableList;
+
 public class ComponentChildren {
 	
 	private static Logger logger = LoggerFactory.getLogger(ComponentChildren.class);
@@ -16,8 +18,8 @@ public class ComponentChildren {
 	private ArrayList<Child> children = new ArrayList<Child>();
 	private boolean haveChildrenBeenResolved = false;
 
-	public ArrayList<Child> getList() {
-		return children;
+	public ImmutableList<Child> getList() {
+		return ImmutableList.copyOf(children);
 	}
 
 	public boolean isHaveChildrenBeenResolved() {
@@ -28,9 +30,26 @@ public class ComponentChildren {
 		this.haveChildrenBeenResolved = haveChildrenBeenResolved;
 	}
 
-	public void addChild(Child child) {
+	public void addChildIgnoreOrdinal(Child child) {
 		this.children.add(child);
-	}	
+	}
+	
+	public void addChildAtOrdinal(Child child, long ordinal) {
+		logger.info("Adding child at index: {}", ordinal);
+		if (ordinal == Child.ORDINAL_LAST) {
+			ordinal = this.children.size();
+		}
+		
+		sortByOrdinal();
+		
+		this.children.add((int) ordinal, child);
+		for (int i = 0; i < this.children.size(); i++) {
+			Child childReset = this.children.get(i);
+			childReset.setOrdinal(String.valueOf(i));
+			
+			logger.info("New child reset: {}", childReset.getOrdinal());
+		}
+	}
 	
 	public void clear() {
 		this.children.clear();
@@ -44,6 +63,16 @@ public class ComponentChildren {
 		}
 		
 		this.children.remove(child);
+		this.resetChildrensOrdinals();
+	}
+	
+	public void resetChildrensOrdinals() {
+		this.sortByOrdinal();
+		logger.info("Size children: {}", this.children.size());
+		for (int i = 0; i < this.children.size(); i++) {
+			Child child = this.children.get(i);
+			child.setOrdinal(String.valueOf(i));
+		}
 	}
 	
 	public Child findChildById(long childId) {
@@ -75,6 +104,22 @@ public class ComponentChildren {
 	        	if (p1.getId() > p2.getId())  {
 	        		result = 1;
 	        	} else if (p1.getId() < p2.getId()) {
+	        		result = -1;
+	        	}
+	            return result; 
+	        }
+	    });
+	}
+	
+	public void sortByOrdinal() {
+		Collections.sort(this.children, new Comparator<Child>() {
+	        @Override public int compare(Child p1, Child p2) {
+	        	int result = 0;
+	        	long ordinal1 = p1.getOrdinalAsNumber();
+	        	long ordinal2 = p2.getOrdinalAsNumber();
+	        	if (ordinal1 > ordinal2)  {
+	        		result = 1;
+	        	} else if (ordinal1 < ordinal1) {
 	        		result = -1;
 	        	}
 	            return result; 

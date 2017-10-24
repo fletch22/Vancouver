@@ -48,22 +48,24 @@ public class MoveService {
 
 	@Transactional
 	public void move(MoveCommand moveCommand) {
-		logger.debug("Attempting to move the item.");
+		logger.info("Attempting to move the item.");
 
 		Orb movingChildParent = orbManager.getOrb(moveCommand.sourceParentId);
 		OrbType movingChildParentOrbType = orbTypeManager.getOrbType(movingChildParent.getOrbTypeInternalId());
 
 		DomainService domainService = serviceFactory.getServiceFromTypeLabel(movingChildParentOrbType.label);
 		Child child = domainService.removeChildFromParent(moveCommand.sourceParentId, moveCommand.childId);
-		
-		logger.debug("Destination: {}", moveCommand.destinationParentId);
+
+		logger.info("Source: {}; Child: {}", moveCommand.sourceParentId, moveCommand.childId);
+
+		logger.info("Destination: {}", moveCommand.destinationParentId);
 
 		Orb destinationChildParent = orbManager.getOrb(moveCommand.destinationParentId);
 		OrbType destinationParentOrbType = orbTypeManager.getOrbType(destinationChildParent.getOrbTypeInternalId());
 
 		domainService = serviceFactory.getServiceFromTypeLabel(destinationParentOrbType.label);
 		Parent parent = domainService.get(moveCommand.destinationParentId);
-				
-		domainService.addToParent(parent, child);
+
+		domainService.addToParent(parent, child, moveCommand.ordinalChildTarget);
 	}
 }

@@ -172,7 +172,7 @@ public class AppDesignerModule implements OrbSystemModule {
 		appContainerService.addToParent(appContainer, dataUniverse);
 
 		Datastore datastore = datastoreService.createInstance("default");
-		dataUniverseService.addToParent(dataUniverse, datastore);
+		dataUniverseService.addToParent(dataUniverse, datastore, Child.ORDINAL_LAST);
 
 		Website website = websiteService.createInstance("website1");
 		appService.addToParent(app, website);

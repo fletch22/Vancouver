@@ -32,6 +32,7 @@ public class JsonDiffProcessorService {
 	private static final String MODEL_NODE_NAME = "model";
 
 	private static final String PROPERTY_PARENT_ID = "parentId";
+	private static final String PROPERTY_CHILD_ORDINAL = com.fletch22.app.designer.Child.ATTR_ORDINAL;
 
 	private static final String PROPERTY_ID = "id";
 
@@ -102,6 +103,7 @@ public class JsonDiffProcessorService {
 			break;
 		case EDITED_PROPERTY:
 			JsonElement newValue = jsonObject.get("rhs");
+			logger.info("New value: {}", newValue.toString());
 			processEditedProperty(state, pathInformation, newValue);
 			break;
 		case ARRAY_CHANGE:
@@ -260,6 +262,10 @@ public class JsonDiffProcessorService {
 				} else {
 					if (key.equals(PROPERTY_PARENT_ID)) {
 						parentId = jsonPrimitive.getAsLong();
+					} else if (key.equals(PROPERTY_CHILD_ORDINAL)) {
+						logger.info("PROPERTY_CHILD_ORDINAL: {}", String.valueOf(jsonPrimitive.getAsLong()));
+						
+						properties.put(key, String.valueOf(jsonPrimitive.getAsLong()));
 					} else {
 						throw new RuntimeException(
 								String.format(

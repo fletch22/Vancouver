@@ -17,7 +17,7 @@ public class DropDownListbox extends ViewComponent implements DropDownListboxChi
 	public static final String ATTR_TEXT_FIELD_NAME = "dataTextId";
 	public static final String ATTR_SELECTED_VALUE = "selected_value";
 	public static final LinkedHashSet<String> ATTRIBUTE_LIST = new LinkedHashSet<String>(Arrays.asList(DropDownListbox.ATTR_PARENT, ATTR_ELEMENT_ID, ATTR_DATASTORE_ID, ATTR_DATAMODEL_ID,
-			ATTR_VALUE_FIELD_NAME, ATTR_TEXT_FIELD_NAME, ATTR_STYLE));
+			ATTR_VALUE_FIELD_NAME, ATTR_TEXT_FIELD_NAME, ATTR_STYLE, ATTR_ORDINAL));
 	
 	public static final LinkedHashSet<String> ATTRIBUTE_LIVE_LIST = new LinkedHashSet<String>(Arrays.asList(ATTR_SELECTED_VALUE));
 

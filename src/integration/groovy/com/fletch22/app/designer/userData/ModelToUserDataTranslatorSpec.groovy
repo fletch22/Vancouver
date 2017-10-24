@@ -74,7 +74,7 @@ class ModelToUserDataTranslatorSpec extends Specification {
 		DataField dataField = new DataField()
 		dataField.setId(124)
 		dataField.label = "column_1"
-		componentChildren.addChild(dataField)
+		componentChildren.addChildAtOrdinal(dataField, Child.ORDINAL_LAST)
 
 		def label = modelToUserDataTranslator.composeUserDataTypeLabel(dataModel)
 

@@ -13,6 +13,7 @@ public class DivTransformer extends DomainTransformer<Div> {
 		
 		this.setBaseAttributes(orb, div);
 		div.style = orb.getUserDefinedProperties().get(Div.ATTR_STYLE);
+		div.ordinal = orb.getUserDefinedProperties().get(Div.ATTR_ORDINAL);
 		
 		return div;
 	}

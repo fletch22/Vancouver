@@ -10,7 +10,7 @@ public class DataUniverse extends Parent implements AppContainerChild {
 
 	public static final String TYPE_LABEL = "DataUniverse";
 	public static final String ATTR_LABEL = "label";
-	public static LinkedHashSet<String> ATTRIBUTE_LIST = new LinkedHashSet<String>(Arrays.asList(DataUniverse.ATTR_PARENT, ATTR_LABEL, ATTR_CHILDREN));
+	public static LinkedHashSet<String> ATTRIBUTE_LIST = new LinkedHashSet<String>(Arrays.asList(DataUniverse.ATTR_PARENT, ATTR_LABEL, ATTR_ORDINAL, ATTR_CHILDREN));
 
 	public String label;
 

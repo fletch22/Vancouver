@@ -15,7 +15,7 @@ public class ButtonSubmitDao extends AppDesignerDao<ButtonSubmit, ButtonSubmitTr
 	Logger logger = LoggerFactory.getLogger(ButtonSubmitDao.class);
 
 	@Autowired
-	ButtonSubmitTransformer dropDownListboxTransformer;
+	ButtonSubmitTransformer buttonSubmitTransformer;
 
 	@Override
 	protected void create(ButtonSubmit div) {
@@ -27,14 +27,15 @@ public class ButtonSubmitDao extends AppDesignerDao<ButtonSubmit, ButtonSubmitTr
 
 	@Override
 	protected ButtonSubmitTransformer getTransformer() {
-		return dropDownListboxTransformer;
+		return buttonSubmitTransformer;
 	}
 	
 	@Override
-	protected void setNonChildrenAttributes(ButtonSubmit ddl, Orb orb) {
-		orb.getUserDefinedProperties().put(ButtonSubmit.ATTR_STYLE, ddl.style);
-		orb.getUserDefinedProperties().put(ButtonSubmit.ATTR_ELEMENT_ID, ddl.elementId);  
-		orb.getUserDefinedProperties().put(ButtonSubmit.ATTR_LABEL, ddl.label);
+	protected void setNonChildrenAttributes(ButtonSubmit buttonSubmit, Orb orb) {
+		orb.getUserDefinedProperties().put(ButtonSubmit.ATTR_STYLE, buttonSubmit.style);
+		orb.getUserDefinedProperties().put(ButtonSubmit.ATTR_ELEMENT_ID, buttonSubmit.elementId);  
+		orb.getUserDefinedProperties().put(ButtonSubmit.ATTR_LABEL, buttonSubmit.label);
+		orb.getUserDefinedProperties().put(ButtonSubmit.ATTR_ORDINAL, buttonSubmit.ordinal);
 	}
 }
 

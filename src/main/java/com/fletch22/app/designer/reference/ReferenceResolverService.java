@@ -1,6 +1,5 @@
 package com.fletch22.app.designer.reference;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -11,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fletch22.app.designer.Child;
+import com.fletch22.app.designer.ComponentChildren;
 import com.fletch22.app.designer.OrbBasedComponent;
 import com.fletch22.app.designer.Parent;
 import com.fletch22.app.designer.app.App;
@@ -150,6 +150,7 @@ public class ReferenceResolverService {
 
 		orbBasedComponentParent.getChildren().setHaveChildrenBeenResolved(true);
 		orbBasedComponentParent.getChildren().sort();
+		orbBasedComponentParent.getChildren().sortByOrdinal();
 	}
 
 	private void validateChildKey(DecomposedKey decomposedKey) {
@@ -171,7 +172,7 @@ public class ReferenceResolverService {
 	}
 
 	private OrbBasedComponent addChild(Parent parent, Orb orbChild, OrbType orbType) {
-		ArrayList<Child> children = parent.getChildren().getList();
+		ComponentChildren componentChildren = parent.getChildren();
 		long childId = orbChild.getOrbInternalId();
 
 		OrbBasedComponent orbBaseComponentChild = null;
@@ -216,7 +217,7 @@ public class ReferenceResolverService {
 			throw new RuntimeException("Encountered problem trying to determine type while resolving children.");
 		}
 
-		children.add(orbBaseComponentChild);
+		componentChildren.addChildIgnoreOrdinal(orbBaseComponentChild);
 
 		return orbBaseComponentChild;
 	}

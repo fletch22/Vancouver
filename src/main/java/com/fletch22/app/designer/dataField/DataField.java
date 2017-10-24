@@ -9,7 +9,7 @@ public class DataField extends Parent {
 
 	public static final String TYPE_LABEL = "DataField";
 	public static final String ATTR_LABEL = "label";
-	public static LinkedHashSet<String> ATTRIBUTE_LIST = new LinkedHashSet<String>(Arrays.asList(DataField.ATTR_PARENT, ATTR_LABEL));
+	public static LinkedHashSet<String> ATTRIBUTE_LIST = new LinkedHashSet<String>(Arrays.asList(DataField.ATTR_PARENT, ATTR_ORDINAL, ATTR_LABEL));
 	
 	public String label;
 	

@@ -5,6 +5,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.fletch22.app.designer.Child;
 import com.fletch22.app.designer.DomainService;
 import com.fletch22.app.designer.webFolder.WebFolderChild;
 
@@ -15,7 +16,7 @@ public class WebsiteService extends DomainService<Website, WebFolderChild> {
 	WebsiteDao websiteDao;
 
 	public void addToParent(Website website, WebFolderChild webFolderChild) {
-		connectParentAndChild(website, webFolderChild);
+		connectParentAndChild(website, webFolderChild, Child.ORDINAL_LAST);
 		save(website);
 	}
 

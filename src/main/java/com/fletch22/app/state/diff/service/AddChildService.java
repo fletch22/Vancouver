@@ -36,7 +36,7 @@ public class AddChildService {
 		
 		String typeLabelParent = domainUtilDao.getTypeLabelFromId(addedChild.parentId);
 		DomainService domainService = serviceFactory.getServiceFromTypeLabel(typeLabelParent);
-		domainService.addToParent(domainService.get(addedChild.parentId), child); 
+		domainService.addToParent(domainService.get(addedChild.parentId), child, child.getOrdinalAsNumber()); 
 		
 		return child.getId();
 	}

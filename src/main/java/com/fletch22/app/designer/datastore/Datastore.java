@@ -10,7 +10,7 @@ public class Datastore extends Parent implements DataUniverseChild {
 
 	public static final String TYPE_LABEL = "Datastore";
 	public static final String ATTR_LABEL = "label";
-	public static LinkedHashSet<String> ATTRIBUTE_LIST = new LinkedHashSet<String>(Arrays.asList(Datastore.ATTR_PARENT, ATTR_LABEL, ATTR_CHILDREN));
+	public static LinkedHashSet<String> ATTRIBUTE_LIST = new LinkedHashSet<String>(Arrays.asList(Datastore.ATTR_PARENT, ATTR_LABEL, ATTR_ORDINAL, ATTR_CHILDREN));
 
 	public String label;
 

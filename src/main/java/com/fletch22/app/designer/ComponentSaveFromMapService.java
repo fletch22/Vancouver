@@ -38,7 +38,7 @@ public class ComponentSaveFromMapService {
 				long parentId = app.getParentId();
 				String typeLabelParent = domainServiceUtil.getTypeLabelFromId(parentId);
 				DomainService domainService = serviceFactory.getServiceFromTypeLabel(typeLabelParent);
-				domainService.addToParent(domainService.get(parentId), app);
+				domainService.addToParent(domainService.get(parentId), app, Child.ORDINAL_LAST);
 				
 				savedObject = app;
 				break;

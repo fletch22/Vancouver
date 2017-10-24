@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fletch22.app.designer.dao.AppDesignerDao;
+import com.fletch22.app.designer.submit.ButtonSubmit;
 import com.fletch22.orb.Orb;
 import com.fletch22.orb.OrbType;
 
@@ -33,6 +34,7 @@ public class DivDao extends AppDesignerDao<Div, DivTransformer> {
 	@Override
 	protected void setNonChildrenAttributes(Div div, Orb orb) {
 		orb.getUserDefinedProperties().put(Div.ATTR_STYLE, div.style);
+		orb.getUserDefinedProperties().put(Div.ATTR_ORDINAL, div.ordinal);
 	}
 }
 

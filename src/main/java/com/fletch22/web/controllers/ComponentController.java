@@ -281,5 +281,6 @@ public class ComponentController extends Controller {
 		public long sourceParentId;
 		public long destinationParentId;
 		public long childId;
+		public long ordinalChildTarget;
 	}
 }

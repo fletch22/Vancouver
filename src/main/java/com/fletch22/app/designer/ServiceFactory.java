@@ -42,9 +42,6 @@ public class ServiceFactory {
 			case App.TYPE_LABEL:
 				domainService = serviceJunction.appService;
 				break;
-			case ButtonSubmit.TYPE_LABEL:
-				domainService = serviceJunction.buttonSubmitService;
-				break;
 			case DataUniverse.TYPE_LABEL:
 				domainService = serviceJunction.dataUniverseService;
 				break;
@@ -83,6 +80,9 @@ public class ServiceFactory {
 		DomainServiceBase domainServiceBase = getDomainServiceForParents(typeLabel);
 		if (domainServiceBase == null) {
 			switch (typeLabel) {
+				case ButtonSubmit.TYPE_LABEL:
+					domainServiceBase = serviceJunction.buttonSubmitService;
+					break;
 				case DropDownListbox.TYPE_LABEL:
 					domainServiceBase = serviceJunction.dropDownListboxService;
 					break;

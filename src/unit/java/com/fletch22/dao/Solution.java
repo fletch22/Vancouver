@@ -65,6 +65,7 @@ public class Solution {
         bw.newLine();
         
         bw.close();
+        in.close();
     }
 
     private static LogEntry createLogEntry(String line) {

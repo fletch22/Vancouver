@@ -11,7 +11,6 @@ import com.fletch22.app.designer.ServiceJunction;
 import com.fletch22.app.designer.dao.BaseDao;
 import com.fletch22.app.designer.dataField.DataField;
 import com.fletch22.app.designer.dataModel.DataModel;
-import com.fletch22.app.designer.div.Div;
 import com.fletch22.app.designer.util.DomainUtilDao;
 import com.fletch22.orb.Orb;
 import com.fletch22.orb.OrbManager;

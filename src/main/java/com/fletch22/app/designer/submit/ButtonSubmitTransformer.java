@@ -10,13 +10,14 @@ public class ButtonSubmitTransformer extends DomainTransformer<ButtonSubmit> {
 	
 	public ButtonSubmit transform(Orb orb) {
 		
-		ButtonSubmit ddl = new ButtonSubmit();
+		ButtonSubmit buttonSubmit = new ButtonSubmit();
 		
-		this.setBaseAttributes(orb, ddl);
-		ddl.style = orb.getUserDefinedProperties().get(ButtonSubmit.ATTR_STYLE);
-		ddl.elementId = orb.getUserDefinedProperties().get(ButtonSubmit.ATTR_ELEMENT_ID);
-		ddl.label = orb.getUserDefinedProperties().get(ButtonSubmit.ATTR_LABEL);
+		this.setBaseAttributes(orb, buttonSubmit);
+		buttonSubmit.style = orb.getUserDefinedProperties().get(ButtonSubmit.ATTR_STYLE);
+		buttonSubmit.elementId = orb.getUserDefinedProperties().get(ButtonSubmit.ATTR_ELEMENT_ID);
+		buttonSubmit.label = orb.getUserDefinedProperties().get(ButtonSubmit.ATTR_LABEL);
+		buttonSubmit.ordinal = orb.getUserDefinedProperties().get(ButtonSubmit.ATTR_ORDINAL);
 		
-		return ddl;
+		return buttonSubmit;
 	}
 }
