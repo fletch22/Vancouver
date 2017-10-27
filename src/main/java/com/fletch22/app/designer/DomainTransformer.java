@@ -15,9 +15,6 @@ public abstract class DomainTransformer<T extends OrbBasedComponent> {
 		orbBasedComponent.setParentId(Long.parseLong(orb.getUserDefinedProperties().get(OrbBasedComponent.ATTR_PARENT)));
 		
 		String ordinal = orb.getUserDefinedProperties().get(Child.ATTR_ORDINAL);
-		
-		logger.info("DT ordinal: {}", ordinal);
-		
 		orbBasedComponent.setOrdinal((ordinal == null) ? Child.UNSET_ORDINAL : ordinal);
 	}
 	

@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,19 +113,18 @@ public class ComponentChildren {
 	}
 
 	public void sortByOrdinal() {
-		Collections.sort(this.children, new Comparator<Child>() {
-			@Override
-			public int compare(Child p1, Child p2) {
-				int result = 0;
-				long ordinal1 = p1.getOrdinalAsNumber();
-				long ordinal2 = p2.getOrdinalAsNumber();
-				if (ordinal1 > ordinal2) {
-					result = 1;
-				} else if (ordinal1 < ordinal1) {
-					result = -1;
-				}
-				return result;
+		this.children = this.children
+		  .stream()
+		  .sorted((child1, child2) -> {
+			int ordinal1 = (int) child1.getOrdinalAsNumber();
+			int ordinal2 = (int) child2.getOrdinalAsNumber();
+			int result = 0;
+			if (ordinal1 > ordinal2) {
+				result = 1;
+			} else if (ordinal1 < ordinal2) {
+				result = -1;
 			}
-		});
+			return result;
+		  }).collect(Collectors.toCollection(ArrayList::new));
 	}
 }

@@ -129,21 +129,6 @@ public class JsonDiffProcessorService {
 		throw new NotImplementedException("processDeleteProperty not implemented yet. (Set to null?)");
 	}
 
-//	private StuntDoubleAndNewId processAddedChild(JsonObject state, JsonArray pathInformation, long index, JsonElement jsonElementChild) {
-//
-//		JsonElement parentElement = getParentDescribedByPath(pathInformation, state);
-//
-//		Child child = getChild(jsonElementChild);
-//		String temporaryId = child.props.remove(PROPERTY_ID);
-//		long parentId = getId(parentElement);
-//
-//		AddedChild addedChild = new AddedChild(parentId, child, temporaryId);
-//
-//		long childNewId = addChildService.process(addedChild);
-//
-//		return new StuntDoubleAndNewId(temporaryId, childNewId);
-//	}
-
 	private StuntDoubleAndNewId processAddedChildNew(JsonArray pathInformation, long index, JsonElement jsonElementChild) {
 
 		Child child = getChild(jsonElementChild);
