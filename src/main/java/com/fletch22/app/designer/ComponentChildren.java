@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,6 +61,7 @@ public class ComponentChildren {
 		if (!this.children.contains(child)) {
 			throw new RuntimeException("Encountered problem while trying to remove child. Child is not in parent.");
 		}
+		
 
 		this.children.remove(child);
 		this.resetChildrensOrdinals();
@@ -113,9 +113,7 @@ public class ComponentChildren {
 	}
 
 	public void sortByOrdinal() {
-		this.children = this.children
-		  .stream()
-		  .sorted((child1, child2) -> {
+		this.children = this.children.stream().sorted((child1, child2) -> {
 			int ordinal1 = (int) child1.getOrdinalAsNumber();
 			int ordinal2 = (int) child2.getOrdinalAsNumber();
 			int result = 0;
@@ -125,6 +123,6 @@ public class ComponentChildren {
 				result = -1;
 			}
 			return result;
-		  }).collect(Collectors.toCollection(ArrayList::new));
+		}).collect(Collectors.toCollection(ArrayList::new));
 	}
 }

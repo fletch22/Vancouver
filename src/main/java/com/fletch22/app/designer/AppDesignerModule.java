@@ -177,7 +177,7 @@ public class AppDesignerModule implements OrbSystemModule {
 		Website website = websiteService.createInstance("website1");
 		appService.addToParent(app, website);
 
-		Page page = pageService.createInstance("page1");
+		Page page = pageService.createInstance("page1", "{ \"flexDirection\": \"column\" }");
 		websiteService.addToParent(website, page);
 	}
 

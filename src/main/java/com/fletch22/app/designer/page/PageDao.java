@@ -34,6 +34,7 @@ public class PageDao extends AppDesignerDao<Page, PageTransformer> {
 	@Override
 	protected void setNonChildrenAttributes(Page page, Orb orb) {
 		orb.getUserDefinedProperties().put(Page.ATTR_PAGE_NAME, page.pageName);
+		orb.getUserDefinedProperties().put(Page.ATTR_STYLE, page.style);
 	}
 }
 

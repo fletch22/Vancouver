@@ -13,9 +13,10 @@ public class PageService extends DomainService<Page, PageChild> {
 	@Autowired
 	PageDao pageDao;
 
-	public Page createInstance(String pageName) {
+	public Page createInstance(String pageName, String style) {
 		Page page = new Page();
 		page.pageName = pageName;
+		page.style = style;
 		save(page);
 		return page;
 	}
@@ -32,7 +33,7 @@ public class PageService extends DomainService<Page, PageChild> {
 	public Page createInstance(Map<String, String> properties) {
 		validatePropertiesSimple(properties, Page.ATTRIBUTE_LIST);
 		
-		return createInstance(properties.get(Page.ATTR_PAGE_NAME));
+		return createInstance(properties.get(Page.ATTR_PAGE_NAME), properties.get(Page.ATTR_STYLE));
 	}
 	
 	@Override
@@ -41,6 +42,7 @@ public class PageService extends DomainService<Page, PageChild> {
 		
 		Page page = get(id);
 		if (properties.containsKey(Page.ATTR_PAGE_NAME)) page.pageName = properties.get(Page.ATTR_PAGE_NAME);
+		if (properties.containsKey(Page.ATTR_STYLE)) page.style = properties.get(Page.ATTR_STYLE);
 		
 		this.save(page);
 		

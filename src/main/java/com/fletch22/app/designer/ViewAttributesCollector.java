@@ -59,7 +59,7 @@ public class ViewAttributesCollector {
 		}
 	}
 	
-	private Optional<Field> hasField(Class clazz, String attributeName) {
+	private Optional<Field> hasField(@SuppressWarnings("rawtypes") Class clazz, String attributeName) {
 		Field[] fields = clazz.getFields();
 		Optional<Field> fieldOpt = Optional.empty();
 		

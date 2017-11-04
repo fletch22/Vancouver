@@ -10,9 +10,11 @@ public class Page extends Parent implements WebFolderChild {
 	
 	public static final String TYPE_LABEL = "Page";
 	public static final String ATTR_PAGE_NAME = "pageName";
-	public static LinkedHashSet<String> ATTRIBUTE_LIST = new LinkedHashSet<String>(Arrays.asList(Page.ATTR_PARENT, ATTR_PAGE_NAME, ATTR_CHILDREN, ATTR_ORDINAL));
+	public static final String ATTR_STYLE = "style";
+	public static LinkedHashSet<String> ATTRIBUTE_LIST = new LinkedHashSet<String>(Arrays.asList(Page.ATTR_PARENT, ATTR_PAGE_NAME, ATTR_CHILDREN, ATTR_ORDINAL, ATTR_STYLE));
 	
 	public String pageName;
+	public String style;
 	
 	@Override
 	public String getTypeLabel() {

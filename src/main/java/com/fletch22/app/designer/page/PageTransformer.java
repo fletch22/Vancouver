@@ -14,6 +14,7 @@ public class PageTransformer extends DomainTransformer<Page> {
 		
 		this.setBaseAttributes(orb, page);
 		page.pageName = orb.getUserDefinedProperties().get(Page.ATTR_PAGE_NAME);
+		page.style = orb.getUserDefinedProperties().get(Page.ATTR_STYLE);
 		
 		return page;
 	}
