@@ -1,7 +1,9 @@
 package com.fletch22.app.state;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +16,8 @@ import com.fletch22.app.designer.appContainer.AppContainerService;
 import com.fletch22.app.state.FrontEndStateDao.StateSearchResult;
 import com.fletch22.app.state.diff.service.JsonDiffProcessorService;
 import com.fletch22.app.state.diff.service.StuntDoubleAndNewId;
+import com.fletch22.dao.LogActionService;
+import com.fletch22.orb.command.transaction.RollbackTransactionService;
 import com.fletch22.web.controllers.ComponentController.ClientIdsPackage;
 import com.fletch22.web.controllers.ComponentController.StatePackage;
 import com.fletch22.web.controllers.exception.ErrorCode;
@@ -35,7 +39,13 @@ public class FrontEndStateService {
 	
 	@Autowired
 	Root root;
-
+	
+	@Autowired
+	LogActionService logActionService;
+	
+	@Autowired
+	RollbackTransactionService rollbackTransactionService;
+	
 	@Transactional
 	public void save(String state, String clientId) {
 		frontEndStateDao.save(state, clientId);
@@ -57,6 +67,7 @@ public class FrontEndStateService {
 				ArrayList<StuntDoubleAndNewId> stuntDoubleAndNewIdList = jsonDiffProcessorService.process(statePackage.state, statePackage.diffBetweenOldAndNew);
 				statePackage.state = insertNewIdsIntoState(statePackage.state, stuntDoubleAndNewIdList);
 			}
+			logger.info("Saving state...");
 			save(statePackage.state, statePackage.clientId);
 		} else {
 			throw new RestException(ErrorCode.CLIENT_THINKS_TALKING_TO_PREV_INSTANCE_OLD_SERVER);
@@ -64,19 +75,7 @@ public class FrontEndStateService {
 			
 		return statePackage.state;
 	}
-	
-//	private boolean replaceIds(String state, StuntDoubleAndNewId stuntDoubleAndNewId) {
-//		int start = state.indexOf(stuntDoubleAndNewId.temporaryId) - 1;
-//		int end = start + stuntDoubleAndNewId.temporaryId.length() + 2;
-//		
-//		boolean wasFound = (start != -1);
-//		if (wasFound) {
-//			state = state.substring(0, start) + String.valueOf(stuntDoubleAndNewId.idNew) + state.substring(end, state.length());
-//		}
-//		
-//		return wasFound;
-//	}
-	
+
 	private String insertNewIdsIntoState(String state, ArrayList<StuntDoubleAndNewId> stuntDoubleAndNewIdList) {
 		for (StuntDoubleAndNewId stuntDoubleAndNewId : stuntDoubleAndNewIdList) {
 			state = state.replace("\"" + stuntDoubleAndNewId.temporaryId + "\"", String.valueOf(stuntDoubleAndNewId.idNew));
@@ -111,8 +110,18 @@ public class FrontEndStateService {
 		
 		return stateSearchResult;
 	}
-
+	
 	public void rollbackToState(String stateClientId) {
-		frontEndStateDao.rollbackToState(stateClientId);
+		BigDecimal tranId = this.frontEndStateDao.getTranIdFromClientId(stateClientId);
+		
+		// NOTE: 11-05-2017: Kludgy. Although we use transaction start boundaries to help us roll back, multiple operations within the same 'transaction umbrella'
+		// get their own transaction ID. Since the final transaction ID is created after we have a chance to read it, we have to call "getSubsequent".
+		// It is assumed here that the subsequent and last transactionID is still part of the same "saveState" multi-persist operation.
+		Optional<BigDecimal> tranIdFound = this.logActionService.getSubsequentTranIdIfAny(tranId);
+		
+		if (tranIdFound.isPresent()) {
+			logger.info("Rolling back to tranID {} ...", tranIdFound.get());
+			this.rollbackTransactionService.rollbackToSpecificTransaction(tranIdFound.get());
+		}
 	}
 }

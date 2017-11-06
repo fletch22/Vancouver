@@ -35,7 +35,7 @@ public class ComponentChildren {
 	}
 
 	public void addChildAtOrdinal(Child child, long ordinal) {
-		logger.info("Adding child at index: {}", ordinal);
+		logger.debug("Adding child at index: {}", ordinal);
 		if (ordinal == Child.ORDINAL_LAST) {
 			ordinal = this.children.size();
 		}
@@ -47,7 +47,7 @@ public class ComponentChildren {
 			Child childReset = this.children.get(i);
 			childReset.setOrdinal(String.valueOf(i));
 
-			logger.info("New child reset: {}", childReset.getOrdinal());
+			logger.debug("New child reset: {}", childReset.getOrdinal());
 		}
 	}
 

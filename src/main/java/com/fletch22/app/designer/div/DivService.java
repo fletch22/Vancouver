@@ -12,9 +12,9 @@ import com.fletch22.app.designer.DomainService;
 
 @Component
 public class DivService extends DomainService<Div, Child> {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(DivService.class);
-	
+
 	@Autowired
 	DivDao divDao;
 
@@ -22,11 +22,11 @@ public class DivService extends DomainService<Div, Child> {
 		Div div = new Div();
 		div.style = style;
 		div.ordinal = ordinal;
-		
+
 		save(div);
 		return div;
 	}
-	
+
 	public void save(Div div) {
 		divDao.save(div);
 	}
@@ -34,26 +34,26 @@ public class DivService extends DomainService<Div, Child> {
 	public Div get(long orbInternalId) {
 		return divDao.read(orbInternalId);
 	}
-	
+
 	@Override
 	public Div createInstance(Map<String, String> properties) {
 		validatePropertiesSimple(properties, Div.ATTRIBUTE_LIST);
-		
-		logger.info("props in ci: {}", properties.get(Div.ATTR_ORDINAL));
-		
+
 		return createInstance(properties.get(Div.ATTR_STYLE), properties.get(Div.ATTR_ORDINAL));
 	}
-	
+
 	@Override
 	public Div update(long id, Map<String, String> properties) {
 		validatePropertiesSimple(properties, Div.ATTRIBUTE_LIST);
-		
+
 		Div div = get(id);
-		if (properties.containsKey(Div.ATTR_STYLE)) div.style = properties.get(Div.ATTR_STYLE);
-		if (properties.containsKey(Div.ATTR_ORDINAL)) div.ordinal = properties.get(Div.ATTR_ORDINAL);
-		
+		if (properties.containsKey(Div.ATTR_STYLE))
+			div.style = properties.get(Div.ATTR_STYLE);
+		if (properties.containsKey(Div.ATTR_ORDINAL))
+			div.ordinal = properties.get(Div.ATTR_ORDINAL);
+
 		this.save(div);
-		
+
 		return get(id);
 	}
 }

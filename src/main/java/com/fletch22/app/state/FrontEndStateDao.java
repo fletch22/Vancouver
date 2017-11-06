@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fletch22.app.designer.Root;
+import com.fletch22.dao.LogActionService;
 import com.fletch22.orb.Orb;
 import com.fletch22.orb.OrbManager;
 import com.fletch22.orb.OrbType;
@@ -51,6 +52,9 @@ public class FrontEndStateDao {
 
 	@Autowired
 	Root root;
+	
+	@Autowired
+	LogActionService logActionService;
 
 	public void save(String state, String clientId) {
 		OrbType orbType = this.orbTypeManager.getOrbType(FrontEndState.TYPE_LABEL);
@@ -64,9 +68,8 @@ public class FrontEndStateDao {
 		properties.put(FrontEndState.ATTR_STATE, state);
 		properties.put(FrontEndState.ATTR_CLIENT_ID, clientId);
 
-		BigDecimal currentTransactionId = transactionService.getCurrentTransactionId();
-
-		logger.debug("Current tranid: {} for type: {}", currentTransactionId, orbType.id);
+		BigDecimal currentTransactionId = transactionService.generateTranId();
+		logger.debug("Current tranId: {} for {}", currentTransactionId, clientId);
 
 		if (currentTransactionId == TransactionService.NO_TRANSACTION_IN_FLIGHT) {
 			throw new RuntimeException("Attempted to save fron end state without a transaction number. This is not allowed. Wrap the call in a transaction.");
@@ -292,39 +295,10 @@ public class FrontEndStateDao {
 		}
 	}
 
-	public void rollbackToState(String stateClientId) {
+	public BigDecimal getTranIdFromClientId(String stateClientId) {
 		OrbType orbType = this.orbTypeManager.getOrbType(FrontEndState.TYPE_LABEL);
-
-		Optional<BigDecimal> optionalTranId = this.getSubsequentState(orbType.id, stateClientId);
-
-		if (optionalTranId.isPresent()) {
-			BigDecimal tranIdSubsequent = optionalTranId.get();
-			logger.error("Attempting to rollback to tranID {} ...", tranIdSubsequent);
-			rollbackTransactionService.rollbackToSpecificTransaction(tranIdSubsequent);
-
-			// Remove client Ids above this one.
-			Criteria criteria = new CriteriaStandard(orbType.id, randomUtil.getRandomUuidString());
-
-			CriteriaSortInfo criteriaSortInfo = new CriteriaSortInfo();
-			criteriaSortInfo.sortDirection = SortDirection.DESC;
-			criteriaSortInfo.sortAttributeName = FrontEndState.ATTR_CLIENT_ID;
-
-			criteria.setSortOrder(criteriaSortInfo);
-
-			criteria.addAnd(Constraint.gt(FrontEndState.ATTR_CLIENT_ID, stateClientId));
-
-			OrbResultSet orbResultSet = this.queryManager.executeQuery(criteria);
-
-			if (orbResultSet.orbList.size() == 0) {
-				logger.error("There were no states to rollback.");
-			}
-
-			for (Orb orbFound : orbResultSet.orbList) {
-				String clientId = orbFound.getUserDefinedProperties().get(FrontEndState.ATTR_CLIENT_ID);
-				logger.error("Removing item {} with state clientID '{}'", orbFound.getOrbInternalId(), clientId);
-				orbManager.deleteOrb(orbFound.getOrbInternalId(), true);
-			}
-		}
+		Orb orbOrginal = this.queryManager.findByAttribute(orbType.id, FrontEndState.ATTR_CLIENT_ID, stateClientId).uniqueResult();
+		return new BigDecimal(orbOrginal.getUserDefinedProperties().get(FrontEndState.ATTR_ASSOCIATED_TRANSACTION_ID));
 	}
 
 	private Optional<BigDecimal> getSubsequentState(long orbTypeInternalId, String stateClientId) {

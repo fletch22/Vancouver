@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fletch22.dao.LogActionService;
+import com.fletch22.dao.LogActionDao.TransactionSearchResult;
 import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory;
 import com.fletch22.orb.command.processor.CommandProcessActionPackageFactory.CommandProcessActionPackage;
 import com.fletch22.orb.command.processor.CommandProcessor;
@@ -50,23 +51,10 @@ public class RollbackTransactionService {
 	}
 	
 	public void rollbackToSpecificTransaction(BigDecimal tranId) {
-		
-		Optional<BigDecimal> optionalSubTranId = this.transactionService.getSubsequantTransaction(tranId);
-		
-		if (optionalSubTranId.isPresent()) {
-			BigDecimal subsequentTranId = optionalSubTranId.get();
-						
-			List<UndoActionBundle> undoActionBundleList = logActionService.getUndoActionsForTransactionsAndSubsequent(subsequentTranId);
-			logger.info("Number of undos: {}", undoActionBundleList.size());
-			for (UndoActionBundle uab: undoActionBundleList) { 
-				logger.info(uab.toJson().toString());
-			}
-			
-			executeUndoActions(undoActionBundleList);
-			
-			logger.info("TranID to roll back before to: {}", subsequentTranId);	
-			this.transactionService.rollbackToBeforeSpecificTransaction(subsequentTranId);
-			eventLogCommandProcessPackageHolder.cleanup();
+		Optional<BigDecimal> tranIdFound = this.logActionService.getSubsequentTranIdIfAny(tranId);
+
+		if (tranIdFound.isPresent()) {
+			this.rollbackToBeforeSpecificTransaction(tranIdFound.get());
 		}
 	}
 	

@@ -182,6 +182,8 @@ public class ComponentController extends Controller {
 	@RequestMapping(value = "/states/{stateClientId}", method = RequestMethod.POST)
 	@ResponseStatus(value = HttpStatus.OK)
 	public @ResponseBody String rollbackToState(@PathVariable String stateClientId, @RequestParam(value = "action", required = true) String action) {
+		
+		logger.info("Rolling back to client ID: {}", stateClientId);
 
 		if (!action.equals(ACTION_ROLLBACK_TO)) {
 			throw new RuntimeException(String.format("Unrecognized action '%s'. Must be '%s'.", action, ACTION_ROLLBACK_TO));

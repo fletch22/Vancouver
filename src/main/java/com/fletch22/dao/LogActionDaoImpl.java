@@ -108,6 +108,8 @@ public class LogActionDaoImpl extends LogActionDao {
 			callableStatement.setString(2, undoAction.toString());
 			callableStatement.setBigDecimal(3, tranDate);
 			callableStatement.setBigDecimal(4, tranId);
+			
+			logger.debug("TranID: {}", tranId);
 
 			callableStatement.executeUpdate();
 		} catch (Exception e) {

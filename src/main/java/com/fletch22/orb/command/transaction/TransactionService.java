@@ -47,6 +47,7 @@ public class TransactionService {
 			throw new RuntimeException("Encountered problem while trying to begin a transaction. There is already a transaction underway '" + tranIdMessage + "'. The system does not yet support nested transactions.");
 		}
 		
+		logger.debug("Recording beginning of tran: {}", tranId);
 		this.logActionDao.recordTransactionStart(tranId);
 		
 		this.transactionIdInFlight = tranId;
@@ -105,7 +106,7 @@ public class TransactionService {
 		return this.transactionIdInFlight;
 	}
 	
-	public Optional<BigDecimal> getSubsequantTransaction(BigDecimal tranId) {
+	public Optional<BigDecimal> getSubsequentTransaction(BigDecimal tranId) {
 		TransactionSearchResult transactionSearchResult = this.logActionDao.getSubsequentTransactionIfAny(tranId);
 		
 		Optional<BigDecimal> optional = Optional.empty();
@@ -121,6 +122,8 @@ public class TransactionService {
 		TransactionSearchResult transactionSearchResult = this.logActionDao.getSubsequentTransactionIfAny(tranId);
 		if (transactionSearchResult.wasTransactionFound()) {
 			this.rollbackToBeforeSpecificTransaction(transactionSearchResult.tranId); 
+		} else {
+			logger.info("Transaction was not found!!!");
 		}
 	}
 }

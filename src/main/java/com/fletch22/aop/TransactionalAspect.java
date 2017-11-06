@@ -30,13 +30,12 @@ public class TransactionalAspect {
 	@Around("transactionalAssurance()")
 	public Object loggingAround(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
 		Object retObject = null;
-		logger.debug("Logging from inside new ASPECT!!!!");
-		
+		logger.debug("Logging from transactional aspect.");
 
 		try {
 			logger.debug("Current counter {}", transactionCounter);
 			if (transactionCounter == 0) {
-				logger.info("beginning tran.");
+				logger.debug("beginning tran.");
 				getTransactionService().beginTransaction();
 			}
 
