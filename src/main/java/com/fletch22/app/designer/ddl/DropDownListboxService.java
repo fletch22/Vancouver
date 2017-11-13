@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fletch22.app.designer.DomainServiceBase;
+import com.fletch22.app.designer.div.Div;
 
 @Component
 public class DropDownListboxService extends DomainServiceBase<DropDownListbox> {
@@ -13,7 +14,7 @@ public class DropDownListboxService extends DomainServiceBase<DropDownListbox> {
 	@Autowired
 	DropDownListboxDao dropDownListboxDao;
 
-	public DropDownListbox createInstance(String style, String name, String dataStoreId, String dataModelId, String dataValueId, String dataTextId) {
+	public DropDownListbox createInstance(String style, String name, String dataStoreId, String dataModelId, String dataValueId, String dataTextId, String ordinal) {
 		DropDownListbox dropDownListbox = new DropDownListbox();
 		dropDownListbox.style = style;
 		dropDownListbox.elementId = name;
@@ -21,6 +22,7 @@ public class DropDownListboxService extends DomainServiceBase<DropDownListbox> {
 		dropDownListbox.dataModelId = dataModelId;
 		dropDownListbox.dataValueId = dataValueId;
 		dropDownListbox.dataTextId = dataTextId;
+		dropDownListbox.ordinal = ordinal;
 		
 		save(dropDownListbox);
 		return dropDownListbox;
@@ -43,7 +45,8 @@ public class DropDownListboxService extends DomainServiceBase<DropDownListbox> {
 				properties.get(DropDownListbox.ATTR_DATASTORE_ID),
 				properties.get(DropDownListbox.ATTR_DATAMODEL_ID),
 				properties.get(DropDownListbox.ATTR_VALUE_FIELD_NAME),
-				properties.get(DropDownListbox.ATTR_TEXT_FIELD_NAME));
+				properties.get(DropDownListbox.ATTR_TEXT_FIELD_NAME), 
+				properties.get(DropDownListbox.ATTR_ORDINAL));
 	}
 	
 	@Override
@@ -54,6 +57,8 @@ public class DropDownListboxService extends DomainServiceBase<DropDownListbox> {
 		if (properties.containsKey(DropDownListbox.ATTR_STYLE)) ddl.style = properties.get(DropDownListbox.ATTR_STYLE);
 		if (properties.containsKey(DropDownListbox.ATTR_ELEMENT_ID)) ddl.elementId = properties.get(DropDownListbox.ATTR_ELEMENT_ID);
 		if (properties.containsKey(DropDownListbox.ATTR_DATASTORE_ID)) ddl.dataStoreId = properties.get(DropDownListbox.ATTR_DATASTORE_ID);
+		if (properties.containsKey(DropDownListbox.ATTR_ORDINAL))
+			ddl.ordinal = properties.get(DropDownListbox.ATTR_ORDINAL);
 		
 		this.save(ddl);
 		

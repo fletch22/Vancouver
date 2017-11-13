@@ -3,6 +3,7 @@ package com.fletch22.app.designer.ddl;
 import org.springframework.stereotype.Component;
 
 import com.fletch22.app.designer.DomainTransformer;
+import com.fletch22.app.designer.div.Div;
 import com.fletch22.orb.Orb;
 
 @Component
@@ -19,6 +20,7 @@ public class DropDownListboxTransformer extends DomainTransformer<DropDownListbo
 		ddl.dataModelId = orb.getUserDefinedProperties().get(DropDownListbox.ATTR_DATAMODEL_ID);
 		ddl.dataValueId = orb.getUserDefinedProperties().get(DropDownListbox.ATTR_VALUE_FIELD_NAME);
 		ddl.dataTextId = orb.getUserDefinedProperties().get(DropDownListbox.ATTR_TEXT_FIELD_NAME);
+		ddl.ordinal = orb.getUserDefinedProperties().get(DropDownListbox.ATTR_ORDINAL);
 		
 		return ddl;
 	}

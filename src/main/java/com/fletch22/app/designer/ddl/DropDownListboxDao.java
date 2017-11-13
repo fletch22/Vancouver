@@ -38,7 +38,7 @@ public class DropDownListboxDao extends AppDesignerDao<DropDownListbox, DropDown
 		orb.getUserDefinedProperties().put(DropDownListbox.ATTR_DATAMODEL_ID, ddl.dataModelId);
 		orb.getUserDefinedProperties().put(DropDownListbox.ATTR_VALUE_FIELD_NAME, ddl.dataValueId);
 		orb.getUserDefinedProperties().put(DropDownListbox.ATTR_TEXT_FIELD_NAME, ddl.dataTextId);
-		
+		orb.getUserDefinedProperties().put(DropDownListbox.ATTR_ORDINAL, ddl.ordinal);
 	}
 }
 
