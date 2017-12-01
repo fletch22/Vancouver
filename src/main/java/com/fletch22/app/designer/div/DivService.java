@@ -40,7 +40,7 @@ public class DivService extends DomainService<Div, Child> {
 		validatePropertiesSimple(properties, Div.ATTRIBUTE_LIST);
 
 		return createInstance(properties.get(Div.ATTR_STYLE), properties.get(Div.ATTR_ORDINAL));
-	}
+	} 
 
 	@Override
 	public Div update(long id, Map<String, String> properties) {

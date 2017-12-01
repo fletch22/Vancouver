@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fletch22.aop.Transactional;
 import com.fletch22.app.designer.ComponentFactory;
 import com.fletch22.app.designer.ComponentSaveFromMapService;
+import com.fletch22.app.designer.Root;
 import com.fletch22.app.designer.appContainer.AppContainerService;
 import com.fletch22.app.designer.viewmodel.AllModels;
 import com.fletch22.app.state.FrontEndState;
@@ -73,6 +74,9 @@ public class ComponentController extends Controller {
 
 	@Autowired
 	MoveService moveService;
+	
+	@Autowired
+	Root root;
 
 	@RequestMapping(value = "/collections/{id}", method = RequestMethod.GET)
 	public @ResponseBody Object getComponent(@PathVariable long id) {
@@ -197,6 +201,8 @@ public class ComponentController extends Controller {
 	@RequestMapping(value = "/nukeAndPave", method = RequestMethod.POST)
 	@ResponseStatus(value = HttpStatus.OK)
 	public @ResponseBody StateIndexInfo nukeAndPave() {
+		
+		this.root.resetStartupTimestamp();
 
 		this.integrationSystemInitializer.nukePaveAndInitializeAllIntegratedSystems();
 
