@@ -15,6 +15,8 @@ import com.fletch22.app.designer.appContainer.AppContainerService
 import com.fletch22.app.state.diff.service.MoveService
 import com.fletch22.orb.IntegrationSystemInitializer
 import com.fletch22.orb.IntegrationTests
+import com.fletch22.web.controllers.ComponentController.MoveCommand;
+import com.fletch22.web.controllers.ComponentController.StatePackage;
 
 @org.junit.experimental.categories.Category(IntegrationTests.class)
 @ContextConfiguration(locations = "classpath:/springContext-test.xml")
@@ -56,11 +58,18 @@ class MoveServiceSpec extends Specification {
 		appContainerService.clearAndResolveAllDescendents(appContainer1)
 		appContainerService.clearAndResolveAllDescendents(appContainer2)
 		
-		assert appContainer1.getChildren().getList().size == 1
-		assert appContainer2.getChildren().getList().size == 0
+		assert appContainer1.getChildren().getList().size() == 1
+		assert appContainer2.getChildren().getList().size() == 0
+		
+		MoveCommand moveCommand = new MoveCommand()
+		moveCommand.statePackage = null
+		moveCommand.sourceParentId = appContainer1.id
+		moveCommand.destinationParentId = appContainer2.id
+		moveCommand.childId = app1.id
+		moveCommand.ordinalChildTarget = 0
 		
 		when:
-		moveService.move(appContainer1.id, appContainer2.id, app1.id)
+		moveService.move(moveCommand)
 		
 		appContainer1 = appContainerService.get(appContainer1.id)
 		appContainerService.clearAndResolveAllDescendents(appContainer1)
@@ -69,8 +78,8 @@ class MoveServiceSpec extends Specification {
 		appContainerService.clearAndResolveAllDescendents(appContainer2)
 		
 		then:
-		assert appContainer1.getChildren().getList().size == 0
-		assert appContainer2.getChildren().getList().size == 1
+		assert appContainer1.getChildren().getList().size() == 0
+		assert appContainer2.getChildren().getList().size() == 1
 	}
 
 }

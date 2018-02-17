@@ -9,7 +9,7 @@
   <setting name="setup-tab">
     <setting name="setup">
       <setting name="custom-gradle-executor"/>
-      <setting name="current-directory" value="D:\workspaces\git-repository\vancouver"/>
+      <setting name="current-directory" value="C:\Users\chris\Documents\workspaces\vancouver"/>
       <setting name="log-level" value="LIFECYCLE"/>
     </setting>
   </setting>

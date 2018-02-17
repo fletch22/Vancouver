@@ -117,15 +117,19 @@ def testLoggingDefault = {
 	showStandardStreams true
 }
 
+
+def buildCommonDir = buildscript.sourceFile.getParent()
+def aspectjweaverPath = buildCommonDir + "/aspectjweaver/aspectjweaver-1.8.4.jar"
+
 test {
-	jvmArgs '-javaagent:C:/Users/ninjapop/.gradle/caches/modules-2/files-2.1/org.aspectj/aspectjweaver/1.8.4/2ee166facba0b05c5dc444a934027baa114fddd9/aspectjweaver-1.8.4.jar'
+	jvmArgs '-javaagent:${aspectjweaverPath}'
 	
 	testLogging
 	testLoggingDefault
 }
 
 task integrationTest(type: Test) {
-	jvmArgs "-javaagent:C:/Users/ninjapop/.gradle/caches/modules-2/files-2.1/org.aspectj/aspectjweaver/1.8.4/2ee166facba0b05c5dc444a934027baa114fddd9/aspectjweaver-1.8.4.jar"
+	jvmArgs "-javaagent:${aspectjweaverPath}"
 	
 	testClassesDir = sourceSets.integrationTest.output.classesDir
 	classpath = sourceSets.integrationTest.runtimeClasspath
@@ -138,5 +142,5 @@ check.dependsOn integrationTest
 
 gretty {
 	contextConfigFile = 'src/main/resources/jetty-env.xml'
-	jvmArgs "-javaagent:C:/Users/ninjapop/.gradle/caches/modules-2/files-2.1/org.aspectj/aspectjweaver/1.8.4/2ee166facba0b05c5dc444a934027baa114fddd9/aspectjweaver-1.8.4.jar"
+	jvmArgs "-javaagent:${aspectjweaverPath}"
 }

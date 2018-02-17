@@ -68,7 +68,11 @@ class FrontEndStateServiceIntSpec extends Specification {
 		statePackage.state = state
 		statePackage.diffBetweenOldAndNew = null
 		statePackage.clientId = '123412341243423141233241'
-		statePackage.serverStartupTimestamp = root.startupTimestamp;
+		statePackage.serverStartupTimestamp = root.startupTimestamp
+		
+		logger.info('From test: ' + root.startupTimestamp)
+		
+		frontEndStateService.root.startupTimestamp = statePackage.serverStartupTimestamp
 		
 		List<StatePackage> statePackageList = new ArrayList<StatePackage>()
 		statePackageList.add(statePackage)

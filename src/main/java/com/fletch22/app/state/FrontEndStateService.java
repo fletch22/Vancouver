@@ -62,7 +62,7 @@ public class FrontEndStateService {
 	@Transactional
 	public String saveStatePackage(StatePackage statePackage) {
 		
-		if (String.valueOf(root.startupTimestamp).equals(statePackage.serverStartupTimestamp)) {
+		if (root.startupTimestamp.equals(statePackage.serverStartupTimestamp)) {
 			if (statePackage.diffBetweenOldAndNew != null) {
 				ArrayList<StuntDoubleAndNewId> stuntDoubleAndNewIdList = jsonDiffProcessorService.process(statePackage.state, statePackage.diffBetweenOldAndNew);
 				statePackage.state = insertNewIdsIntoState(statePackage.state, stuntDoubleAndNewIdList);

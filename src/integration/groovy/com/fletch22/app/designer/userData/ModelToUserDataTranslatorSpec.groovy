@@ -94,11 +94,11 @@ class ModelToUserDataTranslatorSpec extends Specification {
 		DataModel dataModel = dataModelService.createInstance('dmLabel1')
 
 		DataField dataField1 = dataFieldService.createInstance('dfLabel1')
-		dataModelService.addToParent(dataModel, dataField1)
+		dataModelService.addToParent(dataModel, dataField1, 0)
 
 		DataField dataField2 = dataFieldService.createInstance('dfLabel2')
 		def idOriginalDataField2 = dataField2.getId()
-		dataModelService.addToParent(dataModel, dataField2)
+		dataModelService.addToParent(dataModel, dataField2, 0)
 
 		def label = modelToUserDataTranslator.composeUserDataTypeLabel(dataModel)
 
@@ -125,13 +125,15 @@ class ModelToUserDataTranslatorSpec extends Specification {
 		DataModel dataModel = dataModelService.createInstance('dmLabel1')
 		
 		DataField dataField1 = dataFieldService.createInstance('dfLabel1')
-		dataModelService.addToParent(dataModel, dataField1)
+		dataModelService.addToParent(dataModel, dataField1, 0)
 
 		DataField dataField2 = dataFieldService.createInstance('dfLabel2')
 		def idOriginalDataField2 = dataField2.getId()
-		dataModelService.addToParent(dataModel, dataField2)
+		dataModelService.addToParent(dataModel, dataField2, 0)
 
-		dataModel.getChildren().getList().remove()
+		dataModel.getChildren().removeChild(dataField2);
+		
+		def label = modelToUserDataTranslator.composeUserDataTypeLabel(dataModel)
 
 		when:
 		modelToUserDataTranslator.updateUserData(dataModel)
@@ -140,6 +142,6 @@ class ModelToUserDataTranslatorSpec extends Specification {
 		def orbType = orbTypeManager.getOrbType(label)
 		orbType != null
 		orbType.customFields.size() == 1
-		"column_1" == orbType.customFields.getAt(0)
+		"dfLabel1" == orbType.customFields.getAt(0)
 	}
 }

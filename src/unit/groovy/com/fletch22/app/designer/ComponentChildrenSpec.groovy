@@ -35,13 +35,13 @@ class ComponentChildrenSpec extends Specification {
 		
 		then:
 		Child child0 = children.get(0)
-		child0.ordinal == 0
+		child0.ordinal == '0'
 		child0.getId() == 2
 		Child child1 = children.get(1)
-		child1.ordinal == 1
+		child1.ordinal == '1'
 		child1.getId() == 0
 		Child child2 = children.get(2)
-		child2.ordinal == 2
+		child2.ordinal == '2'
 		child2.getId() == 1
 	}
 }
