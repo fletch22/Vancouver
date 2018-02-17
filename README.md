@@ -42,10 +42,7 @@ Change the project to a Maven Type Project:
 	
 	Select Convert to Maven Project
 	
-	
-	
-	
-Unit/Integration Tests:
+Change application.properties 'backup.location.parentFolder'
 
 
 
